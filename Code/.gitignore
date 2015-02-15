@@ -7,3 +7,4 @@ release.properties
 *.iml
 *.ipr
 *.iws
+.idea
