@@ -6,3 +6,6 @@ jdk:
  - openjdk6
 script: 
  - cd Code && mvn test
+cache:
+  directories:
+    - $HOME/.m2
