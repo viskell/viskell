@@ -41,7 +41,6 @@
               <configLocation>checkstyle.xml</configLocation>
               <encoding>UTF-8</encoding>
               <failOnViolation>false</failOnViolation>
-              <failOnError>false</failOnError>
             </configuration>
             <goals>
               <goal>check</goal>
