@@ -5,7 +5,7 @@ jdk:
  - openjdk6
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -y ghci
+ - sudo apt-get install -y ghc
 script: 
  - cd Code && mvn test
 cache:
