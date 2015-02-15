@@ -41,11 +41,16 @@ public class GhciSession implements Closeable {
             e.printStackTrace();
         }
 
-        // Make it so that GHCI prints a null byte to its standard output when
-        // it expects input
+        /* Make it so that GHCi prints a null byte to its standard output when
+           it expects input. By setting the prompt to a zero byte, GHCi will
+           print a zero byte whenever it expects the user (that's us) to enter
+           the next expression. In UTF-8, zero bytes are not part of any
+           character except for NUL, the zero character, which makes them a
+           useful sentinel. */
         eval(":set prompt " + SENTINEL);
 
-        // Make it so that GHCI resets bindings after every command
+        /* Make it so that GHCi resets bindings after every command. This makes
+           it slightly less likely that GHCi state will affect our results. */
         eval(":set +r");
     }
 
