@@ -1,11 +1,14 @@
 language: java
-sudo: false
 jdk:
  - oraclejdk8
  - oraclejdk7
  - openjdk6
+before_install:
+ - sudo apt-get update -qq
+ - sudo apt-get install -y ghci
 script: 
  - cd Code && mvn test
 cache:
-  directories:
-    - $HOME/.m2
+ apt: true
+ directories:
+  - $HOME/.m2
