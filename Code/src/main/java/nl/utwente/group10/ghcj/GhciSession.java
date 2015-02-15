@@ -41,16 +41,12 @@ public class GhciSession implements Closeable {
             e.printStackTrace();
         }
 
-        try {
-            // Make it so that GHCI prints a null byte to its standard output when
-            // it expects input
-            eval(":set prompt " + SENTINEL);
+        // Make it so that GHCI prints a null byte to its standard output when
+        // it expects input
+        eval(":set prompt " + SENTINEL);
 
-            // Make it so that GHCI resets bindings after every command
-            eval(":set +r");
-        } catch (HaskellException e) {
-            throw new GhciException(e);
-        }
+        // Make it so that GHCI resets bindings after every command
+        eval(":set +r");
     }
 
 
@@ -62,7 +58,7 @@ public class GhciSession implements Closeable {
      * @throws GhciException when ghci is not ready to evaluate the expression.
      * @throws HaskellException when the expression can not be computed.
      */
-    public String eval(String cmd) throws GhciException, HaskellException {
+    public String eval(String cmd) throws GhciException {
         StringBuilder response = new StringBuilder();
 
         try {
@@ -72,14 +68,9 @@ public class GhciSession implements Closeable {
             out.flush();
 
             // Wait for the sentinel.
-            while (true) {
-                int ch = in.read();
-
-                if (ch == 0) {
-                    break;
-                } else {
-                    response.append((char) ch);
-                }
+            int ch = 0;
+            while ((ch = in.read()) != 0) {
+                response.append((char) ch);
             }
         } catch (IOException e) {
             throw new GhciException(e);
