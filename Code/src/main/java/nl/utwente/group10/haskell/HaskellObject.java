@@ -1,4 +1,4 @@
 package nl.utwente.group10.haskell;
 
-public class HaskellObject {
+public abstract class HaskellObject {
 }
