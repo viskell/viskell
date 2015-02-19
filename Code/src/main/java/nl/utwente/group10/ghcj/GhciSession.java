@@ -54,6 +54,9 @@ public class GhciSession implements Closeable {
         eval(":set +r");
     }
 
+    public GhciEnvironment getEnvironment() throws GhciException {
+        return new GhciEnvironment(this);
+    }
 
     /**
      * Evaluate a Haskell expression and wait for it to compute.
