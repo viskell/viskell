@@ -13,6 +13,11 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>18.0</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -41,7 +46,6 @@
               <configLocation>checkstyle.xml</configLocation>
               <encoding>UTF-8</encoding>
               <failOnViolation>false</failOnViolation>
-              <failOnError>false</failOnError>
             </configuration>
             <goals>
               <goal>check</goal>
