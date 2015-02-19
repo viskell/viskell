@@ -1,1 +1,11 @@
-script: true
+language: java
+sudo: false
+jdk:
+ - oraclejdk8
+ - oraclejdk7
+ - openjdk6
+script: 
+ - cd Code && mvn test
+cache:
+  directories:
+    - $HOME/.m2
