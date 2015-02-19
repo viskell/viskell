@@ -10,6 +10,6 @@ public class FuncT extends Type {
     }
 
     public String toString() {
-        return Joiner.on(" -> ").join(arguments);
+        return "(" + Joiner.on(" -> ").join(arguments) + ")";
     }
 }

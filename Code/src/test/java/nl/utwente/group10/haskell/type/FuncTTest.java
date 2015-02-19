@@ -8,6 +8,6 @@ public class FuncTTest {
     public void toStringTest() {
         ConstT integer = new ConstT("Integer");
         FuncT ft = new FuncT(integer, integer);
-        assertEquals("Integer -> Integer", ft.toString());
+        assertEquals("(Integer -> Integer)", ft.toString());
     }
 }
