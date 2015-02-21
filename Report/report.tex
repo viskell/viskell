@@ -47,63 +47,35 @@
 	\thedate
 \end{titlepage}
 
-\chapter{Voorwoord}
-
-Dit is een verslag over een \gls{banaan}. 
-De banaan is geel van kleur. \index{banaankleur}
-Ook Leslie Lamport vindt dat bananen geel zijn \cite{lamport94}.
-
-\chapter{Samenvatting}
-
-\lipsum
-
 % Inhoudsopgave
 \tableofcontents
 
-\chapter{Inleiding}
+\include{Hoofdstukken/Voorwoord}
 
-\lipsum
+\include{Hoofdstukken/Samenvatting}
 
-\chapter{Vereistenanalyse}
+\include{Hoofdstukken/Inleiding}
 
-\lipsum
+\include{Hoofdstukken/Vereistenanalyse}
 
-\chapter{Ontwerp}
+\include{Hoofdstukken/Ontwerp}
 
-\lipsum
+\include{Hoofdstukken/Implementatie}
 
-\chapter{Implementatie}
+\include{Hoofdstukken/Testplan}
 
-\lipsum
+\include{Hoofdstukken/Evaluatie}
 
-\chapter{Testplan}
+\include{Hoofdstukken/Conclusies}
 
-\lipsum
-
-\chapter{Evaluatie}
-
-\lipsum
-
-\chapter{Conclusies}
-
-\lipsum
-
-\chapter{Aanbevelingen}
-
-\lipsum
+\include{Hoofdstukken/Aanbevelingen}
 
 \chapter{Bibliografie}
 
 \begingroup
 \renewcommand{\chapter}[2]{}
 \begin{thebibliography}{9999}
-\bibitem{lamport94}
-  Leslie Lamport,
-  \emph{\LaTeX: a document preparation system}.
-  Addison Wesley, Massachusetts,
-  2nd edition,
-  1994.
-
+\input{Hoofdstukken/Bibliografie}
 \end{thebibliography}
 \endgroup
 
