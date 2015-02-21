@@ -11,7 +11,7 @@
 \usepackage{lipsum}
 \usepackage{titling}
 \usepackage{glossaries}
-\usepackage{makeidx}
+\usepackage[nonewpage]{imakeidx}
 
 \renewcommand{\glossarysection}[2][]{}
 
@@ -92,8 +92,9 @@ Dit is een verslag over een \gls{banaan}. De banaan is geel van kleur. \index{ba
 
 \chapter{Bibliografie}
 
+\begingroup
+\renewcommand{\chapter}[2]{}
 \begin{thebibliography}{9999}
-
 \bibitem{lamport94}
   Leslie Lamport,
   \emph{\LaTeX: a document preparation system}.
@@ -102,14 +103,17 @@ Dit is een verslag over een \gls{banaan}. De banaan is geel van kleur. \index{ba
   1994.
 
 \end{thebibliography}
+\endgroup
 
 \chapter{Index}
 
+\begingroup
+\renewcommand{\chapter}[2]{}
 \printindex
+\endgroup
 
 \chapter{Verklarende woordenlijst}
 
-\setglossarystyle{list}
 \printglossaries
 
 \end{document}
