@@ -10,3 +10,6 @@
 *.ist
 *.gls
 *.out
+*.idx
+*.ilg
+*.ind

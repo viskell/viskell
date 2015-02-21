@@ -11,10 +11,11 @@
 \usepackage{lipsum}
 \usepackage{titling}
 \usepackage{glossaries}
+\usepackage{makeidx}
 
 \renewcommand{\glossarysection}[2][]{}
 
-
+\makeindex
 \makeglossaries
 
 \newglossaryentry{banaan} {
@@ -48,7 +49,7 @@
 
 \chapter{Voorwoord}
 
-Dit is een verslag over een \gls{banaan}.
+Dit is een verslag over een \gls{banaan}. De banaan is geel van kleur. \index{banaankleur}
 
 \chapter{Samenvatting}
 
@@ -104,7 +105,7 @@ Dit is een verslag over een \gls{banaan}.
 
 \chapter{Index}
 
-\lipsum
+\printindex
 
 \chapter{Verklarende woordenlijst}
 
