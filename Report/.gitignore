@@ -4,3 +4,8 @@
 *.log
 *.pdf
 *.toc
+*.dvi
+*.glg
+*.glo
+*.ist
+*.gls

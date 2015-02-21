@@ -9,6 +9,15 @@
 \usepackage{microtype}
 \usepackage{lipsum}
 \usepackage{titling}
+\usepackage{glossaries}
+
+
+\makeglossaries
+
+\newglossaryentry{banaan} {
+	name=banaan,
+	description={tropische, eetbare, langwerpige, gele vrucht met wit en zacht vruchtvlees}
+}
 
 \addtokomafont{disposition}{\rmfamily}
 
@@ -23,6 +32,10 @@
 \date{\today}
 
 \begin{document}
+
+\renewcommand*\rmdefault{ppl}
+\renewcommand*\sfdefault{ppl}
+
 \begin{titlepage}
 	{\Huge \thetitle} \\
 	\vfill
@@ -32,7 +45,7 @@
 
 \chapter{Voorwoord}
 
-\lipsum
+Dit is een verslag over een \gls{banaan}.
 
 \chapter{Samenvatting}
 
@@ -92,6 +105,7 @@
 
 \chapter{Verklarende woordenlijst}
 
-\lipsum
+\setglossarystyle{list}
+\printglossaries
 
 \end{document}
