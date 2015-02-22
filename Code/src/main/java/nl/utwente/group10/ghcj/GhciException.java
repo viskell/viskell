@@ -12,4 +12,9 @@ public class GhciException extends Exception {
     public GhciException(final Exception e) {
         super(e);
     }
+
+    /** A GhciException with a message */
+    public GhciException(String msg) {
+        super(msg);
+    }
 }

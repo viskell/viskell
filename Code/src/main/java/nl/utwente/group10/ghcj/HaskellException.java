@@ -11,4 +11,9 @@ public class HaskellException extends GhciException {
     public HaskellException(final Exception e) {
         super(e);
     }
+
+    /** A HaskellException with a message */
+    public HaskellException(String msg) {
+        super(msg);
+    }
 }

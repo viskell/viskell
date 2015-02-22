@@ -1,11 +1,16 @@
 package nl.utwente.group10.ghcj;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A conversation with an instance of ghci.
@@ -37,7 +42,10 @@ public class GhciSession implements Closeable {
      */
     public GhciSession() throws GhciException {
         try {
-            this.ghci = new ProcessBuilder(GHCIPATH).start();
+            this.ghci = new ProcessBuilder(GHCIPATH)
+                            .redirectErrorStream(true)
+                            .start();
+
             this.in = this.ghci.getInputStream();
             this.out = this.ghci.getOutputStream();
         } catch (IOException e) {
@@ -73,7 +81,7 @@ public class GhciSession implements Closeable {
      * @throws HaskellException when the expression can not be computed.
      */
     public final String eval(final String cmd) throws GhciException {
-        StringBuilder response = new StringBuilder();
+        StringBuilder responseBuilder = new StringBuilder();
 
         try {
             // Send the expression to ghci.
@@ -84,13 +92,36 @@ public class GhciSession implements Closeable {
             // Wait for the sentinel.
             int input;
             while ((input = this.in.read()) != 0) {
-                response.append((char) input);
+                responseBuilder.append((char) input);
             }
         } catch (IOException e) {
             throw new GhciException(e);
         }
 
-        return response.toString();
+        String response = responseBuilder.toString();
+
+        // Check for hints that something went wrong
+        // TODO Make this better
+
+        String exceptionHeader = "*** Exception: ";
+        String parseErrorHeader = "<interactive>";
+
+        List<String> lines = Splitter.on("\n").splitToList(response);
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+
+            if (line.startsWith(exceptionHeader)) {
+                String msg = line.substring(exceptionHeader.length());
+                throw new HaskellException(msg);
+            }
+
+            if (line.startsWith(parseErrorHeader)) {
+                String msg = Joiner.on("\n").join(lines.subList(i, lines.size()));
+                throw new HaskellException(msg);
+            }
+        }
+
+        return response;
     }
 
     /**
