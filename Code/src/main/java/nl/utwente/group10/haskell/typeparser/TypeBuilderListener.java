@@ -16,7 +16,7 @@ import java.util.Stack;
  */
 class TypeBuilderListener extends TypeBaseListener {
     /** Temporary storage area for compound types. */
-    private final Stack<List<Type>> stack = new Stack<>();
+    private final Stack<List<Type>> stack = new Stack<List<Type>>();
 
     /** Build a TypeBuilderListener. */
     protected TypeBuilderListener() {
