@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -101,7 +100,7 @@ public class GhciSession implements Closeable {
         String response = responseBuilder.toString();
 
         // Check for hints that something went wrong
-        // TODO Make this better
+        // To do: Make this better
 
         String exceptionHeader = "*** Exception: ";
         String parseErrorHeader = "<interactive>";
@@ -116,7 +115,8 @@ public class GhciSession implements Closeable {
             }
 
             if (line.startsWith(parseErrorHeader)) {
-                String msg = Joiner.on("\n").join(lines.subList(i, lines.size()));
+                List<String> sublines = lines.subList(i, lines.size());
+                String msg = Joiner.on("\n").join(sublines);
                 throw new HaskellException(msg);
             }
         }

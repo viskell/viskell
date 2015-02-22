@@ -12,7 +12,11 @@ public class HaskellException extends GhciException {
         super(e);
     }
 
-    /** A HaskellException with a message */
+    /**
+     * A HaskellException with a message.
+     *
+     * @param msg The message.
+     */
     public HaskellException(String msg) {
         super(msg);
     }

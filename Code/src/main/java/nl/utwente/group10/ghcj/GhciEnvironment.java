@@ -32,28 +32,18 @@ public class GhciEnvironment {
         List<Binding> out = new ArrayList<Binding>();
 
         for (String line : Splitter.on('\n').split(input)) {
-            out.add(this.parseBinding(line));
+            List<String> parts = Splitter.on(" :: ").splitToList(line);
+
+            if (parts.size() == 2) {
+                /* This could be a function declaration line. */
+                String name = parts.get(0).trim();
+                //String type = parts.get(1);
+
+                out.add(new Binding(name, null));
+            }
         }
 
         return out;
-    }
-
-    /**
-     * Parses a Haskell type into a Binding.
-     * @param line A Haskell type declaration.
-     * @throws GhciException when the line is not valid.
-     * @return A Binding object matching the declaration.
-     */
-    private static Binding parseBinding(final String line) throws GhciException {
-        List<String> parts = Splitter.on(" :: ").splitToList(line);
-
-        if (parts.size() == 2) {
-            /* This could be a function declaration line. */
-            String name = parts.get(0).trim();
-            String type = parts.get(1);
-        }
-
-        return null;
     }
 
     @Override

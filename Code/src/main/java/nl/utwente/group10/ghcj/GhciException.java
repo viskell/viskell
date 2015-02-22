@@ -13,7 +13,10 @@ public class GhciException extends Exception {
         super(e);
     }
 
-    /** A GhciException with a message */
+    /**
+     * A GhciException with a message.
+     * @param msg The message
+     */
     public GhciException(String msg) {
         super(msg);
     }

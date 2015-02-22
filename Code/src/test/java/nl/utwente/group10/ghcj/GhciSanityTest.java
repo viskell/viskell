@@ -12,18 +12,18 @@ public class GhciSanityTest {
 
     @Test
     public void putStrLnTest() throws GhciException {
-        Assert.assertEquals("Hello\n", ghci.eval("putStrLn \"Hello\""));
+        Assert.assertEquals("Hello\n", this.ghci.eval("putStrLn \"Hello\""));
     }
 
     @Test
     public void trivialMathTest() throws GhciException {
-        Assert.assertEquals("4\n", ghci.eval("2 + 2"));
+        Assert.assertEquals("4\n", this.ghci.eval("2 + 2"));
     }
 
     @Test
     public void typeErrorTest() throws GhciException {
         try {
-            ghci.eval("map 10 10");
+            this.ghci.eval("map 10 10");
             Assert.fail("typeErrorTest should throw an exception but didn't");
         } catch (HaskellException e) {
             Assert.assertTrue(e.getMessage().contains("No instance for"));
