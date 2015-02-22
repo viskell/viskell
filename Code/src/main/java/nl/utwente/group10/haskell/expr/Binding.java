@@ -45,8 +45,8 @@ public class Binding extends HaskellObject {
     @Override
     public final String toString() {
         return "Binding{" +
-                "name='" + name + '\'' +
-                ", expr=" + expr +
+                "name='" + this.name + '\'' +
+                ", expr=" + this.expr +
                 '}';
     }
 }
