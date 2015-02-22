@@ -44,7 +44,18 @@ public class GhciEnvironment {
      * @throws GhciException when the line is not valid.
      * @return A Binding object matching the declaration.
      */
-    private Binding parseBinding(final String line) throws GhciException {
+    private static Binding parseBinding(final String line) throws GhciException {
+        List<String> parts = Splitter.on(" :: ").splitToList(line);
+
+        if (parts.size() == 2) {
+            /* This could be a function declaration line. */
+            String name = parts.get(0).trim();
+            String type = parts.get(1);
+
+            System.out.printf("Name: %s Type: %s\n", name, type);
+            //TypeParser.parse(type);
+        }
+
         return null;
     }
 
