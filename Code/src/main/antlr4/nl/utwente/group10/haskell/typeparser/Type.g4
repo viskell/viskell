@@ -4,7 +4,8 @@ CT : [A-Z][a-z]+ ;
 VT : [a-z]+ ;
 WS : [ \t\r\n]+ -> skip ;
 
-type : compoundType ('->' type)* ; // function type
+type : functionType | compoundType; // function type
+functionType : compoundType ('->' type)+ ;
 compoundType : concreteType | tupleType | listType | parenType ;
 
 tupleType : '(' type (',' type)+ ')' ; // tuple type, k>=2

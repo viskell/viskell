@@ -51,9 +51,6 @@ public class GhciEnvironment {
             /* This could be a function declaration line. */
             String name = parts.get(0).trim();
             String type = parts.get(1);
-
-            System.out.printf("Name: %s Type: %s\n", name, type);
-            //TypeParser.parse(type);
         }
 
         return null;
