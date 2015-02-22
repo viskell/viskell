@@ -12,19 +12,22 @@ import java.nio.charset.StandardCharsets;
  */
 public class GhciSession implements Closeable {
     /** The process this GhciSession will communicate with. */
-    private Process ghci;
+    private final Process ghci;
 
     /** Raw input stream for result data from ghci to the application. */
-    private InputStream in;
+    private final InputStream in;
 
     /** Raw output stream from the application to ghci. */
-    private OutputStream out;
+    private final OutputStream out;
 
     /** Responses from ghci are terminated by a null byte. */
-    private final static char SENTINEL = 0;
+    private static final char SENTINEL = 0;
 
     /** All communication is done over UTF_8. */
-    private final static Charset UTF_8 = StandardCharsets.UTF_8;
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
+
+    /** The path to GHCI. */
+    private static final String GHCIPATH = "ghci";
 
     /**
      * Builds a new communication session with ghci.
@@ -34,11 +37,11 @@ public class GhciSession implements Closeable {
      */
     public GhciSession() throws GhciException {
         try {
-            ghci = new ProcessBuilder("ghci").start();
-            in = ghci.getInputStream();
-            out = ghci.getOutputStream();
+            this.ghci = new ProcessBuilder(GHCIPATH).start();
+            this.in = this.ghci.getInputStream();
+            this.out = this.ghci.getOutputStream();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new GhciException(e);
         }
 
         /* Make it so that GHCi prints a null byte to its standard output when
@@ -47,38 +50,41 @@ public class GhciSession implements Closeable {
            the next expression. In UTF-8, zero bytes are not part of any
            character except for NUL, the zero character, which makes them a
            useful sentinel. */
-        eval(":set prompt " + SENTINEL);
+        this.eval(":set prompt " + SENTINEL);
 
         /* Make it so that GHCi resets bindings after every command. This makes
            it slightly less likely that GHCi state will affect our results. */
-        eval(":set +r");
+        this.eval(":set +r");
     }
 
-    public GhciEnvironment getEnvironment() throws GhciException {
+    /**
+     * @return a GhciEnvironment that is connected to this GhciSession.
+     */
+    public final GhciEnvironment getEnvironment() {
         return new GhciEnvironment(this);
     }
 
     /**
-     * Evaluate a Haskell expression and wait for it to compute.
+     * Evaluates a Haskell expression and wait for it to compute.
      *
      * @param cmd The (complete) Haskell
      * @return the result, including newline, as a string.
      * @throws GhciException when ghci is not ready to evaluate the expression.
      * @throws HaskellException when the expression can not be computed.
      */
-    public String eval(String cmd) throws GhciException {
+    public final String eval(final String cmd) throws GhciException {
         StringBuilder response = new StringBuilder();
 
         try {
             // Send the expression to ghci.
-            out.write(cmd.getBytes(UTF_8));
-            out.write('\n');
-            out.flush();
+            this.out.write(cmd.getBytes(UTF_8));
+            this.out.write('\n');
+            this.out.flush();
 
             // Wait for the sentinel.
-            int ch = 0;
-            while ((ch = in.read()) != 0) {
-                response.append((char) ch);
+            int input;
+            while ((input = this.in.read()) != 0) {
+                response.append((char) input);
             }
         } catch (IOException e) {
             throw new GhciException(e);
@@ -88,13 +94,20 @@ public class GhciSession implements Closeable {
     }
 
     /**
+     * @return a String representation of this GhciSession.
+     */
+    public final String toString() {
+        return "GhciSession{" + this.ghci + "}";
+    }
+
+    /**
      * Destroys the ghci instance and closes communications channels.
      * @throws IOException when closing the channels fails.
      */
     @Override
-    public void close() throws IOException {
-        in.close();
-        out.close();
-        ghci.destroy();
+    public final void close() throws IOException {
+        this.in.close();
+        this.out.close();
+        this.ghci.destroy();
     }
 }
