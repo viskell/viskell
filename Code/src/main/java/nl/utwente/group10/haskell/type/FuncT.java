@@ -19,6 +19,7 @@ public class FuncT extends Type {
      * @param arguments The argument types for this function type.
      */
     public FuncT(final Type... arguments) {
+        super("Function");
         this.arguments = arguments.clone();
     }
 
@@ -61,7 +62,31 @@ public class FuncT extends Type {
     }
 
     @Override
-    public final String toHaskell() {
+    public final boolean compatibleWith(Type other) {
+        boolean compatible = true;
+
+        if (other instanceof FuncT) {
+            // If the other type is a {@code FuncT} instance, compare all overlapping subtypes.
+            final Type[] otherArguments = ((FuncT) other).arguments;
+
+            if (this.arguments.length >= otherArguments.length) {
+                for (int i = 0; i < otherArguments.length && compatible; i++) {
+                    compatible = this.arguments[i].compatibleWith(otherArguments[i]);
+                }
+            }
+        } else if (this.arguments.length > 0) {
+            // If not, compare the compatibility of the first argument.
+            this.arguments[0].compatibleWith(other);
+        } else {
+            // If this {@code FuncT} does not have any arguments, the other type is per definition not compatible.
+            compatible = false;
+        }
+
+        return compatible;
+    }
+
+    @Override
+    public final String toHaskellType() {
         return "(" + Joiner.on(" -> ").join(this.arguments) + ")";
     }
 
@@ -70,5 +95,9 @@ public class FuncT extends Type {
         return "FuncT{" +
                 "arguments=" + Arrays.toString(this.arguments) +
                 '}';
+    }
+
+    public final FuncT clone() {
+        return new FuncT(this.arguments);
     }
 }
