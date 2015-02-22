@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.expr;
 
-import com.google.common.base.Joiner;
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -28,8 +28,9 @@ public class Apply extends Expr {
     /**
      * @param func The expression to apply arguments to.
      * @param args The arguments to apply.
+     * @throws HaskellException Invalid Haskell operation. See exception message for details.
      */
-    public Apply(final Func func, final Expr ... args) {
+    public Apply(final Func func, final Expr ... args) throws HaskellException {
         super(((FuncT) func.getType()).getAppliedType());
         this.func = func;
         this.args = args.clone();

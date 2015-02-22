@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.type;
 
-import com.google.common.base.Joiner;
+import nl.utwente.group10.ghcj.HaskellException;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,25 +35,36 @@ public class FuncT extends Type {
      * @param args Arguments to apply. The number of arguments should be less or equal to {@code this.getNumArgs()}.
      * @return The resulting type of the application.
      * @throws AssertionError
+     * @throws HaskellException Invalid Haskell operation. See exception message for details.
      */
-    public final Type getAppliedType(final Type ... args) {
+    public final Type getAppliedType(final Type ... args) throws HaskellException {
         assert args.length < this.arguments.length;
 
         final Map<Type, Type> types = new HashMap<Type, Type>();
         final Type[] resultArguments = new Type[this.arguments.length - args.length];
 
         // Determine resulting type of each argument and build resulting type
+        int j = 0;
         for (int i = 0; i < this.arguments.length; i++) {
             if (i < args.length && !types.containsKey(this.arguments[i])) {
-                // We determine the resulting type for this argument type
-                types.put(this.arguments[i], args[i]);
-                resultArguments[i] = args[i];
-            } else if (types.containsKey(this.arguments[i])) {
-                // We already determined the resulting type for this argument type
-                resultArguments[i] = types.get(this.arguments[i]);
+                // We determine the resulting type for this argument type and throw an exception when it is not valid.
+                if (this.arguments[i].compatibleWith(args[i])) {
+                    types.put(this.arguments[i], args[i]);
+                } else {
+                    throw new HaskellException(null); // TODO Improve this exception with a message
+                }
+            } else if (i >= args.length && types.containsKey(this.arguments[i])) {
+                // We already determined the resulting type for this argument type, use this or throw an exception.
+                if (this.arguments[i].compatibleWith(args[i])) {
+                    resultArguments[j] = types.get(this.arguments[i]);
+                    j++;
+                } else {
+                    throw new HaskellException(null); // TODO Improve this exception with a message
+                }
             } else {
                 // The resulting type for this argument type does not change.
-                resultArguments[i] = this.arguments[i];
+                resultArguments[j] = this.arguments[i];
+                j++;
             }
         }
 
@@ -76,7 +87,7 @@ public class FuncT extends Type {
             }
         } else if (this.arguments.length > 0) {
             // If not, compare the compatibility of the first argument.
-            this.arguments[0].compatibleWith(other);
+            compatible = this.arguments[0].compatibleWith(other);
         } else {
             // If this {@code FuncT} does not have any arguments, the other type is per definition not compatible.
             compatible = false;
@@ -87,7 +98,19 @@ public class FuncT extends Type {
 
     @Override
     public final String toHaskellType() {
-        return "(" + Joiner.on(" -> ").join(this.arguments) + ")";
+        final StringBuilder out = new StringBuilder();
+        out.append("(");
+
+
+        for (int i = 0; i < this.arguments.length; i++) {
+            out.append(this.arguments[i].toHaskellType());
+            if (i + 1 < this.arguments.length) {
+                out.append(" -> ");
+            }
+        }
+
+        out.append(")");
+        return out.toString();
     }
 
     @Override

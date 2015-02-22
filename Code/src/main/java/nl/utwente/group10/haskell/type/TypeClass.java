@@ -39,7 +39,13 @@ public class TypeClass extends Type {
 
     @Override
     public final String toHaskellType() {
-        return Joiner.on("\n" + this.getName() + " ").join(this.types);
+        final StringBuilder out = new StringBuilder();
+
+        for (Type type : this.types) {
+            out.append(this.getName()).append(" ").append(type.toHaskellType()).append("\n");
+        }
+
+        return out.toString().trim();
     }
 
     @Override
