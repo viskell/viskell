@@ -1,13 +1,26 @@
 package nl.utwente.group10.haskell.type;
 
+// TODO
 public class VarT extends Type {
-    private String name;
-
     public VarT(String name) {
-        this.name = name;
+        super(name.toLowerCase());
+    }
+
+    @Override
+    public boolean compatibleWith(Type other) {
+        return true;
+    }
+
+    @Override
+    public String toHaskellType() {
+        return null;
     }
 
     public String toString() {
-        return name;
+        return getName();
+    }
+
+    public VarT clone() throws CloneNotSupportedException {
+        return (VarT) super.clone();
     }
 }
