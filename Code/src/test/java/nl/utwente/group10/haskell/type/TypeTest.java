@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 public class TypeTest {
     @Test
-    public void toStringTest() {
+    public void toHaskellTypeTest() {
         Type t = new TupleT(
                 new ListT(
                         new VarT("a")
@@ -16,6 +16,6 @@ public class TypeTest {
                 )
         );
 
-        assertEquals("([a], (b -> String))", t.toString());
+        assertEquals("([a], (b -> String))", t.toHaskellType());
     }
 }

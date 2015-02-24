@@ -1,15 +1,23 @@
 package nl.utwente.group10.haskell.type;
 
+/**
+ * List type.
+ */
 public class ListT extends Type {
+    /**
+     * Type of the elements in the list.
+     */
     private final Type elementType;
 
-    public ListT(Type elementType) {
-        super("List");
+    /**
+     * @param elementType The type of the elements in the list.
+     */
+    public ListT(final Type elementType) {
         this.elementType = elementType;
     }
 
     @Override
-    public final boolean compatibleWith(Type other) {
+    public final boolean compatibleWith(final Type other) {
         return other instanceof ListT && this.elementType.compatibleWith(((ListT) other).elementType);
     }
 
@@ -21,11 +29,7 @@ public class ListT extends Type {
     @Override
     public final String toString() {
         return "ListT{" +
-                "elementType=" + elementType +
+                "elementType=" + this.elementType +
                 '}';
-    }
-
-    public final ListT clone() {
-        return new ListT(this.elementType);
     }
 }

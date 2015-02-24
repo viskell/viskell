@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Type of a Haskell function. Consists of multiple types in a fixed order.
  */
 public class FuncT extends Type {
     /**
@@ -19,7 +19,6 @@ public class FuncT extends Type {
      * @param arguments The argument types for this function type.
      */
     public FuncT(final Type... arguments) {
-        super("Function");
         this.arguments = arguments.clone();
     }
 
@@ -40,30 +39,34 @@ public class FuncT extends Type {
     public final Type getAppliedType(final Type ... args) throws HaskellException {
         assert args.length < this.arguments.length;
 
-        final Map<Type, Type> types = new HashMap<Type, Type>();
+        final Map<String, Type> varTypes = new HashMap<String, Type>();
         final Type[] resultArguments = new Type[this.arguments.length - args.length];
 
         // Determine resulting type of each argument and build resulting type
         int j = 0;
         for (int i = 0; i < this.arguments.length; i++) {
-            if (i < args.length && !types.containsKey(this.arguments[i])) {
-                // We determine the resulting type for this argument type and throw an exception when it is not valid.
-                if (this.arguments[i].compatibleWith(args[i])) {
-                    types.put(this.arguments[i], args[i]);
-                } else {
-                    throw new HaskellException(null); // TODO Improve this exception with a message
+            Type expectedType = this.arguments[i]; // Expected type
+
+            // Check whether the expected type is a VarT instance, if so, do some extra processing
+            if (expectedType instanceof VarT) {
+                final String variableName = ((VarT) expectedType).getName();
+
+                if (varTypes.containsKey(variableName)) {
+                    // If we already determined the real type of the VarT, set the expected type accordingly.
+                    expectedType = varTypes.get(variableName);
+                } else if (i < args.length) {
+                    // If this is the first occurance of this variable, set its actual type but keep the VarT as
+                    // expected type to check compatibility later on.
+                    varTypes.put(variableName, args[i]);
                 }
-            } else if (i >= args.length && types.containsKey(this.arguments[i])) {
-                // We already determined the resulting type for this argument type, use this or throw an exception.
-                if (this.arguments[i].compatibleWith(args[i])) {
-                    resultArguments[j] = types.get(this.arguments[i]);
-                    j++;
-                } else {
-                    throw new HaskellException(null); // TODO Improve this exception with a message
-                }
-            } else {
-                // The resulting type for this argument type does not change.
-                resultArguments[j] = this.arguments[i];
+            }
+
+            // Check whether the type that will be applied is compatible with the expected type. The expected type can
+            // be a VarT or (a VarT replaced by) a non-variable type.
+            if (i < args.length && !expectedType.compatibleWith(args[i])) {
+                throw new HaskellException(null); // TODO Improve this exception with a message
+            } else if (i >= args.length) {
+                resultArguments[j] = expectedType;
                 j++;
             }
         }
@@ -73,7 +76,7 @@ public class FuncT extends Type {
     }
 
     @Override
-    public final boolean compatibleWith(Type other) {
+    public final boolean compatibleWith(final Type other) {
         boolean compatible = true;
 
         if (other instanceof FuncT) {
@@ -118,9 +121,5 @@ public class FuncT extends Type {
         return "FuncT{" +
                 "arguments=" + Arrays.toString(this.arguments) +
                 '}';
-    }
-
-    public final FuncT clone() {
-        return new FuncT(this.arguments);
     }
 }

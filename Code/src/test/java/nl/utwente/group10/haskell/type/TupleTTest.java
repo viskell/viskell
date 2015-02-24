@@ -5,9 +5,9 @@ import static org.junit.Assert.*;
 
 public class TupleTTest {
     @Test
-    public void toStringTest() {
+    public void toHaskellTypeTest() {
         ConstT integer = new ConstT("Integer");
         TupleT tt = new TupleT(integer, integer);
-        assertEquals("(Integer, Integer)", tt.toString());
+        assertEquals("(Integer, Integer)", tt.toHaskellType());
     }
 }

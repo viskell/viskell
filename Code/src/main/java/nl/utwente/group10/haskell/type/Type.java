@@ -4,27 +4,11 @@ import nl.utwente.group10.haskell.HaskellObject;
 
 /**
  * Abstract class for Haskell types. Provides an interface for common methods.
+ *
+ * Types should be immutable. Also, a Type subclass instance that represents the same in Haskell as another instance of
+ * the same class should be equal, that is {@code this.equals(that)} should return {@code true}.
  */
-public abstract class Type extends HaskellObject implements Cloneable {
-    /**
-     * The name of this type.
-     */
-    private final String name;
-
-    /**
-     * @param name The name of this type.
-     */
-    protected Type(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return The name of this type.
-     */
-    public final String getName() {
-        return this.name;
-    }
-
+public abstract class Type extends HaskellObject {
     /**
      * Tests whether the given type is usable within the context of this type.
      *
@@ -48,8 +32,8 @@ public abstract class Type extends HaskellObject implements Cloneable {
     }
 
     @Override
-    public final boolean equals(Object other) {
-        return this.hashCode() == other.hashCode();
+    public final boolean equals(final Object other) {
+        return this.getClass() == other.getClass() && this.hashCode() == other.hashCode();
     }
 
     @Override

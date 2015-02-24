@@ -5,31 +5,31 @@ package nl.utwente.group10.haskell.type;
  */
 public class ConstT extends Type {
     /**
+     * The Haskell name of this type.
+     */
+    private final String name;
+
+    /**
      * @param name The Haskell name of this type.
      */
     public ConstT(final String name) {
-        super(name);
+        this.name = name;
     }
 
     @Override
-    public final boolean compatibleWith(Type other) {
+    public final boolean compatibleWith(final Type other) {
         return this.equals(other);
     }
 
     @Override
     public final String toHaskellType() {
-        return this.getName();
+        return this.name;
     }
 
     @Override
     public final String toString() {
         return "ConstT{" +
-                "name='" + this.getName() + "'" +
+                "name='" + this.name + "'" +
                 "}";
-    }
-
-    @Override
-    protected final ConstT clone() {
-        return new ConstT(this.getName());
     }
 }
