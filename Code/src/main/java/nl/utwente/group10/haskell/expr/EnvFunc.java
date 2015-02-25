@@ -15,7 +15,7 @@ public class EnvFunc extends Func {
      * @param name The Haskell name of this environment function.
      * @param type The type of this environment function.
      */
-    public EnvFunc(final FuncT type, final String name) {
+    public EnvFunc(final String name, final FuncT type) {
         super(type);
         this.name = name;
     }

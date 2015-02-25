@@ -9,7 +9,7 @@ import java.util.Arrays;
 /**
  * A type of expression that is a lazy application of a function with certain arguments.
  */
-public class Apply extends Expr {
+public class Apply extends Func {
     /**
      * The expression to apply arguments to.
      */
@@ -29,18 +29,28 @@ public class Apply extends Expr {
      * @throws HaskellException Invalid Haskell operation. See exception message for details.
      */
     public Apply(final Func func, final Expr ... args) throws HaskellException {
-        super(((FuncT) func.getType()).getAppliedType());
+        super(((FuncT) func.getType()).getAppliedType(Apply.getArgTypes(args)));
         this.func = func;
         this.args = args.clone();
+    }
+
+    public static Type[] getArgTypes(final Expr[] args) {
+        final Type[] types = new Type[args.length];
+
+        for (int i = 0; i < args.length; i++) {
+            types[i] = args[i].getType();
+        }
+
+        return types;
     }
 
     @Override
     public final String toHaskell() {
         final StringBuilder out = new StringBuilder();
-        out.append("(").append(this.func.toHaskell()).append(")");
+        out.append(this.func.toHaskell());
 
         for (final Expr arg : this.args) {
-            out.append(" (").append(arg.toHaskell()).append(")");
+            out.append(" ").append(arg.toHaskell());
         }
 
         return out.toString();

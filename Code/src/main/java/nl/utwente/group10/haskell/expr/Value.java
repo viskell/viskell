@@ -16,7 +16,7 @@ public class Value extends Expr {
      * @param type Type of this value.
      * @param value Haskell representation of the value that is valid for the given type.
      */
-    protected Value(final Type type, final String value) {
+    public Value(final Type type, final String value) {
         super(type);
         this.value = value;
     }
@@ -24,7 +24,7 @@ public class Value extends Expr {
     /**
      * @param type Type of this value.
      */
-    protected Value(final Type type) {
+    public Value(final Type type) {
         this(type, "");
     }
 
