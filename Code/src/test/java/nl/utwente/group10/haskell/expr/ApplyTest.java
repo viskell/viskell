@@ -20,7 +20,7 @@ public class ApplyTest {
     public void setUp() {
         // Some primitive types
         this.T_integer = new ConstT("Integer");
-        this.T_float = new ConstT("Floating");
+        this.T_float = new ConstT("Float");
         this.T_string = new ConstT("String");
 
         // A typeclass
@@ -42,23 +42,23 @@ public class ApplyTest {
     }
 
 //    @Test
-    public void testCompositeType() throws HaskellException {
-        Func massive = new EnvFunc("massive", new FuncT(T_a, T_b, T_c, new TupleT(T_a, T_b, T_c), T_string));
-
-        // First application
-        Apply a1 = new Apply(massive, new Value(T_float, "1.2"), new Value(T_integer, "0"), new Value(T_string, "\"a\""));
-        assertEquals(a1.getType().toHaskellType(), new FuncT(new TupleT(T_integer, T_float, T_string), T_string).toHaskellType());
-        assertEquals(a1.toHaskell(), "massive 1.2 0 \"a\"");
-
-        // Second application
-        Apply a2 = new Apply(a1, new Value(new TupleT(T_a, T_b, T_c), "(4.5, 3, \"b\")"));
-        assertEquals(a2.getType(), T_string);
-        assertEquals(a2.toHaskell(), "massive 1.2 0 \"a\" (4.5, 3, \"b\")");
-
-        // Third application
-        Apply a3 = new Apply(massive, new Value(T_float, "1.2"), new Value(T_integer, "0"),
-                new Value(T_string, "\"a\""), new Value(new TupleT(T_a, T_b, T_c), "(4.5, 3, \"b\")"));
-        assertEquals(a3.getType(), a2.getType());
-        assertEquals(a3.toHaskell(), a2.toHaskell());
-    }
+//    public void testCompositeType() throws HaskellException {
+//        Func massive = new EnvFunc("massive", new FuncT(T_a, T_b, T_c, new TupleT(T_a, T_b, T_c), T_string));
+//
+//        // First application
+//        Apply a1 = new Apply(massive, new Value(T_float, "1.2"), new Value(T_integer, "0"), new Value(T_string, "\"a\""));
+//        assertEquals(a1.getType().toHaskellType(), new FuncT(new TupleT(T_integer, T_float, T_string), T_string).toHaskellType());
+//        assertEquals(a1.toHaskell(), "massive 1.2 0 \"a\"");
+//
+//        // Second application
+//        Apply a2 = new Apply(a1, new Value(new TupleT(T_a, T_b, T_c), "(4.5, 3, \"b\")"));
+//        assertEquals(a2.getType(), T_string);
+//        assertEquals(a2.toHaskell(), "massive 1.2 0 \"a\" (4.5, 3, \"b\")");
+//
+//        // Third application
+//        Apply a3 = new Apply(massive, new Value(T_float, "1.2"), new Value(T_integer, "0"),
+//                new Value(T_string, "\"a\""), new Value(new TupleT(T_a, T_b, T_c), "(4.5, 3, \"b\")"));
+//        assertEquals(a3.getType(), a2.getType());
+//        assertEquals(a3.toHaskell(), a2.toHaskell());
+//    }
 }

@@ -8,7 +8,7 @@ public class TypeClassTest {
     public void toHaskellTypeTest() {
         TypeClass tc = new TypeClass("BasicNum", new ConstT("Integer"), new ConstT("Floating"));
 
-        assertEquals("instance BasicNum Integer\ninstance BasicNum Floating", tc.toHaskellType());
+        assertEquals("instance BasicNum Floating" + System.lineSeparator() + "instance BasicNum Integer", tc.toHaskellType());
     }
 
     @Test

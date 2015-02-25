@@ -27,8 +27,8 @@ public class TypeClass extends Type {
      */
     public TypeClass(final String name, final Type ... types) {
         this.name = name;
-        Arrays.sort(types.clone());
-        this.types = ImmutableList.copyOf(Arrays.asList(types));
+        Arrays.sort(types);
+        this.types = ImmutableList.copyOf(types);
     }
 
     public final List<Type> getTypes() {
@@ -45,7 +45,8 @@ public class TypeClass extends Type {
         final StringBuilder out = new StringBuilder();
 
         for (final Type type : this.types) {
-            out.append("instance ").append(this.name).append(" ").append(type.toHaskellType()).append("\n");
+            out.append("instance ").append(this.name).append(" ").append(type.toHaskellType())
+                    .append(System.lineSeparator());
         }
 
         return out.toString().trim();

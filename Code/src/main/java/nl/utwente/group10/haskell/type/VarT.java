@@ -27,7 +27,7 @@ public class VarT extends Type {
     public VarT(final String name, final Type ... types) {
         this.name = name.toLowerCase();
         Arrays.sort(types);
-        this.types = ImmutableList.copyOf(Arrays.asList(types));
+        this.types = ImmutableList.copyOf(types);
     }
 
     /**

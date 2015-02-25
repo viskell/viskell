@@ -14,18 +14,12 @@ public class Value extends Expr {
 
     /**
      * @param type Type of this value.
-     * @param value Haskell representation of the value that is valid for the given type.
+     * @param value Haskell representation of the value that is valid for the given type. An empty String is not
+     *              allowed.
      */
     public Value(final Type type, final String value) {
         super(type);
         this.value = value;
-    }
-
-    /**
-     * @param type Type of this value.
-     */
-    public Value(final Type type) {
-        this(type, "");
     }
 
     /**

@@ -31,7 +31,7 @@ public class Apply extends Func {
     public Apply(final Func func, final Expr ... args) throws HaskellException {
         super(((FuncT) func.getType()).getAppliedType(Apply.getArgTypes(args)));
         this.func = func;
-        this.args = args.clone();
+        this.args = args;
     }
 
     public static Type[] getArgTypes(final Expr[] args) {
