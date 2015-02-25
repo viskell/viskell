@@ -1,13 +1,21 @@
 package nl.utwente.group10.ghcj;
 
 import org.junit.Assert;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class GhciSanityTest {
-    private final GhciSession ghci;
+    private GhciSession ghci;
 
-    public GhciSanityTest() throws GhciException {
+    @Before
+    public void startGhci() throws GhciException {
         this.ghci = new GhciSession();
+    }
+
+    @After
+    public void stopGhci() throws Exception {
+        this.ghci.close();
     }
 
     @Test
