@@ -62,7 +62,7 @@ public class FuncT extends CompositeType {
             // Check whether the type that will be applied is compatible with the expected type. The expected type can
             // be a VarT or (a VarT replaced by) a non-variable type.
             if (i < args.length && !expectedType.compatibleWith(args[i])) {
-                throw new HaskellException(null); // TODO Improve this exception with a message
+                throw new HaskellException(new Exception()); // TODO Improve this exception with a message
             } else if (i >= args.length) {
                 resultArguments[j] = expectedType;
                 j++;
