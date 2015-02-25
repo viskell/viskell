@@ -93,8 +93,8 @@
             <ignores>
             </ignores>
             <excludes>
-              <exclude>com/example/dullcode/**/*.class</exclude>
-              <exclude>com/example/**/*Test.class</exclude>
+              <exclude>nl/utwente/group10/haskell/typeparser/*.class</exclude>
+              <exclude>nl/utwente/**/*Test.class</exclude>
             </excludes>
           </instrumentation>
           <check>
