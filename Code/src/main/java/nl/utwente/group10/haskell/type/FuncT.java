@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Type of a Haskell function. Consists of multiple types in a fixed order.
  */
-public class FuncT extends Type {
+public class FuncT extends CompositeType {
     /**
      * The argument types for this function type.
      */
@@ -39,7 +39,7 @@ public class FuncT extends Type {
     public final Type getAppliedType(final Type ... args) throws HaskellException {
         assert args.length < this.arguments.length;
 
-        final Map<String, Type> varTypes = new HashMap<String, Type>();
+        final Map<VarT, Type> varTypes = new HashMap<VarT, Type>();
         final Type[] resultArguments = new Type[this.arguments.length - args.length];
 
         // Determine resulting type of each argument and build resulting type
@@ -49,15 +49,13 @@ public class FuncT extends Type {
 
             // Check whether the expected type is a VarT instance, if so, do some extra processing
             if (expectedType instanceof VarT) {
-                final String variableName = ((VarT) expectedType).getName();
-
-                if (varTypes.containsKey(variableName)) {
+                if (varTypes.containsKey(expectedType)) {
                     // If we already determined the real type of the VarT, set the expected type accordingly.
-                    expectedType = varTypes.get(variableName);
+                    expectedType = varTypes.get(expectedType);
                 } else if (i < args.length) {
                     // If this is the first occurance of this variable, set its actual type but keep the VarT as
                     // expected type to check compatibility later on.
-                    varTypes.put(variableName, args[i]);
+                    varTypes.put((VarT) expectedType, args[i]);
                 }
             }
 
@@ -73,6 +71,23 @@ public class FuncT extends Type {
 
         // Build type
         return resultArguments.length == 1 ? resultArguments[0] : new FuncT(resultArguments);
+    }
+
+    @Override
+    public final FuncT getResolvedType(final Map<VarT, Type> types) {
+        final Type[] arguments = new Type[this.arguments.length];
+
+        for (int i = 0; i < this.arguments.length; i++) {
+            if (this.arguments[i] instanceof CompositeType) {
+                arguments[i] = ((CompositeType) this.arguments[i]).getResolvedType(types);
+            } else if (this.arguments[i] instanceof VarT && types.containsKey(this.arguments[i])) {
+                arguments[i] = types.get(this.arguments[i]);
+            } else {
+                arguments[i] = this.arguments[i];
+            }
+        }
+
+        return new FuncT(arguments);
     }
 
     @Override

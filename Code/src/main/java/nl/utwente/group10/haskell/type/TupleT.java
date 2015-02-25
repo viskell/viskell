@@ -1,11 +1,12 @@
 package nl.utwente.group10.haskell.type;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * Tuple type. Has a fixed number of elements.
  */
-public class TupleT extends Type {
+public class TupleT extends CompositeType {
     /**
      * Types of the elements in the tuple.
      */
@@ -34,6 +35,23 @@ public class TupleT extends Type {
         }
 
         return compatible;
+    }
+
+    @Override
+    public final TupleT getResolvedType(final Map<VarT, Type> types) {
+        final Type[] elementTypes = new Type[this.elementTypes.length];
+
+        for (int i = 0; i < this.elementTypes.length; i++) {
+            if (this.elementTypes[i] instanceof CompositeType) {
+                elementTypes[i] = ((CompositeType) this.elementTypes[i]).getResolvedType(types);
+            } else if (this.elementTypes[i] instanceof VarT && types.containsKey(this.elementTypes[i])) {
+                elementTypes[i] = types.get(this.elementTypes[i]);
+            } else {
+                elementTypes[i] = this.elementTypes[i];
+            }
+        }
+
+        return new TupleT(elementTypes);
     }
 
     @Override
