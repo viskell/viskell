@@ -1,31 +1,27 @@
-\documentclass[twoside,openright,parskip]{scrreprt}
+\documentclass[twoside,openright]{report}
 
 \usepackage[a4paper]{geometry}
-\usepackage[dutch]{babel}
 \usepackage[sc]{mathpazo}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[hidelinks]{hyperref}
 \usepackage{Alegreya}
 \usepackage{microtype}
 \usepackage{lipsum}
 \usepackage{titling}
-\usepackage{glossaries}
-\usepackage[nonewpage]{imakeidx}
-
-\renewcommand{\glossarysection}[2][]{}
+\usepackage{imakeidx}
+\usepackage{parskip}
+\usepackage[nottoc]{tocbibind}
+\usepackage[hidelinks]{hyperref}
+\usepackage[toc,section=chapter]{glossaries}
 
 \makeindex
 \makeglossaries
 
-\newglossaryentry{banaan} {
-	name=banaan,
-	description={tropische, eetbare, langwerpige, gele vrucht met wit en zacht vruchtvlees}
-}
+\input{Chapters/Glossary}
 
-\addtokomafont{disposition}{\rmfamily}
+%\addtokomafont{disposition}{\rmfamily}
 
-\title{Rapport}
+\title{Report}
 \author{
      Martijn Bruning
 \and Kristel Hartsuiker
@@ -50,43 +46,31 @@
 % Inhoudsopgave
 \tableofcontents
 
-\include{Hoofdstukken/Voorwoord}
+\include{Chapters/Preface}
 
-\include{Hoofdstukken/Samenvatting}
+\include{Chapters/Summary}
 
-\include{Hoofdstukken/Inleiding}
+\include{Chapters/Introduction}
 
-\include{Hoofdstukken/Vereistenanalyse}
+\include{Chapters/Requirements}
 
-\include{Hoofdstukken/Ontwerp}
+\include{Chapters/Design}
 
-\include{Hoofdstukken/Implementatie}
+\include{Chapters/Implementation}
 
-\include{Hoofdstukken/Testplan}
+\include{Chapters/Testplan}
 
-\include{Hoofdstukken/Evaluatie}
+\include{Chapters/Evaluation}
 
-\include{Hoofdstukken/Conclusies}
+\include{Chapters/Conclusions}
 
-\include{Hoofdstukken/Aanbevelingen}
+\include{Chapters/Recommendations}
 
-\chapter{Bibliografie}
-
-\begingroup
-\renewcommand{\chapter}[2]{}
-\begin{thebibliography}{9999}
-\input{Hoofdstukken/Bibliografie}
+\begin{thebibliography}{999}
+\input{Chapters/Bibliography}
 \end{thebibliography}
-\endgroup
 
-\chapter{Index}
-
-\begingroup
-\renewcommand{\chapter}[2]{}
 \printindex
-\endgroup
-
-\chapter{Verklarende woordenlijst}
 
 \printglossaries
 
