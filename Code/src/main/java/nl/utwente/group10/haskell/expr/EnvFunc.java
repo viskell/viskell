@@ -3,11 +3,11 @@ package nl.utwente.group10.haskell.expr;
 import nl.utwente.group10.haskell.type.FuncT;
 
 /**
- * Builtin Haskell function. Used to call a function that is available in GHCi.
+ * Haskell function that is known to the Haskell environment. Used to call a function that is available in GHCi.
  */
-public class Builtin extends Func {
+public class EnvFunc extends Func {
     /**
-     * The Haskell name of this builtin function.
+     * The Haskell name of this environment function.
      */
     private final String name;
 
@@ -15,7 +15,7 @@ public class Builtin extends Func {
      * @param name The Haskell name of this builtin function.
      * @param type The type of this builtin function.
      */
-    public Builtin(final FuncT type, final String name) {
+    public EnvFunc(final FuncT type, final String name) {
         super(type);
         this.name = name;
     }
