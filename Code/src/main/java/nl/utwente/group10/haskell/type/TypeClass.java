@@ -28,7 +28,7 @@ public class TypeClass extends Type {
     public TypeClass(final String name, final Type ... types) {
         this.name = name;
         Arrays.sort(types.clone());
-        this.types = ImmutableList.of(types);
+        this.types = ImmutableList.copyOf(Arrays.asList(types));
     }
 
     public final List<Type> getTypes() {
