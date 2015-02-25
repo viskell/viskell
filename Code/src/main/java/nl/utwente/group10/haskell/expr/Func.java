@@ -9,7 +9,7 @@ public abstract class Func extends Expr {
     /**
      * @param type The type of this function.
      */
-    protected Func(FuncT type) {
+    protected Func(final FuncT type) {
         super(type);
     }
 }

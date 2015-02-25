@@ -12,8 +12,8 @@ public class EnvFunc extends Func {
     private final String name;
 
     /**
-     * @param name The Haskell name of this builtin function.
-     * @param type The type of this builtin function.
+     * @param name The Haskell name of this environment function.
+     * @param type The type of this environment function.
      */
     public EnvFunc(final FuncT type, final String name) {
         super(type);
@@ -27,9 +27,9 @@ public class EnvFunc extends Func {
 
     @Override
     public final String toString() {
-        return "Builtin{" +
+        return "EnvFunc{" +
                 "type=" + this.getType() +
-                ", name='" + name + '\'' +
+                ", name='" + this.name + '\'' +
                 '}';
     }
 }

@@ -34,10 +34,10 @@ public class Lambda extends Func {
     @Override
     public final String toHaskell() {
         final StringBuilder out = new StringBuilder();
-        out.append("(");
+        out.append("(\\");
 
         for (final String arg : this.argNames) {
-            out.append("\\").append(arg).append(" ");
+            out.append(arg).append(" ");
         }
 
         out.append("-> ");
