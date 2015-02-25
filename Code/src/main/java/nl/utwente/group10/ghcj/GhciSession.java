@@ -33,6 +33,9 @@ public class GhciSession implements Closeable {
     /** The path to GHCI. */
     private static final String GHCIPATH = "ghci";
 
+    /** A newline character. */
+    private final String NL;
+
     /**
      * Builds a new communication session with ghci.
      *
@@ -50,6 +53,8 @@ public class GhciSession implements Closeable {
         } catch (IOException e) {
             throw new GhciException(e);
         }
+
+        this.NL = System.getProperty("line.separator");
 
         /* Make it so that GHCi prints a null byte to its standard output when
            it expects input. By setting the prompt to a zero byte, GHCi will
@@ -105,7 +110,7 @@ public class GhciSession implements Closeable {
         String exceptionHeader = "*** Exception: ";
         String parseErrorHeader = "<interactive>";
 
-        List<String> lines = Splitter.on("\n").splitToList(response);
+        List<String> lines = Splitter.on(NL).splitToList(response);
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
 
@@ -116,7 +121,7 @@ public class GhciSession implements Closeable {
 
             if (line.startsWith(parseErrorHeader)) {
                 List<String> sublines = lines.subList(i, lines.size());
-                String msg = Joiner.on("\n").join(sublines);
+                String msg = Joiner.on(NL).join(sublines);
                 throw new HaskellException(msg);
             }
         }
