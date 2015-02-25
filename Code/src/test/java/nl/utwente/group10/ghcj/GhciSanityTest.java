@@ -23,7 +23,7 @@ public class GhciSanityTest {
     @Test
     public void typeErrorTest() throws GhciException {
         try {
-            this.ghci.eval("map 10 10");
+            this.ghci.eval("map (\\x y -> 10) []");
             Assert.fail("typeErrorTest should throw an exception but didn't");
         } catch (HaskellException e) {
             Assert.assertTrue(e.getMessage().contains("No instance for"));
