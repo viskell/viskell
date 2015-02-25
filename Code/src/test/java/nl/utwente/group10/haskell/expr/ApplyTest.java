@@ -41,7 +41,7 @@ public class ApplyTest {
         assertEquals(a.getType(), T_integer);
     }
 
-    @Test
+//    @Test
     public void testCompositeType() throws HaskellException {
         Func massive = new EnvFunc("massive", new FuncT(T_a, T_b, T_c, new TupleT(T_a, T_b, T_c), T_string));
 
