@@ -3,40 +3,40 @@ package nl.utwente.group10.haskell.expr;
 import nl.utwente.group10.haskell.HaskellObject;
 
 /**
- * Binding for an Lambda object. Names a Haskell lambda.
+ * Binding for an Expr object. Names a Haskell expression.
  */
 public class Binding extends HaskellObject {
     /**
-     * The name the lambda is bound to.
+     * The name the expression is bound to.
      */
     private final String name;
 
     /**
-     * The lambda that is bound.
+     * The expression that is bound.
      */
-    private final Lambda lambda;
+    private final Expr expr;
 
     /**
-     * @param name The name to bind the lambda to.
-     * @param lambda The lambda to bind.
+     * @param name The name to bind the expression to.
+     * @param expr The expression to bind.
      */
-    public Binding(final String name, final Lambda lambda) {
+    public Binding(final String name, final Expr expr) {
         this.name = name;
-        this.lambda = lambda;
+        this.expr = expr;
     }
 
     /**
-     * @return The name the lambda is bound to.
+     * @return The name the expression is bound to.
      */
     public final String getName() {
         return this.name;
     }
 
     /**
-     * @return The lambda that is bound.
+     * @return The expression that is bound.
      */
-    public final Lambda getLambda() {
-        return this.lambda;
+    public final Expr getExpr() {
+        return this.expr;
     }
 
     /**
@@ -46,7 +46,7 @@ public class Binding extends HaskellObject {
     public final String toString() {
         return "Binding{" +
                 "name='" + this.name + '\'' +
-                ", lambda=" + this.lambda +
+                ", expr=" + this.expr +
                 '}';
     }
 }
