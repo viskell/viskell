@@ -3,6 +3,7 @@ package nl.utwente.group10.haskell.type;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Haskell type class to be interpreted as type. The {@code compatibleWith} makes sure that all types supported by a
@@ -21,11 +22,17 @@ public class TypeClass extends Type {
 
     /**
      * @param name The Haskell name of this type class.
-     * @param types The types in this type class.
+     * @param types The types in this type class. The provided array will be sorted. No element in the provided array
+     *              should be a {@code VarT} or {@code TypeClass} instance.
      */
     public TypeClass(final String name, final Type ... types) {
         this.name = name;
+        Arrays.sort(types.clone());
         this.types = ImmutableList.of(types);
+    }
+
+    public final List<Type> getTypes() {
+        return this.types;
     }
 
     @Override
@@ -38,7 +45,7 @@ public class TypeClass extends Type {
         final StringBuilder out = new StringBuilder();
 
         for (final Type type : this.types) {
-            out.append(this.name).append(" ").append(type.toHaskellType()).append("\n");
+            out.append("instance ").append(this.name).append(" ").append(type.toHaskellType()).append("\n");
         }
 
         return out.toString().trim();

@@ -8,7 +8,7 @@ import nl.utwente.group10.haskell.HaskellObject;
  * Types should be immutable. Also, a Type subclass instance that represents the same in Haskell as another instance of
  * the same class should be equal, that is {@code this.equals(that)} should return {@code true}.
  */
-public abstract class Type extends HaskellObject {
+public abstract class Type extends HaskellObject implements Comparable<Type> {
     /**
      * Tests whether the given type is usable within the context of this type.
      *
@@ -38,4 +38,9 @@ public abstract class Type extends HaskellObject {
 
     @Override
     public abstract String toString();
+
+    @Override
+    public int compareTo(final Type other) {
+        return this.toHaskellType().compareTo(other.toHaskellType());
+    }
 }

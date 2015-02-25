@@ -2,6 +2,8 @@ package nl.utwente.group10.haskell.type;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.Arrays;
+
 /**
  * Variable type. Validates checked types against constraints. Holds identifier
  */
@@ -18,13 +20,25 @@ public class VarT extends Type {
 
     /**
      * @param name Identifier for type checking within {@code FuncT} and {@code TupleT} types. Identifiers are converted
-     *           to lower case.
+     *             to lower case.
      * @param types Constraints for accepted types. This {@code VarT} can be replaced with any type matching one of
-     *              these types.
+     *              these types. The provided types will be sorted.
      */
     public VarT(final String name, final Type ... types) {
         this.name = name.toLowerCase();
+        Arrays.sort(types);
         this.types = ImmutableList.of(types);
+    }
+
+    /**
+     * Constructs a new variable type using the provided TypeClass as the source for the type constraints.
+     * @param name Identifier for type checking within {@code FuncT} and {@code TupleT} types. Identifiers are converted
+     *             to lower case.
+     * @param typeClass Type class to pull the constrains from.
+     */
+    public VarT(final String name, final TypeClass typeClass) {
+        this.name = name.toLowerCase();
+        this.types = ImmutableList.copyOf(typeClass.getTypes());
     }
 
     @Override
