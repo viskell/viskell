@@ -1,0 +1,15 @@
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
+*.toc
+*.dvi
+*.glg
+*.glo
+*.ist
+*.gls
+*.out
+*.idx
+*.ilg
+*.ind

@@ -1,0 +1,75 @@
+\documentclass[twoside,openright]{report}
+
+\usepackage[a4paper]{geometry}
+\usepackage[sc]{mathpazo}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{Alegreya}
+\usepackage{microtype}
+\usepackage{lipsum}
+\usepackage{titling}
+\usepackage{imakeidx}
+\usepackage{parskip}
+\usepackage[nottoc]{tocbibind}
+\usepackage[hidelinks]{hyperref}
+\usepackage[toc,section=chapter]{glossaries}
+
+\makeindex
+\makeglossaries
+
+\input{Chapters/Glossary}
+
+\title{Report}
+\author{
+     Martijn Bruning
+\and Kristel Hartsuiker
+\and Jan-Jelle Kester
+\and Wander Nauta
+\and Derk Snijders
+}
+\date{\today}
+
+\begin{document}
+
+\renewcommand*\rmdefault{ppl}
+\renewcommand*\sfdefault{ppl}
+
+\begin{titlepage}
+	{\Huge \thetitle} \\
+	\vfill
+	\theauthor \\
+	\thedate
+\end{titlepage}
+
+% Inhoudsopgave
+\tableofcontents
+
+\include{Chapters/Preface}
+
+\include{Chapters/Summary}
+
+\include{Chapters/Introduction}
+
+\include{Chapters/Requirements}
+
+\include{Chapters/Design}
+
+\include{Chapters/Implementation}
+
+\include{Chapters/Testplan}
+
+\include{Chapters/Evaluation}
+
+\include{Chapters/Conclusions}
+
+\include{Chapters/Recommendations}
+
+\begin{thebibliography}{999}
+\input{Chapters/Bibliography}
+\end{thebibliography}
+
+\printindex
+
+\printglossaries
+
+\end{document}
