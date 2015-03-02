@@ -4,20 +4,25 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class GhciSanityTest {
+    /** Our connection with Ghci. */
     private final GhciSession ghci;
+
+    /** A newline character. */
+    private final String NL;
 
     public GhciSanityTest() throws GhciException {
         this.ghci = new GhciSession();
+        this.NL = System.getProperty("line.separator");
     }
 
     @Test
     public void putStrLnTest() throws GhciException {
-        Assert.assertEquals("Hello\n", this.ghci.eval("putStrLn \"Hello\""));
+        Assert.assertEquals("Hello" + NL, this.ghci.eval("putStrLn \"Hello\""));
     }
 
     @Test
     public void trivialMathTest() throws GhciException {
-        Assert.assertEquals("4\n", this.ghci.eval("2 + 2"));
+        Assert.assertEquals("4" + NL, this.ghci.eval("2 + 2"));
     }
 
     @Test
