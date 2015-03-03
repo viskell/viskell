@@ -1,6 +1,7 @@
 package nl.utwente.group10.haskell.type;
 
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.HaskellObject;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,12 +32,14 @@ public class FuncT extends CompositeType {
 
     /**
      *
+     * @param relatedObj The HaskellObject that the applied type is calculated for. Only used in case of an Exception.
+     *                   May be {@code null}.
      * @param args Arguments to apply. The number of arguments should be less or equal to {@code this.getNumArgs()}.
      * @return The resulting type of the application.
      * @throws AssertionError
-     * @throws HaskellException Invalid Haskell operation. See exception message for details.
+     * @throws HaskellTypeError Invalid Haskell operation. See exception message for details.
      */
-    public final Type getAppliedType(final Type ... args) throws HaskellException {
+    public final Type getAppliedType(final HaskellObject relatedObj, final Type ... args) throws HaskellTypeError {
         assert args.length < this.arguments.length;
 
         final Map<VarT, Type> varTypes = new HashMap<VarT, Type>();
@@ -62,7 +65,13 @@ public class FuncT extends CompositeType {
             // Check whether the type that will be applied is compatible with the expected type. The expected type can
             // be a VarT or (a VarT replaced by) a non-variable type.
             if (i < args.length && !expectedType.compatibleWith(args[i])) {
-                throw new HaskellException(new Exception()); // TODO Improve this exception with a message
+                throw new HaskellTypeError(
+                        String.format(
+                                "The given type '%s' is not compatible with the expected type '%s' for argument %d.",
+                                args[i].toHaskellType(), expectedType.toHaskellType(), i
+                        ),
+                        relatedObj
+                );
             } else if (i >= args.length) {
                 resultArguments[j] = expectedType;
                 j++;
