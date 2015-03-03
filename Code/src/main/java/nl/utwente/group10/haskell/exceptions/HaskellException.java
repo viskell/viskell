@@ -28,11 +28,11 @@ public class HaskellException extends GhciException {
      * A HaskellException with a message and object that caused the Exception to be thrown.
      *
      * @param msg The message.
-     * @param obj The object.
+     * @param obj The object. May be {@code null}.
      */
     public HaskellException(final String msg, final HaskellObject obj) {
         super(msg);
-        this.obj = Optional.of(obj);
+        this.obj = Optional.fromNullable(obj);
     }
 
     /**
@@ -41,8 +41,7 @@ public class HaskellException extends GhciException {
      * @param msg The message.
      */
     public HaskellException(final String msg) {
-        super(msg);
-        this.obj = Optional.absent();
+        this(msg, null);
     }
 
     /**
