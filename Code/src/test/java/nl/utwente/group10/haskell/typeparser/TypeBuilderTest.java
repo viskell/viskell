@@ -10,7 +10,7 @@ public class TypeBuilderTest {
      * gives the same result.
      */
     private void roundtrip(String hs) {
-        Assert.assertEquals(hs, new TypeBuilder().build(hs).toString());
+        Assert.assertEquals(hs, new TypeBuilder().build(hs).toHaskellType());
     }
 
     @Test public void testBuildConstT() { this.roundtrip("Int"); }
