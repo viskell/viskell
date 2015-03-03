@@ -3,7 +3,7 @@ package nl.utwente.group10.haskell.expr;
 import nl.utwente.group10.haskell.HaskellObject;
 
 /**
- * Binding for an Expr object. Names a Haskell expression.
+ * Binding for an expression. Names a Haskell expression.
  */
 public class Binding extends HaskellObject {
     /**
