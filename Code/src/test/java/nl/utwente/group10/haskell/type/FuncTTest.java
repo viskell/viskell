@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.type;
 
-import nl.utwente.group10.ghcj.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

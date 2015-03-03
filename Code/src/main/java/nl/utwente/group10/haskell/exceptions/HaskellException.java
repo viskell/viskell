@@ -1,4 +1,6 @@
-package nl.utwente.group10.ghcj;
+package nl.utwente.group10.haskell.exceptions;
+
+import nl.utwente.group10.ghcj.GhciException;
 
 /**
  * Exception that is thrown when Ghci balks on our input.
