@@ -10,7 +10,7 @@ public class GhciSanityTest {
     private GhciSession ghci;
 
     /** A newline character. */
-    private final String NL;
+    private String NL;
 
     @Before
     public void startGhci() throws GhciException {
