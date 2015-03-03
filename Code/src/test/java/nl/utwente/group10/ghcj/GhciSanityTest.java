@@ -1,18 +1,26 @@
 package nl.utwente.group10.ghcj;
 
 import org.junit.Assert;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class GhciSanityTest {
     /** Our connection with Ghci. */
-    private final GhciSession ghci;
+    private GhciSession ghci;
 
     /** A newline character. */
     private final String NL;
 
-    public GhciSanityTest() throws GhciException {
+    @Before
+    public void startGhci() throws GhciException {
         this.ghci = new GhciSession();
         this.NL = System.getProperty("line.separator");
+    }
+
+    @After
+    public void stopGhci() throws Exception {
+        this.ghci.close();
     }
 
     @Test
