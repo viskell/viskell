@@ -1,7 +1,5 @@
 .metadata
 *.class
-guava-18.0.jar
-antlr-runtime-4.5.jar
 *.classpath
 *.project
 *.settings
