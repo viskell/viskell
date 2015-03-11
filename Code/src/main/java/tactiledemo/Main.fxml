@@ -7,22 +7,40 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.paint.*?>
+<?import javafx.scene.text.Text?>
 <?import nl.utwente.cs.caes.tactile.control.*?>
 <?import tactiledemo.*?>
 <?import java.net.*?>
 
-<TactilePane  xmlns:fx="http://javafx.com/fxml/1" bordersCollide="true" fx:id="root" 
-           prefHeight="600" prefWidth="800"
-           proximityThreshold="40"  >
-    
-    <ColorItem color="#ff0000" layoutX="0" TactilePane.slideOnRelease="true" TactilePane.tracker="$root"/>
-    <ColorItem color="#ff0000" layoutX="100" TactilePane.slideOnRelease="true" TactilePane.tracker="$root"/>
-    <ColorItem color="#00ff00" layoutX="200" TactilePane.slideOnRelease="true" TactilePane.tracker="$root"/>
-    <ColorItem color="#00ff00" layoutX="300" TactilePane.slideOnRelease="true" TactilePane.tracker="$root"/>
-    <ColorItem color="#0000ff" layoutX="400" TactilePane.slideOnRelease="true" TactilePane.tracker="$root"/>
-    <ColorItem color="#0000ff" layoutX="500" TactilePane.slideOnRelease="true" TactilePane.tracker="$root"/>
-    <ColorItem color="#ffff00" layoutX="600" TactilePane.slideOnRelease="true" TactilePane.tracker="$root"/>
-    <ColorItem color="#ffff00" layoutX="700" TactilePane.slideOnRelease="true" TactilePane.tracker="$root"/>
+<TactilePane xmlns:fx="http://javafx.com/fxml/1"
+	bordersCollide="true" fx:id="root" prefHeight="600" prefWidth="800"
+	proximityThreshold="40">
 
-    <ColorSlotPane layoutY="400" layoutX="100" TactilePane.slideOnRelease="true" tactilePane="$root" fx:id="pane"/>
+	<ColorItem color="#ff0000" layoutX="0"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+	<ColorItem color="#ff0000" layoutX="100"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+	<ColorItem color="#00ff00" layoutX="200"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+	<ColorItem color="#00ff00" layoutX="300"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+	<ColorItem color="#0000ff" layoutX="400"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+	<ColorItem color="#0000ff" layoutX="500"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+	<ColorItem color="#ffff00" layoutX="600"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+	<ColorItem color="#ffff00" layoutX="700"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+	<ColorItem color="#ffff00" layoutX="700"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+	<ColorItem color="#ffff00" layoutX="700"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+	<ColorItem color="#ffff00" layoutX="700"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+	<ColorItem color="#ffff00" layoutX="700"
+		TactilePane.slideOnRelease="true" TactilePane.tracker="$root" />
+		
+	<ColorSlotPane layoutY="400" layoutX="100"
+		TactilePane.slideOnRelease="true" tactilePane="$root" fx:id="pane" />
 </TactilePane>
