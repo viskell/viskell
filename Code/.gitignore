@@ -8,3 +8,4 @@ release.properties
 *.ipr
 *.iws
 .idea
+.recommenders
