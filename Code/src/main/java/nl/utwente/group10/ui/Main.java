@@ -22,23 +22,23 @@ public class Main extends Application{
         // Init TactilePane
         TactilePane tactilePane = (TactilePane) FXMLLoader.load(getClass().getResource("Main.fxml"), null, new TactileBuilderFactory());
         
-        FunctionBlock functionBlock = FunctionBlock.newInstance();
-        FunctionBlock functionBlock2 = FunctionBlock.newInstance();
-        FunctionBlock functionBlock3 = FunctionBlock.newInstance();
-        FunctionBlock functionBlock4 = FunctionBlock.newInstance();
+        FunctionBlock functionBlock = FunctionBlock.newInstance(0);
+        FunctionBlock functionBlock2 = FunctionBlock.newInstance(0);
+        FunctionBlock functionBlock3 = FunctionBlock.newInstance(0);
+        FunctionBlock functionBlock4 = FunctionBlock.newInstance(0);
         
-        functionBlock4.nest(FunctionBlock.newInstance());
-        functionBlock3.nest(FunctionBlock.newInstance());
-        functionBlock3.nest(FunctionBlock.newInstance());
+        functionBlock4.nest(FunctionBlock.newInstance(0));
+        functionBlock3.nest(FunctionBlock.newInstance(0));
+        functionBlock3.nest(FunctionBlock.newInstance(0));
         functionBlock2.nest(functionBlock4);
         functionBlock2.nest(functionBlock3);
         
-        functionBlock.nest(FunctionBlock.newInstance());
-        functionBlock.nest(FunctionBlock.newInstance());
-        functionBlock.nest(FunctionBlock.newInstance());
+        functionBlock.nest(FunctionBlock.newInstance(0));
+        functionBlock.nest(FunctionBlock.newInstance(0));
+        functionBlock.nest(FunctionBlock.newInstance(0));
         tactilePane.getChildren().add(functionBlock);
         tactilePane.getChildren().add(functionBlock2);
-        tactilePane.getChildren().add(FunctionBlock.newInstance());
+        tactilePane.getChildren().add(FunctionBlock.newInstance(0));
         
         // Init Control Pane
         FlowPane controlLayout = new FlowPane();
