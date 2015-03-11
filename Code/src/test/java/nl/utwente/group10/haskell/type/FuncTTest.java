@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.type;
 
-import nl.utwente.group10.ghcj.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -46,17 +46,17 @@ public class FuncTTest {
         FuncT ft4 = new FuncT(varA, varA, string);
 
         // Test function application
-        assertEquals(ft2.getAppliedType(bool, ft1), new FuncT(stringOrInteger, string));
+        assertEquals(ft2.getAppliedType(null, bool, ft1), new FuncT(stringOrInteger, string));
 
         // Test type class application
-        assertEquals(ft3.getAppliedType(string, integer), string);
+        assertEquals(ft3.getAppliedType(null, string, integer), string);
 
         // Test variable type application
-        assertEquals(ft4.getAppliedType(string, string), string);
+        assertEquals(ft4.getAppliedType(null, string, string), string);
 
         // Test incorrect application of simple type
         try {
-            ft2.getAppliedType(string);
+            ft2.getAppliedType(null, string);
             assertTrue(false);
         } catch (HaskellException e) {
             assertTrue(true);
@@ -64,7 +64,7 @@ public class FuncTTest {
 
         // Test incorrect application of variable type
         try {
-            ft4.getAppliedType(string, integer);
+            ft4.getAppliedType(null, string, integer);
             assertTrue(false);
         } catch (HaskellException e) {
             assertTrue(true);
