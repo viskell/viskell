@@ -29,9 +29,7 @@ public class FunctionBlock extends StackPane{
 		arguments = new String[numberOfArguments];
 	}
 	
-	
-	public void sayHI(){
-		System.out.println("HI!!!");
+	public void setArgument(String arg){
+		
 	}
-	
 }
