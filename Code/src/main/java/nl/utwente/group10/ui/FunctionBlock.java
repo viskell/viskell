@@ -4,21 +4,25 @@ import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
+import javafx.scene.control.Label;
 
 public class FunctionBlock extends StackPane{
 	
 	//The arguments this FunctionBlock holds
 	private String[] arguments;
+	private String functionName;
+	private boolean isSelected = false;
+	
 	
 	public static FunctionBlock newInstance(int numberOfArguments) throws IOException{
 		//TODO Prettier resource loading
 		FunctionBlock functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("FunctionBlock.fxml"), null, new FunctionBlockBuilderFactory());
-		functionBlock.initializeArguments(2);
+		functionBlock.initializeArguments(numberOfArguments);
 		
 		return functionBlock;
 	}
 	
-	//To be implemented method that will parse code into haskell interface
+	//TODO To be implemented method that will parse code into Haskell interface
 	public void executeMethod(){
 		
 	}
@@ -29,7 +33,21 @@ public class FunctionBlock extends StackPane{
 		arguments = new String[numberOfArguments];
 	}
 	
-	public void setArgument(String arg){
-		
+	//Sets the String value for a specified Argument
+	public void setArgument(int i,String arg){
+		arguments[i] = arg;
+	}
+	
+	//Selects or deselects this FunctionBlock
+	public void setSelected(boolean bool){
+		//If another object is selected then deselect it first!!
+		isSelected = bool;
+	}
+	
+	//Sets the functionName
+	public void setName(String name){
+		functionName = name;
+		Label label = ((Label)this.lookup("#label_function_name"));
+		label.setText(functionName);
 	}
 }

@@ -22,8 +22,8 @@ public class Main extends Application{
         // Init TactilePane
         TactilePane tactilePane = (TactilePane) FXMLLoader.load(getClass().getResource("Main.fxml"), null, new TactileBuilderFactory());
         
-        FunctionBlock functionBlock = FunctionBlock.newInstance();
-        functionBlock.sayHI();
+        FunctionBlock functionBlock = FunctionBlock.newInstance(2);
+        functionBlock.setName("TestTest");
         
         tactilePane.getChildren().add(functionBlock);
         
