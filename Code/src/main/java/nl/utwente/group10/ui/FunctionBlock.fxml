@@ -12,9 +12,8 @@
 <?import java.net.*?>
 
 
-<FunctionBlock xmlns:fx="http://javafx.com/fxml/1"
-	styleClass="function_block" minHeight="100" minWidth="200">
-	<Rectangle>
+<FunctionBlock xmlns:fx="http://javafx.com/fxml/1" minHeight="100" minWidth="200" styleClass="functionBlock">
+	<Rectangle height="100" width="200" styleClass="functionBlockBackground">
 	</Rectangle>
 	<BorderPane>
 		<top>

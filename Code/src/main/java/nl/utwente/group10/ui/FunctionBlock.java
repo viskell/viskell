@@ -28,4 +28,10 @@ public class FunctionBlock extends StackPane{
 	private void initializeArguments(int numberOfArguments){
 		arguments = new String[numberOfArguments];
 	}
+	
+	
+	public void sayHI(){
+		System.out.println("HI!!!");
+	}
+	
 }

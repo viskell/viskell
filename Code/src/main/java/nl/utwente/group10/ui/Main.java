@@ -22,7 +22,10 @@ public class Main extends Application{
         // Init TactilePane
         TactilePane tactilePane = (TactilePane) FXMLLoader.load(getClass().getResource("Main.fxml"), null, new TactileBuilderFactory());
         
-        tactilePane.getChildren().add(FunctionBlock.newInstance());
+        FunctionBlock functionBlock = FunctionBlock.newInstance();
+        functionBlock.sayHI();
+        
+        tactilePane.getChildren().add(functionBlock);
         
         // Init Control Pane
         FlowPane controlLayout = new FlowPane();

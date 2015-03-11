@@ -15,16 +15,6 @@
 <TactilePane xmlns:fx="http://javafx.com/fxml/1"
 	bordersCollide="true" fx:id="root" prefHeight="600" prefWidth="800"
 	proximityThreshold="40">
-	
-	<BorderPane TactilePane.slideOnRelease="true"
-		TactilePane.tracker="$root" styleClass="function_block" minHeight="100" minWidth="200">
-		<top>
-			<Label id="label_function_name" text="Function name" />
-		</top>
-		<center>
-			<Label id="label_function_type" text="Function type" />
-		</center>
-	</BorderPane>
 	<stylesheets>
 		<URL value="@style.css" />
 	</stylesheets>
