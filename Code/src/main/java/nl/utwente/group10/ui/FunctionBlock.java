@@ -11,4 +11,10 @@ public class FunctionBlock extends StackPane{
 		FunctionBlock fuctionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("FunctionBlock.fxml"), null, new FunctionBlockBuilderFactory());
 		return fuctionBlock;
 	}
+	
+	
+	public void sayHI(){
+		System.out.println("HI!!!");
+	}
+	
 }
