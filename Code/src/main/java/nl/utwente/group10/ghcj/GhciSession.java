@@ -2,6 +2,7 @@ package nl.utwente.group10.ghcj;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class GhciSession implements Closeable {
      * @param cmd The (complete) Haskell
      * @return the result, including newline, as a string.
      * @throws GhciException when ghci is not ready to evaluate the expression.
-     * @throws HaskellException when the expression can not be computed.
+     * @throws nl.utwente.group10.haskell.exceptions.HaskellException when the expression can not be computed.
      */
     public final String eval(final String cmd) throws GhciException {
         StringBuilder responseBuilder = new StringBuilder();
