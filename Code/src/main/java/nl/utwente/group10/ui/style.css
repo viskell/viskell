@@ -1,10 +1,25 @@
 .functionBlock {
 	-fx-font-size: 20px;
     -fx-font-weight: bold;
+    -fx-background-color:aliceblue;
+    -fx-border-color: black;
+    -fx-border-width: 2;
 }
 .functionBlockBackground{
     -fx-text-fill: #333333;
     -fx-fill: aliceblue;
     -fx-stroke: black;
     -fx-stroke-width: 2;
+}
+.functionBlockTitle{
+	-fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 2 5;
+}
+.functionBlockDescription{
+	-fx-font-size: 12px;
+    -fx-padding: 0;
+}
+.functionBlockNestSpace{
+	-fx-padding: 15;
 }
