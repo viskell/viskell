@@ -30,12 +30,16 @@ public class FunctionBlock extends StackPane{
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public static FunctionBlock newInstance(int numberOfArguments) throws IOException{
+	public static FunctionBlock newInstance(int numberOfArguments){
 		//TODO Prettier resource loading
 		//TODO better factory
-		FunctionBlock functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("FunctionBlock.fxml"), null, new TactileBuilderFactory());
-		functionBlock.initializeArguments(numberOfArguments);
-		
+		FunctionBlock functionBlock = null;
+		try{
+			functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("FunctionBlock.fxml"), null, new TactileBuilderFactory());
+			functionBlock.initializeArguments(numberOfArguments);
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 		return functionBlock;
 	}
 	
@@ -47,7 +51,7 @@ public class FunctionBlock extends StackPane{
 	
 	public void nest(Node node){
 		Pane nestSPace = (Pane) this.lookup("#nest_space");
-		((Label) this.lookup("#label_function_name")).setText("Trolololol");
+		((Label) this.lookup("#label_function_name")).setText("Higher order function");
 		nestSPace.getChildren().add(node);
 	}
 	

@@ -10,7 +10,7 @@ import javafx.scene.input.TouchEvent;
 public class CustomGesture implements EventHandler<MouseEvent> {
 
 	private GestureCallBack callBack;
-	//Tijd in miliseconden --> 1000 miliseconde = 1 seconde.
+	//Time in milliseconds: 1000 ms = 1 second
 	private long startTime; 
 	private long endTime;
 	
@@ -30,13 +30,6 @@ public class CustomGesture implements EventHandler<MouseEvent> {
 			} else {
 				callBack.handleCustomEvent(new CustomGestureEvent(CustomGestureEvent.TAP));
 			}
-		}
-		//if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
-		//	callBack.handleCustomEvent(new CustomGestureEvent(
-		//			CustomGestureEvent.ANY));
-		//}
-		else{
-			System.out.println(event.getEventType());
 		}
 	}
 

@@ -1,23 +1,10 @@
-<?import nl.utwente.group10.ui.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import nl.utwente.group10.ui.components.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.Text?>
-<?import nl.utwente.cs.caes.tactile.control.*?>
-<?import tactiledemo.*?>
 <?import java.net.*?>
-<?import javafx.scene.layout.Region?>
 
 
 <FunctionBlock xmlns:fx="http://javafx.com/fxml/1" styleClass="functionBlock">
-	<!--
-	<Rectangle id="background" height="100" width="200" styleClass="functionBlockBackground">
-	</Rectangle>
-	-->
 	<BorderPane id="foreground" minHeight="90" minWidth = "180">
 		<top>
 			<BorderPane>
