@@ -5,16 +5,15 @@ import nl.utwente.group10.ui.gestures.CustomGesture;
 import nl.utwente.group10.ui.gestures.CustomGestureEvent;
 import nl.utwente.group10.ui.gestures.GestureCallBack;
 
-public class CustomUIPane extends TactilePane implements GestureCallBack{
+public class CustomUIPane extends TactilePane implements GestureCallBack {
 
-	public CustomUIPane(){
-		new CustomGesture(this,this);
-		new CustomGesture(this,this);
-		new CustomGesture(this,this);
-		new CustomGesture(this,this);
+	public CustomUIPane() {
+		new CustomGesture(this, this);
+		new CustomGesture(this, this);
+		new CustomGesture(this, this);
+		new CustomGesture(this, this);
 	}
-	
-	
+
 	@Override
 	public void handleCustomEvent(CustomGestureEvent event) {
 		
@@ -23,10 +22,7 @@ public class CustomUIPane extends TactilePane implements GestureCallBack{
 		} else if(event.equals(CustomGestureEvent.TAP_HOLD)){
 			//TODO: open the quick-menu of an element if this is possible
 		} else if(event.equals(CustomGestureEvent.ANY)){
-			// niets
+
 		}
-		
-		System.out.println("EVENT TRIGGER!");
 	}
-	
 }

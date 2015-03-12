@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import nl.utwente.group10.ui.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.Text?>
-<?import nl.utwente.cs.caes.tactile.control.*?>
-<?import tactiledemo.*?>
 <?import java.net.*?>
 
 <CustomUIPane xmlns:fx="http://javafx.com/fxml/1"
