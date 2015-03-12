@@ -21,13 +21,6 @@ public class GhciSession implements Closeable {
     }
 
     /**
-     * @return a GhciEnvironment that is connected to this GhciSession.
-     */
-    public final GhciEnvironment getEnvironment() {
-        return new GhciEnvironment(this);
-    }
-
-    /**
      * @return a String representation of this GhciSession.
      */
     public final String toString() {
