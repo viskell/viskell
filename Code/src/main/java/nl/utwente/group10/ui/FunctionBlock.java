@@ -2,6 +2,7 @@ package nl.utwente.group10.ui;
 
 import java.io.IOException;
 
+import nl.utwente.cs.caes.tactile.fxml.TactileBuilderFactory;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -21,7 +22,8 @@ public class FunctionBlock extends StackPane{
 	
 	public static FunctionBlock newInstance(int numberOfArguments) throws IOException{
 		//TODO Prettier resource loading
-		FunctionBlock functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("FunctionBlock.fxml"), null, new FunctionBlockBuilderFactory());
+		//TODO better factory
+		FunctionBlock functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("FunctionBlock.fxml"), null, new TactileBuilderFactory());
 		functionBlock.initializeArguments(numberOfArguments);
 		
 		return functionBlock;

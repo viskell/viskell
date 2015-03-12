@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import nl.utwente.group10.ui.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
@@ -12,10 +13,10 @@
 <?import tactiledemo.*?>
 <?import java.net.*?>
 
-<TactilePane xmlns:fx="http://javafx.com/fxml/1"
+<CustomUIPane xmlns:fx="http://javafx.com/fxml/1"
 	bordersCollide="true" fx:id="root" prefHeight="600" prefWidth="800"
 	proximityThreshold="40">
 	<stylesheets>
 		<URL value="@style.css" />
 	</stylesheets>
-</TactilePane>
+</CustomUIPane>

@@ -20,7 +20,7 @@ public class Main extends Application{
 		BorderPane root = new BorderPane();
         
         // Init TactilePane
-        TactilePane tactilePane = (TactilePane) FXMLLoader.load(getClass().getResource("Main.fxml"), null, new TactileBuilderFactory());
+		CustomUIPane tactilePane = (CustomUIPane) FXMLLoader.load(getClass().getResource("Main.fxml"), null, new TactileBuilderFactory());
         
         FunctionBlock functionBlock = FunctionBlock.newInstance(2);
         functionBlock.setName("TestTest");
