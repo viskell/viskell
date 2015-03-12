@@ -65,10 +65,10 @@ class GhciEvaluator implements Closeable {
      *
      * @param cmd The (complete) Haskell
      * @return the result, including newline, as a string.
-     * @throws GhciException when ghci is not ready to evaluate the expression.
+     * @throws HaskellException when ghci is not ready to evaluate the expression.
      * @throws nl.utwente.group10.haskell.exceptions.HaskellException when the expression can not be computed.
      */
-    public final String eval(final String cmd) throws GhciException {
+    public final String eval(final String cmd) throws HaskellException {
         StringBuilder responseBuilder = new StringBuilder();
 
         try {
@@ -83,7 +83,7 @@ class GhciEvaluator implements Closeable {
                 responseBuilder.append((char) input);
             }
         } catch (IOException e) {
-            throw new GhciException(e);
+            throw new HaskellException(e);
         }
 
         String response = responseBuilder.toString();
@@ -94,7 +94,7 @@ class GhciEvaluator implements Closeable {
         String exceptionHeader = "*** Exception: ";
         String parseErrorHeader = "<interactive>";
 
-        List<String> lines = Splitter.on(NL).splitToList(response);
+        List<String> lines = Splitter.on(this.NL).splitToList(response);
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
 
@@ -105,7 +105,7 @@ class GhciEvaluator implements Closeable {
 
             if (line.startsWith(parseErrorHeader)) {
                 List<String> sublines = lines.subList(i, lines.size());
-                String msg = Joiner.on(NL).join(sublines);
+                String msg = Joiner.on(this.NL).join(sublines);
                 throw new HaskellException(msg);
             }
         }

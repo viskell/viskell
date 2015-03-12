@@ -1,5 +1,9 @@
 package nl.utwente.group10.ghcj;
 
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.expr.*;
+import nl.utwente.group10.haskell.type.FuncT;
+
 import java.io.Closeable;
 import java.io.IOException;
 
@@ -18,6 +22,21 @@ public class GhciSession implements Closeable {
      */
     public GhciSession() throws GhciException {
         this.ghci = new GhciEvaluator();
+    }
+
+    /**
+     * Uploads a new let binding to ghci.
+     */
+    public EnvFunc push(UserFunc func) throws HaskellException {
+        this.ghci.eval(func.toHaskell());
+        return new EnvFunc(func.getName(), (FuncT) func.getType());
+    }
+
+    /**
+     * Returns the result of evaluating a Haskell expression.
+     */
+    public String pull(Expr expr) throws HaskellException {
+        return this.ghci.eval(expr.toHaskell()).trim();
     }
 
     /**
