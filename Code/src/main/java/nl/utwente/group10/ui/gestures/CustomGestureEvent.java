@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui;
+package nl.utwente.group10.ui.gestures;
 import javafx.event.Event;
 import javafx.event.EventType;
 

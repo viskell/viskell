@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui;
+package nl.utwente.group10.ui.gestures;
 
 public interface GestureCallBack {
 
