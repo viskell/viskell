@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui;
+package nl.utwente.group10.ui.gestures;
 
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -19,8 +19,6 @@ public class CustomGesture implements EventHandler<MouseEvent> {
 		if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
 			callBack.handleCustomEvent(new CustomGestureEvent(
 					CustomGestureEvent.ANY));
-		}else{
-			System.out.println(event.getEventType());
 		}
 	}
 
