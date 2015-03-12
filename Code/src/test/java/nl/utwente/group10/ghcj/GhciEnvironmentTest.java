@@ -5,7 +5,7 @@ import org.junit.Test;
 
 public class GhciEnvironmentTest {
     @Test
-    public void putStrLnTest() throws Exception {
+    public void nonemptyEnvTest() throws Exception {
         GhciSession session = new GhciSession();
         GhciEnvironment env = session.getEnvironment();
         Assert.assertTrue(!env.getBindings().isEmpty());

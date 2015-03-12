@@ -28,7 +28,7 @@ public class GhciEnvironment {
      * @throws GhciException when GHCI is not ready for our query.
      */
     public final List<Binding> getBindings() throws GhciException {
-        String input = this.ghci.eval(":browse");
+        String input = "";
         List<Binding> out = new ArrayList<Binding>();
 
         for (String line : Splitter.on('\n').split(input)) {
