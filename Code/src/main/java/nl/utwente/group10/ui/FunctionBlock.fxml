@@ -10,17 +10,29 @@
 <?import nl.utwente.cs.caes.tactile.control.*?>
 <?import tactiledemo.*?>
 <?import java.net.*?>
+<?import javafx.scene.layout.Region?>
 
 
-<FunctionBlock xmlns:fx="http://javafx.com/fxml/1" minHeight="100" minWidth="200" styleClass="functionBlock">
-	<Rectangle height="100" width="200" styleClass="functionBlockBackground">
+<FunctionBlock xmlns:fx="http://javafx.com/fxml/1" styleClass="functionBlock">
+	<!--
+	<Rectangle id="background" height="100" width="200" styleClass="functionBlockBackground">
 	</Rectangle>
-	<BorderPane>
+	-->
+	<BorderPane id="foreground" minHeight="90" minWidth = "180">
 		<top>
-			<Label id="label_function_name" text="Function name" />
+			<BorderPane>
+				<top>
+					<Label id="label_function_name" text="Function name"
+						styleClass="functionBlockTitle" />
+				</top>
+				<bottom>
+					<Label id="label_function_type" text="Function type"
+						styleClass="functionBlockDescription" />
+				</bottom>
+			</BorderPane>
 		</top>
 		<center>
-			<Label id="label_function_type" text="Function type" />
+			<FlowPane id="nest_space" styleClass="functionBlockNestSpace" prefWrapLength="100" vgap="5"/>
 		</center>
 	</BorderPane>
 	<stylesheets>
