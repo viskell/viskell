@@ -10,9 +10,7 @@ import javafx.scene.input.TouchEvent;
 public class CustomGesture implements EventHandler<MouseEvent> {
 
 	private GestureCallBack callBack;
-	//Tijd in miliseconden --> 1000 miliseconde = 1 seconde.
-	private long startTime; 
-	private long endTime;
+
 	
 	public CustomGesture(GestureCallBack callBack, Node latchTo) {
 		this.callBack = callBack;
@@ -21,12 +19,28 @@ public class CustomGesture implements EventHandler<MouseEvent> {
 
 	@Override
 	public void handle(MouseEvent event) {
+		Thread tt = new Thread(); 
+		InterruptedException ett = null;
 		if(event.getEventType().equals(MouseEvent.MOUSE_PRESSED)){
-			startTime = System.currentTimeMillis();
+			tt.start();
+			try {
+				tt.join(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				//e.printStackTrace();
+				ett = e;
+			}
+			if (ett.equals(null)){
+				callBack.handleCustomEvent(new CustomGestureEvent(CustomGestureEvent.TAP_HOLD));
+			} else {
+				ett = null;
+			}
 		}
 		if(event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
-			if(System.currentTimeMillis() - startTime > 500){
-				callBack.handleCustomEvent(new CustomGestureEvent(CustomGestureEvent.TAP_HOLD));
+			if(tt.isAlive()){
+				tt.interrupt();
+			} else if(!ett.equals(null)){
+				ett = null;
 			} else {
 				callBack.handleCustomEvent(new CustomGestureEvent(CustomGestureEvent.TAP));
 			}

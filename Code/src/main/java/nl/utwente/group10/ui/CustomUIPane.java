@@ -19,9 +19,9 @@ public class CustomUIPane extends TactilePane implements GestureCallBack{
 	public void handleCustomEvent(CustomGestureEvent event) {
 		
 		if(event.equals(CustomGestureEvent.TAP)){
-			//TODO:selecteer het aangetikte element, als deze selecteerbaar is.
+			//TODO:select element if this element has the property to be selected
 		} else if(event.equals(CustomGestureEvent.TAP_HOLD)){
-			//TODO:open het quick-menu van een element, als deze een quick-menu heeft.
+			//TODO: open the quick-menu of an element if this is possible
 		} else if(event.equals(CustomGestureEvent.ANY)){
 			// niets
 		}
