@@ -16,8 +16,6 @@ public class CustomGesture implements EventHandler<MouseEvent> {
 	private GestureCallBack callBack;
 	private long startTime;
 	private Date date = new Date();
-	//private boolean isTapHold = false;
-	//private Timer tt = new Timer(); 
 
 	public CustomGesture(GestureCallBack callBack, Node latchTo) {
 		this.callBack = callBack;
@@ -26,19 +24,22 @@ public class CustomGesture implements EventHandler<MouseEvent> {
 
 	@Override
 	public void handle(MouseEvent event) {
-		if(event.getEventType().equals(MouseEvent.MOUSE_PRESSED)){
+		if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
 			startTime = System.currentTimeMillis();
 		}
-		if(event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
-			if((System.currentTimeMillis() - startTime) < 500){
+		if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+			if ((System.currentTimeMillis() - startTime) < 500) {
 
-				callBack.handleCustomEvent(new CustomGestureEvent(CustomGestureEvent.TAP));
+				callBack.handleCustomEvent(new CustomGestureEvent(
+						CustomGestureEvent.TAP));
 				System.out.println("CustomGesture -> CustomGestureEvent.TAP");
 			} else {
-				callBack.handleCustomEvent(new CustomGestureEvent(CustomGestureEvent.TAP_HOLD));
-				System.out.println("CustomGesture -> CustomGestureEvent.TAP_HOLD");
+				callBack.handleCustomEvent(new CustomGestureEvent(
+						CustomGestureEvent.TAP_HOLD));
+				System.out
+						.println("CustomGesture -> CustomGestureEvent.TAP_HOLD");
 			}
 		}
 	}
-	
+
 }
