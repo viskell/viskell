@@ -1,5 +1,6 @@
 package nl.utwente.group10.ui;
 
+import javafx.event.EventType;
 import nl.utwente.cs.caes.tactile.control.TactilePane;
 import nl.utwente.group10.ui.gestures.CustomGesture;
 import nl.utwente.group10.ui.gestures.CustomGestureEvent;
@@ -8,21 +9,20 @@ import nl.utwente.group10.ui.gestures.GestureCallBack;
 public class CustomUIPane extends TactilePane implements GestureCallBack {
 
 	public CustomUIPane() {
-		new CustomGesture(this, this);
-		new CustomGesture(this, this);
-		new CustomGesture(this, this);
-		new CustomGesture(this, this);
+		CustomGesture cg = new CustomGesture(this, this);
 	}
 
 	@Override
 	public void handleCustomEvent(CustomGestureEvent event) {
-		
-		if(event.equals(CustomGestureEvent.TAP)){
+		EventType<CustomGestureEvent> eventType = (EventType<CustomGestureEvent>) event.getEventType();
+		if(eventType.equals(CustomGestureEvent.TAP)){
+			System.out.println("CustomUIPane -> CustomGestureEvent.TAP");
 			//TODO:select element if this element has the property to be selected
-		} else if(event.equals(CustomGestureEvent.TAP_HOLD)){
+		} else if(eventType.equals(CustomGestureEvent.TAP_HOLD)){
+			System.out.println("CustomUIPane -> CustomGestureEvent.TAP_HOLD");
 			//TODO: open the quick-menu of an element if this is possible
-		} else if(event.equals(CustomGestureEvent.ANY)){
-
+		} else if(eventType.equals(CustomGestureEvent.ANY)){
+			System.out.println("CustomUIPane -> CustomGestureEvent.ANY");
 		}
 	}
 }
