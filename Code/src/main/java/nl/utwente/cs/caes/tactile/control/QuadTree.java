@@ -15,14 +15,14 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
-// TODO: uiteindelijk package-private, alleen voor debug
+// TODO: Eventually package private, currently only for debug
 public class QuadTree {
 
     private final int MAX_DEPTH = 5;
     private final int MAX_OBJECTS = 10;
 
     private QuadTree parent;
-    //TODO: tijdelijk public voor debug
+    //TODO: Temprorarily public for debug purposes
     public QuadTree[] children;
     public final int level;
     private boolean boundsChanged = false;
