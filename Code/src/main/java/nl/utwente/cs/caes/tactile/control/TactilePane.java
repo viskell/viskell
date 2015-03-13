@@ -598,7 +598,7 @@ public class TactilePane extends Control {
     
     // INSTANCE VARIABLES
     private final PhysicsTimer physics;
-    //TODO: uiteindelijke package-private, alleen voor debug
+    //TODO: Eventually package private, currently only for debug
     public final QuadTree quadTree;
     private final ObservableSet<Node> activeNodes;
     

@@ -13,7 +13,7 @@ import javafx.scene.Node;
 import nl.utwente.cs.caes.tactile.event.TactilePaneEvent;
 
 class PhysicsTimer extends AnimationTimer {
-    // TODO: misschien een idee om hier properties van te maken
+    // TODO: maybe make these properties
     
     // Length of a time step
     protected static final double TIME_STEP = 1d / 60d;
@@ -142,7 +142,7 @@ class PhysicsTimer extends AnimationTimer {
                         y += anchorBounds.getMaxY() - nodeBounds.getHeight();
                         break;
                     case BASELINE:
-                        // TODO Support Baseline alignment?
+                        //TODO: Support Baseline alignment?
                         break;
                 }
                 node.setLayoutX(x);
