@@ -1,6 +1,5 @@
 package nl.utwente.group10.ui;
 
-import nl.utwente.cs.caes.tactile.control.TactilePane;
 import nl.utwente.cs.caes.tactile.debug.DebugParent;
 import nl.utwente.cs.caes.tactile.fxml.TactileBuilderFactory;
 import nl.utwente.group10.ui.components.FunctionBlock;
@@ -20,8 +19,7 @@ public class Main extends Application {
 	public void start(Stage stage) throws Exception {
 		BorderPane root = new BorderPane();
 
-		CustomUIPane tactilePane = (CustomUIPane) FXMLLoader.load(getClass()
-				.getResource("Main.fxml"), null, new TactileBuilderFactory());
+		CustomUIPane tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
 
 		FunctionBlock functionBlock = FunctionBlock.newInstance(2);
 		functionBlock.setName("TestTest");
