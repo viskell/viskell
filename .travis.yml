@@ -2,8 +2,10 @@ language: java
 jdk:
  - oraclejdk8
 before_install:
- - sudo apt-get update -qq
- - sudo apt-get install -y ghc
+ - "export DISPLAY=:99.0"
+ - "sh -e /etc/init.d/xvfb start"
+ - "sudo apt-get update -qq"
+ - "sudo apt-get install -y ghc"
 script: 
  - cd Code && mvn test
 cache:
