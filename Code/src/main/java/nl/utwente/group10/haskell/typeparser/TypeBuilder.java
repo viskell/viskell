@@ -1,5 +1,6 @@
 package nl.utwente.group10.haskell.typeparser;
 
+import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -27,5 +28,10 @@ public final class TypeBuilder {
         walker.walk(extractor, tree);
 
         return extractor.result();
+    }
+
+    public FuncT buildFuncT(final String hs) {
+        Type t = this.build(hs);
+        return t instanceof FuncT ? (FuncT) t : new FuncT(t);
     }
 }

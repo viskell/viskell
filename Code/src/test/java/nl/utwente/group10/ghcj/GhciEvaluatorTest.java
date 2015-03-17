@@ -6,16 +6,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class GhciSanityTest {
+public class GhciEvaluatorTest {
     /** Our connection with Ghci. */
-    private GhciSession ghci;
+    private GhciEvaluator ghci = null;
 
     /** A newline character. */
-    private String NL;
+    private String NL = null;
 
     @Before
     public void startGhci() throws GhciException {
-        this.ghci = new GhciSession();
+        this.ghci = new GhciEvaluator();
         this.NL = System.getProperty("line.separator");
     }
 
@@ -26,12 +26,12 @@ public class GhciSanityTest {
 
     @Test
     public void putStrLnTest() throws GhciException {
-        Assert.assertEquals("Hello" + NL, this.ghci.eval("putStrLn \"Hello\""));
+        Assert.assertEquals("Hello" + this.NL, this.ghci.eval("putStrLn \"Hello\""));
     }
 
     @Test
     public void trivialMathTest() throws GhciException {
-        Assert.assertEquals("4" + NL, this.ghci.eval("2 + 2"));
+        Assert.assertEquals("4" + this.NL, this.ghci.eval("2 + 2"));
     }
 
     @Test
