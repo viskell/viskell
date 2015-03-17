@@ -35,7 +35,7 @@ public class FunctionBlock extends StackPane{
 		//TODO better factory
 		FunctionBlock functionBlock = null;
 		try{
-			functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("FunctionBlock.fxml"), null, new TactileBuilderFactory());
+			functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("/ui/FunctionBlock.fxml"), null, new TactileBuilderFactory());
 			functionBlock.initializeArguments(numberOfArguments);
 		}catch(IOException e){
 			e.printStackTrace();
