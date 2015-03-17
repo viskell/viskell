@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="functions.xsl" ?>
+<catalog>
+    <category name="Math">
+        <function name="(+)" signature="a -> a -> a">
+            Adds two numbers.
+        </function>
+    </category>
+    <category name="Maps, folds and lists">
+        <function name="head" signature="[a] -> a">
+            Extract the first element of a list, which must be non-empty.
+        </function>
+    </category>
+    <category name="Assorted">
+        <function name="id" signature="a -> a" >
+            Identity function.
+        </function>
+        <function name="const" signature="a -> b -> a">
+            Constant function.
+        </function>
+    </category>
+</catalog>
