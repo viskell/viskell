@@ -1,0 +1,28 @@
+<?import nl.utwente.group10.ui.components.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.*?>
+
+
+<FunctionBlock xmlns:fx="http://javafx.com/fxml/1" styleClass="functionBlock">
+	<BorderPane id="foreground" minHeight="90" minWidth = "180">
+		<top>
+			<BorderPane>
+				<top>
+					<Label id="label_function_name" text="Function name"
+						styleClass="functionBlockTitle" />
+				</top>
+				<bottom>
+					<Label id="label_function_type" text="Function type"
+						styleClass="functionBlockDescription" />
+				</bottom>
+			</BorderPane>
+		</top>
+		<center>
+			<FlowPane id="nest_space" styleClass="functionBlockNestSpace" prefWrapLength="100" vgap="5"/>
+		</center>
+	</BorderPane>
+	<stylesheets>
+		<URL value="@style.css" />
+	</stylesheets>
+</FunctionBlock>
