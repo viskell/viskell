@@ -41,7 +41,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>nl.utwente.group10.App</mainClass>
+              <mainClass>nl.utwente.group10.ui.Main</mainClass>
             </manifest>
           </archive>
         </configuration>
