@@ -93,6 +93,30 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>xml-maven-plugin</artifactId>
+        <version>1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>validate</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <validationSets>
+            <validationSet>
+              <dir>src/main/resources/catalog/</dir>
+            </validationSet>
+            <validationSet>
+              <dir>src/main/resources/catalog/</dir>
+              <includes><include>functions.xml</include></includes>
+              <systemId>src/main/resources/catalog/functions.xsd</systemId>
+            </validationSet>
+          </validationSets>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <properties>
