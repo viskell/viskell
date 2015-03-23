@@ -18,11 +18,11 @@ import javafx.scene.shape.Rectangle;
  * represents a Haskell function together with it's arguments and
  * visual representation.
  */
-public class FunctionBlock extends StackPane{
-	//The arguments this FunctionBlock holds
+public class FunctionBlock extends Block {
+	/** The arguments this FunctionBlock holds.**/
 	private String[] arguments;
+	/** The name of this Function.**/
 	private String functionName;
-	private boolean isSelected = false;
 	
 	/**
 	 * Method that creates a newInstance of this class along with it's visual representation
@@ -30,34 +30,52 @@ public class FunctionBlock extends StackPane{
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public static FunctionBlock newInstance(int numberOfArguments){
-		//TODO Prettier resource loading
-		//TODO better factory
-		FunctionBlock functionBlock = null;
-		try{
-			functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("/ui/FunctionBlock.fxml"), null, new TactileBuilderFactory());
-			functionBlock.initializeArguments(numberOfArguments);
-		}catch(IOException e){
-			e.printStackTrace();
-		}
+	public static FunctionBlock newInstance(int numberOfArguments) throws IOException {
+		FunctionBlock functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("/ui/FunctionBlock.fxml"), null, new TactileBuilderFactory());
+		functionBlock.initializeArguments(numberOfArguments);
+
 		return functionBlock;
 	}
 	
-	//TODO To be implemented method that will parse code into Haskell interface
-	// and returns the result
-	public String executeMethod(){		
+	/**
+	 * Method that creates a newInstance of this class along with it's visual representation
+	 * @param the number of arguments this FunctionBlock can hold
+	 * @param the name of this FunctionBlock
+	 * @return a new instance of this class
+	 * @throws IOException
+	 */
+	public static FunctionBlock newInstance(int numberOfArguments, String name) throws IOException {
+		FunctionBlock functionBlock = newInstance(numberOfArguments);
+		functionBlock.setName(name);
+		
+		return functionBlock;
+	}
+	
+	/**
+	 * Executes this FunctionBlock and returns the output as a String
+	 * @return Output of the Function
+	 */
+	public String executeMethod() {		
 		return new String("DEBUG-OUTPUT");
 	}
 	
-	public void nest(Node node){
-		Pane nestSPace = (Pane) this.lookup("#nest_space");
+	/**
+	 * Nest another Node object within this FunctionBlock
+	 * @param node to nest
+	 */
+	public void nest(Node node) {
+		Pane nestSpace = (Pane) this.lookup("#nest_space");
 		((Label) this.lookup("#label_function_name")).setText("Higher order function");
-		nestSPace.getChildren().add(node);
+		nestSpace.getChildren().add(node);
 	}
 	
-	//Private method to initialize the argument fields for this function block.
-	//All arguments will be stored as Strings.
-	private void initializeArguments(int numberOfArguments){
+	/**
+	 * Private method to initialize the argument fields for this function block.
+	 * All arguments will are defined as Strings and will be stored as such.
+	 * An Integer value of 6 will also be stored as a String "6"
+	 * @param numberOfArguments
+	 */
+	private void initializeArguments(int numberOfArguments) {
 		arguments = new String[numberOfArguments];
 	}
 	
@@ -66,21 +84,15 @@ public class FunctionBlock extends StackPane{
 	 * @param the index of the argument field
 	 * @param the value that the argument should be changed to
 	 */
-	public void setArgument(int i,String arg){
+	public void setArgument(int i,String arg) {
 		arguments[i] = arg;
-	}
-	
-	//Selects or deselects this FunctionBlock
-	public void setSelected(boolean bool){
-		//If another object is selected then deselect it first!!
-		isSelected = bool;
 	}
 	
 	/**
 	 * Method to set the name of this FunctionBlock
 	 * @param name
 	 */
-	public void setName(String name){
+	public void setName(String name) {
 		functionName = name;
 		Label label = ((Label)this.lookup("#label_function_name"));
 		label.setText(functionName);
