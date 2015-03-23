@@ -18,8 +18,8 @@ import javafx.scene.shape.Rectangle;
  * represents a Haskell function together with it's arguments and
  * visual representation.
  */
-public class FunctionBlock extends Block{
-	/**The arguments this FunctionBlock holds.**/
+public class FunctionBlock extends Block {
+	/** The arguments this FunctionBlock holds.**/
 	private String[] arguments;
 	/** The name of this Function.**/
 	private String functionName;
@@ -30,7 +30,7 @@ public class FunctionBlock extends Block{
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public static FunctionBlock newInstance(int numberOfArguments){
+	public static FunctionBlock newInstance(int numberOfArguments) {
 		FunctionBlock functionBlock;
 		try{
 			functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("/ui/FunctionBlock.fxml"), null, new TactileBuilderFactory());
@@ -49,7 +49,7 @@ public class FunctionBlock extends Block{
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public static FunctionBlock newInstance(int numberOfArguments, String name) throws IOException{
+	public static FunctionBlock newInstance(int numberOfArguments, String name) throws IOException {
 		FunctionBlock functionBlock = newInstance(numberOfArguments);
 		functionBlock.setName(name);
 		
@@ -60,7 +60,7 @@ public class FunctionBlock extends Block{
 	 * Executes this FunctionBlock and returns the output as a String
 	 * @return Output of the Function
 	 */
-	public String executeMethod(){		
+	public String executeMethod() {		
 		return new String("DEBUG-OUTPUT");
 	}
 	
@@ -68,7 +68,7 @@ public class FunctionBlock extends Block{
 	 * Nest another Node object within this FunctionBlock
 	 * @param node to nest
 	 */
-	public void nest(Node node){
+	public void nest(Node node) {
 		Pane nestSPace = (Pane) this.lookup("#nest_space");
 		((Label) this.lookup("#label_function_name")).setText("Higher order function");
 		nestSPace.getChildren().add(node);
@@ -79,7 +79,7 @@ public class FunctionBlock extends Block{
 	 * All arguments will be stored as Strings.
 	 * @param numberOfArguments
 	 */
-	private void initializeArguments(int numberOfArguments){
+	private void initializeArguments(int numberOfArguments) {
 		arguments = new String[numberOfArguments];
 	}
 	
@@ -88,7 +88,7 @@ public class FunctionBlock extends Block{
 	 * @param the index of the argument field
 	 * @param the value that the argument should be changed to
 	 */
-	public void setArgument(int i,String arg){
+	public void setArgument(int i,String arg) {
 		arguments[i] = arg;
 	}
 	
@@ -96,7 +96,7 @@ public class FunctionBlock extends Block{
 	 * Method to set the name of this FunctionBlock
 	 * @param name
 	 */
-	public void setName(String name){
+	public void setName(String name) {
 		functionName = name;
 		Label label = ((Label)this.lookup("#label_function_name"));
 		label.setText(functionName);
