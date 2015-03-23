@@ -12,11 +12,11 @@ public class Block extends StackPane {
 	private boolean isSelected = false;
 	
 	/**
-	 * Set the selected state of this Block
-	 * @param Selected False/True
+	 * Set the selected boolean state of this Block
+	 * @param selectedState
 	 */
-		public void setSelected(boolean bool){
+		public void setSelected(boolean selectedState){
 			//TODO If another object is selected then deselect it first!!
-			isSelected = bool;
+			isSelected = selectedState;
 		}
 }

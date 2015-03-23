@@ -43,6 +43,20 @@ public class FunctionBlock extends Block{
 	}
 	
 	/**
+	 * Method that creates a newInstance of this class along with it's visual representation
+	 * @param the number of arguments this FunctionBlock can hold
+	 * @param the name of this FunctionBlock
+	 * @return a new instance of this class
+	 * @throws IOException
+	 */
+	public static FunctionBlock newInstance(int numberOfArguments, String name) throws IOException{
+		FunctionBlock functionBlock = newInstance(numberOfArguments);
+		functionBlock.setName(name);
+		
+		return functionBlock;
+	}
+	
+	/**
 	 * Executes this FunctionBlock and returns the output as a String
 	 * @return Output of the Function
 	 */
