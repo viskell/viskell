@@ -18,11 +18,11 @@ import javafx.scene.shape.Rectangle;
  * represents a Haskell function together with it's arguments and
  * visual representation.
  */
-public class FunctionBlock extends StackPane{
-	//The arguments this FunctionBlock holds
+public class FunctionBlock extends Block{
+	/**The arguments this FunctionBlock holds.**/
 	private String[] arguments;
+	/** The name of this Function.**/
 	private String functionName;
-	private boolean isSelected = false;
 	
 	/**
 	 * Method that creates a newInstance of this class along with it's visual representation
@@ -31,32 +31,40 @@ public class FunctionBlock extends StackPane{
 	 * @throws IOException
 	 */
 	public static FunctionBlock newInstance(int numberOfArguments){
-		//TODO Prettier resource loading
-		//TODO better factory
-		FunctionBlock functionBlock = null;
+		FunctionBlock functionBlock;
 		try{
 			functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("/ui/FunctionBlock.fxml"), null, new TactileBuilderFactory());
 			functionBlock.initializeArguments(numberOfArguments);
 		}catch(IOException e){
 			e.printStackTrace();
+			functionBlock = null;
 		}
 		return functionBlock;
 	}
 	
-	//TODO To be implemented method that will parse code into Haskell interface
-	// and returns the result
+	/**
+	 * Executes this FunctionBlock and returns the output as a String
+	 * @return Output of the Function
+	 */
 	public String executeMethod(){		
 		return new String("DEBUG-OUTPUT");
 	}
 	
+	/**
+	 * Nest another Node object within this FunctionBlock
+	 * @param node to nest
+	 */
 	public void nest(Node node){
 		Pane nestSPace = (Pane) this.lookup("#nest_space");
 		((Label) this.lookup("#label_function_name")).setText("Higher order function");
 		nestSPace.getChildren().add(node);
 	}
 	
-	//Private method to initialize the argument fields for this function block.
-	//All arguments will be stored as Strings.
+	/**
+	 * Private method to initialize the argument fields for this function block.
+	 * All arguments will be stored as Strings.
+	 * @param numberOfArguments
+	 */
 	private void initializeArguments(int numberOfArguments){
 		arguments = new String[numberOfArguments];
 	}
@@ -68,12 +76,6 @@ public class FunctionBlock extends StackPane{
 	 */
 	public void setArgument(int i,String arg){
 		arguments[i] = arg;
-	}
-	
-	//Selects or deselects this FunctionBlock
-	public void setSelected(boolean bool){
-		//If another object is selected then deselect it first!!
-		isSelected = bool;
 	}
 	
 	/**
