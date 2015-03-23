@@ -1,4 +1,4 @@
-package nl.utwente.cs.caes.tactile.control;
+package nl.utwente.ewi.caes.tactilefx.control;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,25 +15,22 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 
-// TODO: Eventually package private, currently only for debug
+// TODO: uiteindelijk package-private, alleen voor debug
 public class QuadTree {
 
     private final int MAX_DEPTH = 5;
     private final int MAX_OBJECTS = 10;
 
     private QuadTree parent;
-    //TODO: Temprorarily public for debug purposes
-    public QuadTree[] children;
-    public final int level;
+    private QuadTree[] children;
+    private final int level;
     private boolean boundsChanged = false;
-    public final Map<Node, Bounds> proximityBoundsByObject = new HashMap<>();
+    private final Map<Node, Bounds> proximityBoundsByObject = new HashMap<>();
 
     /**
      * Constructor of the QuadTree
      *
      * @param bounds The bounds of the 2D space that this QuadTree divides
-     * @param proximityThreshold The maximum gap between two Nodes which makes
-     * them neighbours
      */
     public QuadTree(Bounds bounds) {
         setBounds(bounds);

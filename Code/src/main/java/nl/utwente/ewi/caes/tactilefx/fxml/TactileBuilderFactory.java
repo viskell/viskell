@@ -1,12 +1,9 @@
-package nl.utwente.cs.caes.tactile.fxml;
+package nl.utwente.ewi.caes.tactilefx.fxml;
 
 import javafx.fxml.JavaFXBuilderFactory;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.util.Builder;
 import javafx.util.BuilderFactory;
-import nl.utwente.cs.caes.tactile.control.Anchor;
-import nl.utwente.cs.caes.tactile.control.Bond;
+import nl.utwente.ewi.caes.tactilefx.control.Anchor;
 
 public class TactileBuilderFactory implements BuilderFactory {
     private final JavaFXBuilderFactory defaultBuilderFactory = new JavaFXBuilderFactory();
@@ -15,8 +12,6 @@ public class TactileBuilderFactory implements BuilderFactory {
     public Builder<?> getBuilder(Class<?> type) {
         if (type == Anchor.class) {
             return new TactilePaneAnchorBuilder();
-        } else if (type == Bond.class) {
-            throw new UnsupportedOperationException("Not supported yet");
         } else {
             return defaultBuilderFactory.getBuilder(type);
         }

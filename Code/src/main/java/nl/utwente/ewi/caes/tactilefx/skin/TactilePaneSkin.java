@@ -1,8 +1,13 @@
-package nl.utwente.cs.caes.tactile.skin;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package nl.utwente.ewi.caes.tactilefx.skin;
 
 import javafx.scene.Node;
 import javafx.scene.control.SkinBase;
-import nl.utwente.cs.caes.tactile.control.TactilePane;
+import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 
 public class TactilePaneSkin extends SkinBase<TactilePane> {
     TactilePane pane;

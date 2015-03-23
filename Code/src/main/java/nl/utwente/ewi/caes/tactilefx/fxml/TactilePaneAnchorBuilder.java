@@ -1,9 +1,9 @@
-package nl.utwente.cs.caes.tactile.fxml;
+package nl.utwente.ewi.caes.tactilefx.fxml;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.util.Builder;
-import nl.utwente.cs.caes.tactile.control.Anchor;
+import nl.utwente.ewi.caes.tactilefx.control.Anchor;
 
 public class TactilePaneAnchorBuilder implements Builder<Anchor> {
     private Node anchorNode = null;
