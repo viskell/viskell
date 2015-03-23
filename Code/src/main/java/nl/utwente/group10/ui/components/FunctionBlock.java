@@ -30,15 +30,10 @@ public class FunctionBlock extends Block {
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public static FunctionBlock newInstance(int numberOfArguments) {
-		FunctionBlock functionBlock;
-		try{
-			functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("/ui/FunctionBlock.fxml"), null, new TactileBuilderFactory());
-			functionBlock.initializeArguments(numberOfArguments);
-		}catch(IOException e){
-			e.printStackTrace();
-			functionBlock = null;
-		}
+	public static FunctionBlock newInstance(int numberOfArguments) throws IOException {
+		FunctionBlock functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("/ui/FunctionBlock.fxml"), null, new TactileBuilderFactory());
+		functionBlock.initializeArguments(numberOfArguments);
+
 		return functionBlock;
 	}
 	
@@ -69,14 +64,15 @@ public class FunctionBlock extends Block {
 	 * @param node to nest
 	 */
 	public void nest(Node node) {
-		Pane nestSPace = (Pane) this.lookup("#nest_space");
+		Pane nestSpace = (Pane) this.lookup("#nest_space");
 		((Label) this.lookup("#label_function_name")).setText("Higher order function");
-		nestSPace.getChildren().add(node);
+		nestSpace.getChildren().add(node);
 	}
 	
 	/**
 	 * Private method to initialize the argument fields for this function block.
-	 * All arguments will be stored as Strings.
+	 * All arguments will are defined as Strings and will be stored as such.
+	 * An Integer value of 6 will also be stored as a String "6"
 	 * @param numberOfArguments
 	 */
 	private void initializeArguments(int numberOfArguments) {
