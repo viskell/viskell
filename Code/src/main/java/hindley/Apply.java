@@ -19,7 +19,10 @@ class Apply extends Expr {
         Type argtype = arg.analyze(env, nonGen);
         Type restype = HindleyMilner.makeTypeVar();
 
-        HindleyMilner.unify(new FuncT(argtype, restype), funtype);
+        // Rule [App]:
+        // IFF  the type of our function is a -> b and the type of our arg is a
+        // THEN the type of our result is b
+        HindleyMilner.unify(this, funtype, new FuncT(argtype, restype));
 
         return restype;
     }

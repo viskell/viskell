@@ -15,31 +15,37 @@ public class InferencePlayground {
 
         Type alpha = HindleyMilner.makeTypeVar();
         Type beta = HindleyMilner.makeTypeVar();
+        Type gamma = HindleyMilner.makeTypeVar();
+        Type delta = HindleyMilner.makeTypeVar();
 
         Env env = new Env();
         env.put("id", new FuncT(alpha, alpha));
         env.put("seven", new TypeOp("Int"));
         env.put("length", new FuncT(new TypeOp("List", beta), intType));
         env.put("(+)", new FuncT(intType, new FuncT(intType, intType)));
+        env.put("const", new FuncT(alpha, new FuncT(gamma, delta)));
 
         System.out.println("Environment:");
         System.out.println(env);
         System.out.println();
 
         Expr program =
+            new Apply(
                 new Apply(
-                        new Ident("id"),
+                    new Ident("(+)"),
+                    new Value(intType, "10")
+                ),
+                new Apply(
+                    new Ident("length"),
+                    new Apply(
                         new Apply(
-                                new Apply(
-                                        new Ident("(+)"),
-                                        new Value(intType, "10")
-                                ),
-                                new Apply(
-                                        new Ident("id"),
-                                        new Value(intType, "20")
-                                )
-                        )
-                );
+                            new Ident("const"),
+                            new Value(listOfBools, "[]")
+                        ),
+                        new Value(tupleOfInts, "(1, 2)")
+                    )
+                )
+            );
 
         System.out.println("Expression:");
         System.out.println(program);

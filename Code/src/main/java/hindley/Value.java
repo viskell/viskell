@@ -15,6 +15,6 @@ class Value extends Expr {
     }
 
     public String toString() {
-        return String.format("(%s :: %s)", val, type);
+        return val;
     }
 }

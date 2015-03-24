@@ -7,9 +7,11 @@ class HindleyMilner {
     private static Logger logger = Logger.getLogger(HindleyMilner.class.getName());
     static int tvOffset = 0;
 
-    static void unify(Type t1, Type t2) {
+    static void unify(Expr context, Type t1, Type t2) {
         Type a = prune(t1);
         Type b = prune(t2);
+
+        logger.info(String.format("Unifying types %s and %s for context %s", t1, t2, context.toString()));
 
         if (a instanceof TypeVar && !(a.equals(b))) {
             // Example: we have to unify (for example) α and Int.
@@ -18,7 +20,7 @@ class HindleyMilner {
         } else if (a instanceof TypeOp && b instanceof TypeVar) {
             // Example: we have to unify Int and α.
             // Same as above, but mirrored.
-            unify(b, a);
+            unify(context, b, a);
         } else if (a instanceof TypeOp && b instanceof TypeOp) {
             // Example: we have to unify Int and Int.
 
@@ -39,7 +41,7 @@ class HindleyMilner {
 
             // Other than that, types can be unified if each of the arguments can be.
             for (int i = 0; i < ao.getArgs().length; i++) {
-                unify(ao.getArgs()[i], bo.getArgs()[i]);
+                unify(context, ao.getArgs()[i], bo.getArgs()[i]);
             }
         }
     }

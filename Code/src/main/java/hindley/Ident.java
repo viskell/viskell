@@ -9,6 +9,9 @@ class Ident extends Expr {
 
     @Override
     public Type analyze(Env env, GenSet nonGen) {
+        // Rule [Var]:
+        // IFF  we know (from the env) that the type of this expr is x
+        // THEN the type of this expr is x.
         return env.get(name);
     }
 
