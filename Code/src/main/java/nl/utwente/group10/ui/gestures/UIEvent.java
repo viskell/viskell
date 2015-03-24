@@ -2,7 +2,7 @@ package nl.utwente.group10.ui.gestures;
 
 import javafx.event.EventType;
 import javafx.scene.Node;
-import nl.utwente.cs.caes.tactile.event.TactilePaneEvent;
+import nl.utwente.ewi.caes.tactilefx.event.TactilePaneEvent;
 
 public class UIEvent extends TactilePaneEvent {
 

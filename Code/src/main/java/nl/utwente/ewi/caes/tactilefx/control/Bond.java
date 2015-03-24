@@ -1,4 +1,4 @@
-package nl.utwente.cs.caes.tactile.control;
+package nl.utwente.ewi.caes.tactilefx.control;
 
 import javafx.scene.Node;
 

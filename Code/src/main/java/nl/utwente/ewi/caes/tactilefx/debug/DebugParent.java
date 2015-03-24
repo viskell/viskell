@@ -1,4 +1,4 @@
-package nl.utwente.cs.caes.tactile.debug;
+package nl.utwente.ewi.caes.tactilefx.debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +29,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
-import nl.utwente.cs.caes.tactile.control.QuadTree;
-import nl.utwente.cs.caes.tactile.control.TactilePane;
+import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 
 public class DebugParent extends StackPane {
     
@@ -41,10 +40,7 @@ public class DebugParent extends StackPane {
     Map<Node, VectorDisplay> vectorDisplayByDraggable = new ConcurrentHashMap<>();
     Map<Node, ProximityDisplay> proximityDisplayByNode = new ConcurrentHashMap<>();
     Map<Node, BoundsDisplay> boundsDisplayByNode = new ConcurrentHashMap<>();
-    
-    Map<TactilePane, QuadTree> quadTreeByTactilePane = new ConcurrentHashMap<>();
 
-    List<QuadTreeDisplay> quadTreeDisplays = new ArrayList<>();
     List<TouchPoint> touchPoints = new ArrayList<>();
     int touchSetId = 0;
     boolean active = false;
@@ -210,34 +206,8 @@ public class DebugParent extends StackPane {
                     boundsDisplay.setBoundsHeight(bounds.getHeight());
                     boundsDisplay.relocate(bounds.getMinX(), bounds.getMinY());
                 }
-                // Dit is extreem inefficient, maar het is niet de bedoeling dat deze functionaliteit er in blijft
-                for (QuadTreeDisplay qtd : quadTreeDisplays) {
-                    overlay.getChildren().remove(qtd);
-                }
-                quadTreeDisplays.clear();
-                
-                for (TactilePane pane : quadTreeByTactilePane.keySet()) {
-                    QuadTreeDisplay qtd = new QuadTreeDisplay(pane.quadTree, "root");
-                    quadTreeDisplays.add(qtd);
-                    overlay.getChildren().add(qtd);
-                    drawQuadTreeChildren(pane.quadTree, "");
-                }
             }
         }.start();
-    }
-    
-    //Tijdelijk
-    private void drawQuadTreeChildren(QuadTree root, String label){
-        if (root.children == null) return;
-        int postfix = 0;
-        for (QuadTree child : root.children) {
-            QuadTreeDisplay qtd = new QuadTreeDisplay(child, label + postfix);
-            overlay.getChildren().add(qtd);
-            qtd.relocate(child.getBounds().getMinX(), child.getBounds().getMinY());
-            drawQuadTreeChildren(child, label + postfix);
-            quadTreeDisplays.add(qtd);
-            postfix++;
-        }
     }
     
     // Returns a TouchPoint for a given MouseEvent
@@ -358,8 +328,6 @@ public class DebugParent extends StackPane {
                 deregisterActiveNode(c.getElementRemoved());
             }
         });
-        
-        quadTreeByTactilePane.put(pane, pane.quadTree);
     }
     
     private void registerActiveNode(Node node, TactilePane pane) {
