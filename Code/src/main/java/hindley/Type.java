@@ -1,0 +1,4 @@
+package hindley;
+
+class Type {
+}

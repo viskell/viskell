@@ -12,7 +12,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-class GhciEvaluator implements Closeable {
+public class GhciEvaluator implements Closeable {
     private final Process ghci;
 
     /** Raw input stream for result data from ghci to the application. */
@@ -33,7 +33,7 @@ class GhciEvaluator implements Closeable {
     /** A newline character. */
     private final String NL;
 
-    GhciEvaluator() throws GhciException {
+    public GhciEvaluator() throws GhciException {
         try {
             this.ghci = new ProcessBuilder(GHCIPATH)
                     .redirectErrorStream(true)
