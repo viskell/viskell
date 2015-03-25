@@ -1,11 +1,9 @@
 package nl.utwente.group10.haskell.type;
 
-import com.google.common.collect.ImmutableList;
-
-import java.util.Arrays;
+import java.util.Optional;
 
 /**
- * Variable type. Validates checked types against constraints. Holds identifier
+ * Variable type.
  */
 public class VarT extends Type {
     /**
@@ -14,45 +12,26 @@ public class VarT extends Type {
     private final String name;
 
     /**
-     * The types that form the constraints of this variable type.
+     * The instance for this type.
      */
-    private final ImmutableList<Type> types;
+    private Optional<Type> instance;
 
     /**
-     * @param name Identifier for type checking within {@code FuncT} and {@code TupleT} types. Identifiers are converted
-     *             to lower case.
-     * @param types Constraints for accepted types. This {@code VarT} can be replaced with any type matching one of
-     *              these types. The provided types will be sorted.
+     * @param name Identifier for this type. Identifiers are not used in the type checking progress, different
+     *             {@code VarT} instances with the same name are not equal.
+     * @param instance The instance of this type.
      */
-    public VarT(final String name, final Type ... types) {
+    public VarT(final String name, final Type instance) {
         this.name = name.toLowerCase();
-        Arrays.sort(types);
-        this.types = ImmutableList.copyOf(types);
+        this.instance = Optional.ofNullable(instance);
     }
 
     /**
-     * Constructs a new variable type using the provided TypeClass as the source for the type constraints.
-     * @param name Identifier for type checking within {@code FuncT} and {@code TupleT} types. Identifiers are converted
-     *             to lower case.
-     * @param typeClass Type class to pull the constrains from.
+     * @param name Identifier for this type. Identifiers are not used in the type checking progress, different
+     *             {@code VarT} instances with the same name are not equal.
      */
-    public VarT(final String name, final TypeClass typeClass) {
-        this.name = name.toLowerCase();
-        this.types = ImmutableList.copyOf(typeClass.getTypes());
-    }
-
-    @Override
-    public final boolean compatibleWith(final Type other) {
-        boolean compatible = false;
-
-        for (final Type type : this.types) {
-            if (type.compatibleWith(other)) {
-                compatible = true;
-                break;
-            }
-        }
-
-        return compatible;
+    public VarT(final String name) {
+        this(name, null);
     }
 
     /**
@@ -62,6 +41,34 @@ public class VarT extends Type {
         return this.name;
     }
 
+    /**
+     * @return The {@code Optional} that may contain an instance for this variable type.
+     */
+    public final Optional<Type> getInstance() {
+        return this.instance;
+    }
+
+    /**
+     * @param instance The new instance to set for this variable type.
+     */
+    public final void setInstance(final Type instance) {
+        this.instance = Optional.ofNullable(instance);
+    }
+
+    @Override
+    public final Type prune() {
+        final Type pruned;
+
+        if (this.getInstance().isPresent()) {
+            pruned = this.getInstance().get().prune();
+            this.setInstance(pruned);
+        } else {
+            pruned = this;
+        }
+
+        return pruned;
+    }
+
     @Override
     public final String toHaskellType() {
         return this.name;
@@ -69,9 +76,6 @@ public class VarT extends Type {
 
     @Override
     public final String toString() {
-        return "VarT{" +
-                "name='" + this.name + "'" +
-                ", types=" + this.types +
-                '}';
+        return this.instance.isPresent() ? String.format("%s:%s", this.name, this.instance.get()) : this.name;
     }
 }
