@@ -29,20 +29,30 @@ public class Connection extends Line implements ChangeListener<Number> {
 	private Block output;
 	/** The argument field of the FunctionBlock that we are outputting data into */
 	private int outputarg;
-
+	
 	/**
 	 * Method that creates a newInstance of this class along with it's visual
 	 * representation.
-	 * @param the FunctionBlock that inputs data into this connection
-	 * @param the FunctionBlock that we output data into from this connection
-	 * @param the number of the argument field to output data into
+	 * @return a new empty instance of this class
+	 * @throws IOException
+	 */
+	private static Connection newInstance() throws IOException {
+		Connection connection = (Connection) FXMLLoader.load(Main.class.getResource("/ui/Connection.fxml"), null, new TactileBuilderFactory());					
+		return connection;
+	}
+
+	/**
+	 * Method that creates a newInstance of this class along with it's visual
+	 * representation. 
+	 * @param Anchor of the Block
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public static Connection newInstance(ConnectionAnchor startAnchor, ConnectionAnchor endAnchor) throws IOException {
-		Connection connection = (Connection) FXMLLoader.load(Main.class.getResource("/ui/Connection.fxml"), null, new TactileBuilderFactory());			
+	public static Connection newInstance(ConnectionAnchor startAnchor) throws IOException {
+		Connection connection = newInstance();
 		startAnchor.layoutXProperty().addListener(connection);
 		startAnchor.layoutYProperty().addListener(connection);
+		
 		endAnchor.layoutXProperty().addListener(connection);
 		endAnchor.layoutYProperty().addListener(connection);
 		
@@ -51,7 +61,7 @@ public class Connection extends Line implements ChangeListener<Number> {
 		
 		return connection;
 	}
-
+	
 	/**
 	 * Private method that sets the input into this Connection
 	 * @param input source

@@ -2,6 +2,16 @@ package nl.utwente.group10.ui.components;
 
 import javafx.scene.shape.CubicCurve;
 
+/**
+ * This class represent a Line visual object in the UI.
+ * Each UI element that uses Line properties should extend
+ * from here.
+ * 
+ * Each Line also stores a startAnchor and an endAnchor to keep track
+ * of origin points of the Line.
+ * 
+ * For Lines that connect inputs and outputs of Blocks see Connection.
+ */
 public class Line extends CubicCurve {
 
 	/** Control offset for this bezier of this line */

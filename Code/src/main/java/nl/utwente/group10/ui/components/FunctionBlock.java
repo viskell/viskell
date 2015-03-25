@@ -23,6 +23,10 @@ public class FunctionBlock extends Block {
 	private String[] arguments;
 	/** The name of this Function.**/
 	private String functionName;
+	/** The output of this FunctionBlock.**/
+	private ConnectionAnchor output;
+	/** The inputs for this FunctionBlock.**/
+	private ConnectionAnchor[] inputs;
 	
 	/**
 	 * Method that creates a newInstance of this class along with it's visual representation
@@ -73,10 +77,20 @@ public class FunctionBlock extends Block {
 	 * Private method to initialize the argument fields for this function block.
 	 * All arguments will are defined as Strings and will be stored as such.
 	 * An Integer value of 6 will also be stored as a String "6"
+	 * Each argument will generate a corresponding ConnectionAnchor where input can be linked to.
 	 * @param numberOfArguments
 	 */
 	private void initializeArguments(int numberOfArguments) {
 		arguments = new String[numberOfArguments];
+		inputs = new ConnectionAnchor[numberOfArguments];
+		
+		// create anchors for each argument and 'anchor' them around the functionBlock
+		for(int i = 0;i<numberOfArguments; i++){
+			ConnectionAnchor newAnchor = new ConnectionAnchor();
+			inputs[i] = newAnchor;
+			Pane anchorSpace = (Pane) this.lookup("#anchor_space");
+			anchorSpace.getChildren().add(newAnchor);
+		}
 	}
 	
 	/**
