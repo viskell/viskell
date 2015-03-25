@@ -8,8 +8,8 @@ class HindleyMilner {
     static int tvOffset = 0;
 
     static void unify(Expr context, Type t1, Type t2) {
-        Type a = prune(t1);
-        Type b = prune(t2);
+        Type a = t1.prune();
+        Type b = t2.prune();
 
         logger.info(String.format("Unifying types %s and %s for context %s", t1, t2, context.toString()));
 
@@ -44,20 +44,6 @@ class HindleyMilner {
                 unify(context, ao.getArgs()[i], bo.getArgs()[i]);
             }
         }
-    }
-
-    static Type prune(Type t) {
-        if (t instanceof TypeVar) {
-            TypeVar tv = (TypeVar) t;
-            if (tv.getInstance().isPresent()) {
-                Type instance = prune(tv.getInstance().get());
-                tv.setInstance(Optional.of(instance));
-
-                return instance;
-            }
-        }
-
-        return t;
     }
 
     static TypeVar makeTypeVar() {

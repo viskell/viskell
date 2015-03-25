@@ -26,4 +26,13 @@ class TypeOp extends Type {
             return constructor;
         }
     }
+
+    @Override
+    public Type prune() {
+        for (int i = 0; i < args.length; i++) {
+            this.args[i] = this.args[i].prune();
+        }
+
+        return this;
+    }
 }

@@ -35,4 +35,14 @@ class TypeVar extends Type {
     public void setInstance(Optional<Type> instance) {
         this.instance = instance;
     }
+
+    @Override
+    public Type prune() {
+        if (this.getInstance().isPresent()) {
+            this.setInstance(Optional.of(this.getInstance().get().prune()));
+            return this.getInstance().get();
+        } else {
+            return this;
+        }
+    }
 }

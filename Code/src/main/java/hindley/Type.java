@@ -1,4 +1,5 @@
 package hindley;
 
-class Type {
+abstract class Type {
+    public abstract Type prune();
 }
