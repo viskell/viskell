@@ -26,7 +26,7 @@ class TypeVar extends Type {
     @Override
     public String toString() {
         if (instance.isPresent()) {
-            return String.format("%s (%s)", name, instance.get());
+            return String.format("%s:%s", name, instance.get());
         } else {
             return name;
         }
