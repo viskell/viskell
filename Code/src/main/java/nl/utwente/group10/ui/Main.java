@@ -23,20 +23,20 @@ public class Main extends Application {
 
 		FunctionBlock functionBlock = FunctionBlock.newInstance(2);
 		functionBlock.setName("TestTest");
-		FunctionBlock functionBlock2 = FunctionBlock.newInstance(0);
-		FunctionBlock functionBlock3 = FunctionBlock.newInstance(0);
-		FunctionBlock functionBlock4 = FunctionBlock.newInstance(0);
+		FunctionBlock functionBlock2 = FunctionBlock.newInstance(1);
+		FunctionBlock functionBlock3 = FunctionBlock.newInstance(1);
+		FunctionBlock functionBlock4 = FunctionBlock.newInstance(1);
 		
 
-		functionBlock4.nest(FunctionBlock.newInstance(0));
-		functionBlock3.nest(FunctionBlock.newInstance(0));
-		functionBlock3.nest(FunctionBlock.newInstance(0));
+		functionBlock4.nest(FunctionBlock.newInstance(1));
+		functionBlock3.nest(FunctionBlock.newInstance(1));
+		functionBlock3.nest(FunctionBlock.newInstance(1));
 		functionBlock2.nest(functionBlock4);
 		functionBlock2.nest(functionBlock3);
 
-		functionBlock.nest(FunctionBlock.newInstance(0));
-		functionBlock.nest(FunctionBlock.newInstance(0));
-		functionBlock.nest(FunctionBlock.newInstance(0));
+		functionBlock.nest(FunctionBlock.newInstance(1));
+		functionBlock.nest(FunctionBlock.newInstance(1));
+		functionBlock.nest(FunctionBlock.newInstance(1));
 		tactilePane.getChildren().add(functionBlock);
 		tactilePane.getChildren().add(functionBlock2);
 		tactilePane.getChildren().add(FunctionBlock.newInstance(3));

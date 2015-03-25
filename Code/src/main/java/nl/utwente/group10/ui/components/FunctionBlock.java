@@ -112,4 +112,44 @@ public class FunctionBlock extends Block {
 		Label label = ((Label)this.lookup("#label_function_name"));
 		label.setText(functionName);
 	}
+	
+	/**
+	 * Method that returns the name of this Function.
+	 * @return functionName
+	 */
+	public String getName() {
+		return functionName;
+	}
+	
+	/**
+	 * Method to fetch an array containing all of the input anchors for this
+	 * FunctionBlock
+	 * @return inputAnchors
+	 */
+	public ConnectionAnchor[] getInputs(){
+		return inputs;
+	}
+	
+	/**
+	 * Returns the index of the argument matched to the Anchor.
+	 * @param anchor
+	 * @return argumentIndex
+	 */
+	public int getArgumentIndex(ConnectionAnchor anchor) {
+		int index=0;
+		/**
+		 * @invariant index < inputs.length
+		 */
+		while((inputs[index]!=anchor)&&(index<inputs.length)) {
+			index++;
+		}
+		return index;
+	}
+	
+	//TODO index? argument? or both?
+	public String getArgument(ConnectionAnchor anchor) {
+		int index = getArgumentIndex(anchor);
+		
+		return arguments[index];
+	}
 }
