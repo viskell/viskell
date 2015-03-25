@@ -89,9 +89,8 @@ public class FunctionBlock extends Block {
 		for(int i = 0;i<numberOfArguments; i++){
 			ConnectionAnchor newAnchor = ConnectionAnchor.newInstance();
 			inputs[i] = newAnchor;
-			//TODO why does this fail?
 			Pane anchorSpace = (Pane) this.lookup("#anchor_space");
-			//anchorSpace.getChildren().add(newAnchor);
+			anchorSpace.getChildren().add(newAnchor);
 		}
 	}
 	
