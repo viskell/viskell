@@ -1,5 +1,8 @@
 package nl.utwente.group10.haskell.expr;
 
+import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.Type;
 
 /**
@@ -7,6 +10,11 @@ import nl.utwente.group10.haskell.type.Type;
  * e.g. wrapping a String in quotes, is the responsibility of the user.
  */
 public class Value extends Expr {
+    /**
+     * Type of this value.
+     */
+    private final Type type;
+
     /**
      * Haskell representation of the value.
      */
@@ -18,8 +26,13 @@ public class Value extends Expr {
      *              allowed.
      */
     public Value(final Type type, final String value) {
-        super(type);
+        this.type = type;
         this.value = value;
+    }
+
+    @Override
+    public final Type analyze(final Env env, final GenSet genSet) throws HaskellTypeError {
+        return this.type;
     }
 
     /**
@@ -43,9 +56,6 @@ public class Value extends Expr {
 
     @Override
     public final String toString() {
-        return "Value{" +
-                "type=" + this.getType() +
-                ", value='" + this.value + '\'' +
-                '}';
+        return this.value;
     }
 }
