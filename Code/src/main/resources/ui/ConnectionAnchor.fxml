@@ -1,0 +1,7 @@
+<?import nl.utwente.group10.ui.components.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.*?>
+
+<ConnectionAnchor xmlns:fx="http://javafx.com/fxml/1" styleClass="connectionAnchor" radius="10">
+</ConnectionAnchor>

@@ -17,14 +17,10 @@ public class ConnectionAnchor extends Circle {
 	
 	/** Indication of what dataType this Anchor supports.*/
 	public String dataType = "Int";
-	/** Used to determine whether this Anchor serves output or accepts Input.*/
-	private boolean isOutput;
 	
-	public static ConnectionAnchor newInstance(boolean isOutput) throws IOException {
+	public static ConnectionAnchor newInstance() throws IOException {
 		ConnectionAnchor connectionAnchor = FXMLLoader.load(Main.class.getResource("/ui/ConnectionAnchor.fxml"), null, new TactileBuilderFactory());			
 		
 		return connectionAnchor;
-	}
-	
-	
+	}	
 }

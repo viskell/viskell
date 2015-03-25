@@ -79,17 +79,19 @@ public class FunctionBlock extends Block {
 	 * An Integer value of 6 will also be stored as a String "6"
 	 * Each argument will generate a corresponding ConnectionAnchor where input can be linked to.
 	 * @param numberOfArguments
+	 * @throws IOException 
 	 */
-	private void initializeArguments(int numberOfArguments) {
+	private void initializeArguments(int numberOfArguments) throws IOException {
 		arguments = new String[numberOfArguments];
 		inputs = new ConnectionAnchor[numberOfArguments];
 		
 		// create anchors for each argument and 'anchor' them around the functionBlock
 		for(int i = 0;i<numberOfArguments; i++){
-			ConnectionAnchor newAnchor = new ConnectionAnchor();
+			ConnectionAnchor newAnchor = ConnectionAnchor.newInstance();
 			inputs[i] = newAnchor;
+			//TODO why does this fail?
 			Pane anchorSpace = (Pane) this.lookup("#anchor_space");
-			anchorSpace.getChildren().add(newAnchor);
+			//anchorSpace.getChildren().add(newAnchor);
 		}
 	}
 	

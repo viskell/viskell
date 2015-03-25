@@ -5,8 +5,10 @@
 
 
 <FunctionBlock xmlns:fx="http://javafx.com/fxml/1" styleClass="functionBlock">
+	
 	<BorderPane id="foreground" minHeight="90" minWidth = "180">
 		<top>
+		<FlowPane id="anchor_space" styleClass="functionBlockAnchorSpace" prefWrapLength="100" vgap="5"/>
 			<BorderPane>
 				<top>
 					<Label id="label_function_name" text="Function name"

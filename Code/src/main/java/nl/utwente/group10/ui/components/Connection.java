@@ -53,6 +53,7 @@ public class Connection extends Line implements ChangeListener<Number> {
 		startAnchor.layoutXProperty().addListener(connection);
 		startAnchor.layoutYProperty().addListener(connection);
 		
+		ConnectionAnchor endAnchor = ConnectionAnchor.newInstance();
 		endAnchor.layoutXProperty().addListener(connection);
 		endAnchor.layoutYProperty().addListener(connection);
 		
