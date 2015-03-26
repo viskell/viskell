@@ -1,17 +1,13 @@
 package nl.utwente.group10.ui.components;
 
-import java.io.IOException;
-
-import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
-import nl.utwente.group10.ui.Main;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.control.Label;
-import javafx.scene.shape.Rectangle;
+
+import java.io.IOException;
 
 /**
  * Main building block for the visual interface, this class
@@ -21,34 +17,31 @@ import javafx.scene.shape.Rectangle;
 public class FunctionBlock extends Block {
 	/** The arguments this FunctionBlock holds.**/
 	private String[] arguments;
-	/** The name of this Function.**/
-	private String functionName;
-	
-	/**
-	 * Method that creates a newInstance of this class along with it's visual representation
-	 * @param the number of arguments this FunctionBlock can hold
-	 * @return a new instance of this class
-	 * @throws IOException
-	 */
-	public static FunctionBlock newInstance(int numberOfArguments) throws IOException {
-		FunctionBlock functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("/ui/FunctionBlock.fxml"), null, new TactileBuilderFactory());
-		functionBlock.initializeArguments(numberOfArguments);
 
-		return functionBlock;
+	/** The name of this Function. **/
+	private StringProperty name;
+
+	/** The type of this Function. **/
+	private StringProperty type;
+
+	@FXML
+	private Pane nestSpace;
+
+	public FunctionBlock(int numArgs) throws IOException {
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/FunctionBlock.fxml"));
+		fxmlLoader.setRoot(this);
+		fxmlLoader.setController(this);
+
+		name = new SimpleStringProperty("Function name");
+		type = new SimpleStringProperty("Function type");
+
+		initializeArguments(numArgs);
+
+		fxmlLoader.load();
 	}
-	
-	/**
-	 * Method that creates a newInstance of this class along with it's visual representation
-	 * @param the number of arguments this FunctionBlock can hold
-	 * @param the name of this FunctionBlock
-	 * @return a new instance of this class
-	 * @throws IOException
-	 */
-	public static FunctionBlock newInstance(int numberOfArguments, String name) throws IOException {
-		FunctionBlock functionBlock = newInstance(numberOfArguments);
-		functionBlock.setName(name);
-		
-		return functionBlock;
+
+	public static FunctionBlock newInstance(int numArgs) throws IOException {
+		return new FunctionBlock(numArgs);
 	}
 	
 	/**
@@ -64,8 +57,7 @@ public class FunctionBlock extends Block {
 	 * @param node to nest
 	 */
 	public void nest(Node node) {
-		Pane nestSpace = (Pane) this.lookup("#nest_space");
-		((Label) this.lookup("#label_function_name")).setText("Higher order function");
+		name.set("Higher order function");
 		nestSpace.getChildren().add(node);
 	}
 	
@@ -81,20 +73,24 @@ public class FunctionBlock extends Block {
 	
 	/**
 	 * Method to set the value of a specified argument
-	 * @param the index of the argument field
-	 * @param the value that the argument should be changed to
 	 */
 	public void setArgument(int i,String arg) {
 		arguments[i] = arg;
 	}
+
+	public String getName() {
+		return name.get();
+	}
 	
-	/**
-	 * Method to set the name of this FunctionBlock
-	 * @param name
-	 */
 	public void setName(String name) {
-		functionName = name;
-		Label label = ((Label)this.lookup("#label_function_name"));
-		label.setText(functionName);
+		this.name.set(name);
+	}
+
+	public String getType() {
+		return type.get();
+	}
+
+	public void setType(String type) {
+		this.type.set(type);
 	}
 }
