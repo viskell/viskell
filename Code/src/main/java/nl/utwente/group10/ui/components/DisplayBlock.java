@@ -7,29 +7,29 @@ import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 import java.io.IOException;
 
 /**
- * OutputBlock is an extension of Block that only provides a display of the input
+ * DisplayBlock is an extension of Block that only provides a display of the input
  * it receives through it's inputAnchor.
  * The input will be rendered visually on the Block.
- * OutputBlock can be empty and contain no value at all, the value can be altered at any time
+ * DisplayBlock can be empty and contain no value at all, the value can be altered at any time
  * by providing a different input source using a Connection.
  */
-public class OutputBlock extends Block {
+public class DisplayBlock extends Block {
 	
 	/** The input this Block is receiving.**/
 	private String input;
 	
 	/**
-	 * Creates a new instance of OutputBlock.
-	 * @return new OutputBlock instance
+	 * Creates a new instance of DisplayBlock.
+	 * @return new DisplayBlock instance
 	 * @throws IOException
 	 */
-    private static OutputBlock newInstance() throws IOException {
-        OutputBlock block = FXMLLoader.load(OutputBlock.class.getResource("/ui/OutputBlock.fxml"), null, new TactileBuilderFactory());
+    private static DisplayBlock newInstance() throws IOException {
+        DisplayBlock block = FXMLLoader.load(DisplayBlock.class.getResource("/ui/DisplayBlock.fxml"), null, new TactileBuilderFactory());
         return block;
     }
     
     /**
-     * Sets the input flowing into the OutputBlock and refresh the display.
+     * Sets the input flowing into the DisplayBlock and refresh the display.
      * @param input
      */
     public void setInput(String inputValue) {

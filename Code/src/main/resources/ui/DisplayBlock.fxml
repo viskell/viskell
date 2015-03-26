@@ -3,9 +3,9 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.*?>
 
-<OutputBlock>
-    <VBox styleClass="output, block" alignment="CENTER_LEFT" spacing="12">
+<DisplayBlock>
+    <VBox styleClass="display, block" alignment="CENTER_LEFT" spacing="12">
         <Label id="label_header" text="OUTPUT" styleClass="header" alignment="CENTER_LEFT" />
         <Label id="label_value" text="⊥" styleClass="title" alignment="CENTER_LEFT" />
     </VBox>
-</OutputBlock>
+</DisplayBlock>

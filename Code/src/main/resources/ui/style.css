@@ -28,10 +28,10 @@
 	-fx-background-color: #8e44ad;
 }
 
-.output.block {
+.display.block {
 	-fx-background-color: #c0392b;
 }
 
-.value.block .title, .output.block .title {
+.value.block .title, .display.block .title {
 	-fx-text-fill: #ecf0f1;
 }
