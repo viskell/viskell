@@ -2,7 +2,6 @@ package nl.utwente.group10.ghcj;
 
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.*;
-import nl.utwente.group10.haskell.type.FuncT;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -25,11 +24,16 @@ public class GhciSession implements Closeable {
     }
 
     /**
-     * Uploads a new let binding to ghci.
+     * Uploads a new let binding to ghci. Returns an Expr instance which should be used instead of the supplied function
+     * once the function is pushed.
+     * @param name The name of the new function.
+     * @param func The actual function.
+     * @return The Expr instance to use when accessing the pushed function.
+     * @throws HaskellException when the function is rejected by ghci.
      */
-    public EnvFunc push(UserFunc func) throws HaskellException {
+    public final Expr push(final String name, final Expr func) throws HaskellException {
         this.ghci.eval(func.toHaskell());
-        return new EnvFunc(func.getName(), (FuncT) func.getType());
+        return new Ident(name);
     }
 
     /**
