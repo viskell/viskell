@@ -1,7 +1,5 @@
 package nl.utwente.group10.haskell.type;
 
-import com.google.common.base.Joiner;
-
 /**
  * Type of a Haskell function.
  */
