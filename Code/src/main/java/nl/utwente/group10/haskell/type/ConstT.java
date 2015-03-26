@@ -22,7 +22,7 @@ public class ConstT extends Type {
      */
     public ConstT(final String constructor, final Type ... args) {
         this.constructor = constructor;
-        this.args = args.clone();
+        this.args = args;
     }
 
     /**
@@ -41,6 +41,7 @@ public class ConstT extends Type {
 
     @Override
     public final Type prune() {
+
         for (int i = 0; i < this.args.length; i++) {
             this.args[i] = this.args[i].prune();
         }
@@ -50,7 +51,15 @@ public class ConstT extends Type {
 
     @Override
     public String toHaskellType() {
-        return Joiner.on(" ").join(this.args);
+        StringBuilder out = new StringBuilder();
+        out.append(this.constructor);
+
+        for (int i = 0; i < this.args.length; i++) {
+            out.append(" ");
+            out.append(this.args[i].toHaskellType());
+        }
+
+        return out.toString();
     }
 
     @Override

@@ -18,6 +18,20 @@ public class TupleT extends ConstT {
 
     @Override
     public final String toHaskellType() {
-        return "(" + Joiner.on(", ").join(this.getArgs()) + ")";
+        StringBuilder out = new StringBuilder();
+        Type[] args = this.getArgs();
+
+        out.append("(");
+
+        for (int i = 0; i < args.length; i++) {
+            out.append(args[i].toHaskellType());
+
+            if (i + 1 < args.length) {
+                out.append(", ");
+            }
+        }
+
+        out.append(")");
+        return out.toString();
     }
 }
