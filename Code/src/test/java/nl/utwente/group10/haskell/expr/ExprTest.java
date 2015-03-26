@@ -47,6 +47,6 @@ public class ExprTest {
 
     @Test
     public final void testToHaskell() {
-        assertEquals("map (*) [1, 2, 3, 5, 7]", this.expr.toHaskell());
+        assertEquals("((map (*)) [1, 2, 3, 5, 7])", this.expr.toHaskell());
     }
 }

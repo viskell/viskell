@@ -10,7 +10,7 @@ public class ConstTTest {
         final ConstT integerWithArg = new ConstT("Integer", integer);
 
         assertEquals("Integer", integer.toHaskellType());
-        assertEquals("Integer Integer", integer.toHaskellType());
+        assertEquals("Integer Integer", integerWithArg.toHaskellType());
     }
 
     @Test

@@ -29,7 +29,7 @@ public class IdentTest {
 
     @Test
     public final void testAnalyze() throws HaskellTypeError {
-        assertEquals(new FuncT(this.alpha, this.alpha), new Ident("id").analyze(this.env, this.genSet));
+        assertEquals(new FuncT(this.alpha, this.alpha).toHaskellType(), new Ident("id").analyze(this.env, this.genSet).toHaskellType());
     }
 
     @Test
