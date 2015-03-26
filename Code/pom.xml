@@ -66,6 +66,7 @@
               <configLocation>checkstyle.xml</configLocation>
               <encoding>UTF-8</encoding>
               <failOnViolation>false</failOnViolation>
+              <excludes>**/tactilefx/**</excludes>
             </configuration>
             <goals>
               <goal>check</goal>
