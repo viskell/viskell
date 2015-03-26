@@ -2,6 +2,7 @@ package nl.utwente.group10.haskell.catalog;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -33,17 +34,20 @@ public class HaskellCatalog {
     /** The resource path for the XML Schema definition. */
     public static final String XSD_PATH = "/catalog/functions.xsd";
 
-    /** Construct a HaskellCatalog using the default path. */
+    /**
+     * Construct a HaskellCatalog using the default path.
+     * @throws CatalogException when the default XML file can't be found, read, or parsed.
+     */
     public HaskellCatalog() throws CatalogException {
         this(XML_PATH);
     }
 
     /**
      * Construct a HaskellCatalog from an XML file at the specified path.
-     *
+     * @param path The path to the XML file containing the collection.
      * @throws CatalogException when the XML file can't be found, read, or parsed.
      */
-    public HaskellCatalog(String path) throws CatalogException {
+    public HaskellCatalog(final String path) throws CatalogException {
         URL functions = HaskellCatalog.class.getResource(path);
         URL xmlschema = HaskellCatalog.class.getResource(XSD_PATH);
 
@@ -84,30 +88,61 @@ public class HaskellCatalog {
 
     /**
      * Get a single Entry by its function name.
-     *
+     * @param key The name of the Entry.
+     * @return The Entry with the specified name.
      * @throws java.util.NoSuchElementException when the function is not defined.
      */
-    public Entry getEntry(String key) {
+    public final Entry getEntry(final String key) {
         return this.byName.get(key);
     }
 
-    /** Get a single Entry if it exists, or return the default. */
-    public Entry getOrDefault(String key, Entry defaultValue) {
+    /**
+     * Get a single Entry if it exists, or return the default.
+     * @param key The name of the Entry to get,
+     * @param defaultValue The default value to return when the Entry does not exist.
+     * @return The Entry if it exists, or the specified default.
+     */
+    public final Entry getOrDefault(final String key, final Entry defaultValue) {
         return this.byName.getOrDefault(key, defaultValue);
     }
 
-    /** Get an Optional value with a single Entry if it exists. */
-    public Optional<Entry> getMaybe(String key) {
+    /**
+     * Get an Optional value with a single Entry if it exists.
+     * @param key The name of the Entry.
+     * @return An optional that contains the Entry if it exists.
+     */
+    public final Optional<Entry> getMaybe(final String key) {
         return Optional.ofNullable(this.getOrDefault(key, null));
     }
 
-    /** Returns a Set of the known categories. */
-    public Set<String> getCategories() {
+    /**
+     * Returns a Set of the known categories.
+     * @return The Set of known categories.
+     */
+    public final Set<String> getCategories() {
         return this.byCategory.keySet();
     }
 
-    /** Returns all functions in the given category, or an empty collection. */
-    public Collection<Entry> getCategory(String name) {
+    /**
+     * Returns all functions in the given category, or an empty collection.
+     * @param name The category name.
+     * @return The collection of functions in the given cateagory.
+     */
+    public final Collection<Entry> getCategory(String name) {
         return this.byCategory.get(name);
+    }
+
+    /**
+     * Creates a new environment and adds all entries in this catalog to the environment.
+     * @return The new environment.
+     */
+    public final Env asEnvironment() {
+        final Env env = new Env();
+
+        for (Entry entry : this.byName.values()) {
+            env.put(entry.getName(), entry.getType());
+        }
+
+        return env;
     }
 }
