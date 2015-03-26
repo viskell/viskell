@@ -17,8 +17,6 @@ public class OutputBlock extends Block {
 	
 	/** The input this Block is receiving.**/
 	private String input;
-	/** Determines if this Block serves output.**/
-	private boolean output;
 	
 	/**
 	 * Creates a new instance of OutputBlock.
@@ -32,47 +30,20 @@ public class OutputBlock extends Block {
     }
     
     /**
-     * Creates a new OutputBlock instance, servesThroughput is a boolean value to determine
-     * if the newly created instance should initially put input through as output in addition to
-     * displaying the value.
-     * @param servesThroughput
-     * @return new OutputBlock instance
-     * @throws IOException
-     */
-    public static OutputBlock newInstance(boolean servesThroughput) throws IOException {
-    	OutputBlock outputBlock = OutputBlock.newInstance();
-    	outputBlock.enableOutput(servesThroughput);
-    	
-    	return outputBlock;
-    }
-    
-    /**
      * Sets the input flowing into the OutputBlock
      * @param input
      */
     public void setInput(String inputValue) {
     	input = inputValue;
     }
-    
-    /**
-     * Method to enable/disable if this OutputBlock serves output
-     * in addition to displaying it.
-     * @param enabledState
-     */
-    public void enableOutput(boolean enabledState) {
-    	output = enabledState;
-    }
  
     /**
-     * If output has been enabled the initial input value will be returned,
-     * if output has been disabled a null value will be returned instead.
+     * Returns the input value this Block has, to avoid confusion
+     * from other blocks who expect output from a block the method
+     * has been named getOutput instead of getInput
      * @return outputValue
      */
     public String getOutput() {
-    	String returnval = null;
-    	if (output) {
-    		returnval = input;
-    	}
-    	return returnval;
+    	return input;
     }
 }
