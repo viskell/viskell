@@ -14,20 +14,20 @@ import java.io.IOException;
  * by providing a different input source using a Connection.
  */
 public class DisplayBlock extends Block {
-	
-	/** The input this Block is receiving.**/
-	private String input;
-	
-	/**
-	 * Creates a new instance of DisplayBlock.
-	 * @return new DisplayBlock instance
-	 * @throws IOException
-	 */
-    public static DisplayBlock newInstance() throws IOException {
-        DisplayBlock block = FXMLLoader.load(DisplayBlock.class.getResource("/ui/DisplayBlock.fxml"), null, new TactileBuilderFactory());
-        return block;
-    }
+
+    /** The input this Block is receiving.**/
+    private String input;
     
+    /**
+     * Creates a new instance of DisplayBlock.
+     * @return new DisplayBlock instance
+     * @throws IOException
+     */
+    public static DisplayBlock newInstance() throws IOException {
+    	DisplayBlock block = FXMLLoader.load(DisplayBlock.class.getResource("/ui/DisplayBlock.fxml"), null, new TactileBuilderFactory());
+    	return block;
+    }
+
     /**
      * Sets the input flowing into the DisplayBlock and refresh the display.
      * @param input

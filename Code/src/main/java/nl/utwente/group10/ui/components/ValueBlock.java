@@ -16,17 +16,17 @@ import java.io.IOException;
  * Block should be extended instead.
  */
 public class ValueBlock extends Block {
-	
-	/** The value of this ValueBlock.*/
-	private String blockValue;
-	
-	/**
-	 * Creates a new ValueBlock instance with initialized value,
-	 * once initialized value cannot be changed.
-	 * @param value of this ValueBlock
-	 * @return new ValueBlock instance
-	 * @throws IOException
-	 */
+
+    /** The value of this ValueBlock.*/
+    private String blockValue;
+
+    /**
+     * Creates a new ValueBlock instance with initialized value,
+     * once initialized value cannot be changed.
+     * @param value of this ValueBlock
+     * @return new ValueBlock instance
+     * @throws IOException
+     */
     public static ValueBlock newInstance(String value) throws IOException {
         ValueBlock block = FXMLLoader.load(ValueBlock.class.getResource("/ui/ValueBlock.fxml"), null, new TactileBuilderFactory());
         ((Label) block.lookup("#label_value")).setText(value);
