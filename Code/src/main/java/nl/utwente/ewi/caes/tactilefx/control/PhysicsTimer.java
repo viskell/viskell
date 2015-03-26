@@ -1,4 +1,4 @@
-package nl.utwente.cs.caes.tactile.control;
+package nl.utwente.ewi.caes.tactilefx.control;
 
 
 import java.util.ArrayList;
@@ -10,21 +10,11 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import nl.utwente.cs.caes.tactile.event.TactilePaneEvent;
+import nl.utwente.ewi.caes.tactilefx.event.TactilePaneEvent;
 
 class PhysicsTimer extends AnimationTimer {
-    // TODO: maybe make these properties
-    
     // Length of a time step
     protected static final double TIME_STEP = 1d / 60d;
-    // Multiplied with each vector every time step
-    private static final double FRICTION = 0.95;
-    // Multiplier for a reflection vector
-    private static final double BOUNCE = 0.70;
-    // Multiplier for the slide vector
-    private static final double SLIDE = 1.8;
-    // The threshold at which a vector is set to the zero vector
-    private static final double THRESHOLD = 2.5;
     // Default value for force
     protected static final double DEFAULT_FORCE = 100;
     
@@ -38,7 +28,8 @@ class PhysicsTimer extends AnimationTimer {
     private double accumulatedTime;
     private long previousTime = 0;
     
-    @Override public void handle(long currentTime) {
+    @Override 
+    public void handle(long currentTime) {
         if (previousTime == 0) {
             previousTime = currentTime;
             return;
@@ -54,7 +45,9 @@ class PhysicsTimer extends AnimationTimer {
             accumulatedTime -= TIME_STEP;
         }
     }
-
+    
+    // LAYOUT METHODS
+    
     private void updatePositions() {
         // Copy children to new list, so we don't get a ConcurrentModificationException when calling toFront()
         List<Node> children = new ArrayList<>();
@@ -66,11 +59,11 @@ class PhysicsTimer extends AnimationTimer {
             Point2D vector = TactilePane.getVector(node);
             
             // Multiply with FRICTION to model friction
-            vector = vector.multiply(FRICTION);
+            vector = vector.multiply(pane.getFrictionMultiplier());
             TactilePane.setVector(node, vector);
             
             // If the resulting vector is small enough, set the vector to zero vector
-            if (Math.abs(vector.getX()) < THRESHOLD && Math.abs(vector.getY()) < THRESHOLD) {
+            if (Math.abs(vector.magnitude()) < pane.getVectorThreshold()) {
                 vector = Point2D.ZERO;
                 TactilePane.setVector(node, vector);
             }
@@ -85,7 +78,7 @@ class PhysicsTimer extends AnimationTimer {
                 double deltaY = node.getLayoutY() - prevLocation.getY();
                 
                 // Update vector
-                Point2D newVector = TactilePane.getVector(node).add(new Point2D(deltaX , deltaY).multiply(SLIDE));
+                Point2D newVector = TactilePane.getVector(node).add(new Point2D(deltaX , deltaY).multiply(pane.getSlideMultiplier()));
                 TactilePane.setVector(node, newVector);
             }
             // Update vector for Bonds
@@ -142,7 +135,7 @@ class PhysicsTimer extends AnimationTimer {
                         y += anchorBounds.getMaxY() - nodeBounds.getHeight();
                         break;
                     case BASELINE:
-                        //TODO: Support Baseline alignment?
+                        // TODO Support Baseline alignment?
                         break;
                 }
                 node.setLayoutX(x);
@@ -232,7 +225,7 @@ class PhysicsTimer extends AnimationTimer {
             // Relocate node to the wall it collides with
             node.setLayoutX(node.getLayoutX() + deltaX);
             node.setLayoutY(node.getLayoutY() + deltaY);
-            TactilePane.setVector(node, reflectionDelta.multiply(1 / TIME_STEP).multiply(BOUNCE));
+            TactilePane.setVector(node, reflectionDelta.multiply(1 / TIME_STEP).multiply(pane.getBounceMultiplier()));
             
             // Layout the node for the remaining delta
             layoutNode(node, reflectionDelta);

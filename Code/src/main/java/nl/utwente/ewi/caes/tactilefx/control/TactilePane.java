@@ -1,4 +1,4 @@
-package nl.utwente.cs.caes.tactile.control;
+package nl.utwente.ewi.caes.tactilefx.control;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +15,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -33,8 +34,8 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
-import nl.utwente.cs.caes.tactile.event.TactilePaneEvent;
-import nl.utwente.cs.caes.tactile.skin.TactilePaneSkin;
+import nl.utwente.ewi.caes.tactilefx.event.TactilePaneEvent;
+import nl.utwente.ewi.caes.tactilefx.skin.TactilePaneSkin;
 
 /**
  * <p>
@@ -551,7 +552,7 @@ public class TactilePane extends Control {
     /**
      * Gives the {@code move} Node a velocity vector with a direction so that it will move
      * away from the {@code from} Node. The speed with which the Node moves away
-     * depends on {@code force}, which is the magniute of the vector.
+     * depends on {@code force}, which is the magnitude of the vector.
      * @param move  The Node that should move away
      * @param from  The Node it should move away from
      * @param force The magnitude of the vector that the Node gets
@@ -593,13 +594,12 @@ public class TactilePane extends Control {
      * @param from  The Node it should move away from
      */
     public static void moveAwayFrom(Node move, Node from) {
-    	moveAwayFrom(move, from, PhysicsTimer.DEFAULT_FORCE);
+    	moveAwayFrom(move, from, 100d);
     }
     
     // INSTANCE VARIABLES
     private final PhysicsTimer physics;
-    //TODO: Eventually package private, currently only for debug
-    public final QuadTree quadTree;
+    protected final QuadTree quadTree;
     private final ObservableSet<Node> activeNodes;
     
     // CONSTRUCTORS
@@ -770,6 +770,9 @@ public class TactilePane extends Control {
         EventHandler<TouchEvent> touchHandler = (EventHandler<TouchEvent>) getConstraint(node, TOUCH_EVENT_HANDLER);
         EventHandler<MouseEvent> mouseHandler = (EventHandler<MouseEvent>) getConstraint(node, MOUSE_EVENT_HANDLER);
         
+        // assuming that mouseHandler will be null if touchHandler is null
+        if (touchHandler == null) return;
+        
         if (getDragProcessingMode() == EventProcessingMode.FILTER) {
             node.removeEventFilter(TouchEvent.ANY, touchHandler);
             node.removeEventFilter(MouseEvent.ANY, mouseHandler);
@@ -929,6 +932,132 @@ public class TactilePane extends Control {
      */
     public final DoubleProperty proximityThresholdProperty() {
         return quadTree.proximityThresholdProperty();
+    }
+    
+    /**
+     * A scalar by which a vector is multiplied during every physics calculation.
+     * Must between 0 and 1. Influences how fast a node stops moving after it has
+     * been given a vector.
+     * 
+     * @defaultValue 0.95
+     */
+    private DoubleProperty frictionMultiplier;
+    
+    public final double getFrictionMultiplier() {
+        return frictionMultiplierProperty().get();
+    }
+    
+    public final void setFrictionMultiplier(double frictionMultiplier) {
+        frictionMultiplierProperty().set(frictionMultiplier);
+    }
+    
+    public final DoubleProperty frictionMultiplierProperty() {
+        if (frictionMultiplier == null) {
+            frictionMultiplier = new SimpleDoubleProperty(0.95) {
+                @Override
+                public void set(double value) {
+                    if (value < 0 || value > 1) {
+                        throw new IllegalArgumentException("FrictionMultiplier must be between 0 and 1");
+                    }
+                    super.set(value);
+                }
+            };
+        }
+        return frictionMultiplier;
+    }
+   
+    /**
+     * A scalar by which a node's vector is multiplied whenever it collides with
+     * a border of the TactilePane. Must be a value between 0 and 1. Influences
+     * how much energy it loses retains after bouncing off a border.
+     *
+     * @defaultValue 0.7
+     */
+    private DoubleProperty bounceMultiplier;
+    
+    public final double getBounceMultiplier() {
+        return bounceMultiplierProperty().get();
+    }
+    
+    public final void setBounceMultiplier(double bounceMultiplier) {
+        bounceMultiplierProperty().set(bounceMultiplier);
+    }
+    
+    public final DoubleProperty bounceMultiplierProperty() {
+        if (bounceMultiplier == null) {
+            bounceMultiplier = new SimpleDoubleProperty(0.70) {
+                @Override
+                public void set(double value) {
+                    if (value < 0 || value > 1) {
+                        throw new IllegalArgumentException("BounceMultiplier must be between 0 and 1");
+                    }
+                    super.set(value);
+                }
+            };
+        }
+        return bounceMultiplier;
+    }
+
+    /**
+     * A scalar by which a vector is multiplied if its node is configured to
+     * slide on release. May not be a negative value. Influences how much speed the
+     * node will have when it is released.
+     *
+     * @defaultValue 1.6
+     */
+    private DoubleProperty slideMultiplier;
+    
+    public double getSlideMultiplier() {
+        return slideMultiplierProperty().get();
+    }
+    
+    public void setSlideMultiplier(double slideMultiplier) {
+        slideMultiplierProperty().set(slideMultiplier);
+    }
+    
+    public DoubleProperty slideMultiplierProperty() {
+        if (slideMultiplier == null) {
+            slideMultiplier = new SimpleDoubleProperty(1.6) {
+                @Override
+                public void set(double value) {
+                    if (value < 0) {
+                        throw new IllegalArgumentException("SlideMultiplier may not be a negative number");
+                    }
+                    super.set(value);
+                }
+            };
+        }
+        return slideMultiplier;
+    }
+    
+    /**
+     * The minimum magnitude a vector must have before it is reset to a zero vector.
+     * 
+     * @defaultValue 2.5
+     */
+    private DoubleProperty vectorThreshold;
+    
+    public double getVectorThreshold() {
+        return vectorThresholdProperty().get();
+    }
+    
+    public void setVectorThreshold(double vectorThreshold) {
+        vectorThresholdProperty().set(vectorThreshold);
+    }
+    
+    public DoubleProperty vectorThresholdProperty() {
+        if (vectorThreshold == null) {
+            vectorThreshold = new SimpleDoubleProperty(1.6) {
+                @Override
+                public void set(double value) {
+                    if (value < 0) {
+                        throw new IllegalArgumentException("VectorThreshold may not be a negative number");
+                    }
+                    super.set(value);
+                }
+            };
+        }
+        return vectorThreshold;
     }
     
     // STYLESHEET HANDLING

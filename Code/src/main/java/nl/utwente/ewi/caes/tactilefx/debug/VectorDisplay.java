@@ -1,4 +1,4 @@
-package nl.utwente.cs.caes.tactile.debug;
+package nl.utwente.ewi.caes.tactilefx.debug;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;

@@ -1,4 +1,4 @@
 /**
  * Provides the core control of TactileAPI.
  */
-package nl.utwente.cs.caes.tactile.control;
+package nl.utwente.ewi.caes.tactilefx.control;
