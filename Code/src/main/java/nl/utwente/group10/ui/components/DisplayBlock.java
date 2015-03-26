@@ -23,7 +23,7 @@ public class DisplayBlock extends Block {
 	 * @return new DisplayBlock instance
 	 * @throws IOException
 	 */
-    private static DisplayBlock newInstance() throws IOException {
+    public static DisplayBlock newInstance() throws IOException {
         DisplayBlock block = FXMLLoader.load(DisplayBlock.class.getResource("/ui/DisplayBlock.fxml"), null, new TactileBuilderFactory());
         return block;
     }
