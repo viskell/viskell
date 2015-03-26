@@ -1,4 +1,4 @@
-.functionBlock {
+.block {
 	-fx-font-size: 20px;
 	-fx-font-weight: bold;
 	-fx-background-color:aliceblue;
@@ -22,4 +22,8 @@
 }
 .functionBlockNestSpace{
 	-fx-padding: 15;
+}
+
+.value.block {
+	-fx-background-color: #8e44ad;
 }
