@@ -28,7 +28,7 @@ public class ExprTest {
                         new Ident("(*)")
                 ),
                 new Value(
-                        new ListT(new ConstT("Integer")),
+                        new ListT(new ConstT("Int")),
                         "[1, 2, 3, 5, 7]"
                 )
         );
@@ -42,7 +42,7 @@ public class ExprTest {
 
     @Test
     public final void testAnalyze() throws HaskellTypeError {
-        assertEquals("[Integer]", this.expr.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertEquals("[(Int -> Int)]", this.expr.analyze(this.env, this.genSet).prune().toHaskellType());
     }
 
     @Test

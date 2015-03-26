@@ -36,7 +36,7 @@ public class Apply extends Expr {
     @Override
     public final Type analyze(final Env env, final GenSet genSet) throws HaskellTypeError {
         final Type funcType = func.analyze(env, genSet);
-        final Type argType = func.analyze(env, genSet);
+        final Type argType = arg.analyze(env, genSet);
         final Type resType = HindleyMilner.makeVariable();
 
 
