@@ -25,16 +25,16 @@ public class OutputBlock extends Block {
 	 */
     private static OutputBlock newInstance() throws IOException {
         OutputBlock block = FXMLLoader.load(OutputBlock.class.getResource("/ui/OutputBlock.fxml"), null, new TactileBuilderFactory());
-        ((Label) block.lookup("#label_value")).setText("Connect Input");
         return block;
     }
     
     /**
-     * Sets the input flowing into the OutputBlock
+     * Sets the input flowing into the OutputBlock and refresh the display.
      * @param input
      */
     public void setInput(String inputValue) {
     	input = inputValue;
+    	((Label) this.lookup("#label_value")).setText(input);
     }
  
     /**
