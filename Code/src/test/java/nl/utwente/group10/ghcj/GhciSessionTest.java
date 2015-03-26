@@ -21,7 +21,7 @@ public class GhciSessionTest {
     private Expr pi;
 
     @Before
-    private void setUp() throws HaskellException {
+    public void setUp() throws HaskellException {
         this.env = new Env();
         this.genSet = new GenSet();
 

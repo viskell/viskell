@@ -32,7 +32,7 @@ public class GhciSession implements Closeable {
      * @throws HaskellException when the function is rejected by ghci.
      */
     public final Expr push(final String name, final Expr func) throws HaskellException {
-        this.ghci.eval(func.toHaskell());
+        this.ghci.eval(String.format("let %s = %s", name, func.toHaskell()));
         return new Ident(name);
     }
 
