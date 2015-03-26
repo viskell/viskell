@@ -5,7 +5,7 @@
 
 
 <FunctionBlock xmlns:fx="http://javafx.com/fxml/1" styleClass="block">
-	<BorderPane id="foreground" minHeight="90" minWidth = "180">
+	<BorderPane id="foreground" minHeight="90" minWidth="180">
 		<top>
 			<BorderPane>
 				<top>
