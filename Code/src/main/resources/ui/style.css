@@ -23,6 +23,10 @@
 .functionBlockNestSpace{
 	-fx-padding: 15;
 }
-.functionBlockAnchorSpace{
-	-fx-padding: 15;
+.functionBlockArgument{
+	-fx-font-size: 9px;
+	-fx-font-weight: none;
+	-fx-background-color:white;
+	-fx-border-color: black;
+	-fx-border-width: 1;
 }

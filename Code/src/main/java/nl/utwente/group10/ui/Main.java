@@ -26,20 +26,13 @@ public class Main extends Application {
 		FunctionBlock functionBlock2 = FunctionBlock.newInstance(1);
 		FunctionBlock functionBlock3 = FunctionBlock.newInstance(1);
 		FunctionBlock functionBlock4 = FunctionBlock.newInstance(1);
-		
-
-		functionBlock4.nest(FunctionBlock.newInstance(1));
-		functionBlock3.nest(FunctionBlock.newInstance(1));
-		functionBlock3.nest(FunctionBlock.newInstance(1));
-		functionBlock2.nest(functionBlock4);
-		functionBlock2.nest(functionBlock3);
 
 		functionBlock.nest(FunctionBlock.newInstance(1));
 		functionBlock.nest(FunctionBlock.newInstance(1));
 		functionBlock.nest(FunctionBlock.newInstance(1));
 		tactilePane.getChildren().add(functionBlock);
 		tactilePane.getChildren().add(functionBlock2);
-		tactilePane.getChildren().add(FunctionBlock.newInstance(3));
+		tactilePane.getChildren().add(FunctionBlock.newInstance(6));
 
 		// Init Control Pane
 		FlowPane controlLayout = new FlowPane();

@@ -4,19 +4,26 @@
 <?import java.net.*?>
 
 
-<FunctionBlock xmlns:fx="http://javafx.com/fxml/1" styleClass="functionBlock">
+<FunctionBlock xmlns:fx="http://javafx.com/fxml/1" >
 	<BorderPane minHeight="90" minWidth = "180">
 		<top>
-			<FlowPane id="anchor_space" styleClass="functionBlockAnchorSpace" prefWrapLength="100" hgap="5" vgap="5"/>		
+			<FlowPane id="input_anchor_space" prefWrapLength="100" hgap="5" vgap="5"/>		
 		</top>	
-		<bottom>
-			<BorderPane id="foreground" minHeight="90" minWidth = "180">
+		<center>
+			<BorderPane id="foreground" styleClass="functionBlock" minHeight="90" minWidth = "180">
 				<top>
 						<BorderPane>
 							<top>
 								<Label id="label_function_name" text="Function name"
 									styleClass="functionBlockTitle" />
 							</top>
+							<center>
+								<HBox id="argument_space" spacing="10" alignment="center">
+									<Label text=" Integer " styleClass="functionBlockArgument"/>
+									<Label text=" Integer " styleClass="functionBlockArgument"/>
+									<Label text=" Integer " styleClass="functionBlockArgument"/>	
+								</HBox>
+							</center>
 							<bottom>
 								<Label id="label_function_type" text="Function type"
 									styleClass="functionBlockDescription" />
@@ -27,6 +34,11 @@
 					<FlowPane id="nest_space" styleClass="functionBlockNestSpace" prefWrapLength="100" vgap="5"/>
 				</center>
 			</BorderPane>
+		</center>
+		<bottom>
+			<AnchorPane>
+				<FlowPane id="output_anchor_space" prefWrapLength="100" hgap="5" vgap="5" AnchorPane.leftAnchor="90"/>		
+			</AnchorPane>
 		</bottom>
 	</BorderPane>
 	<stylesheets>

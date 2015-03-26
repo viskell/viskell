@@ -1,5 +1,6 @@
 package nl.utwente.group10.ui.components;
 
+import java.awt.Color;
 import java.io.IOException;
 
 import nl.utwente.cs.caes.tactile.fxml.TactileBuilderFactory;
@@ -38,6 +39,10 @@ public class FunctionBlock extends Block {
 		FunctionBlock functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("/ui/FunctionBlock.fxml"), null, new TactileBuilderFactory());
 		functionBlock.initializeArguments(numberOfArguments);
 
+		//TODO put in new method
+		ConnectionAnchor newAnchor = ConnectionAnchor.newInstance();
+		Pane anchorSpace = (Pane) functionBlock.lookup("#output_anchor_space");
+		anchorSpace.getChildren().add(newAnchor);
 		return functionBlock;
 	}
 	
@@ -89,8 +94,12 @@ public class FunctionBlock extends Block {
 		for(int i = 0;i<numberOfArguments; i++){
 			ConnectionAnchor newAnchor = ConnectionAnchor.newInstance();
 			inputs[i] = newAnchor;
-			Pane anchorSpace = (Pane) this.lookup("#anchor_space");
+			Pane anchorSpace = (Pane) this.lookup("#input_anchor_space");
 			anchorSpace.getChildren().add(newAnchor);
+			Pane argumentSpace = (Pane) this.lookup("#argument_space");
+			//TODO get css styling on these arguments
+			//Label argument = new Label("Integer");
+		    //argumentSpace.getChildren().add(argument);
 		}
 	}
 	
