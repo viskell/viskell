@@ -2,20 +2,13 @@ package nl.utwente.group10.ui.components;
 
 import java.io.IOException;
 
-import nl.utwente.cs.caes.tactile.fxml.TactileBuilderFactory;
+import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 import nl.utwente.group10.ui.Main;
 import nl.utwente.group10.ui.components.Line;
-import javafx.scene.paint.Color;
-import javafx.beans.property.DoubleProperty;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.control.Label;
-
 
 /**
  * This class represents a connection between two different FunctionBlocks. The

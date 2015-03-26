@@ -3,9 +3,8 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.*?>
 
-
-<FunctionBlock xmlns:fx="http://javafx.com/fxml/1" >
-	<BorderPane minHeight="90" minWidth = "180">
+<FunctionBlock xmlns:fx="http://javafx.com/fxml/1" styleClass="block">
+	<BorderPane id="foreground" minHeight="90" minWidth="180">
 		<top>
 			<FlowPane id="input_anchor_space" prefWrapLength="100" hgap="5" vgap="5"/>		
 		</top>	

@@ -2,7 +2,9 @@ package nl.utwente.group10.ui;
 
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
+import nl.utwente.group10.ui.components.DisplayBlock;
 import nl.utwente.group10.ui.components.FunctionBlock;
+import nl.utwente.group10.ui.components.ValueBlock;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -32,7 +34,10 @@ public class Main extends Application {
 		functionBlock.nest(FunctionBlock.newInstance(1));
 		tactilePane.getChildren().add(functionBlock);
 		tactilePane.getChildren().add(functionBlock2);
-		tactilePane.getChildren().add(FunctionBlock.newInstance(6));
+		
+		tactilePane.getChildren().add(FunctionBlock.newInstance(0));
+		tactilePane.getChildren().add(ValueBlock.newInstance("6"));
+		tactilePane.getChildren().add(DisplayBlock.newInstance());
 
 		// Init Control Pane
 		FlowPane controlLayout = new FlowPane();
