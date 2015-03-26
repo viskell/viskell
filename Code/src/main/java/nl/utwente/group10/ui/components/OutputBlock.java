@@ -21,8 +21,7 @@ public class OutputBlock extends Block {
 	private boolean output;
 	
 	/**
-	 * Creates a new instance of OutputBlock should only ever be called
-	 * internally by the class, for instantiation see other newInstance method.
+	 * Creates a new instance of OutputBlock.
 	 * @return new OutputBlock instance
 	 * @throws IOException
 	 */
@@ -63,5 +62,17 @@ public class OutputBlock extends Block {
     public void enableOutput(boolean enabledState) {
     	output = enabledState;
     }
-    
+ 
+    /**
+     * If output has been enabled the initial input value will be returned,
+     * if output has been disabled a null value will be returned instead.
+     * @return outputValue
+     */
+    public String getOutput() {
+    	String returnval = null;
+    	if (output) {
+    		returnval = input;
+    	}
+    	return returnval;
+    }
 }
