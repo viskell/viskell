@@ -5,25 +5,33 @@
 	-fx-border-color: black;
 	-fx-border-width: 2;
 }
-.functionBlockBackground{
+.functionBlockBackground {
 	-fx-text-fill: #333333;
 	-fx-fill: aliceblue;
 	-fx-stroke: black;
 	-fx-stroke-width: 2;
 }
-.functionBlockTitle{
+.functionBlockTitle {
 	-fx-font-size: 20px;
 	-fx-font-weight: bold;
 	-fx-padding: 0 0 2 5;
 }
-.functionBlockDescription{
+.functionBlockDescription {
 	-fx-font-size: 12px;
 	-fx-padding: 0;
 }
-.functionBlockNestSpace{
+.functionBlockNestSpace {
 	-fx-padding: 15;
 }
 
 .value.block {
 	-fx-background-color: #8e44ad;
+}
+
+.output.block {
+	-fx-background-color: #c0392b;
+}
+
+.value.block .title, .output.block .title {
+	-fx-text-fill: #ecf0f1;
 }
