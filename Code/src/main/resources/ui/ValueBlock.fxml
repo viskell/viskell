@@ -7,7 +7,7 @@
             <Label id="label_header" text="VALUE" styleClass="header" />
             </top>
             <center>
-            <Label text="${controller.blockValue}" styleClass="title" />
+            <Label text="${controller.value}" styleClass="title" />
             </center>
         </BorderPane>
 </fx:root>

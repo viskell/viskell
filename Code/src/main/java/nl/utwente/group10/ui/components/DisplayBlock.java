@@ -18,15 +18,15 @@ import java.io.IOException;
  */
 public class DisplayBlock extends Block {
 
-    /** The input this Block is receiving.**/
-    private StringProperty input;
+    /** The output this Block is displaying.**/
+    private StringProperty output;
     
     public DisplayBlock() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/DisplayBlock.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
     
-        input = new SimpleStringProperty("New Output");
+        output = new SimpleStringProperty("New Output");
         
         fxmlLoader.load();
     }
@@ -41,20 +41,18 @@ public class DisplayBlock extends Block {
     }
 
     /**
-     * Sets the input flowing into the DisplayBlock and refresh the display.
-     * @param input
+     * Sets the output flowing into the DisplayBlock and refresh the display.
+     * @param output
      */
-    public void setInput(String inputValue) {
-        input.set(inputValue);
+    public void setOutput(String inputValue) {
+        output.set(inputValue);
     }
 
     /**
-     * Returns the input value this Block has, to avoid confusion
-     * from other blocks who expect output from a block the method
-     * has been named getOutput instead of getInput
+     * Returns the output value this Block has.
      * @return outputValue
      */
     public String getOutput() {
-        return input.get();
+        return output.get();
     }
 }

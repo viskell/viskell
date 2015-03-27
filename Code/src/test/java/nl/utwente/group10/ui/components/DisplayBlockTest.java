@@ -17,7 +17,7 @@ public class DisplayBlockTest extends ComponentTest {
         DisplayBlock block = DisplayBlock.newInstance();
         assertEquals(block.getOutput(), "New Output");
 
-        block.setInput("8");
+        block.setOutput("8");
         assertEquals(block.getOutput(), "8");
     }
 }

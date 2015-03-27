@@ -47,7 +47,7 @@ public class ValueBlock extends Block {
      * Sets the value of this block so it can be used as output.
      * @param value
      */
-    public void setOutput(String StringVal) {
+    public void setValue(String StringVal) {
         this.value.set(StringVal);
     }
 
@@ -55,7 +55,7 @@ public class ValueBlock extends Block {
      * Returns the value that this block is outputting.
      * @return output
      */
-    public String getOutput() {
+    public String getValue() {
         return value.get();
     }
 }
