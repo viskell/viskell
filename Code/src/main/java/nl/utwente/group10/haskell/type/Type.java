@@ -6,9 +6,6 @@ import java.util.logging.Logger;
 
 /**
  * Abstract class for Haskell types. Provides an interface for common methods.
- *
- * Types should be immutable. Also, a Type subclass instance that represents the same in Haskell as another instance of
- * the same class should be equal, that is {@code this.equals(that)} should return {@code true}.
  */
 public abstract class Type extends HaskellObject {
     /** Logger instance for types. */
