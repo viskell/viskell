@@ -49,20 +49,20 @@ public class ConstT extends Type {
     }
 
     @Override
-    public String toHaskellType() {
+    public final String toHaskellType() {
         StringBuilder out = new StringBuilder();
         out.append(this.constructor);
 
-        for (int i = 0; i < this.args.length; i++) {
+        for (Type arg : this.args) {
             out.append(" ");
-            out.append(this.args[i].toHaskellType());
+            out.append(arg.toHaskellType());
         }
 
         return out.toString();
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         if (this.args.length > 0) {
             return String.format("(%s %s)", this.constructor, Joiner.on(' ').join(this.args));
         } else {
