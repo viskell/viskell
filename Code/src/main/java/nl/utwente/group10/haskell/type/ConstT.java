@@ -41,7 +41,6 @@ public class ConstT extends Type {
 
     @Override
     public final Type prune() {
-
         for (int i = 0; i < this.args.length; i++) {
             this.args[i] = this.args[i].prune();
         }
