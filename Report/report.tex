@@ -10,6 +10,7 @@
 \usepackage{titling}
 \usepackage{imakeidx}
 \usepackage{parskip}
+\usepackage{cite}
 \usepackage[nottoc]{tocbibind}
 \usepackage[hidelinks]{hyperref}
 \usepackage[toc,section=chapter]{glossaries}
@@ -64,9 +65,8 @@
 
 \include{Chapters/Recommendations}
 
-\begin{thebibliography}{999}
-\input{Chapters/Bibliography}
-\end{thebibliography}
+\bibliography{Chapters/Bibliography}{}
+\bibliographystyle{unsrt}
 
 \printindex
 
