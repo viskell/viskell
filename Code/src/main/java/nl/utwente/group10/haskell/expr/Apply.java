@@ -23,7 +23,7 @@ public class Apply extends Expr {
 
     /**
      * Applies an argument to a function to produce a new expression. The application is lazy, the type needs to be
-     * analyzed before it can be resolved.
+     * analyzed before there is certainty about the validity of this application and the resulting type.
      *
      * @param func The expression to apply argument to.
      * @param arg The argument to apply.
