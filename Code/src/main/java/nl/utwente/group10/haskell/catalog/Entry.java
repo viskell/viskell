@@ -1,6 +1,7 @@
 package nl.utwente.group10.haskell.catalog;
 
 import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 
 /** A function entry in the Haskell catalog. */
 public class Entry {
@@ -63,6 +64,7 @@ public class Entry {
      * @return The Type of this Entry.
      */
     public final Type getType() {
-        return null; // TODO Let this return the type of this Entry when the type parser is fixed.
+        TypeBuilder builder = new TypeBuilder();
+        return builder.build(this.getSignature());
     }
 }
