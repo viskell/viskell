@@ -3,6 +3,15 @@ package nl.utwente.group10.ui.components;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import java.io.IOException;
+
+import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
+import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.Main;
+import nl.utwente.group10.ui.gestures.CustomGesture;
+import nl.utwente.group10.ui.gestures.UIEvent;
+import nl.utwente.group10.ui.gestures.GestureCallBack;
+import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -23,6 +32,9 @@ public class FunctionBlock extends Block {
 
 	/** The type of this Function. **/
 	private StringProperty type;
+	
+	/** intstance to create Events for this FunctionBlock. **/
+	private static CustomGesture cg;
 
 	@FXML
 	private Pane nestSpace;
@@ -35,12 +47,16 @@ public class FunctionBlock extends Block {
 		name = new SimpleStringProperty("Function name");
 		type = new SimpleStringProperty("Function type");
 
+		cg = new CustomGesture(this, this);
+		
 		initializeArguments(numArgs);
 
 		fxmlLoader.load();
 	}
 
-	public static FunctionBlock newInstance(int numArgs) throws IOException {
+	public static FunctionBlock newInstance(int numArgs, CustomUIPane pane) throws IOException {
+		cup = pane;
+
 		return new FunctionBlock(numArgs);
 	}
 	

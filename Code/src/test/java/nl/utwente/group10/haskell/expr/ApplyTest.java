@@ -1,64 +1,95 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ApplyTest {
-    private Type T_integer;
-    private Type T_float;
-    private Type T_string;
-    private Type T_numeric;
-    private Type T_a;
-    private Type T_b;
-    private Type T_c;
+    private final Type alpha = new VarT("a");
+    private final Type beta = new VarT("b");
+    private final Type gamma = new VarT("c");
+    private final Type alphaList = new ListT(this.alpha);
+    private final Type betaList = new ListT(this.beta);
+    private final Type integer = new ConstT("Int");
+    private final Type integerList = new ListT(this.integer);
+    private final Type string = new ConstT("String");
+    private final Type stringList = new ListT(this.string);
+
+    private Env env;
+    private GenSet genSet;
 
     @Before
-    public void setUp() {
-        // Some primitive types
-        this.T_integer = new ConstT("Integer");
-        this.T_float = new ConstT("Float");
-        this.T_string = new ConstT("String");
+    public final void setUp() {
+        this.env = new Env();
+        this.genSet = new GenSet();
 
-        // A typeclass
-        this.T_numeric = new TypeClass("Num", T_integer, T_float);
-
-        // Two variable types
-        this.T_a = new VarT("a", T_numeric);
-        this.T_b = new VarT("b", T_numeric);
-        this.T_c = new VarT("c", T_numeric, T_string);
+        this.env.put("id", new FuncT(this.gamma, this.gamma));
+        this.env.put("(+)", new FuncT(this.integer, new FuncT(this.integer, this.integer)));
+        this.env.put("map", new FuncT(new FuncT(this.alpha, this.beta), new FuncT(this.alphaList, this.betaList)));
+        this.env.put("zip", new FuncT(this.alphaList, new FuncT(this.betaList, new ListT(new TupleT(this.alpha, this.beta)))));
+        this.env.put("lcm", new FuncT(this.alpha, new FuncT(this.alpha, this.alpha)));
     }
 
     @Test
-    public void testSimpleType() throws HaskellException {
-        Func add = new EnvFunc("(+)", new FuncT(T_integer, T_integer, T_integer));
-        Apply a = new Apply(add, new Value(T_integer, "4"), new Value(T_integer, "6"));
+    public final void testId() throws HaskellTypeError {
+        final Apply apply = new Apply(new Ident("id"), new Value(this.integer, "42"));
 
-        assertEquals(a.toHaskell(), "(+) 4 6");
-        assertEquals(a.getType(), T_integer);
+        assertEquals("(id 42)", apply.toHaskell());
+        assertEquals(this.integer.toHaskellType(), apply.analyze(this.env, this.genSet).prune().toHaskellType());
     }
 
-//    @Test
-//    public void testCompositeType() throws HaskellException {
-//        Func massive = new EnvFunc("massive", new FuncT(T_a, T_b, T_c, new TupleT(T_a, T_b, T_c), T_string));
-//
-//        // First application
-//        Apply a1 = new Apply(massive, new Value(T_float, "1.2"), new Value(T_integer, "0"), new Value(T_string, "\"a\""));
-//        assertEquals(a1.getType().toHaskellType(), new FuncT(new TupleT(T_integer, T_float, T_string), T_string).toHaskellType());
-//        assertEquals(a1.toHaskell(), "massive 1.2 0 \"a\"");
-//
-//        // Second application
-//        Apply a2 = new Apply(a1, new Value(new TupleT(T_a, T_b, T_c), "(4.5, 3, \"b\")"));
-//        assertEquals(a2.getType(), T_string);
-//        assertEquals(a2.toHaskell(), "massive 1.2 0 \"a\" (4.5, 3, \"b\")");
-//
-//        // Third application
-//        Apply a3 = new Apply(massive, new Value(T_float, "1.2"), new Value(T_integer, "0"),
-//                new Value(T_string, "\"a\""), new Value(new TupleT(T_a, T_b, T_c), "(4.5, 3, \"b\")"));
-//        assertEquals(a3.getType(), a2.getType());
-//        assertEquals(a3.toHaskell(), a2.toHaskell());
-//    }
+    @Test
+    public final void testAdd() throws HaskellTypeError {
+        final Apply apply1 = new Apply(new Ident("(+)"), new Value(this.integer, "42"));
+        final Apply apply2 = new Apply(apply1, new Value(this.integer, "42"));
+
+        assertEquals("((+) 42)", apply1.toHaskell());
+        assertEquals("(((+) 42) 42)", apply2.toHaskell());
+
+        assertEquals(new FuncT(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertEquals(this.integer.toHaskellType(), apply2.analyze(this.env, this.genSet).prune().toHaskellType());
+    }
+
+    @Test
+    public final void testMap() throws HaskellTypeError {
+        final Apply apply0 = new Apply(new Ident("(+)"), new Value(this.integer, "42"));
+        final Apply apply1 = new Apply(new Ident("map"), apply0);
+        final Apply apply2 = new Apply(apply1, new Value(this.integerList, "[1, 2, 3, 5, 7]"));
+
+        assertEquals("(map ((+) 42))", apply1.toHaskell());
+        assertEquals("((map ((+) 42)) [1, 2, 3, 5, 7])", apply2.toHaskell());
+
+        assertEquals(new FuncT(this.integerList, this.integerList).toHaskellType(), apply1.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertEquals(this.integerList.toHaskellType(), apply2.analyze(this.env, this.genSet).prune().toHaskellType());
+    }
+
+    @Test
+    public final void testZip() throws HaskellTypeError {
+        final Apply apply1 = new Apply(new Ident("zip"), new Value(this.integerList, "[1, 2, 3, 5, 7]"));
+        final Apply apply2 = new Apply(apply1, new Value(this.stringList, "[\"a\", \"b\", \"c\"]"));
+
+        assertEquals("(zip [1, 2, 3, 5, 7])", apply1.toHaskell());
+        assertEquals("((zip [1, 2, 3, 5, 7]) [\"a\", \"b\", \"c\"])", apply2.toHaskell());
+
+        assertEquals(new FuncT(this.betaList, new ListT(new TupleT(this.integer, this.beta))).toHaskellType(), apply1.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertEquals(new ListT(new TupleT(this.integer, this.string)).toHaskellType(), apply2.analyze(this.env, this.genSet).prune().toHaskellType());
+    }
+
+    @Test(expected=HaskellTypeError.class)
+    public final void testIncorrectLcm() throws HaskellTypeError {
+        final Apply apply1 = new Apply(new Ident("lcm"), new Value(this.integer, "42"));
+        final Apply apply2 = new Apply(apply1, new Value(this.string, "\"haskell\""));
+
+        assertEquals("(lcm 42)", apply1.toHaskell());
+        assertEquals("((lcm 42) \"haskell\")", apply2.toHaskell());
+
+        assertEquals(new FuncT(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertNotEquals(this.string, apply2.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertNotEquals(this.integer, apply2.analyze(this.env, this.genSet).prune().toHaskellType());
+    }
 }

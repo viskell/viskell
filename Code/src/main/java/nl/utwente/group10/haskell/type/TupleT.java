@@ -1,80 +1,32 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.Arrays;
-import java.util.Map;
-
 /**
- * Tuple type. Has a fixed number of elements.
+ * Tuple type.
  */
-public class TupleT extends CompositeType {
+public class TupleT extends ConstT {
     /**
-     * Types of the elements in the tuple.
+     * @param args The types of the elements for this tuple.
      */
-    private final Type[] elementTypes;
-
-    /**
-     * @param elementTypes Types of the elements in the tuple.
-     */
-    public TupleT(final Type... elementTypes) {
-        this.elementTypes = elementTypes.clone();
-    }
-
-    @Override
-    public final boolean compatibleWith(final Type other) {
-        boolean compatible = true;
-
-        if (other instanceof TupleT && this.elementTypes.length == ((TupleT) other).elementTypes.length) {
-            for (int i = 0; i < this.elementTypes.length; i++) {
-                if (!this.elementTypes[i].compatibleWith(((TupleT) other).elementTypes[i])) {
-                    compatible = false;
-                    break;
-                }
-            }
-        } else {
-            compatible = false;
-        }
-
-        return compatible;
-    }
-
-    @Override
-    public final TupleT getResolvedType(final Map<VarT, Type> types) {
-        final Type[] elementTypes = new Type[this.elementTypes.length];
-
-        for (int i = 0; i < this.elementTypes.length; i++) {
-            if (this.elementTypes[i] instanceof CompositeType) {
-                elementTypes[i] = ((CompositeType) this.elementTypes[i]).getResolvedType(types);
-            } else if (this.elementTypes[i] instanceof VarT && types.containsKey(this.elementTypes[i])) {
-                elementTypes[i] = types.get(this.elementTypes[i]);
-            } else {
-                elementTypes[i] = this.elementTypes[i];
-            }
-        }
-
-        return new TupleT(elementTypes);
+    public TupleT(Type... args) {
+        super("(,)", args);
     }
 
     @Override
     public final String toHaskellType() {
-        final StringBuilder out = new StringBuilder();
+        StringBuilder out = new StringBuilder();
+        Type[] args = this.getArgs();
+
         out.append("(");
 
-        for (int i = 0; i < this.elementTypes.length; i++) {
-            out.append(this.elementTypes[i].toHaskellType());
+        for (int i = 0; i < args.length; i++) {
+            out.append(args[i].toHaskellType());
 
-            if (i + 1 < this.elementTypes.length) {
+            if (i + 1 < args.length) {
                 out.append(", ");
             }
         }
 
         out.append(")");
         return out.toString();
-    }
-
-    @Override
-    public final String toString() {
-        return "TupleT{" +
-                "elementTypes=" + Arrays.toString(this.elementTypes) +
-                '}';
     }
 }
