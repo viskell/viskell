@@ -40,6 +40,5 @@ public class IdentTest {
     @Test(expected=HaskellTypeError.class)
     public final void testIncorrectName() throws HaskellTypeError {
         new Ident("id").analyze(new Env(), new GenSet());
-        assertTrue("Invalid state reached: exception not raised.", false);
     }
 }
