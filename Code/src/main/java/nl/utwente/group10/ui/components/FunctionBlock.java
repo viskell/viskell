@@ -3,7 +3,12 @@ package nl.utwente.group10.ui.components;
 import java.io.IOException;
 
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
+import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.Main;
+import nl.utwente.group10.ui.gestures.CustomGesture;
+import nl.utwente.group10.ui.gestures.UIEvent;
+import nl.utwente.group10.ui.gestures.GestureCallBack;
+import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -23,17 +28,21 @@ public class FunctionBlock extends Block {
 	private String[] arguments;
 	/** The name of this Function.**/
 	private String functionName;
-	
+	/** intstance to create Events for this FunctionBlock. **/
+	private static CustomGesture cg;
+		
 	/**
 	 * Method that creates a newInstance of this class along with it's visual representation
 	 * @param the number of arguments this FunctionBlock can hold
+	 * @param pane: The CustomUIPane in which this FunctionBlock exists. Via this this FunctionBlock knows which other FunctionBlocks exist.
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public static FunctionBlock newInstance(int numberOfArguments) throws IOException {
+	public static FunctionBlock newInstance(int numberOfArguments, CustomUIPane pane) throws IOException {
 		FunctionBlock functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("/ui/FunctionBlock.fxml"), null, new TactileBuilderFactory());
 		functionBlock.initializeArguments(numberOfArguments);
-
+		cg = new CustomGesture(functionBlock, functionBlock);
+		cup = pane;
 		return functionBlock;
 	}
 	
@@ -44,8 +53,8 @@ public class FunctionBlock extends Block {
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public static FunctionBlock newInstance(int numberOfArguments, String name) throws IOException {
-		FunctionBlock functionBlock = newInstance(numberOfArguments);
+	public static FunctionBlock newInstance(int numberOfArguments, CustomUIPane pane, String name) throws IOException {
+		FunctionBlock functionBlock = newInstance(numberOfArguments, pane);
 		functionBlock.setName(name);
 		
 		return functionBlock;
