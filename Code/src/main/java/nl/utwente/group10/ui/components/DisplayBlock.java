@@ -1,7 +1,10 @@
 package nl.utwente.group10.ui.components;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
+
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 
 import java.io.IOException;
@@ -16,16 +19,25 @@ import java.io.IOException;
 public class DisplayBlock extends Block {
 
     /** The input this Block is receiving.**/
-    private String input;
+    private StringProperty input;
     
+    public DisplayBlock() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/DisplayBlock.fxml"));
+        fxmlLoader.setRoot(this);
+        fxmlLoader.setController(this);
+    
+        input = new SimpleStringProperty("New Output");
+        
+        fxmlLoader.load();
+    }
+
     /**
      * Creates a new instance of DisplayBlock.
      * @return new DisplayBlock instance
      * @throws IOException
      */
     public static DisplayBlock newInstance() throws IOException {
-    	DisplayBlock block = FXMLLoader.load(DisplayBlock.class.getResource("/ui/DisplayBlock.fxml"), null, new TactileBuilderFactory());
-    	return block;
+        return new DisplayBlock();
     }
 
     /**
@@ -33,10 +45,9 @@ public class DisplayBlock extends Block {
      * @param input
      */
     public void setInput(String inputValue) {
-    	input = inputValue;
-    	((Label) this.lookup("#label_value")).setText(input);
+        input.set(inputValue);
     }
- 
+
     /**
      * Returns the input value this Block has, to avoid confusion
      * from other blocks who expect output from a block the method
@@ -44,6 +55,6 @@ public class DisplayBlock extends Block {
      * @return outputValue
      */
     public String getOutput() {
-    	return input;
+        return input.get();
     }
 }

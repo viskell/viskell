@@ -1,8 +1,9 @@
 package nl.utwente.group10.ui.components;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
-import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 
 import java.io.IOException;
 
@@ -18,7 +19,18 @@ import java.io.IOException;
 public class ValueBlock extends Block {
 
     /** The value of this ValueBlock.*/
-    private String blockValue;
+    private StringProperty value;
+
+    
+    public ValueBlock(String val) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ValueBlock.fxml"));
+        fxmlLoader.setRoot(this);
+        fxmlLoader.setController(this);
+        
+        value = new SimpleStringProperty(val);
+        
+        fxmlLoader.load();
+    }
 
     /**
      * Creates a new ValueBlock instance with initialized value,
@@ -28,26 +40,22 @@ public class ValueBlock extends Block {
      * @throws IOException
      */
     public static ValueBlock newInstance(String value) throws IOException {
-        ValueBlock block = FXMLLoader.load(ValueBlock.class.getResource("/ui/ValueBlock.fxml"), null, new TactileBuilderFactory());
-        ((Label) block.lookup("#label_value")).setText(value);
-        block.setOutput(value);
-        
-        return block;
+        return new ValueBlock(value);
     }
-    
+
     /**
      * Sets the value of this block so it can be used as output.
      * @param value
      */
-    private void setOutput(String value) {
-    	blockValue = value;
+    public void setOutput(String StringVal) {
+        this.value.set(StringVal);
     }
-    
+
     /**
      * Returns the value that this block is outputting.
      * @return output
      */
     public String getOutput() {
-    	return blockValue;
+        return value.get();
     }
 }

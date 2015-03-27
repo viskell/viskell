@@ -1,11 +1,13 @@
-<?import nl.utwente.group10.ui.components.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import java.net.*?>
 
-<ValueBlock>
-    <VBox styleClass="value, block" alignment="CENTER_LEFT" spacing="12">
-        <Label id="label_header" text="VALUE" styleClass="header" alignment="CENTER_LEFT" />
-        <Label id="label_value" text="10" styleClass="title" alignment="CENTER_LEFT" />
-    </VBox>
-</ValueBlock>
+<fx:root type="nl.utwente.group10.ui.components.ValueBlock" xmlns:fx="http://javafx.com/fxml/" styleClass="value, block">
+        <BorderPane>
+            <top>
+            <Label id="label_header" text="VALUE" styleClass="header" />
+            </top>
+            <center>
+            <Label text="${controller.blockValue}" styleClass="title" />
+            </center>
+        </BorderPane>
+</fx:root>

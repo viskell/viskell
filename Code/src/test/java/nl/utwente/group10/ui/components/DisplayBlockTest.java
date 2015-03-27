@@ -15,7 +15,7 @@ public class DisplayBlockTest extends ComponentTest {
     @Test
     public void inputOutputTest() throws IOException {
         DisplayBlock block = DisplayBlock.newInstance();
-        assertNull(block.getOutput());
+        assertEquals(block.getOutput(), "New Output");
 
         block.setInput("8");
         assertEquals(block.getOutput(), "8");
