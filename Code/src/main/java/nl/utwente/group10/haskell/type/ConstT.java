@@ -49,7 +49,7 @@ public class ConstT extends Type {
     }
 
     @Override
-    public final String toHaskellType() {
+    public String toHaskellType() {
         StringBuilder out = new StringBuilder();
         out.append(this.constructor);
 
@@ -62,7 +62,7 @@ public class ConstT extends Type {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         if (this.args.length > 0) {
             return String.format("(%s %s)", this.constructor, Joiner.on(' ').join(this.args));
         } else {
