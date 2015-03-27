@@ -5,19 +5,9 @@ import static org.junit.Assert.*;
 
 public class TupleTTest {
     @Test
-    public void toHaskellTypeTest() {
-        ConstT integer = new ConstT("Integer");
-        TupleT tt = new TupleT(integer, integer);
-        assertEquals("(Integer, Integer)", tt.toHaskellType());
-    }
-
-    @Test
-    public void testCompatibleWith() {
-        ConstT integer = new ConstT("Integer");
-        TupleT tt = new TupleT(integer, integer);
-        assertTrue(tt.compatibleWith(tt));
-        assertTrue(tt.compatibleWith(new TupleT(new ConstT("Integer"), new ConstT("Integer"))));
-        assertFalse(tt.compatibleWith(new TupleT(new ConstT("Integer"), new ConstT("String"))));
-        assertFalse(tt.compatibleWith(new TupleT(new ConstT("Integer"))));
+    public final void toHaskellTypeTest() {
+        final ConstT integer = new ConstT("Integer");
+        final TupleT tuple = new TupleT(integer, integer);
+        assertEquals("(Integer, Integer)", tuple.toHaskellType());
     }
 }
