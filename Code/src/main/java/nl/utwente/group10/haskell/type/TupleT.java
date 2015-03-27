@@ -1,10 +1,5 @@
 package nl.utwente.group10.haskell.type;
 
-import com.google.common.base.Joiner;
-
-import java.util.Arrays;
-import java.util.Map;
-
 /**
  * Tuple type.
  */
