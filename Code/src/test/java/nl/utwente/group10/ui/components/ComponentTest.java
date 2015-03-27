@@ -8,6 +8,8 @@ import org.junit.BeforeClass;
  * Superclass for component tests.
  */
 public class ComponentTest {
+    private static Thread t = null;
+
     /**
      * Test Application extension with voided start method
      * to enable setup of unit testing.
@@ -25,12 +27,14 @@ public class ComponentTest {
      */
     @BeforeClass
     public static void initJFX() {
-        Thread t = new Thread("JavaFX Init Thread") {
-            public void run() {
-                Application.launch(MockApp.class);
-            }
-        };
-        t.setDaemon(true);
-        t.start();
+        if (t == null) {
+            t = new Thread("JavaFX Init Thread") {
+                public void run() {
+                    Application.launch(MockApp.class);
+                }
+            };
+            t.setDaemon(true);
+            t.start();
+        }
     }
 }
