@@ -7,7 +7,7 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class ValueBlockTest {
+public class ValueBlockTest extends ComponentTest {
     @Test
     public void initTest() throws IOException {
         assertNotNull(ValueBlock.newInstance("6"));
