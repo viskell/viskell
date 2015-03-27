@@ -29,7 +29,7 @@ public class Block extends StackPane implements GestureCallBack {
 	
 	@Override
 	public void handleCustomEvent(UIEvent event) {
-		EventType<UIEvent> eventType = (EventType<UIEvent>) event
+		EventType eventType = event
 				.getEventType();
 		if (eventType.equals(UIEvent.TAP)) {
 			for(Node n : cup.getChildren()){

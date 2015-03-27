@@ -34,6 +34,7 @@ public class FunctionBlock extends Block {
 	/**
 	 * Method that creates a newInstance of this class along with it's visual representation
 	 * @param the number of arguments this FunctionBlock can hold
+	 * @param pane: The CustomUIPane in which this FunctionBlock exists. Via this this FunctionBlock knows which other FunctionBlocks exist.
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */

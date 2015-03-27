@@ -9,13 +9,9 @@ import nl.utwente.group10.ui.gestures.GestureCallBack;
 public class CustomUIPane extends TactilePane implements GestureCallBack {
 
 	public CustomUIPane() {
-		CustomGesture cg = new CustomGesture(this, this);
 	}
 
 	@Override
 	public void handleCustomEvent(UIEvent event) {
-		EventType<UIEvent> eventType = (EventType<UIEvent>) event
-				.getEventType();
-	
 	}
 }
