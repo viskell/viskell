@@ -17,7 +17,7 @@ public class ApplyTest {
     private final Type betaList = new ListT(this.beta);
     private final Type integer = new ConstT("Int");
     private final Type integerList = new ListT(this.integer);
-    private final Type string = new ConstT("Str");
+    private final Type string = new ConstT("String");
     private final Type stringList = new ListT(this.string);
 
     private Env env;
