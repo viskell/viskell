@@ -10,10 +10,15 @@ import nl.utwente.group10.haskell.type.Type;
  */
 public class Ident extends Expr {
     /**
-     * Name of this identity.
+     * Name of this identifier.
      */
     private final String name;
 
+    /**
+     * Constructs a new identifier to use with functions that are known to the Haskell environment.
+     * @param name The identifier. Be sure that this exists in the environment as it would cause exceptions elsewhere if
+     *             this is not the case.
+     */
     public Ident(final String name) {
         this.name = name;
     }
