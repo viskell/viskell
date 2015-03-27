@@ -28,11 +28,7 @@ public class ComponentTest {
     @BeforeClass
     public static void initJFX() {
         if (t == null) {
-            t = new Thread("JavaFX Init Thread") {
-                public void run() {
-                    Application.launch(MockApp.class);
-                }
-            };
+            t = new Thread(() -> Application.launch(MockApp.class));
             t.setDaemon(true);
             t.start();
         }
