@@ -39,20 +39,24 @@ public class FunctionBlock extends Block {
 	@FXML
 	private Pane nestSpace;
 
+	/**
+	 * Method that creates a newInstance of this class along with it's visual representation
+	 * @param the number of arguments this FunctionBlock can hold
+	 * @param pane: The CustomUIPane in which this FunctionBlock exists. Via this this FunctionBlock knows which other FunctionBlocks exist.
+	 * @return a new instance of this class
+	 * @throws IOException
+	 */
 	public FunctionBlock(int numArgs, CustomUIPane pane) throws IOException {
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/FunctionBlock.fxml"));
-		fxmlLoader.setRoot(this);
-		fxmlLoader.setController(this);
-
+		super("FunctionBlock", pane);
+		
 		name = new SimpleStringProperty("Function name");
 		type = new SimpleStringProperty("Function type");
-
+		
 		cg = new CustomGesture(this, this);
-		cup = pane;
 		
 		initializeArguments(numArgs);
-
-		fxmlLoader.load();
+		
+		this.getLoader().load();
 	}
 	
 	/**
@@ -89,18 +93,34 @@ public class FunctionBlock extends Block {
 		arguments[i] = arg;
 	}
 
+	/**
+	 * Get the name property of this FunctionBlock.
+	 * @return name
+	 */
 	public String getName() {
 		return name.get();
 	}
 	
+	/**
+	 * Set the value of the name property of this FunctionBlock.
+	 * @param name
+	 */
 	public void setName(String name) {
 		this.name.set(name);
 	}
 
+	/**
+	 * Get the type property of this FunctionBlock.
+	 * @return type
+	 */
 	public String getType() {
 		return type.get();
 	}
 
+	/**
+	 * Set the type property of this FunctionBlock.
+	 * @param type
+	 */
 	public void setType(String type) {
 		this.type.set(type);
 	}

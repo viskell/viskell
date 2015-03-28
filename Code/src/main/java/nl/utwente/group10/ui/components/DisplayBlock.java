@@ -27,13 +27,11 @@ public class DisplayBlock extends Block {
      * @throws IOException
      */
     public DisplayBlock() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/DisplayBlock.fxml"));
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
-    
+        super("DisplayBlock", null);
+
         output = new SimpleStringProperty("New Output");
         
-        fxmlLoader.load();
+        this.getLoader().load();
     }
 
     /**

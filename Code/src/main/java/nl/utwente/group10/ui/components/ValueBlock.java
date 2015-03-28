@@ -29,13 +29,11 @@ public class ValueBlock extends Block {
      * @throws IOException
      */
     public ValueBlock(String val) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ValueBlock.fxml"));
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
+        super("ValueBlock", null);
         
         value = new SimpleStringProperty(val);
         
-        fxmlLoader.load();
+        this.getLoader().load();
     }
 
     /**

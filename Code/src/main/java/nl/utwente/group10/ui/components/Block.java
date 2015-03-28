@@ -1,6 +1,7 @@
 package nl.utwente.group10.ui.components;
 
 
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.gestures.GestureCallBack;
@@ -9,6 +10,7 @@ import javafx.event.EventType;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -22,7 +24,26 @@ public class Block extends StackPane implements Initializable, GestureCallBack {
 	/** Selected state of this Block*/
 	private boolean isSelected = false;
 	
-	protected static CustomUIPane cup;
+	/** The fxmlLoader responsible for loading the fxml of this Block.*/
+	private FXMLLoader fxmlLoader;
+	
+	private CustomUIPane cup;
+	
+	public Block(String blockName, CustomUIPane pane) throws IOException {
+		fxmlLoader = new FXMLLoader(getClass().getResource("/ui/"+blockName+".fxml"));
+		fxmlLoader.setRoot(this);
+		fxmlLoader.setController(this);
+		
+		cup = pane;
+	}
+	
+	/**
+	 * Returns the FXMLLoader use by this Block.
+	 * @return fxmlLoader;
+	 */
+	public FXMLLoader getLoader(){
+		return fxmlLoader;
+	}
 	
 	/**
 	 * Set the selected boolean state of this Block
