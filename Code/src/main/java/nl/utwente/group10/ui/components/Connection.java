@@ -1,20 +1,22 @@
 package nl.utwente.group10.ui.components;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 import nl.utwente.group10.ui.Main;
 import nl.utwente.group10.ui.components.Line;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 
 /**
  * This class represents a connection between two different FunctionBlocks. The
  * output of one FunctionBlock will be used as input for another FunctionBlock
  */
-public class Connection extends Line implements ChangeListener<Number> {
+public class Connection extends Line implements ChangeListener<Number> , Initializable {
 
 	/** The Block that inputs data into this connection */
 	private Block input;
@@ -22,38 +24,36 @@ public class Connection extends Line implements ChangeListener<Number> {
 	private Block output;
 	/** The argument field of the FunctionBlock that we are outputting data into */
 	private int outputarg;
-	
-	/**
-	 * Method that creates a newInstance of this class along with it's visual
-	 * representation.
-	 * @return a new empty instance of this class
-	 * @throws IOException
-	 */
-	private static Connection newInstance() throws IOException {
-		Connection connection = (Connection) FXMLLoader.load(Main.class.getResource("/ui/Connection.fxml"), null, new TactileBuilderFactory());					
-		return connection;
-	}
+	/** The fxmlLoader responsible for loading the fxml.*/
+	private FXMLLoader fxmlLoader;
 
 	/**
-	 * Method that creates a newInstance of this class along with it's visual
+	 * Method that creates a new instance of this class along with it's visual
 	 * representation. 
 	 * @param Anchor of the Block
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public static Connection newInstance(ConnectionAnchor startAnchor) throws IOException {
-		Connection connection = newInstance();
-		startAnchor.layoutXProperty().addListener(connection);
-		startAnchor.layoutYProperty().addListener(connection);
+	public Connection(ConnectionAnchor startAnchor) throws IOException {
+		fxmlLoader = new FXMLLoader(getClass().getResource("/ui/Connection.fxml"));
+		fxmlLoader.setRoot(this);
+		fxmlLoader.setController(this);
+		
+		startAnchor.layoutXProperty().addListener(this);
+		startAnchor.layoutYProperty().addListener(this);
 		
 		ConnectionAnchor endAnchor = new ConnectionAnchor();
-		endAnchor.layoutXProperty().addListener(connection);
-		endAnchor.layoutYProperty().addListener(connection);
+		endAnchor.layoutXProperty().addListener(this);
+		endAnchor.layoutYProperty().addListener(this);
 		
-		connection.setStartAnchor(startAnchor);
-		connection.setEndAnchor(endAnchor);	
+		this.setStartAnchor(startAnchor);
+		this.setEndAnchor(endAnchor);	
 		
-		return connection;
+		fxmlLoader.load();
+	}
+	
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
 	}
 	
 	/**

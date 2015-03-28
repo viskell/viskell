@@ -1,0 +1,10 @@
+<?import nl.utwente.group10.ui.components.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.*?>
+
+<fx:root type="nl.utwente.group10.ui.components.Connection" 
+	xmlns:fx="http://javafx.com/fxml/" styleClass="connection"
+	startX="100" startY="100" endX="200" endY="200" controlX1="100"
+	controlX2="200" controlY1="150" controlY2="150">	
+</fx:root>

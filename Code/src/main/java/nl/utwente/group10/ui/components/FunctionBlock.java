@@ -175,6 +175,10 @@ public class FunctionBlock extends Block {
 		return inputs;
 	}
 	
+	public ConnectionAnchor getOutput() {
+		return output;
+	}
+	
 	/**
 	 * Returns the index of the argument matched to the Anchor.
 	 * @param anchor

@@ -2,6 +2,8 @@ package nl.utwente.group10.ui;
 
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
+import nl.utwente.group10.ui.components.Connection;
+import nl.utwente.group10.ui.components.ConnectionAnchor;
 import nl.utwente.group10.ui.components.DisplayBlock;
 import nl.utwente.group10.ui.components.FunctionBlock;
 import nl.utwente.group10.ui.components.ValueBlock;
@@ -23,7 +25,7 @@ public class Main extends Application {
 
 		CustomUIPane tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
 
-//		FunctionBlock functionBlock = new FunctionBlock(2, tactilePane);
+		FunctionBlock functionBlock = new FunctionBlock(2, tactilePane);
 //		functionBlock.setName("TestTest");
 //
 //		FunctionBlock functionBlock2 = new FunctionBlock(0, tactilePane);
@@ -44,6 +46,11 @@ public class Main extends Application {
 		tactilePane.getChildren().add(new FunctionBlock(4, tactilePane));
 		tactilePane.getChildren().add(new ValueBlock("6"));
 		tactilePane.getChildren().add(new DisplayBlock());
+		
+		Connection connection = new Connection(functionBlock.getOutput());
+		Connection connection2 = new Connection(new ConnectionAnchor());
+		tactilePane.getChildren().add(connection);
+		tactilePane.getChildren().add(connection2);
 
 		// Init Control Pane
 		FlowPane controlLayout = new FlowPane();

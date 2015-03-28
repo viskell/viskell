@@ -37,3 +37,8 @@
 .block .title {
 	-fx-text-fill: #ecf0f1;
 }
+.connection{
+	-fx-stroke-width: 3px;
+	-fx-stroke: black;
+	-fx-fill: null;
+}
