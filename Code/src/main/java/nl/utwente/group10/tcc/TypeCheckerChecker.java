@@ -11,10 +11,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.haskell.type.VarT;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 
 import java.net.URL;
@@ -47,13 +49,21 @@ public class TypeCheckerChecker extends Application implements Initializable {
         Type argT = tb.build(arg.getText());
         Type resT = HindleyMilner.makeVariable();
 
+        // First, check if funT is a function
         try {
-            HindleyMilner.unify(new Ident(""), funT, new FuncT(argT, resT));
-            res.setText(resT.prune().toHaskellType());
-            res.setTextFill(Paint.valueOf("black"));
+            HindleyMilner.unify(funT, new FuncT(new VarT(""), new VarT("")));
         } catch (HaskellTypeError haskellTypeError) {
-            res.setText("Types do not unify.");
-            res.setTextFill(Paint.valueOf("red"));
+            res.setText("⊥ (Invalid function type.)");
+            return;
+        }
+
+        // Then check if the argument is reasonable
+        try {
+            HindleyMilner.unify(funT, new FuncT(argT, resT));
+            res.setText(resT.prune().toHaskellType());
+        } catch (HaskellTypeError haskellTypeError) {
+            res.setText("⊥ (Types do not unify.)");
+            return;
         }
     }
 

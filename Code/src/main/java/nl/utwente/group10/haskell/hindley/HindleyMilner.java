@@ -29,11 +29,15 @@ public final class HindleyMilner {
     private HindleyMilner() {
     }
 
+    public static void unify(final Type t1, final Type t2) throws HaskellTypeError {
+        unify(null, t1, t2);
+    }
+
     public static void unify(final Expr context, final Type t1, final Type t2) throws HaskellTypeError {
         final Type a = t1.prune();
         final Type b = t2.prune();
 
-        HindleyMilner.logger.info(String.format("Unifying types %s and %s for context %s", t1, t2, context.toString()));
+        HindleyMilner.logger.info(String.format("Unifying types %s and %s for context %s", t1, t2, context));
 
         if (a instanceof VarT && !a.equals(b)) {
             // Example: we have to unify (for example) α and Int.
