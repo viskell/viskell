@@ -31,7 +31,7 @@
 			</BorderPane>
 		</center>
 		<bottom>
-			<FlowPane fx:id="outputSpace" prefWrapLength="100" vgap="50" hgap="10"/>
+			<VBox fx:id="outputSpace" alignment = "center"/>
 		</bottom>
 	</BorderPane>
 </fx:root>

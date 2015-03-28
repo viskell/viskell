@@ -29,9 +29,6 @@ public class FunctionBlock extends Block {
 	/** The arguments this FunctionBlock holds.**/
 	private String[] arguments;
 	
-	/** The output of this FunctionBlock.**/
-	private ConnectionAnchor output;
-	
 	/** The inputs for this FunctionBlock.**/
 	private ConnectionAnchor[] inputs;
 	
@@ -69,8 +66,7 @@ public class FunctionBlock extends Block {
 		
 		this.getLoader().load();
 		
-		output = new ConnectionAnchor();
-		outputSpace.getChildren().add(output);
+		outputSpace.getChildren().add(this.getOutputAnchor());
 		
 		initializeArguments(numArgs);
 		
@@ -108,7 +104,7 @@ public class FunctionBlock extends Block {
 		// create anchors for each argument and 'anchor' them around the functionBlock
 		for(int i = 0;i<numberOfArguments; i++){
 			inputs[i] = new ConnectionAnchor();
-			
+			//TODO insert argument field into functionBlock for each argument
 			anchorSpace.getChildren().add(inputs[i]);
 		}
 	}
@@ -173,10 +169,6 @@ public class FunctionBlock extends Block {
 	 */
 	public ConnectionAnchor[] getInputs(){
 		return inputs;
-	}
-	
-	public ConnectionAnchor getOutput() {
-		return output;
 	}
 	
 	/**

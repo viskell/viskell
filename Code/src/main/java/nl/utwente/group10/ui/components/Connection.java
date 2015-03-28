@@ -92,6 +92,7 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 
 	@Override
 	public void changed(ObservableValue<?extends Number> observable, Number oldValue, Number newValue) {
+		System.out.println("Changed");
 		updateStartEndPositions();
 	}
 }

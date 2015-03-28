@@ -47,10 +47,10 @@ public class Main extends Application {
 		tactilePane.getChildren().add(new ValueBlock("6"));
 		tactilePane.getChildren().add(new DisplayBlock());
 		
-		Connection connection = new Connection(functionBlock.getOutput());
-		Connection connection2 = new Connection(new ConnectionAnchor());
+		Connection connection = new Connection(functionBlock.getOutputAnchor());
+		
 		tactilePane.getChildren().add(connection);
-		tactilePane.getChildren().add(connection2);
+
 
 		// Init Control Pane
 		FlowPane controlLayout = new FlowPane();
