@@ -1,26 +1,21 @@
 .block {
 	-fx-font-size: 20px;
 	-fx-font-weight: bold;
-	-fx-background-color:aliceblue;
+	-fx-background-color: aliceblue;
 	-fx-border-color: black;
 	-fx-border-width: 2;
 }
-.functionBlockBackground {
+.function.block .title {
 	-fx-text-fill: #333333;
-	-fx-fill: aliceblue;
-	-fx-stroke: black;
-	-fx-stroke-width: 2;
-}
-.functionBlockTitle {
 	-fx-font-size: 20px;
 	-fx-font-weight: bold;
 	-fx-padding: 0 0 2 5;
 }
-.functionBlockDescription {
+.function.block .description {
 	-fx-font-size: 12px;
 	-fx-padding: 0;
 }
-.functionBlockNestSpace {
+.function.block .nestSpace {
 	-fx-padding: 15;
 }
 
@@ -32,6 +27,6 @@
 	-fx-background-color: #c0392b;
 }
 
-.value.block .title, .display.block .title {
+.block .title {
 	-fx-text-fill: #ecf0f1;
 }

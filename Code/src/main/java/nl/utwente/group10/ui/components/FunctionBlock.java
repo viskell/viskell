@@ -1,5 +1,8 @@
 package nl.utwente.group10.ui.components;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.fxml.FXML;
 import java.io.IOException;
 
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
@@ -11,12 +14,9 @@ import nl.utwente.group10.ui.gestures.GestureCallBack;
 import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.control.Label;
-import javafx.scene.shape.Rectangle;
+
+import java.io.IOException;
 
 /**
  * Main building block for the visual interface, this class
@@ -26,11 +26,19 @@ import javafx.scene.shape.Rectangle;
 public class FunctionBlock extends Block {
 	/** The arguments this FunctionBlock holds.**/
 	private String[] arguments;
-	/** The name of this Function.**/
-	private String functionName;
+
+	/** The name of this Function. **/
+	private StringProperty name;
+
+	/** The type of this Function. **/
+	private StringProperty type;
+	
 	/** intstance to create Events for this FunctionBlock. **/
 	private static CustomGesture cg;
-		
+
+	@FXML
+	private Pane nestSpace;
+
 	/**
 	 * Method that creates a newInstance of this class along with it's visual representation
 	 * @param the number of arguments this FunctionBlock can hold
@@ -38,26 +46,17 @@ public class FunctionBlock extends Block {
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public static FunctionBlock newInstance(int numberOfArguments, CustomUIPane pane) throws IOException {
-		FunctionBlock functionBlock = (FunctionBlock) FXMLLoader.load(Main.class.getResource("/ui/FunctionBlock.fxml"), null, new TactileBuilderFactory());
-		functionBlock.initializeArguments(numberOfArguments);
-		cg = new CustomGesture(functionBlock, functionBlock);
-		cup = pane;
-		return functionBlock;
-	}
-	
-	/**
-	 * Method that creates a newInstance of this class along with it's visual representation
-	 * @param the number of arguments this FunctionBlock can hold
-	 * @param the name of this FunctionBlock
-	 * @return a new instance of this class
-	 * @throws IOException
-	 */
-	public static FunctionBlock newInstance(int numberOfArguments, CustomUIPane pane, String name) throws IOException {
-		FunctionBlock functionBlock = newInstance(numberOfArguments, pane);
-		functionBlock.setName(name);
+	public FunctionBlock(int numArgs, CustomUIPane pane) throws IOException {
+		super("FunctionBlock", pane);
 		
-		return functionBlock;
+		name = new SimpleStringProperty("Function name");
+		type = new SimpleStringProperty("Function type");
+		
+		cg = new CustomGesture(this, this);
+		
+		initializeArguments(numArgs);
+		
+		this.getLoader().load();
 	}
 	
 	/**
@@ -73,8 +72,7 @@ public class FunctionBlock extends Block {
 	 * @param node to nest
 	 */
 	public void nest(Node node) {
-		Pane nestSpace = (Pane) this.lookup("#nest_space");
-		((Label) this.lookup("#label_function_name")).setText("Higher order function");
+		name.set("Higher order function");
 		nestSpace.getChildren().add(node);
 	}
 	
@@ -90,20 +88,54 @@ public class FunctionBlock extends Block {
 	
 	/**
 	 * Method to set the value of a specified argument
-	 * @param the index of the argument field
-	 * @param the value that the argument should be changed to
 	 */
 	public void setArgument(int i,String arg) {
 		arguments[i] = arg;
 	}
+
+	/**
+	 * Get the name property of this FunctionBlock.
+	 * @return name
+	 */
+	public String getName() {
+		return name.get();
+	}
 	
 	/**
-	 * Method to set the name of this FunctionBlock
-	 * @param name
+	 * @param name for this FunctionBlock
 	 */
 	public void setName(String name) {
-		functionName = name;
-		Label label = ((Label)this.lookup("#label_function_name"));
-		label.setText(functionName);
+		this.name.set(name);
+	}
+
+	/**
+	 * Get the type property of this FunctionBlock.
+	 * @return type
+	 */
+	public String getType() {
+		return type.get();
+	}
+
+	/**
+	 * @param the type property of this FunctionBlock.
+	 */
+	public void setType(String type) {
+		this.type.set(type);
+	}
+	
+	/**
+	 * the StringProperty for the name of this FunctionBlock.
+	 * @return name
+	 */
+	public StringProperty nameProperty() {
+		return name;
+	}
+	
+	/**
+	 * the StringProperty for the type of this FunctionBlock.
+	 * @return type
+	 */
+	public StringProperty typeProperty() {
+		return type;
 	}
 }

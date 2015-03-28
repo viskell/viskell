@@ -1,7 +1,10 @@
 package nl.utwente.group10.ui.components;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
+
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 
 import java.io.IOException;
@@ -15,35 +18,43 @@ import java.io.IOException;
  */
 public class DisplayBlock extends Block {
 
-    /** The input this Block is receiving.**/
-    private String input;
+    /** The output this Block is displaying.**/
+    private StringProperty output;
     
     /**
      * Creates a new instance of DisplayBlock.
      * @return new DisplayBlock instance
      * @throws IOException
      */
-    public static DisplayBlock newInstance() throws IOException {
-    	DisplayBlock block = FXMLLoader.load(DisplayBlock.class.getResource("/ui/DisplayBlock.fxml"), null, new TactileBuilderFactory());
-    	return block;
+    public DisplayBlock() throws IOException {
+        super("DisplayBlock", null);
+
+        output = new SimpleStringProperty("New Output");
+        
+        this.getLoader().load();
     }
 
     /**
-     * Sets the input flowing into the DisplayBlock and refresh the display.
-     * @param input
+     * Sets the output flowing into the DisplayBlock and refresh the display.
+     * @param output
      */
-    public void setInput(String inputValue) {
-    	input = inputValue;
-    	((Label) this.lookup("#label_value")).setText(input);
+    public void setOutput(String inputValue) {
+        output.set(inputValue);
     }
- 
+
     /**
-     * Returns the input value this Block has, to avoid confusion
-     * from other blocks who expect output from a block the method
-     * has been named getOutput instead of getInput
+     * Returns the output value this Block has.
      * @return outputValue
      */
     public String getOutput() {
-    	return input;
+        return output.get();
+    }
+    
+    /**
+     * Property getter for the output property.
+     * @return outputProperty
+     */
+    public StringProperty outputProperty() {
+    	return output;
     }
 }
