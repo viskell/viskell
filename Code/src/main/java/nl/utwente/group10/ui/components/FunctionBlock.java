@@ -102,8 +102,7 @@ public class FunctionBlock extends Block {
 	}
 	
 	/**
-	 * Set the value of the name property of this FunctionBlock.
-	 * @param name
+	 * @param name for this FunctionBlock
 	 */
 	public void setName(String name) {
 		this.name.set(name);
@@ -118,10 +117,25 @@ public class FunctionBlock extends Block {
 	}
 
 	/**
-	 * Set the type property of this FunctionBlock.
-	 * @param type
+	 * @param the type property of this FunctionBlock.
 	 */
 	public void setType(String type) {
 		this.type.set(type);
+	}
+	
+	/**
+	 * the StringProperty for the name of this FunctionBlock.
+	 * @return name
+	 */
+	public StringProperty nameProperty() {
+		return name;
+	}
+	
+	/**
+	 * the StringProperty for the type of this FunctionBlock.
+	 * @return type
+	 */
+	public StringProperty typeProperty() {
+		return type;
 	}
 }

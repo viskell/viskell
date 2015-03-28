@@ -49,4 +49,12 @@ public class DisplayBlock extends Block {
     public String getOutput() {
         return output.get();
     }
+    
+    /**
+     * Property getter for the output property.
+     * @return outputProperty
+     */
+    public StringProperty outputProperty() {
+    	return output;
+    }
 }
