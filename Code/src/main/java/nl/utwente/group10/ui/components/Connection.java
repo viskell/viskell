@@ -75,7 +75,7 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 	private void setOutput(FunctionBlock out, int outarg) {
 		output = out;
 		outputarg = outarg;
-		out.setArgument(outputarg, ((FunctionBlock)input).executeMethod());
+		//out.setArgument(outputarg, ((FunctionBlock)input).executeMethod());
 	}
 	
 	/**

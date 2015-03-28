@@ -7,9 +7,10 @@
 }
 .function.block .title {
 	-fx-text-fill: #333333;
-	-fx-font-size: 20px;
+	-fx-font-size: 14px;
 	-fx-font-weight: bold;
-	-fx-padding: 0 0 2 5;
+	/*-fx-padding: 0 0 2 5;*/
+
 }
 .function.block .description {
 	-fx-font-size: 12px;
@@ -18,13 +19,20 @@
 .function.block .nestSpace {
 	-fx-padding: 15;
 }
-.function.block .argument {
-	-fx-font-size: 9px;
+.function.block #argumentSpace Label {
+	-fx-padding: 0 5 0 5;
+	-fx-font-size: 14px;
 	-fx-font-weight: none;
 	-fx-background-color:white;
 	-fx-border-color: black;
 	-fx-border-width: 1;
 }
+
+.function.block #argumentSpace Label.result {
+	-fx-background-color: black;
+	-fx-text-fill: white;
+}
+
 .value.block {
 	-fx-background-color: #8e44ad;
 }
