@@ -8,6 +8,7 @@ import nl.utwente.group10.haskell.type.ListT;
 import nl.utwente.group10.haskell.type.ConstT;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
@@ -73,13 +74,25 @@ class TypeBuilderListener extends TypeBaseListener {
     }
 
     @Override
-    public final void exitConstantType(TypeParser.ConstantTypeContext ctx) {
+    public final void exitTypeConstructor(TypeParser.TypeConstructorContext ctx) {
         this.addParam(new ConstT(ctx.getText()));
+    }
+
+    @Override
+    public final void enterConstantType(TypeParser.ConstantTypeContext ctx) {
+        this.enter();
+    }
+
+    @Override
+    public final void exitConstantType(TypeParser.ConstantTypeContext ctx) {
+        Type[] types = this.popParams();
+        Type[] args = Arrays.copyOfRange(types, 1, types.length);
+        this.addParam(new ConstT(types[0].toHaskellType(), args));
     }
 
     /** Call this when entering a compound (function, list, tuple) type. */
     private void enter() {
-        this.stack.push(new ArrayList<Type>());
+        this.stack.push(new ArrayList<>());
     }
 
     /**
