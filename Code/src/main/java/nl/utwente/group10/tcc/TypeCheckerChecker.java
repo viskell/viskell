@@ -37,7 +37,6 @@ public class TypeCheckerChecker extends Application implements Initializable {
 
         Scene scene = new Scene(root);
 
-
         stage.setTitle("Type inference demo");
         stage.setScene(scene);
         stage.show();
@@ -64,6 +63,5 @@ public class TypeCheckerChecker extends Application implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
     }
 }
