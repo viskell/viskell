@@ -9,12 +9,12 @@ import org.junit.Test;
 public class DisplayBlockTest extends ComponentTest {
     @Test
     public void initTest() throws IOException {
-        assertNotNull(DisplayBlock.newInstance());
+        assertNotNull(new DisplayBlock());
     }
 
     @Test
     public void inputOutputTest() throws IOException {
-        DisplayBlock block = DisplayBlock.newInstance();
+        DisplayBlock block = new DisplayBlock();
         assertEquals(block.getOutput(), "New Output");
 
         block.setOutput("8");

@@ -10,12 +10,12 @@ import static org.junit.Assert.assertNotNull;
 public class ValueBlockTest extends ComponentTest {
     @Test
     public void initTest() throws IOException {
-        assertNotNull(ValueBlock.newInstance("6"));
+        assertNotNull(new ValueBlock("6"));
     }
 
     @Test
     public void outputTest() throws IOException {
-        ValueBlock block = ValueBlock.newInstance("6");
+        ValueBlock block = new ValueBlock("6");
         assertEquals(block.getValue(), "6");
     }
 }
