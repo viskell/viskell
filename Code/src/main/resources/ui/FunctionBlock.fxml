@@ -1,32 +1,37 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root type="nl.utwente.group10.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1" styleClass="function, block">
-	<BorderPane minHeight="90" minWidth="180">
+<fx:root type="nl.utwente.group10.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
+	<BorderPane>
 		<top>
-			<FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="5"/>
+			<FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10"/>
 		</top>
-		
 		<center>
-			<BorderPane>
-				<top>
-					<Label text="${controller.name}" styleClass="title" />
-				</top>
+			<BorderPane minHeight="90" minWidth="180" styleClass="function, block">
 				<center>
-								<HBox fx:id="argumentSpace" spacing="10" alignment="center">
-									<Label text=" Integer " styleClass="functionBlockArgument"/>
-									<Label text=" Integer " styleClass="functionBlockArgument"/>
-									<Label text=" Integer " styleClass="functionBlockArgument"/>	
-								</HBox>
-							</center>
+					<BorderPane>
+						<top>
+							<Label text="${controller.name}" styleClass="title" />
+						</top>
+						<center>
+										<HBox fx:id="argumentSpace" spacing="10" alignment="center">
+											<Label text=" Integer " styleClass="functionBlockArgument"/>
+											<Label text=" Integer " styleClass="functionBlockArgument"/>
+											<Label text=" Integer " styleClass="functionBlockArgument"/>	
+										</HBox>
+									</center>
+						<bottom>
+							<Label text="${controller.type}" styleClass="description" />
+						</bottom>
+					</BorderPane>
+				</center>
 				<bottom>
-					<Label text="${controller.type}" styleClass="description" />
+					<FlowPane fx:id="nestSpace" styleClass="nestSpace" prefWrapLength="100" vgap="5"/>
 				</bottom>
 			</BorderPane>
 		</center>
-		
 		<bottom>
-			<FlowPane fx:id="nestSpace" styleClass="nestSpace" prefWrapLength="100" vgap="5"/>
+			<FlowPane fx:id="outputSpace" prefWrapLength="100" vgap="50" hgap="10"/>
 		</bottom>
 	</BorderPane>
 </fx:root>

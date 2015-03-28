@@ -44,14 +44,13 @@ public class FunctionBlock extends Block {
 	/** intstance to create Events for this FunctionBlock. **/
 	private static CustomGesture cg;
 
-	@FXML
-	private Pane nestSpace;
+	@FXML private Pane nestSpace;
 	
-	@FXML
-	private Pane anchorSpace;
+	@FXML private Pane anchorSpace;
 	
-	@FXML
-	private Pane argumentSpace;
+	@FXML private Pane outputSpace;
+	
+	@FXML private Pane argumentSpace;
 
 	/**
 	 * Method that creates a newInstance of this class along with it's visual representation
@@ -68,9 +67,13 @@ public class FunctionBlock extends Block {
 		
 		cg = new CustomGesture(this, this);
 		
+		this.getLoader().load();
+		
+		output = new ConnectionAnchor();
+		outputSpace.getChildren().add(output);
+		
 		initializeArguments(numArgs);
 		
-		this.getLoader().load();
 	}
 	
 	/**
@@ -105,7 +108,7 @@ public class FunctionBlock extends Block {
 		// create anchors for each argument and 'anchor' them around the functionBlock
 		for(int i = 0;i<numberOfArguments; i++){
 			inputs[i] = new ConnectionAnchor();
-			//TODO why does this cause a nullpointer?
+			
 			anchorSpace.getChildren().add(inputs[i]);
 		}
 	}
