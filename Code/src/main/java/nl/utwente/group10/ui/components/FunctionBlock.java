@@ -104,9 +104,9 @@ public class FunctionBlock extends Block {
 		
 		// create anchors for each argument and 'anchor' them around the functionBlock
 		for(int i = 0;i<numberOfArguments; i++){
-			ConnectionAnchor newAnchor = ConnectionAnchor.newInstance();
-			inputs[i] = newAnchor;
-			//anchorSpace.getChildren().add(newAnchor);
+			inputs[i] = new ConnectionAnchor();
+			//TODO why does this cause a nullpointer?
+			anchorSpace.getChildren().add(inputs[i]);
 		}
 	}
 	

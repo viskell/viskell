@@ -13,7 +13,7 @@
 					<Label text="${controller.name}" styleClass="title" />
 				</top>
 				<center>
-								<HBox id="argument_space" spacing="10" alignment="center">
+								<HBox fx:id="argumentSpace" spacing="10" alignment="center">
 									<Label text=" Integer " styleClass="functionBlockArgument"/>
 									<Label text=" Integer " styleClass="functionBlockArgument"/>
 									<Label text=" Integer " styleClass="functionBlockArgument"/>	

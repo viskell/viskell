@@ -3,5 +3,5 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.*?>
 
-<ConnectionAnchor xmlns:fx="http://javafx.com/fxml/1" styleClass="connectionAnchor" radius="10">
-</ConnectionAnchor>
+<fx:root type="nl.utwente.group10.ui.components.ConnectionAnchor" xmlns:fx="http://javafx.com/fxml/">
+</fx:root>

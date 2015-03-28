@@ -41,7 +41,7 @@ public class Main extends Application {
 //		functionBlock.nest(new FunctionBlock(0, tactilePane));
 		//tactilePane.getChildren().add(functionBlock);
 		//tactilePane.getChildren().add(functionBlock2);
-		tactilePane.getChildren().add(new FunctionBlock(3, tactilePane));
+		tactilePane.getChildren().add(new FunctionBlock(1, tactilePane));
 		tactilePane.getChildren().add(new ValueBlock("6"));
 		tactilePane.getChildren().add(new DisplayBlock());
 
