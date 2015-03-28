@@ -20,10 +20,6 @@ public class HaskellCatalogTest {
         Assert.assertEquals("Identity function.", e.getDocumentation());
         Assert.assertFalse(e.getCategory().isEmpty());
 
-        // asEnvFunc
-        Assert.assertEquals("id", e.asEnvFunc().toHaskell());
-        Assert.assertNotNull(e.asEnvFunc().getType());
-
         // getMaybe
         Assert.assertTrue(hc.getMaybe("id").isPresent());
         Assert.assertFalse(hc.getMaybe("\0").isPresent());

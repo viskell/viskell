@@ -1,66 +1,60 @@
 package nl.utwente.group10.haskell.expr;
 
+import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.hindley.GenSet;
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 
-import java.util.Arrays;
-
 /**
- * A type of expression that is a lazy application of a function with certain arguments.
+ * Lazy application of an argument to a function.
  */
-public class Apply extends Func {
+public class Apply extends Expr {
     /**
-     * The expression to apply arguments to.
+     * The expression to apply the argument to.
      */
-    private final Func func;
+    private final Expr func;
 
     /**
-     * The arguments to apply.
+     * The argument to apply.
      */
-    private final Expr[] args;
+    private final Expr arg;
 
     /**
-     * Constructs a new function application object. The resulting type will be calculated based on the given arguments.
-     * The type of the arguments is validated, and an exception is thrown when one of the arguments is incorrect.
+     * Applies an argument to a function to produce a new expression. The application is lazy, the type needs to be
+     * analyzed before there is certainty about the validity of this application and the resulting type.
      *
-     * @param func The expression to apply arguments to.
-     * @param args The arguments to apply.
-     * @throws HaskellTypeError The types of the expressions are not valid for the given function.
+     * @param func The expression to apply argument to.
+     * @param arg The argument to apply.
      */
-    public Apply(final Func func, final Expr ... args) throws HaskellTypeError {
-        super(((FuncT) func.getType()).getAppliedType(func, Apply.getArgTypes(args)));
+    public Apply(final Expr func, final Expr arg) {
         this.func = func;
-        this.args = args;
+        this.arg = arg;
     }
 
-    public static Type[] getArgTypes(final Expr[] args) {
-        final Type[] types = new Type[args.length];
+    @Override
+    public final Type analyze(final Env env, final GenSet genSet) throws HaskellTypeError {
+        final Type funcType = func.analyze(env, genSet);
+        final Type argType = arg.analyze(env, genSet);
+        final Type resType = HindleyMilner.makeVariable();
 
-        for (int i = 0; i < args.length; i++) {
-            types[i] = args[i].getType();
-        }
 
-        return types;
+        // Rule [App]:
+        // IFF  the type of our function is a -> b and the type of our arg is a
+        // THEN the type of our result is b
+        HindleyMilner.unify(this, funcType, new FuncT(argType, resType));
+
+        return resType;
     }
 
     @Override
     public final String toHaskell() {
-        final StringBuilder out = new StringBuilder();
-        out.append(this.func.toHaskell());
-
-        for (final Expr arg : this.args) {
-            out.append(" ").append(arg.toHaskell());
-        }
-
-        return out.toString();
+        return String.format("(%s %s)", this.func, this.arg);
     }
 
     @Override
     public final String toString() {
-        return "Apply{" +
-                "func=" + this.func +
-                ", args=" + Arrays.toString(this.args) +
-                '}';
+        return String.format("(%s %s)", this.func, this.arg);
     }
 }

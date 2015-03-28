@@ -35,7 +35,9 @@ class TypeBuilderListener extends TypeBaseListener {
 
     @Override
     public final void exitFunctionType(TypeParser.FunctionTypeContext ctx) {
-        this.addParam(new FuncT(this.popParams()));
+        Type[] params = this.popParams();
+        this.addParam(new FuncT(params[0], params[1])); // We can do this because the grammer makes sure that a function
+                                                        // always has two arguments.
     }
 
     @Override

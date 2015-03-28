@@ -29,9 +29,4 @@ public final class TypeBuilder {
 
         return extractor.result();
     }
-
-    public FuncT buildFuncT(final String hs) {
-        Type t = this.build(hs);
-        return t instanceof FuncT ? (FuncT) t : new FuncT(t);
-    }
 }

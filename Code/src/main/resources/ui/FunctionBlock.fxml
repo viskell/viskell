@@ -1,46 +1,32 @@
-<?import nl.utwente.group10.ui.components.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import java.net.*?>
 
-<FunctionBlock xmlns:fx="http://javafx.com/fxml/1" styleClass="block">
-	<BorderPane id="foreground" minHeight="90" minWidth="180">
+<fx:root type="nl.utwente.group10.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1" styleClass="function, block">
+	<BorderPane minHeight="90" minWidth="180">
 		<top>
-			<FlowPane id="input_anchor_space" prefWrapLength="100" hgap="5" vgap="5"/>		
-		</top>	
+			<FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="5"/>
+		</top>
+		
 		<center>
-			<BorderPane id="foreground" styleClass="functionBlock" minHeight="90" minWidth = "180">
+			<BorderPane>
 				<top>
-						<BorderPane>
-							<top>
-								<Label id="label_function_name" text="Function name"
-									styleClass="functionBlockTitle" />
-							</top>
-							<center>
+					<Label text="${controller.name}" styleClass="title" />
+				</top>
+				<center>
 								<HBox id="argument_space" spacing="10" alignment="center">
 									<Label text=" Integer " styleClass="functionBlockArgument"/>
 									<Label text=" Integer " styleClass="functionBlockArgument"/>
 									<Label text=" Integer " styleClass="functionBlockArgument"/>	
 								</HBox>
 							</center>
-							<bottom>
-								<Label id="label_function_type" text="Function type"
-									styleClass="functionBlockDescription" />
-							</bottom>
-						</BorderPane>		
-				</top>
-				<center>
-					<FlowPane id="nest_space" styleClass="functionBlockNestSpace" prefWrapLength="100" vgap="5"/>
-				</center>
+				<bottom>
+					<Label text="${controller.type}" styleClass="description" />
+				</bottom>
 			</BorderPane>
 		</center>
+		
 		<bottom>
-			<AnchorPane>
-				<FlowPane id="output_anchor_space" prefWrapLength="100" hgap="5" vgap="5" AnchorPane.leftAnchor="90"/>		
-			</AnchorPane>
+			<FlowPane fx:id="nestSpace" styleClass="nestSpace" prefWrapLength="100" vgap="5"/>
 		</bottom>
 	</BorderPane>
-	<stylesheets>
-		<URL value="@style.css" />
-	</stylesheets>
-</FunctionBlock>
+</fx:root>
