@@ -34,7 +34,7 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public Connection(ConnectionAnchor startAnchor) throws IOException {
+	public Connection(ConnectionAnchor startAnchor, ConnectionAnchor endAnchor) throws IOException {
 		fxmlLoader = new FXMLLoader(getClass().getResource("/ui/Connection.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
@@ -42,7 +42,6 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 		startAnchor.layoutXProperty().addListener(this);
 		startAnchor.layoutYProperty().addListener(this);
 		
-		ConnectionAnchor endAnchor = new ConnectionAnchor();
 		endAnchor.layoutXProperty().addListener(this);
 		endAnchor.layoutYProperty().addListener(this);
 		
