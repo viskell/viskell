@@ -1,11 +1,16 @@
 .block {
 	-fx-font-size: 20px;
 	-fx-font-weight: bold;
-	-fx-background-color: gray;
+	-fx-background-color: aliceblue;
 	-fx-border-color: black;
 	-fx-border-width: 2;
 }
-
+.function.block .title {
+	-fx-text-fill: #333333;
+	-fx-font-size: 20px;
+	-fx-font-weight: bold;
+	-fx-padding: 0 0 2 5;
+}
 .function.block .description {
 	-fx-font-size: 12px;
 	-fx-padding: 0;
