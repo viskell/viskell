@@ -25,6 +25,7 @@ public class Main extends Application {
 
 		CustomUIPane tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
 
+		DisplayBlock displayBlock = new DisplayBlock();
 		FunctionBlock functionBlock = new FunctionBlock(2, tactilePane);
 //		functionBlock.setName("TestTest");
 //
@@ -41,13 +42,16 @@ public class Main extends Application {
 //		functionBlock.nest(new FunctionBlock(0, tactilePane));
 //		functionBlock.nest(new FunctionBlock(0, tactilePane));
 //		functionBlock.nest(new FunctionBlock(0, tactilePane));
-		//tactilePane.getChildren().add(functionBlock);
+		tactilePane.getChildren().add(functionBlock);
 		//tactilePane.getChildren().add(functionBlock2);
-		tactilePane.getChildren().add(new FunctionBlock(4, tactilePane));
+		//tactilePane.getChildren().add(new FunctionBlock(4, tactilePane));
 		tactilePane.getChildren().add(new ValueBlock("6"));
-		tactilePane.getChildren().add(new DisplayBlock());
+		//tactilePane.getChildren().add(new DisplayBlock());
+
+		tactilePane.getChildren().add(functionBlock);
+		tactilePane.getChildren().add(displayBlock);
 		
-		Connection connection = new Connection(functionBlock.getOutputAnchor());
+		Connection connection = new Connection(functionBlock, functionBlock.getOutputAnchor(), displayBlock, displayBlock.getInputAnchor());
 		
 		tactilePane.getChildren().add(connection);
 
