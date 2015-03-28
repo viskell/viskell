@@ -18,7 +18,7 @@
 .function.block .nestSpace {
 	-fx-padding: 15;
 }
-.functionBlockArgument{
+.function.block .argument {
 	-fx-font-size: 9px;
 	-fx-font-weight: none;
 	-fx-background-color:white;
