@@ -21,6 +21,11 @@ public class DisplayBlock extends Block {
     /** The output this Block is displaying.**/
     private StringProperty output;
     
+    /**
+     * Creates a new instance of DisplayBlock.
+     * @return new DisplayBlock instance
+     * @throws IOException
+     */
     public DisplayBlock() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/DisplayBlock.fxml"));
         fxmlLoader.setRoot(this);
@@ -29,15 +34,6 @@ public class DisplayBlock extends Block {
         output = new SimpleStringProperty("New Output");
         
         fxmlLoader.load();
-    }
-
-    /**
-     * Creates a new instance of DisplayBlock.
-     * @return new DisplayBlock instance
-     * @throws IOException
-     */
-    public static DisplayBlock newInstance() throws IOException {
-        return new DisplayBlock();
     }
 
     /**

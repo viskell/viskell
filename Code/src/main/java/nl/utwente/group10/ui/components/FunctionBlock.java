@@ -39,7 +39,7 @@ public class FunctionBlock extends Block {
 	@FXML
 	private Pane nestSpace;
 
-	public FunctionBlock(int numArgs) throws IOException {
+	public FunctionBlock(int numArgs, CustomUIPane pane) throws IOException {
 		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/FunctionBlock.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
@@ -48,16 +48,11 @@ public class FunctionBlock extends Block {
 		type = new SimpleStringProperty("Function type");
 
 		cg = new CustomGesture(this, this);
+		cup = pane;
 		
 		initializeArguments(numArgs);
 
 		fxmlLoader.load();
-	}
-
-	public static FunctionBlock newInstance(int numArgs, CustomUIPane pane) throws IOException {
-		cup = pane;
-
-		return new FunctionBlock(numArgs);
 	}
 	
 	/**

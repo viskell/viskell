@@ -21,7 +21,13 @@ public class ValueBlock extends Block {
     /** The value of this ValueBlock.*/
     private StringProperty value;
 
-    
+    /**
+     * Creates a new ValueBlock instance with initialized value,
+     * once initialized value cannot be changed.
+     * @param value of this ValueBlock
+     * @return new ValueBlock instance
+     * @throws IOException
+     */
     public ValueBlock(String val) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ValueBlock.fxml"));
         fxmlLoader.setRoot(this);
@@ -30,17 +36,6 @@ public class ValueBlock extends Block {
         value = new SimpleStringProperty(val);
         
         fxmlLoader.load();
-    }
-
-    /**
-     * Creates a new ValueBlock instance with initialized value,
-     * once initialized value cannot be changed.
-     * @param value of this ValueBlock
-     * @return new ValueBlock instance
-     * @throws IOException
-     */
-    public static ValueBlock newInstance(String value) throws IOException {
-        return new ValueBlock(value);
     }
 
     /**
