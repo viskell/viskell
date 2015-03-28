@@ -24,17 +24,11 @@ public class FunctionBlock extends Block {
 	/** The inputs for this FunctionBlock.**/
 	private ConnectionAnchor[] inputs;
 
-	/** The types of the input for this FunctionBlock. **/
-	private Label[] labels;
-	
 	/** The name of this Function. **/
 	private StringProperty name;
 
 	/** The type of this Function. **/
 	private StringProperty type;
-
-	/** The arguments of this Function. */
-	private ArrayList<String> args;
 
 	/** intstance to create Events for this FunctionBlock. **/
 	private static CustomGesture cg;
@@ -60,13 +54,12 @@ public class FunctionBlock extends Block {
 		
 		this.name = new SimpleStringProperty(name);
 		this.type = new SimpleStringProperty(type.toHaskellType());
-		this.args = new ArrayList<>();
-
 		cg = new CustomGesture(this, this);
-		
+
 		this.getLoader().load();
 		
 		// Collect argument types
+		ArrayList<String> args = new ArrayList<>();
 		Type t = type;
 		while (t instanceof FuncT) {
 			FuncT ft = (FuncT) t;
@@ -75,7 +68,6 @@ public class FunctionBlock extends Block {
 		}
 
 		this.inputs = new ConnectionAnchor[args.size()];
-		this.labels = new Label[args.size()];
 
 		// Create anchors and labels for each argument
 		for (int i = 0; i < args.size(); i++) {
@@ -97,7 +89,7 @@ public class FunctionBlock extends Block {
 	 * @return Output of the Function
 	 */
 	public String executeMethod() {		
-		return new String("DEBUG-OUTPUT");
+		return "DEBUG-OUTPUT";
 	}
 	
 	/**
@@ -166,7 +158,7 @@ public class FunctionBlock extends Block {
 	
 	/**
 	 * Returns the index of the argument matched to the Anchor.
-	 * @param anchor
+	 * @param anchor The anchor to look up.
 	 * @return argumentIndex
 	 */
 	public int getArgumentIndex(ConnectionAnchor anchor) {
