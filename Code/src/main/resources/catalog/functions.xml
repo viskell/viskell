@@ -10,7 +10,7 @@
 
         <function name="(^)" signature="Float -> Float -> Float"></function>
 
-        <function name="(<)" signature="Float -> Float -> Bool"></function>
+        <function name="(&lt;)" signature="Float -> Float -> Bool"></function>
         <function name="(==)" signature="Float -> Float -> Bool"></function>
         <function name="(>)" signature="Float -> Float -> Bool"></function>
 
