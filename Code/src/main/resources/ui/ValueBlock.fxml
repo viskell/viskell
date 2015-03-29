@@ -1,13 +1,21 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root type="nl.utwente.group10.ui.components.ValueBlock" xmlns:fx="http://javafx.com/fxml/" styleClass="value, block">
-        <BorderPane>
-            <top>
-            <Label id="label_header" text="VALUE" styleClass="header" />
-            </top>
-            <center>
-            <Label text="${controller.value}" styleClass="title" />
-            </center>
-        </BorderPane>
+<fx:root type="nl.utwente.group10.ui.components.ValueBlock" xmlns:fx="http://javafx.com/fxml/">
+    <BorderPane>
+        <center>
+            <BorderPane styleClass="value, block">
+                <top>
+                <Label id="label_header" text="VALUE" styleClass="header" />
+                </top>
+                <center>
+                <Label text="${controller.value}" styleClass="title" />
+                </center>
+            </BorderPane>
+        </center>
+        <bottom>
+        <VBox fx:id="outputSpace" alignment = "center"/>
+        </bottom>
+    </BorderPane>
+        
 </fx:root>

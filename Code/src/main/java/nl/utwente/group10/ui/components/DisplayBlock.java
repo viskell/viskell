@@ -4,7 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-
+import javafx.scene.layout.Pane;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 
 import java.io.IOException;
@@ -20,6 +20,12 @@ public class DisplayBlock extends Block {
 
     /** The output this Block is displaying.**/
     private StringProperty output;
+
+    private ConnectionAnchor inputAnchor;
+    
+    @FXML private Pane anchorSpace;
+    
+    @FXML private Pane outputSpace;
     
     /**
      * Creates a new instance of DisplayBlock.
@@ -32,6 +38,11 @@ public class DisplayBlock extends Block {
         output = new SimpleStringProperty("New Output");
         
         this.getLoader().load();
+        
+        inputAnchor = new ConnectionAnchor();
+        anchorSpace.getChildren().add(inputAnchor);
+        outputSpace.getChildren().add(this.getOutputAnchor());
+        
     }
 
     /**
@@ -57,4 +68,9 @@ public class DisplayBlock extends Block {
     public StringProperty outputProperty() {
     	return output;
     }
+
+    public ConnectionAnchor getInputAnchor() {
+        return inputAnchor;
+    }
+
 }

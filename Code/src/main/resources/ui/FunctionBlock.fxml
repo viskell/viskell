@@ -1,20 +1,33 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<fx:root type="nl.utwente.group10.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1" styleClass="function, block">
-	<BorderPane minHeight="90" minWidth="180">
+<fx:root type="nl.utwente.group10.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
+	<BorderPane>
 		<top>
-			<BorderPane>
-				<top>
-					<Label text="${controller.name}" styleClass="title" />
-				</top>
-				<bottom>
-					<Label text="${controller.type}" styleClass="description" />
-				</bottom>
-			</BorderPane>
+			<FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10"/>
 		</top>
 		<center>
-			<FlowPane fx:id="nestSpace" styleClass="nestSpace" prefWrapLength="100" vgap="5"/>
+			<BorderPane minHeight="90" minWidth="180" styleClass="function, block">
+				<center>
+					<BorderPane>
+						<top>
+							<Label text="${controller.name}" styleClass="title" />
+						</top>
+						<center>
+							<HBox fx:id="argumentSpace" spacing="10" alignment="center" />
+						</center>
+						<bottom>
+							<Label text="${controller.type}" styleClass="description" />
+						</bottom>
+					</BorderPane>
+				</center>
+				<bottom>
+					<FlowPane fx:id="nestSpace" styleClass="nestSpace" prefWrapLength="100" vgap="5"/>
+				</bottom>
+			</BorderPane>
 		</center>
+		<bottom>
+			<VBox fx:id="outputSpace" alignment = "center"/>
+		</bottom>
 	</BorderPane>
 </fx:root>

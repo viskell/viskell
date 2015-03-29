@@ -3,20 +3,14 @@ package nl.utwente.group10.ui.components;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+
 import java.io.IOException;
 
-import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
+import javafx.scene.control.Label;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.Main;
 import nl.utwente.group10.ui.gestures.CustomGesture;
-import nl.utwente.group10.ui.gestures.UIEvent;
-import nl.utwente.group10.ui.gestures.GestureCallBack;
-import javafx.event.EventType;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-
-import java.io.IOException;
 
 /**
  * Main building block for the visual interface, this class
@@ -26,23 +20,34 @@ import java.io.IOException;
 public class FunctionBlock extends Block {
 	/** The arguments this FunctionBlock holds.**/
 	private String[] arguments;
+	
+	/** The inputs for this FunctionBlock.**/
+	private ConnectionAnchor[] inputs;
 
+	/** The types of the input for this FunctionBlock. **/
+	private Label[] labels;
+	
 	/** The name of this Function. **/
 	private StringProperty name;
 
 	/** The type of this Function. **/
 	private StringProperty type;
-	
+
 	/** intstance to create Events for this FunctionBlock. **/
 	private static CustomGesture cg;
 
-	@FXML
-	private Pane nestSpace;
+	@FXML private Pane nestSpace;
+	
+	@FXML private Pane anchorSpace;
+	
+	@FXML private Pane outputSpace;
+	
+	@FXML private Pane argumentSpace;
 
 	/**
 	 * Method that creates a newInstance of this class along with it's visual representation
-	 * @param the number of arguments this FunctionBlock can hold
-	 * @param pane: The CustomUIPane in which this FunctionBlock exists. Via this this FunctionBlock knows which other FunctionBlocks exist.
+	 * @param numArgs The number of arguments this FunctionBlock can hold
+	 * @param pane The CustomUIPane in which this FunctionBlock exists. Via this this FunctionBlock knows which other FunctionBlocks exist.
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
@@ -51,12 +56,28 @@ public class FunctionBlock extends Block {
 		
 		name = new SimpleStringProperty("Function name");
 		type = new SimpleStringProperty("Function type");
-		
+
 		cg = new CustomGesture(this, this);
 		
-		initializeArguments(numArgs);
-		
 		this.getLoader().load();
+		
+		outputSpace.getChildren().add(this.getOutputAnchor());
+
+		arguments = new String[numArgs];
+		inputs = new ConnectionAnchor[numArgs];
+		labels = new Label[numArgs];
+
+		// Create anchors and labels for each argument
+		for (int i = 0; i < numArgs; i++) {
+			arguments[i] = "Int";
+
+			inputs[i] = new ConnectionAnchor();
+			anchorSpace.getChildren().add(inputs[i]);
+
+			labels[i] = new Label(String.format(" %s ", arguments[i]));
+			labels[i].getStyleClass().add("argument");
+			argumentSpace.getChildren().add(labels[i]);
+		}
 	}
 	
 	/**
@@ -75,17 +96,7 @@ public class FunctionBlock extends Block {
 		name.set("Higher order function");
 		nestSpace.getChildren().add(node);
 	}
-	
-	/**
-	 * Private method to initialize the argument fields for this function block.
-	 * All arguments will are defined as Strings and will be stored as such.
-	 * An Integer value of 6 will also be stored as a String "6"
-	 * @param numberOfArguments
-	 */
-	private void initializeArguments(int numberOfArguments) {
-		arguments = new String[numberOfArguments];
-	}
-	
+
 	/**
 	 * Method to set the value of a specified argument
 	 */
@@ -117,7 +128,7 @@ public class FunctionBlock extends Block {
 	}
 
 	/**
-	 * @param the type property of this FunctionBlock.
+	 * @param type the type property of this FunctionBlock.
 	 */
 	public void setType(String type) {
 		this.type.set(type);
@@ -137,5 +148,37 @@ public class FunctionBlock extends Block {
 	 */
 	public StringProperty typeProperty() {
 		return type;
+	}
+	
+	/**
+	 * Method to fetch an array containing all of the input anchors for this
+	 * FunctionBlock
+	 * @return inputAnchors
+	 */
+	public ConnectionAnchor[] getInputs(){
+		return inputs;
+	}
+	
+	/**
+	 * Returns the index of the argument matched to the Anchor.
+	 * @param anchor
+	 * @return argumentIndex
+	 */
+	public int getArgumentIndex(ConnectionAnchor anchor) {
+		int index=0;
+		/**
+		 * @invariant index < inputs.length
+		 */
+		while((inputs[index]!=anchor)&&(index<inputs.length)) {
+			index++;
+		}
+		return index;
+	}
+	
+	//TODO index? argument? or both?
+	public String getArgument(ConnectionAnchor anchor) {
+		int index = getArgumentIndex(anchor);
+		
+		return arguments[index];
 	}
 }

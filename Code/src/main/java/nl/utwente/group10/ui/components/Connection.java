@@ -1,63 +1,99 @@
 package nl.utwente.group10.ui.components;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
+import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
+import nl.utwente.group10.ui.Main;
+import nl.utwente.group10.ui.components.Line;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.control.Label;
-import javafx.scene.shape.Rectangle;
+import javafx.fxml.Initializable;
 
 /**
  * This class represents a connection between two different FunctionBlocks. The
  * output of one FunctionBlock will be used as input for another FunctionBlock
  */
-public class Connection extends StackPane {
+public class Connection extends Line implements ChangeListener<Number> , Initializable {
 
-	/** The FunctionBlock that inputs data into this connection */
-	private FunctionBlock input;
-	/** The FunctionBlock that we output data into from this connection */
-	private FunctionBlock output;
+	/** The Block that inputs data into this connection */
+	private Block input;
+	/** The Block that we output data into from this connection */
+	private Block output;
 	/** The argument field of the FunctionBlock that we are outputting data into */
 	private int outputarg;
+	/** The fxmlLoader responsible for loading the fxml.*/
+	private FXMLLoader fxmlLoader;
 
 	/**
-	 * Method that creates a newInstance of this class along with it's visual
-	 * representation
-	 * 
-	 * @param the
-	 *            FunctionBlock that inputs data into this connection
-	 * @param the
-	 *            FunctionBlock that we output data into from this connection
-	 * @param the
-	 *            number of the argument field to output data into
+	 * Method that creates a new instance of this class along with it's visual
+	 * representation. 
+	 * @param Block to connect from.
+	 * @param Anchor to start from.
+	 * @param Block to connect to.
+	 * @param Anchor to end at.
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public static Connection newInstance(FunctionBlock in, FunctionBlock out,
-			int outarg) {
-		// TODO instantiate FXML instead of blank new connection
-		Connection connection = new Connection();
-		connection.setInput(in);
-		connection.setOutput(out, outarg);
+	public Connection(Block from, ConnectionAnchor fromAnchor, Block to, ConnectionAnchor toAnchor) throws IOException {
+		fxmlLoader = new FXMLLoader(getClass().getResource("/ui/Connection.fxml"));
+		fxmlLoader.setRoot(this);
+		fxmlLoader.setController(this);
 
-		return connection;
+		from.layoutXProperty().addListener(this);
+		from.layoutYProperty().addListener(this);
+
+		to.layoutXProperty().addListener(this);
+		to.layoutYProperty().addListener(this);
+
+		this.setStartAnchor(fromAnchor);
+		this.setEndAnchor(toAnchor);
+		
+		fxmlLoader.load();
 	}
-
-	// Private method to set the input of this line
+	
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+	}
+	
+	/**
+	 * Private method that sets the input into this Connection
+	 * @param input source
+	 */
 	private void setInput(FunctionBlock in) {
 		input = in;
 	}
 
-	// Private method to set the functionBlock where the input will be directed
-	// to
-	// AKA the output
+	/**
+	 * Private method that sets the FunctionBlock and argument 
+	 * that Connection will output into.
+	 * @param FunctionBlock to output into
+	 * @param Argument field to output into
+	 */
 	private void setOutput(FunctionBlock out, int outarg) {
 		output = out;
 		outputarg = outarg;
-		out.setArgument(outputarg, input.executeMethod());
+		out.setArgument(outputarg, ((FunctionBlock)input).executeMethod());
+	}
+	
+	/**
+	 * @return Block that is being used as input
+	 */
+	public Block getInputFunction() {
+		return input;
+	}
+	
+	/**
+	 * @return Block that is being used as output
+	 */
+	public Block getOutputFunction() {
+		return output;
+	}
+
+	@Override
+	public void changed(ObservableValue<?extends Number> observable, Number oldValue, Number newValue) {
+		updateStartEndPositions();
 	}
 }

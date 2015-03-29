@@ -4,6 +4,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
@@ -20,6 +21,8 @@ public class ValueBlock extends Block {
 
     /** The value of this ValueBlock.*/
     private StringProperty value;
+    
+    @FXML private Pane outputSpace;
 
     /**
      * Creates a new ValueBlock instance with initialized value,
@@ -34,6 +37,8 @@ public class ValueBlock extends Block {
         value = new SimpleStringProperty(val);
         
         this.getLoader().load();
+        
+        outputSpace.getChildren().add(this.getOutputAnchor());
     }
 
     /**
@@ -56,6 +61,6 @@ public class ValueBlock extends Block {
      * @return value
      */
     public StringProperty valueProperty() {
-    	return value;
+        return value;
     }
 }

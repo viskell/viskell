@@ -3,9 +3,19 @@
 <?import javafx.scene.layout.*?>
 <?import java.net.*?>
 
-<fx:root type="nl.utwente.group10.ui.components.DisplayBlock" xmlns:fx="http://javafx.com/fxml/" styleClass="display, block">
-    <VBox styleClass="display, block" alignment="CENTER_LEFT" spacing="12">
-        <Label id="label_header" text="OUTPUT" styleClass="header" alignment="CENTER_LEFT" />
-        <Label text="${controller.output}" styleClass="title" alignment="CENTER_LEFT" />
-    </VBox>
+<fx:root type="nl.utwente.group10.ui.components.DisplayBlock" xmlns:fx="http://javafx.com/fxml/">
+    <BorderPane>
+        <top>
+            <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="center"/>
+        </top>
+        <center>
+        <VBox styleClass="display, block" spacing="12">
+            <Label id="label_header" text="OUTPUT" styleClass="header" alignment="center_left" />
+            <Label text="${controller.output}" styleClass="title" alignment="center" />
+        </VBox>
+        </center>
+        <bottom>
+            <VBox fx:id="outputSpace" alignment = "center"/>
+        </bottom>
+    </BorderPane>
 </fx:root>

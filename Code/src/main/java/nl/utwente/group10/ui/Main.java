@@ -2,6 +2,8 @@ package nl.utwente.group10.ui;
 
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
+import nl.utwente.group10.ui.components.Connection;
+import nl.utwente.group10.ui.components.ConnectionAnchor;
 import nl.utwente.group10.ui.components.DisplayBlock;
 import nl.utwente.group10.ui.components.FunctionBlock;
 import nl.utwente.group10.ui.components.ValueBlock;
@@ -23,26 +25,24 @@ public class Main extends Application {
 
 		CustomUIPane tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
 
+		DisplayBlock displayBlock = new DisplayBlock();
 		FunctionBlock functionBlock = new FunctionBlock(2, tactilePane);
-		functionBlock.setName("TestTest");
-		FunctionBlock functionBlock2 = new FunctionBlock(0, tactilePane);
-		FunctionBlock functionBlock3 = new FunctionBlock(0, tactilePane);
-		FunctionBlock functionBlock4 = new FunctionBlock(0, tactilePane);
-
-		functionBlock4.nest(new FunctionBlock(0, tactilePane));
-		functionBlock3.nest(new FunctionBlock(0, tactilePane));
-		functionBlock3.nest(new FunctionBlock(0, tactilePane));
-		functionBlock2.nest(functionBlock4);
-		functionBlock2.nest(functionBlock3);
-
-		functionBlock.nest(new FunctionBlock(0, tactilePane));
-		functionBlock.nest(new FunctionBlock(0, tactilePane));
-		functionBlock.nest(new FunctionBlock(0, tactilePane));
+		ValueBlock valueBlock = new ValueBlock("6");
+		ValueBlock valueBlock2 = new ValueBlock("6");
+		
 		tactilePane.getChildren().add(functionBlock);
-		tactilePane.getChildren().add(functionBlock2);
-		tactilePane.getChildren().add(new FunctionBlock(0, tactilePane));
-		tactilePane.getChildren().add(new ValueBlock("6"));
-		tactilePane.getChildren().add(new DisplayBlock());
+		tactilePane.getChildren().add(displayBlock);
+		tactilePane.getChildren().add(valueBlock);
+		tactilePane.getChildren().add(valueBlock2);
+
+		Connection connection = new Connection(functionBlock, functionBlock.getOutputAnchor(), displayBlock, displayBlock.getInputAnchor());
+		Connection connection2 = new Connection(valueBlock, valueBlock.getOutputAnchor(), functionBlock, functionBlock.getInputs()[0]);
+		Connection connection3 = new Connection(valueBlock2, valueBlock2.getOutputAnchor(), functionBlock, functionBlock.getInputs()[1]);
+		
+		tactilePane.getChildren().add(connection);
+		tactilePane.getChildren().add(connection2);
+		tactilePane.getChildren().add(connection3);
+
 
 		// Init Control Pane
 		FlowPane controlLayout = new FlowPane();

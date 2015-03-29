@@ -1,6 +1,7 @@
 package nl.utwente.group10.ui.components;
 
 
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -8,6 +9,7 @@ import nl.utwente.group10.ui.gestures.GestureCallBack;
 import nl.utwente.group10.ui.gestures.UIEvent;
 import javafx.event.EventType;
 import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
@@ -24,6 +26,9 @@ public class Block extends StackPane implements Initializable, GestureCallBack {
 	/** Selected state of this Block*/
 	private boolean isSelected = false;
 	
+	/** The output of this Block.**/
+	private ConnectionAnchor output;
+	
 	/** The fxmlLoader responsible for loading the fxml of this Block.*/
 	private FXMLLoader fxmlLoader;
 	
@@ -34,6 +39,7 @@ public class Block extends StackPane implements Initializable, GestureCallBack {
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 		
+		output = new ConnectionAnchor();
 		cup = pane;
 	}
 	
@@ -43,6 +49,13 @@ public class Block extends StackPane implements Initializable, GestureCallBack {
 	 */
 	public FXMLLoader getLoader(){
 		return fxmlLoader;
+	}
+	
+	/**
+	 * @return the output Anchor for this Block
+	 */
+	public ConnectionAnchor getOutputAnchor() {
+		return output;
 	}
 	
 	/**
