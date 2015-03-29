@@ -30,23 +30,26 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 	/**
 	 * Method that creates a new instance of this class along with it's visual
 	 * representation. 
-	 * @param Anchor of the Block
+	 * @param Block to connect from.
+	 * @param Anchor to start from.
+	 * @param Block to connect to.
+	 * @param Anchor to end at.
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public Connection(ConnectionAnchor startAnchor, ConnectionAnchor endAnchor) throws IOException {
+	public Connection(Block from, ConnectionAnchor fromAnchor, Block to, ConnectionAnchor toAnchor) throws IOException {
 		fxmlLoader = new FXMLLoader(getClass().getResource("/ui/Connection.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
-		
-		startAnchor.layoutXProperty().addListener(this);
-		startAnchor.layoutYProperty().addListener(this);
-		
-		endAnchor.layoutXProperty().addListener(this);
-		endAnchor.layoutYProperty().addListener(this);
-		
-		this.setStartAnchor(startAnchor);
-		this.setEndAnchor(endAnchor);	
+
+		from.layoutXProperty().addListener(this);
+		from.layoutYProperty().addListener(this);
+
+		to.layoutXProperty().addListener(this);
+		to.layoutYProperty().addListener(this);
+
+		this.setStartAnchor(fromAnchor);
+		this.setEndAnchor(toAnchor);
 		
 		fxmlLoader.load();
 	}
@@ -91,7 +94,6 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 
 	@Override
 	public void changed(ObservableValue<?extends Number> observable, Number oldValue, Number newValue) {
-		System.out.println("Changed");
 		updateStartEndPositions();
 	}
 }

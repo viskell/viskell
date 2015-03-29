@@ -1,5 +1,6 @@
 package nl.utwente.group10.ui.components;
 
+import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 
 /**
@@ -79,7 +80,11 @@ public class Line extends CubicCurve {
 	 * startAnchor as a reference point.
 	 */
 	private void updateStartPosition() {
-		setStartPosition(startAnchor.getLayoutX()+startAnchor.getCenterX()-this.getLayoutX(),startAnchor.getLayoutY()+startAnchor.getCenterY()-this.getLayoutY());
+		double x = startAnchor.getCenterX();
+		double y = startAnchor.getCenterY();
+		Point2D point = startAnchor.localToScene(x, y);
+
+		setStartPosition(point.getX(), point.getY());
 	}
 	
 	/**
@@ -87,6 +92,10 @@ public class Line extends CubicCurve {
 	 * endAnchor as a reference point.
 	 */
 	private void updateEndPosition() {
-		setEndPosition(endAnchor.getLayoutX()+endAnchor.getCenterX()-this.getLayoutX(),endAnchor.getLayoutY()+endAnchor.getCenterY()-this.getLayoutY());
+		double x = endAnchor.getCenterX();
+		double y = endAnchor.getCenterY();
+		Point2D point = endAnchor.localToScene(x, y);
+
+		setEndPosition(point.getX(), point.getY());
 	}
 }

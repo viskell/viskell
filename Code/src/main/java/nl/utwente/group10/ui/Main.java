@@ -25,12 +25,14 @@ public class Main extends Application {
 
 		CustomUIPane tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
 
-		tactilePane.getChildren().add(new FunctionBlock(4, tactilePane));
+		DisplayBlock displayBlock = new DisplayBlock();
+		FunctionBlock functionBlock = new FunctionBlock(2, tactilePane);
+
+		tactilePane.getChildren().add(functionBlock);
+		tactilePane.getChildren().add(displayBlock);
 		tactilePane.getChildren().add(new ValueBlock("6"));
-		tactilePane.getChildren().add(new DisplayBlock());
-		
-		//TODO why aren't the anchors showing?
-		Connection connection = new Connection(new ConnectionAnchor(), new ConnectionAnchor());
+
+		Connection connection = new Connection(functionBlock, functionBlock.getOutputAnchor(), displayBlock, displayBlock.getInputAnchor());
 		
 		tactilePane.getChildren().add(connection);
 

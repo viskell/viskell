@@ -20,7 +20,7 @@ public class DisplayBlock extends Block {
 
     /** The output this Block is displaying.**/
     private StringProperty output;
-    
+
     private ConnectionAnchor inputAnchor;
     
     @FXML private Pane anchorSpace;
@@ -68,4 +68,9 @@ public class DisplayBlock extends Block {
     public StringProperty outputProperty() {
     	return output;
     }
+
+    public ConnectionAnchor getInputAnchor() {
+        return inputAnchor;
+    }
+
 }
