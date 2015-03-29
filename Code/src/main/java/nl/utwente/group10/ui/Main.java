@@ -27,14 +27,21 @@ public class Main extends Application {
 
 		DisplayBlock displayBlock = new DisplayBlock();
 		FunctionBlock functionBlock = new FunctionBlock(2, tactilePane);
-
+		ValueBlock valueBlock = new ValueBlock("6");
+		ValueBlock valueBlock2 = new ValueBlock("6");
+		
 		tactilePane.getChildren().add(functionBlock);
 		tactilePane.getChildren().add(displayBlock);
-		tactilePane.getChildren().add(new ValueBlock("6"));
+		tactilePane.getChildren().add(valueBlock);
+		tactilePane.getChildren().add(valueBlock2);
 
 		Connection connection = new Connection(functionBlock, functionBlock.getOutputAnchor(), displayBlock, displayBlock.getInputAnchor());
+		Connection connection2 = new Connection(valueBlock, valueBlock.getOutputAnchor(), functionBlock, functionBlock.getInputs()[0]);
+		Connection connection3 = new Connection(valueBlock2, valueBlock2.getOutputAnchor(), functionBlock, functionBlock.getInputs()[1]);
 		
 		tactilePane.getChildren().add(connection);
+		tactilePane.getChildren().add(connection2);
+		tactilePane.getChildren().add(connection3);
 
 
 		// Init Control Pane

@@ -78,7 +78,6 @@ public class FunctionBlock extends Block {
 			labels[i].getStyleClass().add("argument");
 			argumentSpace.getChildren().add(labels[i]);
 		}
-
 	}
 	
 	/**

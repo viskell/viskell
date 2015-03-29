@@ -14,8 +14,8 @@
 							<Label text="${controller.name}" styleClass="title" />
 						</top>
 						<center>
-                            <HBox fx:id="argumentSpace" spacing="10" alignment="center" />
-                        </center>
+							<HBox fx:id="argumentSpace" spacing="10" alignment="center" />
+						</center>
 						<bottom>
 							<Label text="${controller.type}" styleClass="description" />
 						</bottom>
