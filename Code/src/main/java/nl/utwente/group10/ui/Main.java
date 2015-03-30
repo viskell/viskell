@@ -64,7 +64,7 @@ public class Main extends Application {
 		debug.registerTactilePane(tactilePane);
 
 		Scene scene = new Scene(debug);
-		stage.setOnCloseRequest(event -> Platform.exit());
+		stage.setOnCloseRequest(event -> System.exit(0));
 		stage.setScene(scene);
 		stage.show();
 
