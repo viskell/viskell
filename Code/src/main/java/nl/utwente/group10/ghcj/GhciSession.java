@@ -15,7 +15,7 @@ public class GhciSession implements Closeable {
     private final GhciEvaluator ghci;
 
     /** Singleton instance. */
-    private static Optional<GhciSession> instance;
+    private static Optional<GhciSession> instance = Optional.empty();
 
     /**
      * Builds a new communication session with ghci.

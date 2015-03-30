@@ -4,6 +4,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
+import nl.utwente.group10.ghcj.GhciException;
+import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 
@@ -79,6 +81,11 @@ public class DisplayBlock extends Block {
     }
 
     public void invalidate() {
-        setOutput(inputAnchor.asExpr().toHaskell());
+        try {
+            GhciSession ghci = GhciSession.getInstance();
+            setOutput(ghci.pull(inputAnchor.asExpr()));
+        } catch (GhciException e) {
+            setOutput("???");
+        }
     }
 }
