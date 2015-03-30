@@ -3,6 +3,7 @@ package nl.utwente.group10.ui;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
@@ -18,13 +19,14 @@ import nl.utwente.group10.ui.components.FunctionBlock;
 import nl.utwente.group10.ui.components.ValueBlock;
 
 public class Main extends Application {
-	DebugParent debug;
+	private DebugParent debug;
+	private CustomUIPane tactilePane;
 
 	@Override
 	public void start(Stage stage) throws Exception {
 		BorderPane root = new BorderPane();
 
-		CustomUIPane tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
+		tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
 
 		HaskellCatalog catalog = new HaskellCatalog();
 
@@ -65,6 +67,18 @@ public class Main extends Application {
 		stage.setOnCloseRequest(event -> Platform.exit());
 		stage.setScene(scene);
 		stage.show();
+
+		// Invalidate
+		invalidate();
+	}
+
+	/** Re-evaluate all displays. */
+	private void invalidate() {
+		for (Node node : tactilePane.getChildren()) {
+			if (node instanceof DisplayBlock) {
+				((DisplayBlock)node).invalidate();
+			}
+		}
 	}
 
 	public static void main(String[] args) {

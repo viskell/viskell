@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.scene.control.Label;
+import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -170,5 +171,10 @@ public class FunctionBlock extends Block {
 			index++;
 		}
 		return index;
+	}
+
+	@Override
+	public Expr asExpr() {
+		return null;
 	}
 }

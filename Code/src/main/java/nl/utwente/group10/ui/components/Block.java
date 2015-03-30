@@ -4,6 +4,7 @@ package nl.utwente.group10.ui.components;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.gestures.GestureCallBack;
 import nl.utwente.group10.ui.gestures.UIEvent;
@@ -21,7 +22,7 @@ import java.util.ResourceBundle;
  * If common functionality is found it should be refactored to here.
  */
 
-public class Block extends StackPane implements Initializable, GestureCallBack {
+public abstract class Block extends StackPane implements Initializable, GestureCallBack {
 	
 	/** Selected state of this Block*/
 	private boolean isSelected = false;
@@ -89,4 +90,9 @@ public class Block extends StackPane implements Initializable, GestureCallBack {
 			//TODO: open the quick-menu
 		}
 	}
+
+	/**
+	 * @return an expression that evaluates to what this block is.
+	 */
+	public abstract Expr asExpr();
 }
