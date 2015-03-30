@@ -4,7 +4,7 @@ import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 
 /** A function entry in the Haskell catalog. */
-public class Entry {
+public class Entry implements Comparable<Entry> {
     /** The name of this Entry. */
     private final String name;
 
@@ -66,5 +66,10 @@ public class Entry {
     public final Type getType() {
         TypeBuilder builder = new TypeBuilder();
         return builder.build(this.getSignature());
+    }
+
+    @Override
+    public int compareTo(Entry entry) {
+        return this.getName().compareTo(entry.getName());
     }
 }

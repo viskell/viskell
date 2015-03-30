@@ -1,7 +1,7 @@
 package nl.utwente.group10.haskell.catalog;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.TreeMultimap;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 import org.w3c.dom.Document;
@@ -23,7 +23,7 @@ import java.util.*;
  */
 public class HaskellCatalog {
     /** Map from category to entry for use in getCategories and getCategory. */
-    private final Multimap<String, Entry> byCategory;
+    private final TreeMultimap<String, Entry> byCategory;
 
     /** Map from function name to entry for use in get() and friends. */
     private final Map<String, Entry> byName;
@@ -51,8 +51,8 @@ public class HaskellCatalog {
         URL functions = HaskellCatalog.class.getResource(path);
         URL xmlschema = HaskellCatalog.class.getResource(XSD_PATH);
 
-        this.byName = new HashMap<String, Entry>();
-        this.byCategory = HashMultimap.create();
+        this.byName = new HashMap<>();
+        this.byCategory = TreeMultimap.create();
 
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
