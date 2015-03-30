@@ -33,8 +33,6 @@ public class FunctionBlock extends Block {
 	/** intstance to create Events for this FunctionBlock. **/
 	private static CustomGesture cg;
 
-	@FXML private Pane nestSpace;
-	
 	@FXML private Pane anchorSpace;
 	
 	@FXML private Pane outputSpace;
@@ -97,8 +95,7 @@ public class FunctionBlock extends Block {
 	 * @param node to nest
 	 */
 	public void nest(Node node) {
-		name.set("Higher order function");
-		nestSpace.getChildren().add(node);
+		throw new UnsupportedOperationException();
 	}
 
 	/**
