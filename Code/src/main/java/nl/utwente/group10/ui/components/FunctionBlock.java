@@ -3,18 +3,17 @@ package nl.utwente.group10.ui.components;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.gestures.CustomGesture;
-import javafx.scene.Node;
-import javafx.scene.layout.Pane;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Main building block for the visual interface, this class

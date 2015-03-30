@@ -1,17 +1,13 @@
 package nl.utwente.group10.ui.components;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
-import nl.utwente.group10.ui.Main;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.shape.Circle;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * Represent an Anchor point on either a Block or a Line

@@ -1,16 +1,13 @@
 package nl.utwente.group10.ui.components;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
-import nl.utwente.group10.ui.Main;
-import nl.utwente.group10.ui.components.Line;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * This class represents a connection between two different FunctionBlocks. The

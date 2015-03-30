@@ -3,9 +3,7 @@ package nl.utwente.group10.ui.components;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
-import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 import nl.utwente.group10.haskell.expr.Expr;
 
 import java.io.IOException;

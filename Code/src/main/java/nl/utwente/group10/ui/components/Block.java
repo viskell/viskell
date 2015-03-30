@@ -1,17 +1,15 @@
 package nl.utwente.group10.ui.components;
 
 
-import javafx.fxml.FXML;
+import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.gestures.GestureCallBack;
 import nl.utwente.group10.ui.gestures.UIEvent;
-import javafx.event.EventType;
-import javafx.scene.Node;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 import java.net.URL;
