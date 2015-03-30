@@ -30,6 +30,8 @@ public class InputAnchor extends ConnectionAnchor {
 
                 return null;
             });
+
+            pane.invalidate();
         });
     }
 }

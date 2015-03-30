@@ -2,7 +2,6 @@ package nl.utwente.group10.ui;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckMenuItem;
@@ -70,7 +69,7 @@ public class Main extends Application {
 		stage.show();
 
 		// Invalidate
-		invalidate();
+		tactilePane.invalidate(this);
 	}
 
 	private void addFunctionBlock(Entry entry) {
@@ -88,15 +87,6 @@ public class Main extends Application {
 		alert.setHeaderText("An unexpected error occurred.");
 		alert.setContentText(String.format("%s", e));
 		alert.showAndWait();
-	}
-
-	/** Re-evaluate all displays. */
-	private void invalidate() {
-		for (Node node : tactilePane.getChildren()) {
-			if (node instanceof DisplayBlock) {
-				((DisplayBlock)node).invalidate();
-			}
-		}
 	}
 
 	public static void main(String[] args) {
