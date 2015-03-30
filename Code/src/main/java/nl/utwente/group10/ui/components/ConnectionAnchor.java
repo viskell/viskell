@@ -14,7 +14,7 @@ import java.util.ResourceBundle;
  * 
  * Other data types will be supported in the future
  */
-public class ConnectionAnchor extends Circle implements Initializable {
+public abstract class ConnectionAnchor extends Circle implements Initializable {
     /** The fxmlLoader responsible for loading the fxml of this Block.*/
     private FXMLLoader fxmlLoader;
 

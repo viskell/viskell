@@ -53,7 +53,7 @@ public abstract class Block extends StackPane implements Initializable, GestureC
 	/**
 	 * @return the output Anchor for this Block
 	 */
-	public ConnectionAnchor getOutputAnchor() {
+	public OutputAnchor getOutputAnchor() {
 		return output;
 	}
 	

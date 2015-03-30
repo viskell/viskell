@@ -27,14 +27,14 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 	/**
 	 * Method that creates a new instance of this class along with it's visual
 	 * representation. 
-	 * @param Block to connect from.
-	 * @param Anchor to start from.
-	 * @param Block to connect to.
-	 * @param Anchor to end at.
+	 * @param from Block to connect from.
+	 * @param fromAnchor Anchor to start from.
+	 * @param to Block to connect to.
+	 * @param toAnchor Anchor to end at.
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public Connection(Block from, ConnectionAnchor fromAnchor, Block to, ConnectionAnchor toAnchor) throws IOException {
+	public Connection(Block from, OutputAnchor fromAnchor, Block to, InputAnchor toAnchor) throws IOException {
 		fxmlLoader = new FXMLLoader(getClass().getResource("/ui/Connection.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);

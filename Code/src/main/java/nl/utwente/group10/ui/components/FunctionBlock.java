@@ -152,7 +152,7 @@ public class FunctionBlock extends Block {
 	 * FunctionBlock
 	 * @return inputAnchors
 	 */
-	public ConnectionAnchor[] getInputs(){
+	public InputAnchor[] getInputs(){
 		return inputs;
 	}
 	

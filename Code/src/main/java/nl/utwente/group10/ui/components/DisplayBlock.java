@@ -38,7 +38,7 @@ public class DisplayBlock extends Block {
         
         this.getLoader().load();
         
-        inputAnchor = new ConnectionAnchor();
+        inputAnchor = new InputAnchor();
         anchorSpace.getChildren().add(inputAnchor);
         outputSpace.getChildren().add(this.getOutputAnchor());
         
