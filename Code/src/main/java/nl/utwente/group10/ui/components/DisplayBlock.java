@@ -5,6 +5,7 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.ui.CustomUIPane;
 
 import java.io.IOException;
 
@@ -31,14 +32,14 @@ public class DisplayBlock extends Block {
      * @return new DisplayBlock instance
      * @throws IOException
      */
-    public DisplayBlock() throws IOException {
-        super("DisplayBlock", null);
+    public DisplayBlock(CustomUIPane pane) throws IOException {
+        super("DisplayBlock", pane);
 
         output = new SimpleStringProperty("New Output");
         
         this.getLoader().load();
         
-        inputAnchor = new InputAnchor();
+        inputAnchor = new InputAnchor(pane);
         anchorSpace.getChildren().add(inputAnchor);
         outputSpace.getChildren().add(this.getOutputAnchor());
         

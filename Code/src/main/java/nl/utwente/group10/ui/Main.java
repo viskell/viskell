@@ -31,7 +31,7 @@ public class Main extends Application {
 		HaskellCatalog catalog = new HaskellCatalog();
 
 		tactilePane.getChildren().add(new ValueBlock("6.0"));
-		tactilePane.getChildren().add(new DisplayBlock());
+		tactilePane.getChildren().add(new DisplayBlock(tactilePane));
 
 		// Init Debug
 		debug = new DebugParent(tactilePane);

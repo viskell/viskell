@@ -69,7 +69,7 @@ public class FunctionBlock extends Block {
 
 		// Create anchors and labels for each argument
 		for (int i = 0; i < args.size(); i++) {
-			inputs[i] = new InputAnchor();
+			inputs[i] = new InputAnchor(pane);
 			anchorSpace.getChildren().add(inputs[i]);
 
 			argumentSpace.getChildren().add(new Label(args.get(i)));

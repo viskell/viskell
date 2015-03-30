@@ -3,6 +3,7 @@ package nl.utwente.group10.ui.components;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.shape.Circle;
+import nl.utwente.group10.ui.CustomUIPane;
 
 import java.io.IOException;
 import java.net.URL;
@@ -18,7 +19,12 @@ public abstract class ConnectionAnchor extends Circle implements Initializable {
     /** The fxmlLoader responsible for loading the fxml of this Block.*/
     private FXMLLoader fxmlLoader;
 
-    public ConnectionAnchor() throws IOException {
+    /** Our parent CustomUIPane. */
+    private CustomUIPane pane;
+
+    public ConnectionAnchor(CustomUIPane pane) throws IOException {
+        this.pane = pane;
+
         fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ConnectionAnchor.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);			
