@@ -39,7 +39,7 @@ public class DisplayBlock extends Block {
         
         this.getLoader().load();
         
-        inputAnchor = new InputAnchor(pane);
+        inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
         outputSpace.getChildren().add(this.getOutputAnchor());
         

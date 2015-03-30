@@ -27,28 +27,28 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 	/**
 	 * Method that creates a new instance of this class along with it's visual
 	 * representation. 
-	 * @param from Block to connect from.
-	 * @param fromAnchor Anchor to start from.
-	 * @param to Block to connect to.
+	 * @param from Anchor to start from.
 	 * @param toAnchor Anchor to end at.
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public Connection(Block from, OutputAnchor fromAnchor, Block to, InputAnchor toAnchor) throws IOException {
+	public Connection(OutputAnchor from, InputAnchor to) throws IOException {
 		fxmlLoader = new FXMLLoader(getClass().getResource("/ui/Connection.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 
-		from.layoutXProperty().addListener(this);
-		from.layoutYProperty().addListener(this);
+		from.getBlock().layoutXProperty().addListener(this);
+		from.getBlock().layoutYProperty().addListener(this);
 
-		to.layoutXProperty().addListener(this);
-		to.layoutYProperty().addListener(this);
+		to.getBlock().layoutXProperty().addListener(this);
+		to.getBlock().layoutYProperty().addListener(this);
 
-		this.setStartAnchor(fromAnchor);
-		this.setEndAnchor(toAnchor);
+		this.setStartAnchor(from);
+		this.setEndAnchor(to);
 		
 		fxmlLoader.load();
+
+		updateStartEndPositions();
 	}
 	
 	@Override

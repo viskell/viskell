@@ -22,7 +22,11 @@ public abstract class ConnectionAnchor extends Circle implements Initializable {
     /** Our parent CustomUIPane. */
     private CustomUIPane pane;
 
-    public ConnectionAnchor(CustomUIPane pane) throws IOException {
+    /** Our parent Block. */
+    private Block block;
+
+    public ConnectionAnchor(Block block, CustomUIPane pane) throws IOException {
+        this.block = block;
         this.pane = pane;
 
         fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ConnectionAnchor.fxml"));
@@ -31,7 +35,15 @@ public abstract class ConnectionAnchor extends Circle implements Initializable {
 
         fxmlLoader.load();
     }
-    
+
+    public Block getBlock() {
+        return block;
+    }
+
+    public CustomUIPane getPane() {
+        return pane;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }

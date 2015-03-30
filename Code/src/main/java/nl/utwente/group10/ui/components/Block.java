@@ -38,7 +38,7 @@ public abstract class Block extends StackPane implements Initializable, GestureC
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 		
-		output = new OutputAnchor(pane);
+		output = new OutputAnchor(this, pane);
 		cup = pane;
 	}
 	
