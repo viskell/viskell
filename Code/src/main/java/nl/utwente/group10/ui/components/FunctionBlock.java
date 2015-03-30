@@ -5,8 +5,11 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javafx.scene.control.Label;
+import nl.utwente.group10.haskell.type.FuncT;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.gestures.CustomGesture;
 import javafx.scene.Node;
@@ -18,15 +21,9 @@ import javafx.scene.layout.Pane;
  * visual representation.
  */
 public class FunctionBlock extends Block {
-	/** The arguments this FunctionBlock holds.**/
-	private String[] arguments;
-	
 	/** The inputs for this FunctionBlock.**/
 	private ConnectionAnchor[] inputs;
 
-	/** The types of the input for this FunctionBlock. **/
-	private Label[] labels;
-	
 	/** The name of this Function. **/
 	private StringProperty name;
 
@@ -46,38 +43,45 @@ public class FunctionBlock extends Block {
 
 	/**
 	 * Method that creates a newInstance of this class along with it's visual representation
-	 * @param numArgs The number of arguments this FunctionBlock can hold
-	 * @param pane The CustomUIPane in which this FunctionBlock exists. Via this this FunctionBlock knows which other FunctionBlocks exist.
-	 * @return a new instance of this class
+	 *
+	 * @param name The name of the function.
+	 * @param type The function's type (usually a FuncT).
+	 * @param pane The CustomUIPane in which this FunctionBlock exists. Via this this FunctionBlock knows which other FunctionBlocks exist.  @return a new instance of this class
 	 * @throws IOException
 	 */
-	public FunctionBlock(int numArgs, CustomUIPane pane) throws IOException {
+	public FunctionBlock(String name, Type type, CustomUIPane pane) throws IOException {
 		super("FunctionBlock", pane);
 		
-		name = new SimpleStringProperty("Function name");
-		type = new SimpleStringProperty("Function type");
-
+		this.name = new SimpleStringProperty(name);
+		this.type = new SimpleStringProperty(type.toHaskellType());
 		cg = new CustomGesture(this, this);
-		
+
 		this.getLoader().load();
 		
-		outputSpace.getChildren().add(this.getOutputAnchor());
+		// Collect argument types
+		ArrayList<String> args = new ArrayList<>();
+		Type t = type;
+		while (t instanceof FuncT) {
+			FuncT ft = (FuncT) t;
+			args.add(ft.getArgs()[0].toHaskellType());
+			t = ft.getArgs()[1];
+		}
 
-		arguments = new String[numArgs];
-		inputs = new ConnectionAnchor[numArgs];
-		labels = new Label[numArgs];
+		this.inputs = new ConnectionAnchor[args.size()];
 
 		// Create anchors and labels for each argument
-		for (int i = 0; i < numArgs; i++) {
-			arguments[i] = "Int";
-
+		for (int i = 0; i < args.size(); i++) {
 			inputs[i] = new ConnectionAnchor();
 			anchorSpace.getChildren().add(inputs[i]);
 
-			labels[i] = new Label(String.format(" %s ", arguments[i]));
-			labels[i].getStyleClass().add("argument");
-			argumentSpace.getChildren().add(labels[i]);
+			argumentSpace.getChildren().add(new Label(args.get(i)));
 		}
+
+		// Create an anchor and label for the result
+		Label lbl = new Label(t.toHaskellType());
+		lbl.getStyleClass().add("result");
+		argumentSpace.getChildren().add(lbl);
+		outputSpace.getChildren().add(this.getOutputAnchor());
 	}
 	
 	/**
@@ -85,7 +89,7 @@ public class FunctionBlock extends Block {
 	 * @return Output of the Function
 	 */
 	public String executeMethod() {		
-		return new String("DEBUG-OUTPUT");
+		return "DEBUG-OUTPUT";
 	}
 	
 	/**
@@ -95,13 +99,6 @@ public class FunctionBlock extends Block {
 	public void nest(Node node) {
 		name.set("Higher order function");
 		nestSpace.getChildren().add(node);
-	}
-
-	/**
-	 * Method to set the value of a specified argument
-	 */
-	public void setArgument(int i,String arg) {
-		arguments[i] = arg;
 	}
 
 	/**
@@ -161,7 +158,7 @@ public class FunctionBlock extends Block {
 	
 	/**
 	 * Returns the index of the argument matched to the Anchor.
-	 * @param anchor
+	 * @param anchor The anchor to look up.
 	 * @return argumentIndex
 	 */
 	public int getArgumentIndex(ConnectionAnchor anchor) {
@@ -173,12 +170,5 @@ public class FunctionBlock extends Block {
 			index++;
 		}
 		return index;
-	}
-	
-	//TODO index? argument? or both?
-	public String getArgument(ConnectionAnchor anchor) {
-		int index = getArgumentIndex(anchor);
-		
-		return arguments[index];
 	}
 }

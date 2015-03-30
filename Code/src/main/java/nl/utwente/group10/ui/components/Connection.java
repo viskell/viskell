@@ -69,13 +69,12 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 	/**
 	 * Private method that sets the FunctionBlock and argument 
 	 * that Connection will output into.
-	 * @param FunctionBlock to output into
-	 * @param Argument field to output into
+	 * @param out FunctionBlock to output into
+	 * @param outarg Argument field to output into
 	 */
 	private void setOutput(FunctionBlock out, int outarg) {
 		output = out;
 		outputarg = outarg;
-		out.setArgument(outputarg, ((FunctionBlock)input).executeMethod());
 	}
 	
 	/**

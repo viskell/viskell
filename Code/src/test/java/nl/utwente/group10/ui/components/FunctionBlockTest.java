@@ -1,24 +1,20 @@
 package nl.utwente.group10.ui.components;
 
 import static org.junit.Assert.*;
-import javafx.application.*;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import nl.utwente.group10.haskell.type.ConstT;
+import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.ConnectionAnchor;
-import nl.utwente.group10.ui.components.FunctionBlock;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class FunctionBlockTest extends ComponentTest {
 
-	private FunctionBlock fblock1;
-	private FunctionBlock fblock2;
-	
+	private FunctionBlock functionBlock;
+
 	/**
 	 * Before each test reset all the FunctionBlock instances
 	 * to have a clear batch to test against.
@@ -26,8 +22,9 @@ public class FunctionBlockTest extends ComponentTest {
 	 */
 	@Before
 	public void setUp() throws IOException{
-		fblock1 = new FunctionBlock(2, new CustomUIPane());
-		fblock2 = new FunctionBlock(4, new CustomUIPane());
+		FuncT func = new FuncT(new ConstT("Int"), new FuncT(new ConstT("Int"), new ConstT("Int")));
+
+		functionBlock = new FunctionBlock("", func, new CustomUIPane());
 	}
 	
 	/**
@@ -36,8 +33,7 @@ public class FunctionBlockTest extends ComponentTest {
 	 */
 	@Test
 	public void instantiateTest() {
-		assertNotNull(fblock1);
-		assertNotNull(fblock2);
+		assertNotNull(functionBlock);
 	}
 	
 	/**
@@ -45,10 +41,8 @@ public class FunctionBlockTest extends ComponentTest {
 	 */
 	@Test
 	public void nameTest() {
-		fblock1.setName("testing again");
-		assertEquals(fblock1.getName(), "testing again");
-		fblock2.setName("name change");
-		assertEquals(fblock2.getName(), "name change");
+		functionBlock.setName("name change");
+		assertEquals(functionBlock.getName(), "name change");
 	}
 	
 	/**
@@ -56,26 +50,7 @@ public class FunctionBlockTest extends ComponentTest {
 	 */
 	@Test
 	public void inputsTest() {
-		assertNotNull(fblock1.getInputs());
-		assertNotNull(fblock2.getInputs());
-		assertEquals(fblock1.getInputs().length, 2);
-		assertEquals(fblock2.getInputs().length, 4);
+		assertNotNull(functionBlock.getInputs());
+		assertEquals(functionBlock.getInputs().length, 2);
 	}
-	
-	/**
-	 * Test if arguments are initialized and if they can be found
-	 * and changed.
-	 */
-	@Test
-	public void argumentTest() {
-		fblock1.setArgument(0, "test1");
-		fblock2.setArgument(3, "test2");
-		
-		ConnectionAnchor[] anchors = fblock1.getInputs();
-		ConnectionAnchor anchor = anchors[0];
-		
-		assertEquals(fblock1.getArgumentIndex(anchor), 0);
-		assertEquals(fblock1.getArgument(anchor), "test1");
-	}
-
 }

@@ -1,33 +1,32 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import javafx.geometry.Insets?>
 <fx:root type="nl.utwente.group10.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
-	<BorderPane>
-		<top>
-			<FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10"/>
-		</top>
-		<center>
-			<BorderPane minHeight="90" minWidth="180" styleClass="function, block">
-				<center>
-					<BorderPane>
-						<top>
-							<Label text="${controller.name}" styleClass="title" />
-						</top>
-						<center>
-							<HBox fx:id="argumentSpace" spacing="10" alignment="center" />
-						</center>
-						<bottom>
-							<Label text="${controller.type}" styleClass="description" />
-						</bottom>
-					</BorderPane>
-				</center>
-				<bottom>
-					<FlowPane fx:id="nestSpace" styleClass="nestSpace" prefWrapLength="100" vgap="5"/>
-				</bottom>
-			</BorderPane>
-		</center>
-		<bottom>
-			<VBox fx:id="outputSpace" alignment = "center"/>
-		</bottom>
-	</BorderPane>
+    <BorderPane>
+        <top>
+            <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10"/>
+        </top>
+        <center>
+            <BorderPane styleClass="function, block">
+                <center>
+                    <HBox>
+                        <HBox>
+                            <padding><Insets top="5" right="10" bottom="5" left="10"/></padding>
+                            <Label text="${controller.name}" styleClass="title" />
+                        </HBox>
+                        <HBox fx:id="argumentSpace" spacing="5">
+                            <padding><Insets top="5" right="5" bottom="5" left="5"/></padding>
+                        </HBox>
+                    </HBox>
+                </center>
+                <bottom>
+                    <FlowPane fx:id="nestSpace" styleClass="nestSpace" prefWrapLength="100" vgap="5"/>
+                </bottom>
+            </BorderPane>
+        </center>
+        <bottom>
+            <VBox fx:id="outputSpace" alignment = "center"/>
+        </bottom>
+    </BorderPane>
 </fx:root>
