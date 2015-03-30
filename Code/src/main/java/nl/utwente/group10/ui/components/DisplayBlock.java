@@ -21,7 +21,7 @@ public class DisplayBlock extends Block {
     /** The output this Block is displaying.**/
     private StringProperty output;
 
-    private ConnectionAnchor inputAnchor;
+    private InputAnchor inputAnchor;
     
     @FXML private Pane anchorSpace;
     
@@ -75,9 +75,10 @@ public class DisplayBlock extends Block {
 
     @Override
     public Expr asExpr() {
-        return null;
+        return inputAnchor.asExpr();
     }
 
     public void invalidate() {
+        setOutput(inputAnchor.asExpr().toHaskell());
     }
 }

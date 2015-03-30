@@ -6,7 +6,9 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -171,6 +173,10 @@ public class FunctionBlock extends Block {
 
 	@Override
 	public Expr asExpr() {
-		return null;
+		Expr expr = new Ident(getName());
+
+		for (InputAnchor in : getInputs()) expr = new Apply(expr, in.asExpr());
+
+		return expr;
 	}
 }

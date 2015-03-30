@@ -69,7 +69,7 @@ public class Main extends Application {
 		stage.show();
 
 		// Invalidate
-		tactilePane.invalidate(this);
+		tactilePane.invalidate();
 	}
 
 	private void addFunctionBlock(Entry entry) {

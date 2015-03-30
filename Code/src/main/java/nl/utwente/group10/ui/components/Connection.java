@@ -37,11 +37,14 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 
-		from.getBlock().layoutXProperty().addListener(this);
-		from.getBlock().layoutYProperty().addListener(this);
+		input = from.getBlock();
+		output = to.getBlock();
 
-		to.getBlock().layoutXProperty().addListener(this);
-		to.getBlock().layoutYProperty().addListener(this);
+		input.layoutXProperty().addListener(this);
+		input.layoutYProperty().addListener(this);
+
+		output.layoutXProperty().addListener(this);
+		output.layoutYProperty().addListener(this);
 
 		this.setStartAnchor(from);
 		this.setEndAnchor(to);

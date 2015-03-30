@@ -1,6 +1,8 @@
 package nl.utwente.group10.ui.components;
 
 import javafx.scene.input.MouseEvent;
+import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.ui.CustomUIPane;
 
 import java.io.IOException;
@@ -33,5 +35,13 @@ public class InputAnchor extends ConnectionAnchor {
 
             pane.invalidate();
         });
+    }
+
+    public Expr asExpr() {
+        if (up.isPresent()) {
+            return up.get().getInputFunction().asExpr();
+        } else {
+            return new Ident("undefined");
+        }
     }
 }
