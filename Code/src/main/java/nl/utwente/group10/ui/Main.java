@@ -77,16 +77,8 @@ public class Main extends Application {
 			FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), tactilePane);
 			tactilePane.getChildren().add(fb);
 		} catch (IOException e) {
-			panic(e);
+			e.printStackTrace();
 		}
-	}
-
-	private void panic(Exception e) {
-		Alert alert = new Alert(Alert.AlertType.ERROR);
-		alert.setTitle("Exception");
-		alert.setHeaderText("An unexpected error occurred.");
-		alert.setContentText(String.format("%s", e));
-		alert.showAndWait();
 	}
 
 	public static void main(String[] args) {
