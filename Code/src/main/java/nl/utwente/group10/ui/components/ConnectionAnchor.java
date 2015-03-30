@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
  * 
  * Other data types will be supported in the future
  */
-public class ConnectionAnchor extends Circle implements Initializable{
+public class ConnectionAnchor extends Circle implements Initializable {
 
     /** Indication of what dataType this Anchor supports.*/
     public StringProperty dataType;

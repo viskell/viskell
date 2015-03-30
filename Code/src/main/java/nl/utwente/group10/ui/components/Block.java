@@ -26,7 +26,7 @@ public abstract class Block extends StackPane implements Initializable, GestureC
 	private boolean isSelected = false;
 	
 	/** The output of this Block.**/
-	private ConnectionAnchor output;
+	private OutputAnchor output;
 	
 	/** The fxmlLoader responsible for loading the fxml of this Block.*/
 	private FXMLLoader fxmlLoader;
@@ -38,7 +38,7 @@ public abstract class Block extends StackPane implements Initializable, GestureC
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 		
-		output = new ConnectionAnchor();
+		output = new OutputAnchor();
 		cup = pane;
 	}
 	

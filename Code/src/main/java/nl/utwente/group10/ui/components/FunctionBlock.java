@@ -22,7 +22,7 @@ import java.util.ArrayList;
  */
 public class FunctionBlock extends Block {
 	/** The inputs for this FunctionBlock.**/
-	private ConnectionAnchor[] inputs;
+	private InputAnchor[] inputs;
 
 	/** The name of this Function. **/
 	private StringProperty name;
@@ -67,11 +67,11 @@ public class FunctionBlock extends Block {
 			t = ft.getArgs()[1];
 		}
 
-		this.inputs = new ConnectionAnchor[args.size()];
+		this.inputs = new InputAnchor[args.size()];
 
 		// Create anchors and labels for each argument
 		for (int i = 0; i < args.size(); i++) {
-			inputs[i] = new ConnectionAnchor();
+			inputs[i] = new InputAnchor();
 			anchorSpace.getChildren().add(inputs[i]);
 
 			argumentSpace.getChildren().add(new Label(args.get(i)));
