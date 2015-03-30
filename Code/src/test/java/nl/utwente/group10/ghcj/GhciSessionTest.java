@@ -31,7 +31,7 @@ public class GhciSessionTest {
 
     @Before
     public void startSession() throws GhciException {
-        this.ghci = new GhciSession();
+        this.ghci = GhciSession.getInstance();
     }
 
     @After
