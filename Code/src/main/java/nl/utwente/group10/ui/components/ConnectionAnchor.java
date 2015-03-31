@@ -10,45 +10,47 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Represent an Anchor point on either a Block or a Line
- * Integers are currently the only supported data type.
- * 
- * Other data types will be supported in the future
+ * Represent an Anchor point on either a Block or a Line. Integers are currently the only supported data type. Other
+ * data types will be supported in the future
  */
 public abstract class ConnectionAnchor extends Circle implements Initializable {
-    /** The fxmlLoader responsible for loading the fxml of this Block.*/
-    private FXMLLoader fxmlLoader;
-
-    /** Our parent CustomUIPane. */
+    /** The pane on which this Anchor resides. */
     private CustomUIPane pane;
 
-    /** Our parent Block. */
+    /** The block this Anchor is connected to. */
     private Block block;
 
+    /**
+     * @param block The block where this Anchor is connected to.
+     * @param pane The pane this Anchor belongs to.
+     * @throws IOException when the FXML definitions cannot be loaded.
+     */
     public ConnectionAnchor(Block block, CustomUIPane pane) throws IOException {
         this.block = block;
         this.pane = pane;
 
-        fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ConnectionAnchor.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ConnectionAnchor.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);			
 
         fxmlLoader.load();
     }
 
-    public Block getBlock() {
+    /**
+     * @return The block this anchor belongs to.
+     */
+    public final Block getBlock() {
         return block;
     }
 
-    public CustomUIPane getPane() {
+    /**
+     * @return The pane this anchor resides on.
+     */
+    public final CustomUIPane getPane() {
         return pane;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-    }
-    
-    public FXMLLoader getLoader(){
-        return fxmlLoader;
     }
 }

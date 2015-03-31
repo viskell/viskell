@@ -1,9 +1,7 @@
 package nl.utwente.group10.ui.components;
 
-
 import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.expr.Expr;
@@ -12,72 +10,70 @@ import nl.utwente.group10.ui.gestures.GestureCallBack;
 import nl.utwente.group10.ui.gestures.UIEvent;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 /**
- * Base UI Component that other visual elements will extend from.
- * If common functionality is found it should be refactored to here.
+ * Base UI Component that other visual elements will extend from. If common functionality is found it should be
+ * refactored to here.
  */
-
-public abstract class Block extends StackPane implements Initializable, GestureCallBack {
-	
-	/** Selected state of this Block*/
+public abstract class Block extends StackPane implements GestureCallBack {
+	/** Selected state of this Block. */
 	private boolean isSelected = false;
 	
-	/** The output of this Block.**/
+	/** The output of this Block. **/
 	private OutputAnchor output;
 	
 	/** The fxmlLoader responsible for loading the fxml of this Block.*/
 	private FXMLLoader fxmlLoader;
-	
-	private CustomUIPane cup;
-	
+
+	/** The pane that is used to hold state and place all components on. */
+	private CustomUIPane parentPane;
+
+	/**
+	 * @param blockName Name of this block. The name is used to load the FXML definition for this block.
+	 * @param pane The pane this block belongs to.
+	 * @throws IOException when the blo
+	 */
 	public Block(String blockName, CustomUIPane pane) throws IOException {
-		fxmlLoader = new FXMLLoader(getClass().getResource("/ui/"+blockName+".fxml"));
+		fxmlLoader = new FXMLLoader(getClass().getResource(String.format("/ui/%s.fxml", blockName)));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 		
 		output = new OutputAnchor(this, pane);
-		cup = pane;
+		parentPane = pane;
 	}
 	
 	/**
-	 * Returns the FXMLLoader use by this Block.
-	 * @return fxmlLoader;
+	 * Returns the FXMLLoader used by this Block.
+	 * @return The FXMLLoader used by this Block.
 	 */
-	public FXMLLoader getLoader(){
+	public final FXMLLoader getLoader(){
 		return fxmlLoader;
 	}
 	
 	/**
 	 * @return the output Anchor for this Block
 	 */
-	public OutputAnchor getOutputAnchor() {
+	public final OutputAnchor getOutputAnchor() {
 		return output;
 	}
 	
 	/**
 	 * Set the selected boolean state of this Block
-	 * @param selectedState
+	 * @param selectedState Whether this Block is currently selected.
 	 */
-	public void setSelected(boolean selectedState) {
+	public final void setSelected(final boolean selectedState) {
 		//TODO If another object is selected then deselect it first!!
 		isSelected = selectedState;
 	}
 	
 	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-	}
-	
-	@Override
-	public void handleCustomEvent(UIEvent event) {
+	public final void handleCustomEvent(UIEvent event) {
 		EventType eventType = event
 				.getEventType();
 		if (eventType.equals(UIEvent.TAP)) {
-			for(Node n : cup.getChildren()){
-				if(n instanceof Block){
-					if(((Block) n).isSelected){
+			for (Node n : parentPane.getChildren()) {
+				if (n instanceof Block){
+					if (((Block) n).isSelected) {
 						((Block) n).setSelected(false);
 					}
 				}
