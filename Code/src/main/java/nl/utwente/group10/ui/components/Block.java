@@ -18,10 +18,10 @@ import java.io.IOException;
 public abstract class Block extends StackPane implements GestureCallBack {
 	/** Selected state of this Block. */
 	private boolean isSelected = false;
-	
+
 	/** The output of this Block. **/
 	private OutputAnchor output;
-	
+
 	/** The fxmlLoader responsible for loading the fxml of this Block.*/
 	private FXMLLoader fxmlLoader;
 
@@ -37,11 +37,11 @@ public abstract class Block extends StackPane implements GestureCallBack {
 		fxmlLoader = new FXMLLoader(getClass().getResource(String.format("/ui/%s.fxml", blockName)));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
-		
+
 		output = new OutputAnchor(this, pane);
 		parentPane = pane;
 	}
-	
+
 	/**
 	 * Returns the FXMLLoader used by this Block.
 	 * @return The FXMLLoader used by this Block.
@@ -49,14 +49,14 @@ public abstract class Block extends StackPane implements GestureCallBack {
 	public final FXMLLoader getLoader(){
 		return fxmlLoader;
 	}
-	
+
 	/**
 	 * @return the output Anchor for this Block
 	 */
 	public final OutputAnchor getOutputAnchor() {
 		return output;
 	}
-	
+
 	/**
 	 * Set the selected boolean state of this Block
 	 * @param selectedState Whether this Block is currently selected.
@@ -65,7 +65,7 @@ public abstract class Block extends StackPane implements GestureCallBack {
 		//TODO If another object is selected then deselect it first!!
 		isSelected = selectedState;
 	}
-	
+
 	@Override
 	public final void handleCustomEvent(UIEvent event) {
 		EventType eventType = event

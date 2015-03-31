@@ -16,7 +16,7 @@ public class Line extends CubicCurve {
 	private ConnectionAnchor startAnchor;
 	/** Ending point of this Line that can be Anchored onto other objects. */
 	private ConnectionAnchor endAnchor;
-	
+
 	/**
 	 * Sets the start point for this line.
 	 * @param start The Anchor that is the start point of this line.
@@ -25,7 +25,7 @@ public class Line extends CubicCurve {
 		startAnchor = start;
 		updateStartPosition();
 	}
-	
+
 	/**
 	 * Sets the start position for this line and updates the end position.
 	 * @param x X-coordinate.
@@ -46,7 +46,7 @@ public class Line extends CubicCurve {
 		endAnchor = end;
 		updateEndPosition();
 	}
-	
+
 	/**
 	 * Sets the end position for this line.
 	 * @param x X-coordinate.
@@ -58,7 +58,7 @@ public class Line extends CubicCurve {
 		setControlX2(x);
 		setControlY2(y - BEZIER_CONTROL_OFFSET_Y);
 	}
-	
+
 	/**
 	 * Runs both the update start end end position functions. Used when refreshing the UI representation of the Line.
 	 */
@@ -66,7 +66,7 @@ public class Line extends CubicCurve {
 		updateStartPosition();
 		updateEndPosition();
 	}
-	
+
 	/**
 	 * Refreshes the start position of this Line with the set start anchor as start point.
 	 */
@@ -77,7 +77,7 @@ public class Line extends CubicCurve {
 
 		setStartPosition(point.getX(), point.getY());
 	}
-	
+
 	/**
 	 * Refresh the end position of this line using endAnchor as a reference point.
 	 */

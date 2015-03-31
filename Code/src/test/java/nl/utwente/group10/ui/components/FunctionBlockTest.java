@@ -26,7 +26,7 @@ public class FunctionBlockTest extends ComponentTest {
 
 		functionBlock = new FunctionBlock("", func, new CustomUIPane());
 	}
-	
+
 	/**
 	 * Test to see if instantiation of FunctionBlocks works
 	 * for both instantiate variants.
@@ -35,7 +35,7 @@ public class FunctionBlockTest extends ComponentTest {
 	public void instantiateTest() {
 		assertNotNull(functionBlock);
 	}
-	
+
 	/**
 	 * Test the setName and getName methods of FunctionBlock
 	 */
@@ -44,7 +44,7 @@ public class FunctionBlockTest extends ComponentTest {
 		functionBlock.setName("name change");
 		assertEquals(functionBlock.getName(), "name change");
 	}
-	
+
 	/**
 	 * Test if all input anchors have been properly initialized
 	 */

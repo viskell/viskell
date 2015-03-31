@@ -77,10 +77,10 @@ public class Main extends Application {
 		tactilePane.invalidate();
 	}
 
-    /**
-     * Adds a function block to the user interface containing the given collection entry.
-     * @param entry The entry to base this function block on.
-     */
+	/**
+	 * Adds a function block to the user interface containing the given collection entry.
+	 * @param entry The entry to base this function block on.
+	 */
 	private void addFunctionBlock(Entry entry) {
 		try {
 			FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), tactilePane);
@@ -90,9 +90,9 @@ public class Main extends Application {
 		}
 	}
 
-    /**
-     * @param args The command line arguments.
-     */
+	/**
+	 * @param args The command line arguments.
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}

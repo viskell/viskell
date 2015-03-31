@@ -36,9 +36,9 @@ public class FunctionBlock extends Block {
 	private CustomGesture gesture;
 
 	@FXML private Pane anchorSpace;
-	
+
 	@FXML private Pane outputSpace;
-	
+
 	@FXML private Pane argumentSpace;
 
 	/**
@@ -51,13 +51,13 @@ public class FunctionBlock extends Block {
 	 */
 	public FunctionBlock(String name, Type type, CustomUIPane pane) throws IOException {
 		super("FunctionBlock", pane);
-		
+
 		this.name = new SimpleStringProperty(name);
 		this.type = new SimpleStringProperty(type.toHaskellType());
 		gesture = new CustomGesture(this, this);
 
 		this.getLoader().load();
-		
+
 		// Collect argument types
 		ArrayList<String> args = new ArrayList<>();
 		Type t = type;
@@ -83,7 +83,7 @@ public class FunctionBlock extends Block {
 		argumentSpace.getChildren().add(lbl);
 		outputSpace.getChildren().add(this.getOutputAnchor());
 	}
-	
+
 	/**
 	 * Executes this FunctionBlock and returns the output as a String.
 	 * @return Output of the Function.
@@ -91,7 +91,7 @@ public class FunctionBlock extends Block {
 	public final String executeMethod() {
 		return "DEBUG-OUTPUT"; // TODO FIXME -- Good change this can be removed as asExpr() provides this functionality in a pull-fashion.
 	}
-	
+
 	/**
 	 * Nest another Node object within this FunctionBlock
 	 * @param node The node to nest.
@@ -107,7 +107,7 @@ public class FunctionBlock extends Block {
 	public final String getName() {
 		return name.get();
 	}
-	
+
 	/**
 	 * @param name The name of this FunctionBlock
 	 */
@@ -128,28 +128,28 @@ public class FunctionBlock extends Block {
 	public final void setType(String type) {
 		this.type.set(type);
 	}
-	
+
 	/**
 	 * @return name The StringProperty for the name of the function.
 	 */
 	public final StringProperty nameProperty() {
 		return name;
 	}
-	
+
 	/**
 	 * @return type The StringProperty for the type of the function.
 	 */
 	public final StringProperty typeProperty() {
 		return type;
 	}
-	
+
 	/**
 	 * @return The array of input anchors for this function block.
 	 */
 	public final InputAnchor[] getInputs(){
 		return inputs;
 	}
-	
+
 	/**
 	 * Returns the index of the argument matched to the Anchor.
 	 * @param anchor The anchor to look up.
