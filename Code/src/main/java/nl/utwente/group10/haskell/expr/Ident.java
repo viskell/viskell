@@ -1,7 +1,7 @@
 package nl.utwente.group10.haskell.expr;
 
 import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -24,14 +24,15 @@ public class Ident extends Expr {
     }
 
     @Override
-    public final Type analyze(final Env env, final GenSet genSet) throws HaskellTypeError {
+    public final Type analyze(final Env env, final GenSet genSet) throws HaskellException {
         // Rule [Var]:
         // IFF  we know (from the env) that the type of this expr is x
         // THEN the type of this expr is x.
         if (env.containsKey(this.name)) {
             return env.get(this.name);
         } else {
-            throw new HaskellTypeError(String.format("Expression %s is not known to the environment.", this));
+            Expr.logger.warning(String.format("Expression %s is not in the environment, but it is assumed to be.", this));
+            throw new HaskellException("Expression not in environment", this);
         }
     }
 

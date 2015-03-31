@@ -1,7 +1,7 @@
 package nl.utwente.group10.haskell.expr;
 
 import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.*;
 import org.junit.Before;
@@ -41,7 +41,7 @@ public class ExprTest {
     }
 
     @Test
-    public final void testAnalyze() throws HaskellTypeError {
+    public final void testAnalyze() throws HaskellException {
         assertEquals("[(Int -> Int)]", this.expr.analyze(this.env, this.genSet).prune().toHaskellType());
     }
 

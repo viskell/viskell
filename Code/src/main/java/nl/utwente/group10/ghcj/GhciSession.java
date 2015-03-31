@@ -1,6 +1,7 @@
 package nl.utwente.group10.ghcj;
 
 import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellSyntaxError;
 import nl.utwente.group10.haskell.expr.*;
 
 import java.io.Closeable;
@@ -42,9 +43,18 @@ public class GhciSession implements Closeable {
 
     /**
      * Returns the result of evaluating a Haskell expression.
+     * @param expr The expression to evaluate.
+     * @return The result of the expression.
+     * @throws HaskellException when ghci encountered an error.
      */
-    public String pull(Expr expr) throws HaskellException {
-        return this.ghci.eval(expr.toHaskell()).trim();
+    public final String pull(final Expr expr) throws HaskellException {
+        try {
+            return this.ghci.eval(expr.toHaskell()).trim();
+        } catch (HaskellSyntaxError e) {
+            throw new HaskellSyntaxError(e.getMessage(), expr);
+        } catch (HaskellException e) {
+            throw new HaskellException(e.getMessage(), expr);
+        }
     }
 
     /**

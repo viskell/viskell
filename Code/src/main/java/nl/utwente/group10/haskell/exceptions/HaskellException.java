@@ -3,6 +3,8 @@ package nl.utwente.group10.haskell.exceptions;
 import com.google.common.base.Optional;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.haskell.HaskellObject;
+import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.type.Type;
 
 /**
  * Exception that is thrown when there is a problem with the Haskell code. This Exception can be thrown because of an
@@ -66,5 +68,24 @@ public class HaskellException extends GhciException {
      */
     public final Optional<HaskellObject> getOptionalHaskellObject() {
         return this.obj;
+    }
+
+    /**
+     * Returns the Haskell string representation for the HaskellObject instance or the empty string if there is no
+     * object present.
+     * @return Haskell string representation or the empty string.
+     */
+    public final String getObjectRepresentation() {
+        String out = "";
+
+        if (this.obj.isPresent()) {
+            if (this.obj.get() instanceof Expr) {
+                out = ((Expr) this.obj.get()).toHaskell();
+            } else if (this.obj.get() instanceof Type) {
+                out = ((Type) this.obj.get()).toHaskellType();
+            }
+        }
+
+        return out;
     }
 }
