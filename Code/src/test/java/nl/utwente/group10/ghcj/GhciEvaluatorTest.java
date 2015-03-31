@@ -19,11 +19,6 @@ public class GhciEvaluatorTest {
         this.NL = System.getProperty("line.separator");
     }
 
-    @After
-    public void stopGhci() throws Exception {
-        this.ghci.close();
-    }
-
     @Test
     public void putStrLnTest() throws GhciException {
         Assert.assertEquals("Hello" + this.NL, this.ghci.eval("putStrLn \"Hello\""));
