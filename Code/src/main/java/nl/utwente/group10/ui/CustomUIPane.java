@@ -5,11 +5,13 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import nl.utwente.group10.ui.components.Block;
+import nl.utwente.group10.ui.components.Connection;
 import nl.utwente.group10.ui.components.DisplayBlock;
 import nl.utwente.group10.ui.components.OutputAnchor;
 import nl.utwente.group10.ui.gestures.UIEvent;
 import nl.utwente.group10.ui.gestures.GestureCallBack;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -68,5 +70,33 @@ public class CustomUIPane extends TactilePane implements GestureCallBack {
 
 	public ObjectProperty<Optional<Block>> selectedBlockProperty() {
 		return selectedBlock;
+	}
+
+	/** Remove the given block from this UI pane, including its connections. */
+	public void removeBlock(Block block) {
+		ArrayList<Node> toRemove = new ArrayList<>();
+
+		for (Node node : getChildren()) {
+			if (node instanceof Connection) {
+				Block in = ((Connection) node).getInputBlock();
+				Block out = ((Connection) node).getOutputBlock();
+
+				if (in.equals(block) || out.equals(block)) {
+					toRemove.add(node);
+				}
+			} else if (node.equals(block)) {
+				toRemove.add(node);
+			}
+		}
+
+		this.getChildren().removeAll(toRemove);
+	}
+
+	/** Remove the selected block, if any. */
+	public void removeSelected() {
+		this.getSelectedBlock().map(obj -> {
+			this.removeBlock(obj);
+			return obj;
+		});
 	}
 }
