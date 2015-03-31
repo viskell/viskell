@@ -3,6 +3,7 @@ package nl.utwente.group10.ghcj;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellSyntaxError;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -106,7 +107,7 @@ public class GhciEvaluator implements Closeable {
             if (line.startsWith(parseErrorHeader)) {
                 List<String> sublines = lines.subList(i, lines.size());
                 String msg = Joiner.on(this.NL).join(sublines);
-                throw new HaskellException(msg);
+                throw new HaskellSyntaxError(msg);
             }
         }
 

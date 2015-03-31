@@ -6,7 +6,6 @@ import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.VarT;
 
-import java.util.Optional;
 import java.util.logging.Logger;
 
 /**
@@ -56,13 +55,15 @@ public final class HindleyMilner {
             // If the constructor doesn't match, give up right away.
             // Example: trying to unify String and Int.
             if (!ao.getConstructor().equals(bo.getConstructor())) {
-                throw new HaskellTypeError(String.format("Sadly, these types are not compatible: %s ≠ %s", a, b), context);
+                HindleyMilner.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
+                throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context, a, b);
             }
 
             // If the two types have different amounts of arguments, bail.
             // Example: trying to unify (,) Int Int and (,) Int Int Int
             if (ao.getArgs().length != bo.getArgs().length) {
-                throw new HaskellTypeError(String.format("Sadly, these types are not compatible: %s ≠ %s", a, b), context);
+                HindleyMilner.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
+                throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context, a, b);
             }
 
             // Other than that, types can be unified if each of the arguments can be.
