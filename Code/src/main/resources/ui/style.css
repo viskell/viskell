@@ -6,6 +6,10 @@
 	-fx-border-width: 2;
 }
 
+.selected .block {
+	-fx-background-color: skyblue;
+}
+
 .function.block .title {
 	-fx-text-fill: #333333;
 	-fx-font-size: 14px;

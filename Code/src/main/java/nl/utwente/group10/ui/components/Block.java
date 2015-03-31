@@ -4,7 +4,6 @@ package nl.utwente.group10.ui.components;
 import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -21,14 +20,10 @@ import java.util.ResourceBundle;
  */
 
 public abstract class Block extends StackPane implements Initializable, GestureCallBack {
-	
-	/** Selected state of this Block*/
-	private boolean isSelected = false;
-	
-	/** The output of this Block.**/
+	/** The output of this Block. **/
 	private OutputAnchor output;
 	
-	/** The fxmlLoader responsible for loading the fxml of this Block.*/
+	/** The fxmlLoader responsible for loading the fxml of this Block. */
 	private FXMLLoader fxmlLoader;
 	
 	private CustomUIPane cup;
@@ -40,6 +35,14 @@ public abstract class Block extends StackPane implements Initializable, GestureC
 		
 		output = new OutputAnchor(this, pane);
 		cup = pane;
+
+		cup.selectedBlockProperty().addListener(event -> {
+			if (cup.getSelectedBlock().isPresent() && this.equals(cup.getSelectedBlock().get())) {
+				this.getStyleClass().add("selected");
+			} else {
+				this.getStyleClass().removeAll("selected");
+			}
+		});
 	}
 	
 	/**
@@ -56,34 +59,17 @@ public abstract class Block extends StackPane implements Initializable, GestureC
 	public OutputAnchor getOutputAnchor() {
 		return output;
 	}
-	
-	/**
-	 * Set the selected boolean state of this Block
-	 * @param selectedState
-	 */
-	public void setSelected(boolean selectedState) {
-		//TODO If another object is selected then deselect it first!!
-		isSelected = selectedState;
-	}
-	
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 	}
 	
 	@Override
 	public void handleCustomEvent(UIEvent event) {
-		EventType eventType = event
-				.getEventType();
+		EventType eventType = event.getEventType();
+
 		if (eventType.equals(UIEvent.TAP)) {
-			for(Node n : cup.getChildren()){
-				if(n instanceof Block){
-					if(((Block) n).isSelected){
-						((Block) n).setSelected(false);
-					}
-				}
-			}
-			this.setSelected(true);
-			System.out.println("Block is selected");
+			cup.setSelectedBlock(this);
 		} else if (eventType.equals(UIEvent.TAP_HOLD)) {
 			//TODO: open the quick-menu
 		}
