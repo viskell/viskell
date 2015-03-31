@@ -1,7 +1,7 @@
 package nl.utwente.group10.haskell.expr;
 
 import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
@@ -28,17 +28,17 @@ public class IdentTest {
     }
 
     @Test
-    public final void testAnalyze() throws HaskellTypeError {
+    public final void testAnalyze() throws HaskellException {
         assertEquals(new FuncT(this.alpha, this.alpha).toHaskellType(), new Ident("id").analyze(this.env, this.genSet).toHaskellType());
     }
 
     @Test
-    public final void testToHaskell() throws HaskellTypeError {
+    public final void testToHaskell() throws HaskellException {
         assertEquals("id", new Ident("id").toHaskell());
     }
 
-    @Test(expected=HaskellTypeError.class)
-    public final void testIncorrectName() throws HaskellTypeError {
+    @Test(expected=HaskellException.class)
+    public final void testIncorrectName() throws HaskellException {
         new Ident("id").analyze(new Env(), new GenSet());
     }
 }

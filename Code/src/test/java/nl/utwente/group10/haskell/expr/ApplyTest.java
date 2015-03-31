@@ -1,7 +1,7 @@
 package nl.utwente.group10.haskell.expr;
 
 import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.*;
 import org.junit.Before;
@@ -36,7 +36,7 @@ public class ApplyTest {
     }
 
     @Test
-    public final void testId() throws HaskellTypeError {
+    public final void testId() throws HaskellException {
         final Apply apply = new Apply(new Ident("id"), new Value(this.integer, "42"));
 
         assertEquals("(id 42)", apply.toHaskell());
@@ -44,7 +44,7 @@ public class ApplyTest {
     }
 
     @Test
-    public final void testAdd() throws HaskellTypeError {
+    public final void testAdd() throws HaskellException {
         final Apply apply1 = new Apply(new Ident("(+)"), new Value(this.integer, "42"));
         final Apply apply2 = new Apply(apply1, new Value(this.integer, "42"));
 
@@ -56,7 +56,7 @@ public class ApplyTest {
     }
 
     @Test
-    public final void testMap() throws HaskellTypeError {
+    public final void testMap() throws HaskellException {
         final Apply apply0 = new Apply(new Ident("(+)"), new Value(this.integer, "42"));
         final Apply apply1 = new Apply(new Ident("map"), apply0);
         final Apply apply2 = new Apply(apply1, new Value(this.integerList, "[1, 2, 3, 5, 7]"));
@@ -69,7 +69,7 @@ public class ApplyTest {
     }
 
     @Test
-    public final void testZip() throws HaskellTypeError {
+    public final void testZip() throws HaskellException {
         final Apply apply1 = new Apply(new Ident("zip"), new Value(this.integerList, "[1, 2, 3, 5, 7]"));
         final Apply apply2 = new Apply(apply1, new Value(this.stringList, "[\"a\", \"b\", \"c\"]"));
 
@@ -80,8 +80,8 @@ public class ApplyTest {
         assertEquals(new ListT(new TupleT(this.integer, this.string)).toHaskellType(), apply2.analyze(this.env, this.genSet).prune().toHaskellType());
     }
 
-    @Test(expected=HaskellTypeError.class)
-    public final void testIncorrectLcm() throws HaskellTypeError {
+    @Test(expected=HaskellException.class)
+    public final void testIncorrectLcm() throws HaskellException {
         final Apply apply1 = new Apply(new Ident("lcm"), new Value(this.integer, "42"));
         final Apply apply2 = new Apply(apply1, new Value(this.string, "\"haskell\""));
 
