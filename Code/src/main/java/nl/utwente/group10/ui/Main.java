@@ -1,70 +1,83 @@
 package nl.utwente.group10.ui;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 import nl.utwente.group10.haskell.catalog.Entry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
-import nl.utwente.group10.ui.components.Connection;
 import nl.utwente.group10.ui.components.DisplayBlock;
 import nl.utwente.group10.ui.components.FunctionBlock;
 import nl.utwente.group10.ui.components.ValueBlock;
 
+import java.io.IOException;
+
 public class Main extends Application {
-	DebugParent debug;
+	private DebugParent debug;
+	private CustomUIPane tactilePane;
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		BorderPane root = new BorderPane();
-
-		CustomUIPane tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
+		tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
 
 		HaskellCatalog catalog = new HaskellCatalog();
 
-		Entry plus = catalog.getEntry("(+)");
-		FunctionBlock plusBlock = new FunctionBlock(plus.getName(), plus.getType(), tactilePane);
-		tactilePane.getChildren().add(plusBlock);
-
-		Entry id = catalog.getEntry("id");
-		FunctionBlock idBlock = new FunctionBlock(id.getName(), id.getType(), tactilePane);
-		tactilePane.getChildren().add(idBlock);
-
-		Entry pi = catalog.getEntry("pi");
-		FunctionBlock piBlock = new FunctionBlock(pi.getName(), pi.getType(), tactilePane);
-		tactilePane.getChildren().add(piBlock);
-
-		tactilePane.getChildren().add(new ValueBlock("6.0"));
-		tactilePane.getChildren().add(new DisplayBlock());
-		
-		Connection connection = new Connection(idBlock, idBlock.getOutputAnchor(), plusBlock, plusBlock.getInputs()[0]);
-		tactilePane.getChildren().add(connection);
-
-		// Init Control Pane
-		FlowPane controlLayout = new FlowPane();
-		CheckBox enableDebug = new CheckBox("Enable Debug Mode");
-		enableDebug.setSelected(false);
-		controlLayout.getChildren().add(enableDebug);
-
-		root.setCenter(tactilePane);
-		root.setBottom(controlLayout);
+		tactilePane.getChildren().add(new ValueBlock(tactilePane));
+		tactilePane.getChildren().add(new DisplayBlock(tactilePane));
 
 		// Init Debug
-		debug = new DebugParent(root);
-		debug.overlayVisibleProperty().bindBidirectional(
-				enableDebug.selectedProperty());
+		debug = new DebugParent(tactilePane);
 		debug.registerTactilePane(tactilePane);
 
+		// Init menu
+		ContextMenu menu = new ContextMenu();
+
+		Menu addFunc = new Menu("Add function...");
+		for (String category : catalog.getCategories()) {
+			Menu submenu = new Menu(category);
+
+			for (Entry entry : catalog.getCategory(category)) {
+				MenuItem item = new MenuItem(entry.getName());
+				item.setOnAction(event -> addFunctionBlock(entry));
+				submenu.getItems().add(item);
+			}
+
+			addFunc.getItems().addAll(submenu);
+		}
+
+		CheckMenuItem enableDebugItem = new CheckMenuItem("Debug mode");
+		enableDebugItem.selectedProperty().bindBidirectional(debug.overlayVisibleProperty());
+		enableDebugItem.setSelected(false);
+
+		MenuItem quitItem = new MenuItem("Quit");
+		quitItem.setOnAction(event -> System.exit(0));
+
+		menu.getItems().addAll(addFunc, enableDebugItem, quitItem);
+		tactilePane.setContextMenu(menu);
+
+		// Init scene
 		Scene scene = new Scene(debug);
-		stage.setOnCloseRequest(event -> Platform.exit());
+		stage.setOnCloseRequest(event -> System.exit(0));
 		stage.setScene(scene);
 		stage.show();
+
+		// Invalidate
+		tactilePane.invalidate();
+	}
+
+	private void addFunctionBlock(Entry entry) {
+		try {
+			FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), tactilePane);
+			tactilePane.getChildren().add(fb);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String[] args) {

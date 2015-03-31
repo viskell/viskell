@@ -3,8 +3,11 @@ package nl.utwente.group10.ui.components;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
+import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Value;
+import nl.utwente.group10.haskell.type.ConstT;
+import nl.utwente.group10.ui.CustomUIPane;
 
 import java.io.IOException;
 
@@ -31,10 +34,10 @@ public class ValueBlock extends Block {
      * @return new ValueBlock instance
      * @throws IOException
      */
-    public ValueBlock(String val) throws IOException {
-        super("ValueBlock", null);
+    public ValueBlock(CustomUIPane pane) throws IOException {
+        super("ValueBlock", pane);
         
-        value = new SimpleStringProperty(val);
+        value = new SimpleStringProperty("5.0");
         
         this.getLoader().load();
         
@@ -62,5 +65,11 @@ public class ValueBlock extends Block {
      */
     public StringProperty valueProperty() {
         return value;
+    }
+
+    @Override
+    public Expr asExpr() {
+        // TODO: support more types than floats
+        return new Value(new ConstT("Float"), getValue());
     }
 }

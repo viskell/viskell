@@ -3,17 +3,19 @@ package nl.utwente.group10.ui.components;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
+import nl.utwente.group10.haskell.expr.Apply;
+import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.gestures.CustomGesture;
-import javafx.scene.Node;
-import javafx.scene.layout.Pane;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Main building block for the visual interface, this class
@@ -22,7 +24,7 @@ import javafx.scene.layout.Pane;
  */
 public class FunctionBlock extends Block {
 	/** The inputs for this FunctionBlock.**/
-	private ConnectionAnchor[] inputs;
+	private InputAnchor[] inputs;
 
 	/** The name of this Function. **/
 	private StringProperty name;
@@ -33,8 +35,6 @@ public class FunctionBlock extends Block {
 	/** intstance to create Events for this FunctionBlock. **/
 	private static CustomGesture cg;
 
-	@FXML private Pane nestSpace;
-	
 	@FXML private Pane anchorSpace;
 	
 	@FXML private Pane outputSpace;
@@ -67,11 +67,11 @@ public class FunctionBlock extends Block {
 			t = ft.getArgs()[1];
 		}
 
-		this.inputs = new ConnectionAnchor[args.size()];
+		this.inputs = new InputAnchor[args.size()];
 
 		// Create anchors and labels for each argument
 		for (int i = 0; i < args.size(); i++) {
-			inputs[i] = new ConnectionAnchor();
+			inputs[i] = new InputAnchor(this, pane);
 			anchorSpace.getChildren().add(inputs[i]);
 
 			argumentSpace.getChildren().add(new Label(args.get(i)));
@@ -97,8 +97,7 @@ public class FunctionBlock extends Block {
 	 * @param node to nest
 	 */
 	public void nest(Node node) {
-		name.set("Higher order function");
-		nestSpace.getChildren().add(node);
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -152,7 +151,7 @@ public class FunctionBlock extends Block {
 	 * FunctionBlock
 	 * @return inputAnchors
 	 */
-	public ConnectionAnchor[] getInputs(){
+	public InputAnchor[] getInputs(){
 		return inputs;
 	}
 	
@@ -170,5 +169,14 @@ public class FunctionBlock extends Block {
 			index++;
 		}
 		return index;
+	}
+
+	@Override
+	public Expr asExpr() {
+		Expr expr = new Ident(getName());
+
+		for (InputAnchor in : getInputs()) expr = new Apply(expr, in.asExpr());
+
+		return expr;
 	}
 }

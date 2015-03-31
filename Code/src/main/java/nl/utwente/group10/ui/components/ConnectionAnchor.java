@@ -1,17 +1,13 @@
 package nl.utwente.group10.ui.components;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
-import nl.utwente.group10.ui.Main;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.shape.Circle;
+import nl.utwente.group10.ui.CustomUIPane;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * Represent an Anchor point on either a Block or a Line
@@ -19,49 +15,40 @@ import javafx.scene.shape.Circle;
  * 
  * Other data types will be supported in the future
  */
-public class ConnectionAnchor extends Circle implements Initializable{
-
-    /** Indication of what dataType this Anchor supports.*/
-    public StringProperty dataType;
-
+public abstract class ConnectionAnchor extends Circle implements Initializable {
     /** The fxmlLoader responsible for loading the fxml of this Block.*/
     private FXMLLoader fxmlLoader;
 
-    public ConnectionAnchor() throws IOException {
+    /** Our parent CustomUIPane. */
+    private CustomUIPane pane;
+
+    /** Our parent Block. */
+    private Block block;
+
+    public ConnectionAnchor(Block block, CustomUIPane pane) throws IOException {
+        this.block = block;
+        this.pane = pane;
+
         fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ConnectionAnchor.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);			
 
         fxmlLoader.load();
     }
-    
+
+    public Block getBlock() {
+        return block;
+    }
+
+    public CustomUIPane getPane() {
+        return pane;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
     }
     
     public FXMLLoader getLoader(){
         return fxmlLoader;
-    }
-
-     /**
-     * @param the type of data accepted by this Anchor.
-     */
-    public void setDataType(String dataType) {
-        this.dataType.set(dataType);
-    }
-
-    /**
-     * @return the type of data accepted by this Anchor.
-     */
-    public String getDataType() {
-        return dataType.get();
-    }
-    
-    /**
-     * the StringProperty for the data type of this Anchor.
-     * @return value
-     */
-    public StringProperty dataTypeProperty() {
-        return dataType;
     }
 }

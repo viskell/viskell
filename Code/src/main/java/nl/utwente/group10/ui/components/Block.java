@@ -1,16 +1,15 @@
 package nl.utwente.group10.ui.components;
 
 
-import javafx.fxml.FXML;
+import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.layout.StackPane;
+import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.gestures.GestureCallBack;
 import nl.utwente.group10.ui.gestures.UIEvent;
-import javafx.event.EventType;
-import javafx.scene.Node;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,13 +20,13 @@ import java.util.ResourceBundle;
  * If common functionality is found it should be refactored to here.
  */
 
-public class Block extends StackPane implements Initializable, GestureCallBack {
+public abstract class Block extends StackPane implements Initializable, GestureCallBack {
 	
 	/** Selected state of this Block*/
 	private boolean isSelected = false;
 	
 	/** The output of this Block.**/
-	private ConnectionAnchor output;
+	private OutputAnchor output;
 	
 	/** The fxmlLoader responsible for loading the fxml of this Block.*/
 	private FXMLLoader fxmlLoader;
@@ -39,7 +38,7 @@ public class Block extends StackPane implements Initializable, GestureCallBack {
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 		
-		output = new ConnectionAnchor();
+		output = new OutputAnchor(this, pane);
 		cup = pane;
 	}
 	
@@ -54,7 +53,7 @@ public class Block extends StackPane implements Initializable, GestureCallBack {
 	/**
 	 * @return the output Anchor for this Block
 	 */
-	public ConnectionAnchor getOutputAnchor() {
+	public OutputAnchor getOutputAnchor() {
 		return output;
 	}
 	
@@ -89,4 +88,9 @@ public class Block extends StackPane implements Initializable, GestureCallBack {
 			//TODO: open the quick-menu
 		}
 	}
+
+	/**
+	 * @return an expression that evaluates to what this block is.
+	 */
+	public abstract Expr asExpr();
 }

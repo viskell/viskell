@@ -21,22 +21,13 @@ public class GhciSessionTest {
     private Expr pi;
 
     @Before
-    public void setUp() throws HaskellException {
+    public void setUp() throws GhciException {
         this.env = new Env();
         this.genSet = new GenSet();
+        this.ghci = GhciSession.getInstance();
 
         this.env.put("my_pi", new ConstT("Float"));
         this.pi = new Value(new ConstT("Float"), "3.14");
-    }
-
-    @Before
-    public void startSession() throws GhciException {
-        this.ghci = new GhciSession();
-    }
-
-    @After
-    public void stopSession() throws Exception {
-        this.ghci.close();
     }
 
     @Test

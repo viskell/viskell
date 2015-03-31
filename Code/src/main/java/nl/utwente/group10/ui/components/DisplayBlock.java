@@ -3,9 +3,11 @@ package nl.utwente.group10.ui.components;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
-import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
+import nl.utwente.group10.ghcj.GhciException;
+import nl.utwente.group10.ghcj.GhciSession;
+import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.ui.CustomUIPane;
 
 import java.io.IOException;
 
@@ -21,7 +23,7 @@ public class DisplayBlock extends Block {
     /** The output this Block is displaying.**/
     private StringProperty output;
 
-    private ConnectionAnchor inputAnchor;
+    private InputAnchor inputAnchor;
     
     @FXML private Pane anchorSpace;
     
@@ -32,14 +34,14 @@ public class DisplayBlock extends Block {
      * @return new DisplayBlock instance
      * @throws IOException
      */
-    public DisplayBlock() throws IOException {
-        super("DisplayBlock", null);
+    public DisplayBlock(CustomUIPane pane) throws IOException {
+        super("DisplayBlock", pane);
 
         output = new SimpleStringProperty("New Output");
         
         this.getLoader().load();
         
-        inputAnchor = new ConnectionAnchor();
+        inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
         outputSpace.getChildren().add(this.getOutputAnchor());
         
@@ -73,4 +75,17 @@ public class DisplayBlock extends Block {
         return inputAnchor;
     }
 
+    @Override
+    public Expr asExpr() {
+        return inputAnchor.asExpr();
+    }
+
+    public void invalidate() {
+        try {
+            GhciSession ghci = GhciSession.getInstance();
+            setOutput(ghci.pull(inputAnchor.asExpr()));
+        } catch (GhciException e) {
+            setOutput("???");
+        }
+    }
 }

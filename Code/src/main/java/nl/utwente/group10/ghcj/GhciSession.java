@@ -5,6 +5,7 @@ import nl.utwente.group10.haskell.expr.*;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * A conversation with an instance of ghci.
@@ -13,13 +14,16 @@ public class GhciSession implements Closeable {
     /** The evaluator this GhciSession will communicate with. */
     private final GhciEvaluator ghci;
 
+    /** Singleton instance. */
+    private static Optional<GhciSession> instance = Optional.empty();
+
     /**
      * Builds a new communication session with ghci.
      *
      * @throws GhciException when ghci can not be found, can not be executed,
      *         or does not understand our setup sequence.
      */
-    public GhciSession() throws GhciException {
+    private GhciSession() throws GhciException {
         this.ghci = new GhciEvaluator();
     }
 
@@ -53,5 +57,13 @@ public class GhciSession implements Closeable {
     @Override
     public void close() throws IOException {
         this.ghci.close();
+    }
+
+    public static GhciSession getInstance() throws GhciException {
+        if (!instance.isPresent()) {
+            instance = Optional.of(new GhciSession());
+        }
+
+        return instance.get();
     }
 }

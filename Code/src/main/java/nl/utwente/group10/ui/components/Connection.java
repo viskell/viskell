@@ -1,16 +1,13 @@
 package nl.utwente.group10.ui.components;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
-import nl.utwente.group10.ui.Main;
-import nl.utwente.group10.ui.components.Line;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 /**
  * This class represents a connection between two different FunctionBlocks. The
@@ -30,28 +27,31 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 	/**
 	 * Method that creates a new instance of this class along with it's visual
 	 * representation. 
-	 * @param Block to connect from.
-	 * @param Anchor to start from.
-	 * @param Block to connect to.
-	 * @param Anchor to end at.
+	 * @param from Anchor to start from.
+	 * @param toAnchor Anchor to end at.
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public Connection(Block from, ConnectionAnchor fromAnchor, Block to, ConnectionAnchor toAnchor) throws IOException {
+	public Connection(OutputAnchor from, InputAnchor to) throws IOException {
 		fxmlLoader = new FXMLLoader(getClass().getResource("/ui/Connection.fxml"));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
 
-		from.layoutXProperty().addListener(this);
-		from.layoutYProperty().addListener(this);
+		input = from.getBlock();
+		output = to.getBlock();
 
-		to.layoutXProperty().addListener(this);
-		to.layoutYProperty().addListener(this);
+		input.layoutXProperty().addListener(this);
+		input.layoutYProperty().addListener(this);
 
-		this.setStartAnchor(fromAnchor);
-		this.setEndAnchor(toAnchor);
+		output.layoutXProperty().addListener(this);
+		output.layoutYProperty().addListener(this);
+
+		this.setStartAnchor(from);
+		this.setEndAnchor(to);
 		
 		fxmlLoader.load();
+
+		updateStartEndPositions();
 	}
 	
 	@Override
