@@ -1,0 +1,8 @@
+<?import nl.utwente.group10.ui.components.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.*?>
+
+<fx:root type="nl.utwente.group10.ui.components.ConnectionLine" 
+	xmlns:fx="http://javafx.com/fxml/" styleClass="connection">	
+</fx:root>

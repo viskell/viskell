@@ -12,16 +12,16 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 
-public class CustomGesture implements EventHandler<MouseEvent> {
-
-	private GestureCallBack callBack;
+public class CustomGesture extends AbstractGesture implements EventHandler<MouseEvent> {
 	private long startTime;
 	private Date date = new Date();
 	private boolean draggedWhilePressed;
+	private GestureCallBack callBack;
 
 	public CustomGesture(GestureCallBack callBack, Node latchTo) {
+		super(latchTo);
 		this.callBack = callBack;
-		latchTo.addEventHandler(MouseEvent.ANY, this);
+		System.out.println("Created!");
 	}
 
 	@Override
@@ -48,6 +48,11 @@ public class CustomGesture implements EventHandler<MouseEvent> {
 		if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)){
 			draggedWhilePressed = true;
 		}
+	}
+
+	@Override
+	protected void latch() {
+		latchTo.addEventHandler(MouseEvent.ANY, this);
 	}
 
 }

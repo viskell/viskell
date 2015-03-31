@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
  * This class represents a connection between two different FunctionBlocks. The
  * output of one FunctionBlock will be used as input for another FunctionBlock
  */
-public class Connection extends Line implements ChangeListener<Number> , Initializable {
+public class Connection extends AnchoredConnectionLine implements ChangeListener<Number> , Initializable {
 
 	/** The Block that inputs data into this connection */
 	private Block input;
@@ -33,9 +33,7 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 	 * @throws IOException
 	 */
 	public Connection(OutputAnchor from, InputAnchor to) throws IOException {
-		fxmlLoader = new FXMLLoader(getClass().getResource("/ui/Connection.fxml"));
-		fxmlLoader.setRoot(this);
-		fxmlLoader.setController(this);
+		super();
 
 		input = from.getBlock();
 		output = to.getBlock();
@@ -48,8 +46,6 @@ public class Connection extends Line implements ChangeListener<Number> , Initial
 
 		this.setStartAnchor(from);
 		this.setEndAnchor(to);
-		
-		fxmlLoader.load();
 
 		updateStartEndPositions();
 	}

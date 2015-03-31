@@ -12,7 +12,9 @@ import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.gestures.AbstractGesture;
 import nl.utwente.group10.ui.gestures.CustomGesture;
+import nl.utwente.group10.ui.gestures.DragFromGesture;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ public class FunctionBlock extends Block {
 	private StringProperty type;
 
 	/** intstance to create Events for this FunctionBlock. **/
-	private static CustomGesture cg;
+	private static AbstractGesture cg;
 
 	@FXML private Pane anchorSpace;
 	
@@ -54,7 +56,6 @@ public class FunctionBlock extends Block {
 		
 		this.name = new SimpleStringProperty(name);
 		this.type = new SimpleStringProperty(type.toHaskellType());
-		cg = new CustomGesture(this, this);
 
 		this.getLoader().load();
 		
