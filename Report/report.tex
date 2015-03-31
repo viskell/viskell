@@ -10,6 +10,8 @@
 \usepackage{titling}
 \usepackage{imakeidx}
 \usepackage{parskip}
+\usepackage{cite}
+\usepackage{url}
 \usepackage[nottoc]{tocbibind}
 \usepackage[hidelinks]{hyperref}
 \usepackage[toc,section=chapter]{glossaries}
@@ -33,6 +35,7 @@
 
 \renewcommand*\rmdefault{ppl}
 \renewcommand*\sfdefault{ppl}
+\urlstyle{same}
 
 \begin{titlepage}
 	{\Huge \thetitle} \\
@@ -64,9 +67,8 @@
 
 \include{Chapters/Recommendations}
 
-\begin{thebibliography}{999}
-\input{Chapters/Bibliography}
-\end{thebibliography}
+\bibliographystyle{unsrt}
+\bibliography{Chapters/Bibliography}
 
 \printindex
 
