@@ -12,5 +12,6 @@ tupleType : '(' type (',' type)+ ')' ; // tuple type, k>=2
 listType : '[' type ']' ;              // list type
 parenType : '(' type ')' ;             // type with parentheses
 
-constantType : CT ;
+constantType : typeConstructor (WS* type)* ;
+typeConstructor : CT ;
 variableType : VT ;

@@ -18,5 +18,9 @@ public class TypeBuilderTest {
     @Test public void testBuildFuncT()  { this.roundtrip("(a -> b)"); }
     @Test public void testBuildListT()  { this.roundtrip("[a]"); }
     @Test public void testBuildTupleT() { this.roundtrip("(String, Int)"); }
+    @Test public void testMaybeA()      { this.roundtrip("Maybe a"); }
+    @Test public void testMaybeInt()    { this.roundtrip("Maybe Int"); }
+    @Test public void testMaybeFunc()   { this.roundtrip("Maybe (Int -> Int)"); }
+    @Test public void testMaybeSink()   { this.roundtrip("(Maybe Int -> Maybe [a])"); }
     @Test public void testKitchenSink() { this.roundtrip("([a] -> ([b] -> [(a, b)]))"); }
 }

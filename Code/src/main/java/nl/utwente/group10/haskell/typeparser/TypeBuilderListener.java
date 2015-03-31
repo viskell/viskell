@@ -8,6 +8,8 @@ import nl.utwente.group10.haskell.type.ListT;
 import nl.utwente.group10.haskell.type.ConstT;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
@@ -16,7 +18,10 @@ import java.util.Stack;
  */
 class TypeBuilderListener extends TypeBaseListener {
     /** Temporary storage area for compound types. */
-    private final Stack<List<Type>> stack = new Stack<List<Type>>();
+    private final Stack<List<Type>> stack = new Stack<>();
+
+    /** Temporary reference store for variable types. */
+    private final HashMap<String, VarT> vars = new HashMap<>();
 
     /** Build a TypeBuilderListener. */
     protected TypeBuilderListener() {
@@ -25,7 +30,15 @@ class TypeBuilderListener extends TypeBaseListener {
 
     @Override
     public final void exitVariableType(TypeParser.VariableTypeContext ctx) {
-        this.addParam(new VarT(ctx.getText()));
+        String varName = ctx.getText();
+
+        if (this.vars.containsKey(varName)) {
+            this.addParam(this.vars.get(varName));
+        } else {
+            VarT var = new VarT(varName);
+            this.vars.put(varName, var);
+            this.addParam(var);
+        }
     }
 
     @Override
@@ -61,13 +74,25 @@ class TypeBuilderListener extends TypeBaseListener {
     }
 
     @Override
-    public final void exitConstantType(TypeParser.ConstantTypeContext ctx) {
+    public final void exitTypeConstructor(TypeParser.TypeConstructorContext ctx) {
         this.addParam(new ConstT(ctx.getText()));
+    }
+
+    @Override
+    public final void enterConstantType(TypeParser.ConstantTypeContext ctx) {
+        this.enter();
+    }
+
+    @Override
+    public final void exitConstantType(TypeParser.ConstantTypeContext ctx) {
+        Type[] types = this.popParams();
+        Type[] args = Arrays.copyOfRange(types, 1, types.length);
+        this.addParam(new ConstT(types[0].toHaskellType(), args));
     }
 
     /** Call this when entering a compound (function, list, tuple) type. */
     private void enter() {
-        this.stack.push(new ArrayList<Type>());
+        this.stack.push(new ArrayList<>());
     }
 
     /**
