@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
@@ -41,12 +42,22 @@ public class Main extends Application {
 
 		// Init scene
 		Scene scene = new Scene(debug);
+		scene.addEventHandler(KeyEvent.KEY_RELEASED, this::handleKey);
+
 		stage.setOnCloseRequest(event -> System.exit(0));
 		stage.setScene(scene);
 		stage.show();
 
 		// Invalidate
 		tactilePane.invalidate();
+	}
+
+	private void handleKey(KeyEvent event) {
+		switch (event.getCode()) {
+			case DELETE:
+				tactilePane.removeSelected();
+				break;
+		}
 	}
 
 	/**
