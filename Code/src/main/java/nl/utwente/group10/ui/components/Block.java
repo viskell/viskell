@@ -15,9 +15,9 @@ import java.io.IOException;
  * refactored to here.
  */
 public abstract class Block extends StackPane implements GestureCallBack {
-	/** The output of this Block. **/
+	/** The output of this Block. */
 	private OutputAnchor output;
-	
+
 	/** The fxmlLoader responsible for loading the fxml of this Block. */
 	private FXMLLoader fxmlLoader;
 
@@ -33,7 +33,7 @@ public abstract class Block extends StackPane implements GestureCallBack {
 		fxmlLoader = new FXMLLoader(getClass().getResource(String.format("/ui/%s.fxml", blockName)));
 		fxmlLoader.setRoot(this);
 		fxmlLoader.setController(this);
-		
+
 		output = new OutputAnchor(this, pane);
 		parentPane = pane;
 
@@ -45,14 +45,14 @@ public abstract class Block extends StackPane implements GestureCallBack {
 			}
 		});
 	}
-	
+
 	/**
 	 * @return The FXMLLoader used by this Block.
 	 */
 	public final FXMLLoader getLoader(){
 		return fxmlLoader;
 	}
-	
+
 	/**
 	 * @return the output Anchor for this Block
 	 */

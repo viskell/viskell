@@ -40,19 +40,19 @@ public class Connection extends Line implements ChangeListener<Number> {
 
 		this.setStartAnchor(from);
 		this.setEndAnchor(to);
-		
+
 		fxmlLoader.load();
 
 		updateStartEndPositions();
 	}
-	
+
 	/**
 	 * @return Block that is being used as input.
 	 */
 	public final Block getInputBlock() {
 		return input;
 	}
-	
+
 	/**
 	 * @return Block that is being used as output.
 	 */

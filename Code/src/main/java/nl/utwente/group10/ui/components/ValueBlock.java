@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * ValueBlock is an extension of Block that contains only a value and does not accept input of any kind. A single output
  * source will be generated in order to connect a ValueBlock to another Block.
- * 
+ *
  * Extensions of ValueBlock should never accept inputs, if desired the class Block should be extended instead.
  */
 public class ValueBlock extends Block {
@@ -30,11 +30,11 @@ public class ValueBlock extends Block {
      */
     public ValueBlock(CustomUIPane pane) throws IOException {
         super("ValueBlock", pane);
-        
+
         value = new SimpleStringProperty("5.0");
-        
+
         this.getLoader().load();
-        
+
         outputSpace.getChildren().add(this.getOutputAnchor());
     }
 
@@ -52,7 +52,7 @@ public class ValueBlock extends Block {
     public final String getValue() {
         return value.get();
     }
-    
+
     /**
      * the StringProperty for the value of this ValueBlock.
      * @return value

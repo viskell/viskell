@@ -30,7 +30,7 @@ public class DisplayBlock extends Block {
 
     /** The space containing the output anchor. */
     @FXML private Pane outputSpace;
-    
+
     /**
      * @param pane The pane on which this DisplayBlock resides.
      * @throws IOException when the FXML definition for this block cannot be loaded.
@@ -39,13 +39,13 @@ public class DisplayBlock extends Block {
         super("DisplayBlock", pane);
 
         output = new SimpleStringProperty("New Output");
-        
+
         this.getLoader().load();
-        
+
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
         outputSpace.getChildren().add(this.getOutputAnchor());
-        
+
     }
 
     /**
@@ -62,12 +62,12 @@ public class DisplayBlock extends Block {
     public final String getOutput() {
         return output.get();
     }
-    
+
     /**
      * @return The StringProperty that contains the output.
      */
     public final StringProperty outputProperty() {
-    	return output;
+        return output;
     }
 
     /**

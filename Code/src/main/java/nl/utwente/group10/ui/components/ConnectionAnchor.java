@@ -31,7 +31,7 @@ public abstract class ConnectionAnchor extends Circle implements Initializable {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ConnectionAnchor.fxml"));
         fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);			
+        fxmlLoader.setController(this);
 
         fxmlLoader.load();
     }
