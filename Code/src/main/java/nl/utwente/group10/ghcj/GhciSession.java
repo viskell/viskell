@@ -11,7 +11,7 @@ import java.util.Optional;
 /**
  * A conversation with an instance of ghci.
  */
-public class GhciSession implements Closeable {
+public final class GhciSession implements Closeable {
     /** The evaluator this GhciSession will communicate with. */
     private final GhciEvaluator ghci;
 
@@ -36,7 +36,7 @@ public class GhciSession implements Closeable {
      * @return The Expr instance to use when accessing the pushed function.
      * @throws HaskellException when the function is rejected by ghci.
      */
-    public final Expr push(final String name, final Expr func) throws HaskellException {
+    public Expr push(final String name, final Expr func) throws HaskellException {
         this.ghci.eval(String.format("let %s = %s", name, func.toHaskell()));
         return new Ident(name);
     }
@@ -47,7 +47,7 @@ public class GhciSession implements Closeable {
      * @return The result of the expression.
      * @throws HaskellException when ghci encountered an error.
      */
-    public final String pull(final Expr expr) throws HaskellException {
+    public String pull(final Expr expr) throws HaskellException {
         try {
             return this.ghci.eval(expr.toHaskell()).trim();
         } catch (HaskellSyntaxError e) {
@@ -60,7 +60,7 @@ public class GhciSession implements Closeable {
     /**
      * @return a String representation of this GhciSession.
      */
-    public final String toString() {
+    public String toString() {
         return "GhciSession{" + this.ghci + "}";
     }
 
@@ -69,6 +69,11 @@ public class GhciSession implements Closeable {
         this.ghci.close();
     }
 
+    /**
+     * @return An instance of GhciSession to work with.
+     * @throws GhciException when there is a problem setting up the connection with ghci, this usually means that ghci
+     *                       is not installed on your system.
+     */
     public static GhciSession getInstance() throws GhciException {
         if (!instance.isPresent()) {
             instance = Optional.of(new GhciSession());

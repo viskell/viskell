@@ -12,20 +12,34 @@ import nl.utwente.group10.ui.gestures.GestureCallBack;
 
 import java.util.Optional;
 
+/**
+ * Extension of TactilePane that keeps state for the user interface.
+ */
 public class CustomUIPane extends TactilePane implements GestureCallBack {
+	/** Optional containing the last selected anchor. */
 	private Optional<OutputAnchor> anchor;
 	private ObjectProperty<Optional<Block>> selectedBlock;
 
+	/**
+	 * Constructs a new instance.
+	 */
 	public CustomUIPane() {
 		this.anchor = Optional.empty();
 		this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
 	}
 
-	public void setLastOutputAnchor(OutputAnchor anchor) {
+	/**
+	 * Sets the last selected anchor. This method should be called when an anchor is selected.
+	 * @param anchor The currently selected anchor. May be {@code null} if no anchor is selected.
+	 */
+	public final void setLastOutputAnchor(final OutputAnchor anchor) {
 		this.anchor = Optional.ofNullable(anchor);
 	}
 
-	public Optional<OutputAnchor> getLastOutputAnchor() {
+	/**
+	 * @return Optional containing the last selected output anchor.
+	 */
+	public final Optional<OutputAnchor> getLastOutputAnchor() {
 		return this.anchor;
 	}
 
@@ -33,8 +47,10 @@ public class CustomUIPane extends TactilePane implements GestureCallBack {
 	public void handleCustomEvent(UIEvent event) {
 	}
 
-	/** Re-evaluate all displays. */
-	public void invalidate() {
+	/**
+	 * Re-evaluate all display blocks.
+	 */
+	public final void invalidate() {
 		for (Node node : getChildren()) {
 			if (node instanceof DisplayBlock) {
 				((DisplayBlock)node).invalidate();

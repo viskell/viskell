@@ -19,20 +19,21 @@ import java.io.IOException;
  * by providing a different input source using a Connection.
  */
 public class DisplayBlock extends Block {
-
-    /** The output this Block is displaying.**/
+    /** The Block for which this DisplayBlock displays the output. **/
     private StringProperty output;
 
+    /** The Anchor that is used as input. */
     private InputAnchor inputAnchor;
-    
+
+    /** The space containing the input anchor. */
     @FXML private Pane anchorSpace;
-    
+
+    /** The space containing the output anchor. */
     @FXML private Pane outputSpace;
     
     /**
-     * Creates a new instance of DisplayBlock.
-     * @return new DisplayBlock instance
-     * @throws IOException
+     * @param pane The pane on which this DisplayBlock resides.
+     * @throws IOException when the FXML definition for this block cannot be loaded.
      */
     public DisplayBlock(CustomUIPane pane) throws IOException {
         super("DisplayBlock", pane);
@@ -48,39 +49,43 @@ public class DisplayBlock extends Block {
     }
 
     /**
-     * Sets the output flowing into the DisplayBlock and refresh the display.
-     * @param output
+     * Sets the output flowing into the DisplayBlock.
+     * @param value The value to show.
      */
-    public void setOutput(String inputValue) {
-        output.set(inputValue);
+    public final void setOutput(final String value) {
+        output.set(value);
     }
 
     /**
-     * Returns the output value this Block has.
-     * @return outputValue
+     * @return The value that is currently outputted.
      */
-    public String getOutput() {
+    public final String getOutput() {
         return output.get();
     }
     
     /**
-     * Property getter for the output property.
-     * @return outputProperty
+     * @return The StringProperty that contains the output.
      */
-    public StringProperty outputProperty() {
+    public final StringProperty outputProperty() {
     	return output;
     }
 
-    public ConnectionAnchor getInputAnchor() {
+    /**
+     * @return The Anchor that is used as input.
+     */
+    public final ConnectionAnchor getInputAnchor() {
         return inputAnchor;
     }
 
     @Override
-    public Expr asExpr() {
+    public final Expr asExpr() {
         return inputAnchor.asExpr();
     }
 
-    public void invalidate() {
+    /**
+     * Invalidates the outputted value and triggers re-evaluation of the value.
+     */
+    public final void invalidate() {
         try {
             GhciSession ghci = GhciSession.getInstance();
             setOutput(ghci.pull(inputAnchor.asExpr()));

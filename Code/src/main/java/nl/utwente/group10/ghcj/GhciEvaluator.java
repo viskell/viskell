@@ -13,7 +13,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * Evaluator for ghci that pushes code to the ghci environment and can evaluate expressions and return a result.
+ */
 public class GhciEvaluator implements Closeable {
+    /** The ghci process to use. */
     private final Process ghci;
 
     /** Raw input stream for result data from ghci to the application. */
@@ -34,6 +38,10 @@ public class GhciEvaluator implements Closeable {
     /** A newline character. */
     private final String NL;
 
+    /**
+     * @throws GhciException Error while trying to communicate with ghci. At this point this usually means that ghci is
+     *                       not installed.
+     */
     public GhciEvaluator() throws GhciException {
         try {
             this.ghci = new ProcessBuilder(GHCIPATH)

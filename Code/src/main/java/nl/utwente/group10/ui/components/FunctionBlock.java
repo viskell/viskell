@@ -23,17 +23,17 @@ import java.util.ArrayList;
  * visual representation.
  */
 public class FunctionBlock extends Block {
-	/** The inputs for this FunctionBlock.**/
+	/** The inputs for this FunctionBlock. **/
 	private InputAnchor[] inputs;
 
-	/** The name of this Function. **/
+	/** The function name. **/
 	private StringProperty name;
 
 	/** The type of this Function. **/
 	private StringProperty type;
 
-	/** intstance to create Events for this FunctionBlock. **/
-	private static CustomGesture cg;
+	/** Gesture to create Events for this FunctionBlock. **/
+	private CustomGesture gesture;
 
 	@FXML private Pane anchorSpace;
 	
@@ -46,15 +46,15 @@ public class FunctionBlock extends Block {
 	 *
 	 * @param name The name of the function.
 	 * @param type The function's type (usually a FuncT).
-	 * @param pane The CustomUIPane in which this FunctionBlock exists. Via this this FunctionBlock knows which other FunctionBlocks exist.  @return a new instance of this class
-	 * @throws IOException
+	 * @param pane The parent pane in which this FunctionBlock exists.
+	 * @throws IOException when the FXML defenition for this Block cannot be loaded.
 	 */
 	public FunctionBlock(String name, Type type, CustomUIPane pane) throws IOException {
 		super("FunctionBlock", pane);
 		
 		this.name = new SimpleStringProperty(name);
 		this.type = new SimpleStringProperty(type.toHaskellType());
-		cg = new CustomGesture(this, this);
+		gesture = new CustomGesture(this, this);
 
 		this.getLoader().load();
 		
@@ -85,94 +85,89 @@ public class FunctionBlock extends Block {
 	}
 	
 	/**
-	 * Executes this FunctionBlock and returns the output as a String
-	 * @return Output of the Function
+	 * Executes this FunctionBlock and returns the output as a String.
+	 * @return Output of the Function.
 	 */
-	public String executeMethod() {		
-		return "DEBUG-OUTPUT";
+	public final String executeMethod() {
+		return "DEBUG-OUTPUT"; // TODO FIXME -- Good change this can be removed as asExpr() provides this functionality in a pull-fashion.
 	}
 	
 	/**
 	 * Nest another Node object within this FunctionBlock
-	 * @param node to nest
+	 * @param node The node to nest.
 	 */
-	public void nest(Node node) {
+	public final void nest(Node node) {
 		throw new UnsupportedOperationException();
 	}
 
 	/**
 	 * Get the name property of this FunctionBlock.
-	 * @return name
+	 * @return name The name of this Block.
 	 */
-	public String getName() {
+	public final String getName() {
 		return name.get();
 	}
 	
 	/**
-	 * @param name for this FunctionBlock
+	 * @param name The name of this FunctionBlock
 	 */
-	public void setName(String name) {
+	public final void setName(String name) {
 		this.name.set(name);
 	}
 
 	/**
-	 * Get the type property of this FunctionBlock.
-	 * @return type
+	 * @return type The Haskell type of this FunctionBlock.
 	 */
-	public String getType() {
+	public final String getType() {
 		return type.get();
 	}
 
 	/**
-	 * @param type the type property of this FunctionBlock.
+	 * @param type The new Haskell type for this FunctionBlock.
 	 */
-	public void setType(String type) {
+	public final void setType(String type) {
 		this.type.set(type);
 	}
 	
 	/**
-	 * the StringProperty for the name of this FunctionBlock.
-	 * @return name
+	 * @return name The StringProperty for the name of the function.
 	 */
-	public StringProperty nameProperty() {
+	public final StringProperty nameProperty() {
 		return name;
 	}
 	
 	/**
-	 * the StringProperty for the type of this FunctionBlock.
-	 * @return type
+	 * @return type The StringProperty for the type of the function.
 	 */
-	public StringProperty typeProperty() {
+	public final StringProperty typeProperty() {
 		return type;
 	}
 	
 	/**
-	 * Method to fetch an array containing all of the input anchors for this
-	 * FunctionBlock
-	 * @return inputAnchors
+	 * @return The array of input anchors for this function block.
 	 */
-	public InputAnchor[] getInputs(){
+	public final InputAnchor[] getInputs(){
 		return inputs;
 	}
 	
 	/**
 	 * Returns the index of the argument matched to the Anchor.
 	 * @param anchor The anchor to look up.
-	 * @return argumentIndex
+	 * @return The index of the given Anchor in the input anchor array.
 	 */
-	public int getArgumentIndex(ConnectionAnchor anchor) {
-		int index=0;
+	public final int getArgumentIndex(ConnectionAnchor anchor) {
+		int index = 0;
 		/**
 		 * @invariant index < inputs.length
 		 */
-		while((inputs[index]!=anchor)&&(index<inputs.length)) {
+		while ((inputs[index] != anchor) && (index < inputs.length)) {
 			index++;
 		}
 		return index;
 	}
 
 	@Override
-	public Expr asExpr() {
+	public final Expr asExpr() {
 		Expr expr = new Ident(getName());
 
 		for (InputAnchor in : getInputs()) expr = new Apply(expr, in.asExpr());

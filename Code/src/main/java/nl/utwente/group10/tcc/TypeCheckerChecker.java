@@ -8,11 +8,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
-import nl.utwente.group10.haskell.expr.Expr;
-import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
@@ -22,15 +19,24 @@ import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * User interface for the Haskell type checker.
+ */
 public class TypeCheckerChecker extends Application implements Initializable {
+    /** Field for the function to apply an argument to. */
     @FXML private TextField fun;
+
+    /** Field for the argument to apply. */
     @FXML private TextField arg;
+
+    /** Label containing the result of the type checker. */
     @FXML private Label res;
 
+    /** TypeBuilder instance that converts strings into Type instances. */
     private TypeBuilder tb;
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public final void start(Stage stage) throws Exception {
         tb = new TypeBuilder();
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/tcc/TypeCheckerChecker.fxml"));
@@ -44,7 +50,10 @@ public class TypeCheckerChecker extends Application implements Initializable {
         stage.show();
     }
 
-    public void recalculate() {
+    /**
+     * Takes the input and performs the tasks again to produce a new output.
+     */
+    public final void recalculate() {
         Type funT = tb.build(fun.getText());
         Type argT = tb.build(arg.getText());
         Type resT = HindleyMilner.makeVariable();
@@ -63,10 +72,12 @@ public class TypeCheckerChecker extends Application implements Initializable {
             res.setText(resT.prune().toHaskellType());
         } catch (HaskellTypeError haskellTypeError) {
             res.setText("⊥ (Types do not unify.)");
-            return;
         }
     }
 
+    /**
+     * @param args The command line arguments for the program.
+     */
     public static void main(String[] args) {
         launch(args);
     }
