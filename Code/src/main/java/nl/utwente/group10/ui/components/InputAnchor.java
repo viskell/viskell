@@ -4,6 +4,7 @@ import javafx.scene.input.MouseEvent;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.gestures.InputAnchorHandler;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -14,6 +15,8 @@ public class InputAnchor extends ConnectionAnchor {
     public InputAnchor(Block block, CustomUIPane pane) throws IOException {
         super(block, pane);
 
+        new InputAnchorHandler(this,pane);
+        
         up = Optional.empty();
 
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
@@ -22,13 +25,9 @@ public class InputAnchor extends ConnectionAnchor {
             });
 
             pane.getLastOutputAnchor().map(anchor -> {
-                try {
                     Connection upstream = new Connection(anchor, this);
                     pane.getChildren().addAll(upstream);
                     up = Optional.of(upstream);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
                 return null;
             });
@@ -43,5 +42,11 @@ public class InputAnchor extends ConnectionAnchor {
         } else {
             return new Ident("undefined");
         }
+    }
+    
+    public Connection createConnectionFrom(OutputAnchor from){
+    	Connection connection = new Connection(from,this);
+    	pane.getChildren().add(connection);
+    	return connection;
     }
 }

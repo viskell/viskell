@@ -32,7 +32,7 @@ public class Connection extends AnchoredConnectionLine implements ChangeListener
 	 * @return a new instance of this class
 	 * @throws IOException
 	 */
-	public Connection(OutputAnchor from, InputAnchor to) throws IOException {
+	public Connection(OutputAnchor from, InputAnchor to){
 		super();
 
 		input = from.getBlock();
