@@ -3,20 +3,13 @@ package nl.utwente.group10.ui;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
-import nl.utwente.group10.haskell.catalog.Entry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.DisplayBlock;
-import nl.utwente.group10.ui.components.FunctionBlock;
 import nl.utwente.group10.ui.components.ValueBlock;
-
-import java.io.IOException;
 
 /**
  * Main application class for the GUI.
@@ -40,31 +33,10 @@ public class Main extends Application {
 		// Init Debug
 		debug = new DebugParent(tactilePane);
 		debug.registerTactilePane(tactilePane);
+		debug.setOverlayVisible(false);
 
 		// Init menu
-		ContextMenu menu = new ContextMenu();
-
-		Menu addFunc = new Menu("Add function...");
-		for (String category : catalog.getCategories()) {
-			Menu submenu = new Menu(category);
-
-			for (Entry entry : catalog.getCategory(category)) {
-				MenuItem item = new MenuItem(entry.getName());
-				item.setOnAction(event -> addFunctionBlock(entry));
-				submenu.getItems().add(item);
-			}
-
-			addFunc.getItems().addAll(submenu);
-		}
-
-		CheckMenuItem enableDebugItem = new CheckMenuItem("Debug mode");
-		enableDebugItem.selectedProperty().bindBidirectional(debug.overlayVisibleProperty());
-		enableDebugItem.setSelected(false);
-
-		MenuItem quitItem = new MenuItem("Quit");
-		quitItem.setOnAction(event -> System.exit(0));
-
-		menu.getItems().addAll(addFunc, enableDebugItem, quitItem);
+		ContextMenu menu = new MainMenu(catalog, tactilePane);
 		tactilePane.setContextMenu(menu);
 
 		// Init scene
@@ -75,19 +47,6 @@ public class Main extends Application {
 
 		// Invalidate
 		tactilePane.invalidate();
-	}
-
-	/**
-	 * Adds a function block to the user interface containing the given collection entry.
-	 * @param entry The entry to base this function block on.
-	 */
-	private void addFunctionBlock(Entry entry) {
-		try {
-			FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), tactilePane);
-			tactilePane.getChildren().add(fb);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
