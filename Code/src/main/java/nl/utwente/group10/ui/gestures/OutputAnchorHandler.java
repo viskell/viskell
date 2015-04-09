@@ -3,7 +3,6 @@ package nl.utwente.group10.ui.gestures;
 import java.util.HashMap;
 import java.util.Map;
 
-import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ConnectionLine;
 import nl.utwente.group10.ui.components.OutputAnchor;
 import javafx.event.EventHandler;
@@ -27,7 +26,7 @@ public class OutputAnchorHandler implements EventHandler<InputEvent> {
 	 */
 	private Map<Integer, ConnectionLine> lines;
 
-	public OutputAnchorHandler(OutputAnchor outputAnchor, CustomUIPane cpane) {
+	public OutputAnchorHandler(OutputAnchor outputAnchor) {
 		this.outputAnchor = outputAnchor;
 		lines = new HashMap<Integer, ConnectionLine>();
 		outputAnchor.addEventFilter(MouseEvent.DRAG_DETECTED, this);

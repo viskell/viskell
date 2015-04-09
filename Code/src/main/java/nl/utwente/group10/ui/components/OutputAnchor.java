@@ -10,12 +10,12 @@ public class OutputAnchor extends ConnectionAnchor {
     public OutputAnchor(Block block, CustomUIPane pane) throws IOException {
         super(block, pane);
         
-        new OutputAnchorHandler(this,pane);
+        new OutputAnchorHandler(this);
     }
     
     public Connection createConnectionTo(InputAnchor to){
     	Connection connection = new Connection(this, to);
-    	pane.getChildren().add(connection);
+    	getPane().getChildren().add(connection);
     	return connection;
     }
 }

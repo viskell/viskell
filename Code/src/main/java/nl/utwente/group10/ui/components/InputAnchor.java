@@ -13,7 +13,7 @@ public class InputAnchor extends ConnectionAnchor {
 
     public InputAnchor(Block block, CustomUIPane pane) throws IOException {
         super(block, pane);
-        new InputAnchorHandler(this,pane);
+        new InputAnchorHandler(this);
         setConnection(null);
     }
 
@@ -35,7 +35,7 @@ public class InputAnchor extends ConnectionAnchor {
     
     public Connection createConnectionFrom(OutputAnchor from){
     	Connection connection = new Connection(from,this);
-    	pane.getChildren().add(connection);
+    	getPane().getChildren().add(connection);
     	return connection;
     }
 }

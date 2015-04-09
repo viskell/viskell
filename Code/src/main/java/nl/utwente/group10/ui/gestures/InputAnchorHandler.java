@@ -3,9 +3,7 @@ package nl.utwente.group10.ui.gestures;
 import java.util.HashMap;
 import java.util.Map;
 
-import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.Connection;
-import nl.utwente.group10.ui.components.ConnectionAnchor;
 import nl.utwente.group10.ui.components.ConnectionLine;
 import nl.utwente.group10.ui.components.InputAnchor;
 import nl.utwente.group10.ui.components.OutputAnchor;
