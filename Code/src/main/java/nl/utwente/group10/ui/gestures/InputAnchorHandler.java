@@ -18,16 +18,25 @@ import javafx.scene.input.TouchEvent;
 
 public class InputAnchorHandler implements EventHandler<InputEvent> {
 
+	/**
+	 * Touch points have an ID associated with each specific touch point, this
+	 * is the ID associated with the Mouse.
+	 */
 	public static final Integer MOUSE_ID = 0;
-	private CustomUIPane cpane;
 	private InputAnchor inputAnchor;
+	/**
+	 * Maps an (Touch or Mouse) ID to a line, used to keep track of what touch
+	 * point is dragging what line.
+	 */
 	private Map<Integer, ConnectionLine> lines;
 
-	public InputAnchorHandler(InputAnchor inputAnchor, CustomUIPane cpane) {
-		this.cpane = cpane;
+	public InputAnchorHandler(InputAnchor inputAnchor) {
 		this.inputAnchor = inputAnchor;
 		lines = new HashMap<Integer, ConnectionLine>();
-		inputAnchor.addEventFilter(MouseEvent.ANY, this);
+		inputAnchor.addEventFilter(MouseEvent.DRAG_DETECTED, this);
+		inputAnchor.addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
+		inputAnchor.addEventFilter(MouseEvent.MOUSE_RELEASED, this);
+		inputAnchor.addEventFilter(MouseDragEvent.MOUSE_DRAG_RELEASED, this);
 		inputAnchor.addEventFilter(TouchEvent.ANY, this);
 	}
 
@@ -87,8 +96,7 @@ public class InputAnchorHandler implements EventHandler<InputEvent> {
 
 	private void createLine(int id, double x, double y) {
 		ConnectionLine line = new ConnectionLine();
-		cpane.getChildren().add(line);
-		line.setMouseTransparent(true);
+		inputAnchor.getPane().getChildren().add(line);
 		line.setStartPosition(x, y);
 		line.setEndPosition(x, y);
 		lines.put(id, line);
@@ -100,21 +108,21 @@ public class InputAnchorHandler implements EventHandler<InputEvent> {
 
 	private void finalizeLine(int id) {
 		lines.get(id).setMouseTransparent(false);
-		cpane.getChildren().remove(lines.get(id));
-		cpane.invalidate();
+		inputAnchor.getPane().getChildren().remove(lines.get(id));
+		inputAnchor.getPane().invalidate();
 		lines.remove(id);
 	}
 
 	private void removeConnection() {
-		Connection connection =inputAnchor.getConnection().get(); 
+		Connection connection = inputAnchor.getConnection().get();
 		connection.disconnect();
-		cpane.getChildren().remove(connection);
+		inputAnchor.getPane().getChildren().remove(connection);
 	}
 
 	private void createConnection(MouseDragEvent mdEvent) {
 		inputAnchor.createConnectionFrom((OutputAnchor) mdEvent
 				.getGestureSource());
-		cpane.invalidate();
+		inputAnchor.getPane().invalidate();
 	}
 
 	private void moveConnection(int id) {

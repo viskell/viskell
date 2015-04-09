@@ -85,7 +85,6 @@ public class DisplayBlock extends Block {
             GhciSession ghci = GhciSession.getInstance();
             setOutput(ghci.pull(inputAnchor.asExpr()));
         } catch (GhciException e) {
-            //e.printStackTrace();
         	setOutput("???");
         }
     }

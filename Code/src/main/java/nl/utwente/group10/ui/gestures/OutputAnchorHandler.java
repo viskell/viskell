@@ -4,14 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.Connection;
-import nl.utwente.group10.ui.components.ConnectionAnchor;
 import nl.utwente.group10.ui.components.ConnectionLine;
-import nl.utwente.group10.ui.components.InputAnchor;
 import nl.utwente.group10.ui.components.OutputAnchor;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
@@ -19,18 +15,25 @@ import javafx.scene.input.TouchEvent;
 
 public class OutputAnchorHandler implements EventHandler<InputEvent> {
 
+	/**
+	 * Touch points have an ID associated with each specific touch point, this
+	 * is the ID associated with the Mouse.
+	 */
 	public static final Integer MOUSE_ID = 0;
-
-	private CustomUIPane cpane;
 	private OutputAnchor outputAnchor;
-
+	/**
+	 * Maps an (Touch or Mouse) ID to a line, used to keep track of what touch
+	 * point is dragging what line.
+	 */
 	private Map<Integer, ConnectionLine> lines;
 
 	public OutputAnchorHandler(OutputAnchor outputAnchor, CustomUIPane cpane) {
-		this.cpane = cpane;
 		this.outputAnchor = outputAnchor;
 		lines = new HashMap<Integer, ConnectionLine>();
-		outputAnchor.addEventFilter(MouseEvent.ANY, this);
+		outputAnchor.addEventFilter(MouseEvent.DRAG_DETECTED, this);
+		outputAnchor.addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
+		outputAnchor.addEventFilter(MouseEvent.MOUSE_RELEASED, this);
+		outputAnchor.addEventFilter(MouseDragEvent.MOUSE_DRAG_RELEASED, this);
 		outputAnchor.addEventFilter(TouchEvent.ANY, this);
 	}
 
@@ -80,7 +83,7 @@ public class OutputAnchorHandler implements EventHandler<InputEvent> {
 
 	private void createLine(int id, double x, double y) {
 		ConnectionLine line = new ConnectionLine();
-		cpane.getChildren().add(line);
+		outputAnchor.getPane().getChildren().add(line);
 		line.setStartPosition(x, y);
 		line.setEndPosition(x, y);
 		lines.put(id, line);
@@ -91,7 +94,7 @@ public class OutputAnchorHandler implements EventHandler<InputEvent> {
 	}
 
 	private void finalizeLine(int id) {
-		cpane.getChildren().remove(lines.get(id));
+		outputAnchor.getPane().getChildren().remove(lines.get(id));
 		lines.remove(id);
 	}
 }

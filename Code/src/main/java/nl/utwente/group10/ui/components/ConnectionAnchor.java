@@ -4,7 +4,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.shape.Circle;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.gestures.OutputAnchorHandler;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,7 +20,7 @@ public abstract class ConnectionAnchor extends Circle implements Initializable {
     private FXMLLoader fxmlLoader;
 
     /** Our parent CustomUIPane. */
-    protected CustomUIPane pane;
+    private CustomUIPane pane;
 
     /** Our parent Block. */
     private Block block;
