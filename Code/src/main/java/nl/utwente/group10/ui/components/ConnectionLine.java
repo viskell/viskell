@@ -2,10 +2,19 @@ package nl.utwente.group10.ui.components;
 
 import java.io.IOException;
 
+import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.shape.CubicCurve;
 
 
+/**
+ * This class represent a Connection-Line visual object in the UI.
+ * Each UI element that uses Connection-Line properties should extend
+ * from here.
+ * 
+ * For Lines based on Start and End anchors, see AnchoredConnectionLine
+ * For Lines that connect inputs and outputs of Blocks see Connection.
+ */
 public class ConnectionLine extends CubicCurve {
 	/** Control offset for this bezier of this line */
 	public static final double BEZIER_CONTROL_OFFSET_Y = 100f;
@@ -23,6 +32,10 @@ public class ConnectionLine extends CubicCurve {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		TactilePane.setDraggable(this,false);
+		TactilePane.setGoToForegroundOnContact(this, false);
+		this.setMouseTransparent(true);
 	}
 	
 	

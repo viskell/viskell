@@ -1,6 +1,5 @@
 package nl.utwente.group10.ui.components;
 
-import javafx.scene.input.MouseEvent;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -14,26 +13,8 @@ public class InputAnchor extends ConnectionAnchor {
 
     public InputAnchor(Block block, CustomUIPane pane) throws IOException {
         super(block, pane);
-
         new InputAnchorHandler(this,pane);
-        
-        up = Optional.empty();
-
-        this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            up.map(oldAnchor -> {
-                return pane.getChildren().removeAll(oldAnchor);
-            });
-
-            pane.getLastOutputAnchor().map(anchor -> {
-                    Connection upstream = new Connection(anchor, this);
-                    pane.getChildren().addAll(upstream);
-                    up = Optional.of(upstream);
-
-                return null;
-            });
-
-            pane.invalidate();
-        });
+        setConnection(null);
     }
 
     public Expr asExpr() {
@@ -44,10 +25,17 @@ public class InputAnchor extends ConnectionAnchor {
         }
     }
     
+    public void setConnection(Connection connection){
+    	up = Optional.ofNullable(connection);
+    }
+    
+    public Optional<Connection> getConnection(){
+    	return up;
+    }
+    
     public Connection createConnectionFrom(OutputAnchor from){
     	Connection connection = new Connection(from,this);
     	pane.getChildren().add(connection);
-    	up = Optional.of(connection);
     	return connection;
     }
 }

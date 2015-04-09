@@ -1,5 +1,8 @@
 package nl.utwente.group10.ui.gestures;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.Connection;
 import nl.utwente.group10.ui.components.ConnectionAnchor;
@@ -15,17 +18,20 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 
 public class OutputAnchorHandler implements EventHandler<InputEvent>{
-
-	private ConnectionLine line;
-	private CustomUIPane cpane;
-	private ConnectionAnchor anchor;
 	
-	public OutputAnchorHandler(ConnectionAnchor anchor, CustomUIPane cpane) {
+	public static final Integer MOUSE_ID = 0;
+	
+	private CustomUIPane cpane;
+	private OutputAnchor outputAnchor;
+	
+	private Map<Integer,ConnectionLine> lines;
+	
+	public OutputAnchorHandler(OutputAnchor outputAnchor, CustomUIPane cpane) {
 		this.cpane = cpane;
-		this.anchor = anchor;
-		anchor.addEventFilter(MouseEvent.ANY, this);
-		anchor.addEventFilter(MouseDragEvent.ANY, this);
-		anchor.addEventFilter(TouchEvent.ANY, this);
+		this.outputAnchor = outputAnchor;
+		lines = new HashMap<Integer, ConnectionLine>();
+		outputAnchor.addEventFilter(MouseEvent.ANY, this);
+		outputAnchor.addEventFilter(TouchEvent.ANY, this);
 	}	
 	
 	@Override
@@ -33,37 +39,43 @@ public class OutputAnchorHandler implements EventHandler<InputEvent>{
 		if(event instanceof MouseEvent){
 			MouseEvent mEvent = ((MouseEvent) event);
 			if(event.getEventType().equals(MouseEvent.DRAG_DETECTED)){
-				anchor.startFullDrag();
-				Point2D point = anchor.localToScene(anchor.getCenterX(),anchor.getCenterY());
-				createLine(point.getX(),point.getY());
-			}else if(event.getEventType().equals(MouseEvent.MOUSE_DRAGGED) && line!=null){
-				updateLine(mEvent.getSceneX(),mEvent.getSceneY());
-			}else if(event.getEventType().equals(MouseEvent.MOUSE_RELEASED) && line!=null){
-				finalizeLine();
+				//Create connection
+				Point2D point = outputAnchor.localToScene(outputAnchor.getCenterX(),outputAnchor.getCenterY());
+				createLine(MOUSE_ID, point.getX(),point.getY());
+				outputAnchor.startFullDrag();
+			}else if(event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)){
+				// Move in progress visual-only connection (follow cursor)
+				if(lines.get(MOUSE_ID)!=null){
+					updateLine(MOUSE_ID, mEvent.getSceneX(),mEvent.getSceneY());
+				}
+			}else if(event.getEventType().equals(MouseEvent.MOUSE_RELEASED)){
+				// Remove visual-only line
+				if(lines.get(MOUSE_ID)!=null){
+					finalizeLine(MOUSE_ID);
+				}
 			}
-			if(event instanceof MouseDragEvent){
-				System.out.println(event.getEventType());
-			}
+		}else if(event instanceof TouchEvent){
+			TouchEvent tEvent = ((TouchEvent) event);
 		}
 		event.consume();
 	}
 	
 	
-	private void createLine(double x, double y){
-		line = cpane.createLine();
-		line.setMouseTransparent(true);
+	
+	private void createLine(int id, double x, double y){
+		ConnectionLine line = new ConnectionLine();
+		cpane.getChildren().add(line);
 		line.setStartPosition(x, y);
 		line.setEndPosition(x, y);
+		lines.put(id, line);
 	}
 	
-	private void updateLine(double x, double y){
-		line.setEndPosition(x, y);
+	private void updateLine(int id, double x, double y){
+		lines.get(id).setEndPosition(x, y);
 	}
 	
-	private void finalizeLine(){
-		line.setMouseTransparent(false);
-		cpane.getChildren().remove(line);
-		line = null;
+	private void finalizeLine(int id){
+		cpane.getChildren().remove(lines.get(id));
+		lines.remove(id);
 	}
-
 }

@@ -11,7 +11,6 @@ public class OutputAnchor extends ConnectionAnchor {
         super(block, pane);
         
         new OutputAnchorHandler(this,pane);
-        this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> pane.setLastOutputAnchor(this));
     }
     
     public Connection createConnectionTo(InputAnchor to){

@@ -10,22 +10,8 @@ import nl.utwente.group10.ui.gestures.GestureCallBack;
 
 import java.util.Optional;
 
-public class CustomUIPane extends TactilePane implements GestureCallBack {
-	private Optional<OutputAnchor> anchor;
+public class CustomUIPane extends TactilePane implements GestureCallBack {	
 	
-	
-	public CustomUIPane() {
-		this.anchor = Optional.empty();
-	}
-
-	public void setLastOutputAnchor(OutputAnchor anchor) {
-		this.anchor = Optional.ofNullable(anchor);
-	}
-
-	public Optional<OutputAnchor> getLastOutputAnchor() {
-		return this.anchor;
-	}
-
 	@Override
 	public void handleCustomEvent(UIEvent event) {
 	}
@@ -37,11 +23,5 @@ public class CustomUIPane extends TactilePane implements GestureCallBack {
 				((DisplayBlock)node).invalidate();
 			}
 		}
-	}
-	
-	public ConnectionLine createLine(){
-		ConnectionLine line = new ConnectionLine();
-		this.getChildren().add(line);
-		return line;
 	}
 }

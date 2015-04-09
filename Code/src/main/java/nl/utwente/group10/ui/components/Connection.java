@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+
 /**
  * This class represents a connection between two different FunctionBlocks. The
  * output of one FunctionBlock will be used as input for another FunctionBlock
@@ -19,6 +21,9 @@ public class Connection extends AnchoredConnectionLine implements ChangeListener
 	private Block input;
 	/** The Block that we output data into from this connection */
 	private Block output;
+	private OutputAnchor outputAnchor;
+	private InputAnchor inputAnchor;	
+	
 	/** The argument field of the FunctionBlock that we are outputting data into */
 	private int outputarg;
 	/** The fxmlLoader responsible for loading the fxml.*/
@@ -37,7 +42,10 @@ public class Connection extends AnchoredConnectionLine implements ChangeListener
 
 		input = from.getBlock();
 		output = to.getBlock();
-
+		inputAnchor = to;
+		outputAnchor = from;
+		
+		
 		input.layoutXProperty().addListener(this);
 		input.layoutYProperty().addListener(this);
 
@@ -46,8 +54,9 @@ public class Connection extends AnchoredConnectionLine implements ChangeListener
 
 		this.setStartAnchor(from);
 		this.setEndAnchor(to);
-
+		
 		updateStartEndPositions();
+		to.setConnection(this);
 	}
 	
 	@Override
@@ -85,6 +94,13 @@ public class Connection extends AnchoredConnectionLine implements ChangeListener
 	 */
 	public Block getOutputFunction() {
 		return output;
+	}
+	
+	public OutputAnchor getOutputAnchor(){
+		return outputAnchor;
+	}
+	public InputAnchor getInputAnchor(){
+		return inputAnchor;
 	}
 
 	@Override
