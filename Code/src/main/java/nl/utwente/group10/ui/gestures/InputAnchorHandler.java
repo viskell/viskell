@@ -29,11 +29,9 @@ public class InputAnchorHandler implements EventHandler<InputEvent>{
 		if(event instanceof MouseDragEvent){
 			MouseDragEvent mdEvent = ((MouseDragEvent) event);
 			if(mdEvent.getEventType().equals(MouseDragEvent.MOUSE_DRAG_RELEASED)){
-				//System.out.println(mdEvent.getSource()); //Circle
-				//System.out.println(mdEvent.getTarget()); //Circle
-				//System.out.println(mdEvent.getGestureSource()); //OutputAnchor
 				if(mdEvent.getGestureSource() instanceof OutputAnchor){
 					anchor.createConnectionFrom((OutputAnchor)mdEvent.getGestureSource());
+					cpane.invalidate();
 				}
 			}
 		}

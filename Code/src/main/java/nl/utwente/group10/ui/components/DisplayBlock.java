@@ -81,11 +81,13 @@ public class DisplayBlock extends Block {
     }
 
     public void invalidate() {
-        try {
+    	System.out.println("Invalidate()!");
+    	try {
             GhciSession ghci = GhciSession.getInstance();
             setOutput(ghci.pull(inputAnchor.asExpr()));
         } catch (GhciException e) {
-            setOutput("???");
+            e.printStackTrace();
+        	setOutput("???");
         }
     }
 }

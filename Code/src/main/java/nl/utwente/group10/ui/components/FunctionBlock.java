@@ -14,7 +14,7 @@ import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.gestures.AbstractGesture;
 import nl.utwente.group10.ui.gestures.CustomGesture;
-import nl.utwente.group10.ui.gestures.CreateConnectionHandler;
+import nl.utwente.group10.ui.gestures.OutputAnchorHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;

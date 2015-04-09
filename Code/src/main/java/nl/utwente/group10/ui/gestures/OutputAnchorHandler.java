@@ -14,13 +14,13 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 
-public class CreateConnectionHandler implements EventHandler<InputEvent>{
+public class OutputAnchorHandler implements EventHandler<InputEvent>{
 
 	private ConnectionLine line;
 	private CustomUIPane cpane;
 	private ConnectionAnchor anchor;
 	
-	public CreateConnectionHandler(ConnectionAnchor anchor, CustomUIPane cpane) {
+	public OutputAnchorHandler(ConnectionAnchor anchor, CustomUIPane cpane) {
 		this.cpane = cpane;
 		this.anchor = anchor;
 		anchor.addEventFilter(MouseEvent.ANY, this);

@@ -4,7 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.shape.Circle;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.gestures.CreateConnectionHandler;
+import nl.utwente.group10.ui.gestures.OutputAnchorHandler;
 
 import java.io.IOException;
 import java.net.URL;

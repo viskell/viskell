@@ -2,7 +2,7 @@ package nl.utwente.group10.ui.components;
 
 import javafx.scene.input.MouseEvent;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.gestures.CreateConnectionHandler;
+import nl.utwente.group10.ui.gestures.OutputAnchorHandler;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ public class OutputAnchor extends ConnectionAnchor {
     public OutputAnchor(Block block, CustomUIPane pane) throws IOException {
         super(block, pane);
         
-        new CreateConnectionHandler(this,pane);
+        new OutputAnchorHandler(this,pane);
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> pane.setLastOutputAnchor(this));
     }
     

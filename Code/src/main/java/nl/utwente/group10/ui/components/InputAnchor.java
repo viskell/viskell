@@ -47,6 +47,7 @@ public class InputAnchor extends ConnectionAnchor {
     public Connection createConnectionFrom(OutputAnchor from){
     	Connection connection = new Connection(from,this);
     	pane.getChildren().add(connection);
+    	up = Optional.of(connection);
     	return connection;
     }
 }
