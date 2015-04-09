@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.components.Connection;
 import nl.utwente.group10.ui.components.ConnectionAnchor;
 import nl.utwente.group10.ui.components.ConnectionLine;
 import nl.utwente.group10.ui.components.InputAnchor;
@@ -40,7 +41,9 @@ public class InputAnchorHandler implements EventHandler<InputEvent> {
 						MouseDragEvent.MOUSE_DRAG_RELEASED)) {
 					if (mdEvent.getGestureSource() instanceof OutputAnchor) {
 						// Finalize connection
-						createConnection(mdEvent);
+						if (!inputAnchor.getConnection().isPresent()) {
+							createConnection(mdEvent);
+						}
 					}
 				}
 			} else if (mEvent.getEventType().equals(MouseEvent.DRAG_DETECTED)) {
@@ -103,7 +106,9 @@ public class InputAnchorHandler implements EventHandler<InputEvent> {
 	}
 
 	private void removeConnection() {
-		cpane.getChildren().remove(inputAnchor.getConnection().get());
+		Connection connection =inputAnchor.getConnection().get(); 
+		connection.disconnect();
+		cpane.getChildren().remove(connection);
 	}
 
 	private void createConnection(MouseDragEvent mdEvent) {

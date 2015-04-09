@@ -4,12 +4,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 
 /**
  * This class represents a connection between two different FunctionBlocks. The
@@ -56,7 +53,7 @@ public class Connection extends AnchoredConnectionLine implements ChangeListener
 		this.setEndAnchor(to);
 		
 		updateStartEndPositions();
-		to.setConnection(this);
+		inputAnchor.setConnection(this);
 	}
 	
 	@Override
@@ -102,6 +99,11 @@ public class Connection extends AnchoredConnectionLine implements ChangeListener
 	public InputAnchor getInputAnchor(){
 		return inputAnchor;
 	}
+	
+	public void disconnect(){
+		inputAnchor.setConnection(null);
+	}
+	
 
 	@Override
 	public void changed(ObservableValue<?extends Number> observable, Number oldValue, Number newValue) {
