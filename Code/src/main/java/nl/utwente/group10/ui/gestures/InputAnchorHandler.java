@@ -46,27 +46,39 @@ public class InputAnchorHandler implements EventHandler<InputEvent> {
 			} else if (mEvent.getEventType().equals(MouseEvent.DRAG_DETECTED)) {
 				if (inputAnchor.getConnection().isPresent()) {
 					// Edit (move) existing connection
-					OutputAnchor outputAnchor = inputAnchor.getConnection().get().getOutputAnchor();
-					outputAnchor.startFullDrag();
-					Point2D point = outputAnchor.localToScene(outputAnchor.getCenterX(),outputAnchor.getCenterY());
-					createLine(MOUSE_ID, point.getX(),point.getY());
-					removeConnection();
+					moveConnection(MOUSE_ID);
 				}
-			}else if (mEvent.getEventType()
-					.equals(MouseEvent.MOUSE_DRAGGED)) {
+			} else if (mEvent.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
 				// Move in progress visual-only connection (follow cursor)
 				if (lines.get(MOUSE_ID) != null) {
-					updateLine(MOUSE_ID, mEvent.getSceneX(),
-							mEvent.getSceneY());
+					updateLine(MOUSE_ID, mEvent.getSceneX(), mEvent.getSceneY());
 				}
-			} else if (mEvent.getEventType().equals(
-					MouseEvent.MOUSE_RELEASED)) {
+			} else if (mEvent.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
 				// Remove visual-only connection
 				if (lines.get(MOUSE_ID) != null) {
 					finalizeLine(MOUSE_ID);
 				}
 			}
+		} else if (event instanceof TouchEvent) {
+			TouchEvent tEvent = ((TouchEvent) event);
+			int touchID = tEvent.getTouchPoint().getId();
+			if (tEvent.getEventType().equals(TouchEvent.TOUCH_PRESSED)) {
+				moveConnection(touchID);
+			} else if (tEvent.getEventType().equals(TouchEvent.TOUCH_MOVED)) {
+				if (lines.get(touchID) != null) {
+					updateLine(touchID, tEvent.getTouchPoint().getSceneX(),
+							tEvent.getTouchPoint().getSceneY());
+				}
+			} else if (tEvent.getEventType().equals(TouchEvent.TOUCH_RELEASED)) {
+				if (lines.get(touchID) != null) {
+					finalizeLine(touchID);
+				}
+			}
 		}
+
+		// TODO TouchDragEvent does not exist. Test if touch fires synthesized
+		// MouseDragEvents, else find workaround.
+
 		event.consume();
 	}
 
@@ -93,10 +105,20 @@ public class InputAnchorHandler implements EventHandler<InputEvent> {
 	private void removeConnection() {
 		cpane.getChildren().remove(inputAnchor.getConnection().get());
 	}
-	
-	private void createConnection(MouseDragEvent mdEvent){
+
+	private void createConnection(MouseDragEvent mdEvent) {
 		inputAnchor.createConnectionFrom((OutputAnchor) mdEvent
 				.getGestureSource());
 		cpane.invalidate();
+	}
+
+	private void moveConnection(int id) {
+		OutputAnchor outputAnchor = inputAnchor.getConnection().get()
+				.getOutputAnchor();
+		outputAnchor.startFullDrag();
+		Point2D point = outputAnchor.localToScene(outputAnchor.getCenterX(),
+				outputAnchor.getCenterY());
+		createLine(id, point.getX(), point.getY());
+		removeConnection();
 	}
 }
