@@ -49,17 +49,7 @@ public class OutputAnchorHandler implements EventHandler<InputEvent> {
 				// Remove visual-only line
 				manager.finalizeConnection(ConnectionCreationManager.MOUSE_ID);
 			}
-		} /*
-		 * else if (event instanceof TouchEvent) { TouchEvent tEvent =
-		 * ((TouchEvent) event); int touchID = tEvent.getTouchPoint().getId();
-		 * if (tEvent.getEventType().equals(TouchEvent.TOUCH_PRESSED)) {
-		 * manager.createConnectionFrom(touchID,outputAnchor); } else if
-		 * (tEvent.getEventType().equals(TouchEvent.TOUCH_MOVED)) {
-		 * manager.updateLine(touchID, tEvent.getTouchPoint().getSceneX(),
-		 * tEvent.getTouchPoint().getSceneY()); } else if
-		 * (tEvent.getEventType().equals(TouchEvent.TOUCH_RELEASED)) {
-		 * manager.finalizeLine(touchID); } }
-		 */
+		}
 		event.consume();
 	}
 }

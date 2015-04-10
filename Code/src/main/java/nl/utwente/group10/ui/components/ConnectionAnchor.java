@@ -54,7 +54,7 @@ public abstract class ConnectionAnchor extends Circle implements Initializable {
     	return connection;
     }
     
-    public abstract boolean allowsConnecting();
+    public abstract boolean canConnect();
     public abstract void disconnect(Connection connection);
     
     public Optional<ConnectionAnchor> getOtherAnchor(){

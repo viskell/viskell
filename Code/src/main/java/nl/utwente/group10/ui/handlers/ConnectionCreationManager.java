@@ -53,7 +53,7 @@ public class ConnectionCreationManager {
 	public Connection finalizeConnection(int id, ConnectionAnchor anchor){
 		Connection connection = connections.get(id);
 		if(connection!=null){
-			if(anchor.allowsConnecting() && connection.addAnchor(anchor)){
+			if(anchor.canConnect() && connection.addAnchor(anchor)){
 				pane.invalidate();
 			}else{
 				finalizeConnection(id);

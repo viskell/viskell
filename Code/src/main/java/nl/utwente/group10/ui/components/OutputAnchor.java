@@ -35,7 +35,7 @@ public class OutputAnchor extends ConnectionAnchor{
     }
 
 	@Override
-	public boolean allowsConnecting() {
+	public boolean canConnect() {
 		//OutputAnchors can have multiple connections;
 		return true;
 	}

@@ -49,7 +49,7 @@ public class InputAnchor extends ConnectionAnchor {
     }
 
 	@Override
-	public boolean allowsConnecting() {
+	public boolean canConnect() {
 		//InputAnchors only support 1 connection;
 		return !isConnected();
 	}
