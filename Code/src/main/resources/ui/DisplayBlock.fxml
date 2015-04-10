@@ -1,8 +1,8 @@
-<?import nl.utwente.group10.ui.components.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import java.net.*?>
-
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+<?import nl.utwente.group10.ui.components.DisplayBlock?>
 <fx:root type="nl.utwente.group10.ui.components.DisplayBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane>
         <top>

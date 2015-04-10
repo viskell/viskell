@@ -1,0 +1,77 @@
+package nl.utwente.group10.ui.components;
+
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
+import javafx.scene.shape.CubicCurve;
+import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+
+import java.io.IOException;
+
+/**
+ * This class represent a Connection-Line visual object in the UI. Each UI
+ * element that uses Connection-Line properties should extend this class.
+ *
+ * For Lines based on Start and End anchors, see AnchoredConnectionLine For
+ * Lines that connect inputs and outputs of Blocks see Connection.
+ */
+public class ConnectionLine extends CubicCurve {
+	/**
+	 * Control offset for this bezier of this line. in simple terms: controls
+	 * the curviness of the line
+	 */
+	public static final double BEZIER_CONTROL_OFFSET_Y = 100f;
+
+	/** The fxmlLoader responsible for loading the fxml. */
+	private FXMLLoader fxmlLoader;
+
+	public ConnectionLine() {
+		try {
+			fxmlLoader = new FXMLLoader(getClass().getResource(
+					"/ui/ConnectionLine.fxml"));
+			fxmlLoader.setRoot(this);
+			fxmlLoader.setController(this);
+			fxmlLoader.load();
+		} catch (IOException e) {
+			// TODO clean up loading fxml
+			e.printStackTrace();
+		}
+
+		TactilePane.setDraggable(this, false);
+		TactilePane.setGoToForegroundOnContact(this, false);
+		this.setMouseTransparent(true);
+	}
+
+	/**
+	 * Sets the start position for this Line object
+	 *
+	 * @param x coordinate
+	 * @param y coordinate
+	 */
+	public void setStartPosition(double x, double y) {
+		setStartX(x);
+		setStartY(y);
+		setControlX1(x);
+		setControlY1(y + BEZIER_CONTROL_OFFSET_Y);
+	}
+
+	public void setStartPosition(Point2D point) {
+		setStartPosition(point.getX(), point.getY());
+	}
+
+	/**
+	 * Sets the end position for this Line object.
+	 *
+	 * @param x coordinate
+	 * @param y coordinate
+	 */
+	public void setEndPosition(double x, double y) {
+		setEndX(x);
+		setEndY(y);
+		setControlX2(x);
+		setControlY2(y - BEZIER_CONTROL_OFFSET_Y);
+	}
+
+	public void setEndPosition(Point2D point) {
+		setEndPosition(point.getX(), point.getY());
+	}
+}

@@ -12,11 +12,11 @@ import nl.utwente.group10.ui.CustomUIPane;
 import java.io.IOException;
 
 /**
- * DisplayBlock is an extension of Block that only provides a display of the input
- * it receives through it's inputAnchor.
- * The input will be rendered visually on the Block.
- * DisplayBlock can be empty and contain no value at all, the value can be altered at any time
- * by providing a different input source using a Connection.
+ * DisplayBlock is an extension of Block that only provides a display of the
+ * input it receives through it's inputAnchor. The input will be rendered
+ * visually on the Block. DisplayBlock can be empty and contain no value at all,
+ * the value can be altered at any time by providing a different input source
+ * using a Connection.
  */
 public class DisplayBlock extends Block {
     /** The Block for which this DisplayBlock displays the output. **/
@@ -32,6 +32,7 @@ public class DisplayBlock extends Block {
     @FXML private Pane outputSpace;
 
     /**
+     * Creates a new instance of DisplayBlock.
      * @param pane The pane on which this DisplayBlock resides.
      * @throws IOException when the FXML definition for this block cannot be loaded.
      */
@@ -45,35 +46,33 @@ public class DisplayBlock extends Block {
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
         outputSpace.getChildren().add(this.getOutputAnchor());
-
     }
 
     /**
-     * Sets the output flowing into the DisplayBlock.
+     * Sets the output flowing into the DisplayBlock and refresh the display.
      * @param value The value to show.
      */
-    public final void setOutput(final String value) {
+    public void setOutput(final String value) {
         output.set(value);
     }
 
     /**
-     * @return The value that is currently outputted.
+     * Returns the output value this Block has.
+     * @return outputValue
      */
-    public final String getOutput() {
+    public String getOutput() {
         return output.get();
     }
 
     /**
-     * @return The StringProperty that contains the output.
+     * Property getter for the output property.
+     * @return outputProperty
      */
-    public final StringProperty outputProperty() {
+    public StringProperty outputProperty() {
         return output;
     }
 
-    /**
-     * @return The Anchor that is used as input.
-     */
-    public final ConnectionAnchor getInputAnchor() {
+    public ConnectionAnchor getInputAnchor() {
         return inputAnchor;
     }
 

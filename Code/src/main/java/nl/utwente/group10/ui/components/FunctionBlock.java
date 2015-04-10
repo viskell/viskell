@@ -12,7 +12,6 @@ import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.gestures.CustomGesture;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,9 +30,6 @@ public class FunctionBlock extends Block {
 
 	/** The type of this Function. **/
 	private StringProperty type;
-
-	/** Gesture to create Events for this FunctionBlock. **/
-	private CustomGesture gesture;
 
 	@FXML private Pane anchorSpace;
 
@@ -54,7 +50,6 @@ public class FunctionBlock extends Block {
 
 		this.name = new SimpleStringProperty(name);
 		this.type = new SimpleStringProperty(type.toHaskellType());
-		gesture = new CustomGesture(this, this);
 
 		this.getLoader().load();
 
@@ -82,14 +77,6 @@ public class FunctionBlock extends Block {
 		lbl.getStyleClass().add("result");
 		argumentSpace.getChildren().add(lbl);
 		outputSpace.getChildren().add(this.getOutputAnchor());
-	}
-
-	/**
-	 * Executes this FunctionBlock and returns the output as a String.
-	 * @return Output of the Function.
-	 */
-	public final String executeMethod() {
-		return "DEBUG-OUTPUT"; // TODO FIXME -- Good change this can be removed as asExpr() provides this functionality in a pull-fashion.
 	}
 
 	/**
@@ -146,7 +133,7 @@ public class FunctionBlock extends Block {
 	/**
 	 * @return The array of input anchors for this function block.
 	 */
-	public final InputAnchor[] getInputs(){
+	public final InputAnchor[] getInputs() {
 		return inputs;
 	}
 

@@ -1,12 +1,10 @@
 package nl.utwente.group10.ui.components;
 
-import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.gestures.GestureCallBack;
-import nl.utwente.group10.ui.gestures.UIEvent;
 
 import java.io.IOException;
 
@@ -14,8 +12,8 @@ import java.io.IOException;
  * Base UI Component that other visual elements will extend from. If common functionality is found it should be
  * refactored to here.
  */
-public abstract class Block extends StackPane implements GestureCallBack {
-	/** The output of this Block. */
+public abstract class Block extends StackPane {
+	/** The output of this Block.**/
 	private OutputAnchor output;
 
 	/** The fxmlLoader responsible for loading the fxml of this Block. */
@@ -44,12 +42,19 @@ public abstract class Block extends StackPane implements GestureCallBack {
 				this.getStyleClass().removeAll("selected");
 			}
 		});
+
+		this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::select);
+	}
+
+	/** Sets this block as the selected block. */
+	private void select(MouseEvent mouseEvent) {
+		parentPane.setSelectedBlock(this);
 	}
 
 	/**
 	 * @return The FXMLLoader used by this Block.
 	 */
-	public final FXMLLoader getLoader(){
+	public final FXMLLoader getLoader() {
 		return fxmlLoader;
 	}
 
@@ -58,17 +63,6 @@ public abstract class Block extends StackPane implements GestureCallBack {
 	 */
 	public final OutputAnchor getOutputAnchor() {
 		return output;
-	}
-
-	@Override
-	public void handleCustomEvent(UIEvent event) {
-		EventType eventType = event .getEventType();
-
-		if (eventType.equals(UIEvent.TAP)) {
-			parentPane.setSelectedBlock(this);
-		} else if (eventType.equals(UIEvent.TAP_HOLD)) {
-			//TODO: open the quick-menu
-		}
 	}
 
 	/**

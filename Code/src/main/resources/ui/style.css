@@ -57,6 +57,6 @@
 
 .connection {
 	-fx-stroke-width: 3px;
-	-fx-stroke: black;
+	-fx-stroke: red;
 	-fx-fill: null;
 }

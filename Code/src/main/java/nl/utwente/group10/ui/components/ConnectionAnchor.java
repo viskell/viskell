@@ -1,24 +1,27 @@
 package nl.utwente.group10.ui.components;
 
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.shape.Circle;
 import nl.utwente.group10.ui.CustomUIPane;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.Optional;
 
 /**
- * Represent an Anchor point on either a Block or a Line. Integers are currently the only supported data type. Other
- * data types will be supported in the future
+ * Represent an Anchor point on either a Block or a Line Integers are currently
+ * the only supported data type.
+ *
+ * Other data types will be supported in the future
  */
-public abstract class ConnectionAnchor extends Circle implements Initializable {
-    /** The pane on which this Anchor resides. */
-    private CustomUIPane pane;
+public abstract class ConnectionAnchor extends Circle {
+	/** The pane on which this Anchor resides. */
+	private CustomUIPane pane;
 
     /** The block this Anchor is connected to. */
-    private Block block;
+	private Block block;
+
+	/** The possible connection linked to this anchor */
+	private Optional<Connection> connection;
 
     /**
      * @param block The block where this Anchor is connected to.
@@ -29,12 +32,14 @@ public abstract class ConnectionAnchor extends Circle implements Initializable {
         this.block = block;
         this.pane = pane;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ConnectionAnchor.fxml"));
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ConnectionAnchor.fxml"));
+		fxmlLoader.setRoot(this);
+		fxmlLoader.setController(this);
 
-        fxmlLoader.load();
-    }
+		fxmlLoader.load();
+		setConnection(null);
+	}
+
 
     /**
      * @return The block this anchor belongs to.
@@ -50,7 +55,40 @@ public abstract class ConnectionAnchor extends Circle implements Initializable {
         return pane;
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-    }
+	public void setConnection(Connection connection) {
+		this.connection = Optional.ofNullable(connection);
+	}
+
+	public boolean isConnected() {
+		return connection.isPresent();
+	}
+
+	public Optional<Connection> getConnection() {
+		return connection;
+	}
+
+	public abstract boolean canConnect();
+
+	public abstract void disconnect(Connection connection);
+
+	public Optional<ConnectionAnchor> getOtherAnchor() {
+		if (isConnected()) {
+			Optional<OutputAnchor> out = getConnection().get()
+					.getOutputAnchor();
+			Optional<InputAnchor> in = getConnection().get().getInputAnchor();
+			if (in.isPresent() && out.get().equals(this)) {
+				// Re-wrap Optional to change from InputAnchor to
+				// ConnectionAnchor
+				return Optional.of(in.get());
+			} else if (out.isPresent() && in.get().equals(this)) {
+				return Optional.of(out.get());
+			}
+		}
+		return Optional.empty();
+	}
+
+	@Override
+	public String toString() {
+		return "ConnectionAnchor for " + getBlock();
+	}
 }

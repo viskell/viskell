@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
@@ -25,6 +26,8 @@ public class Main extends Application {
 	@Override
 	public void start(Stage stage) throws Exception {
 		tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
+
+		tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
 
 		HaskellCatalog catalog = new HaskellCatalog();
 

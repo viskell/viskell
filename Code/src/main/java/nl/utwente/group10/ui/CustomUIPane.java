@@ -7,9 +7,7 @@ import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import nl.utwente.group10.ui.components.Block;
 import nl.utwente.group10.ui.components.Connection;
 import nl.utwente.group10.ui.components.DisplayBlock;
-import nl.utwente.group10.ui.components.OutputAnchor;
-import nl.utwente.group10.ui.gestures.UIEvent;
-import nl.utwente.group10.ui.gestures.GestureCallBack;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -17,36 +15,16 @@ import java.util.Optional;
 /**
  * Extension of TactilePane that keeps state for the user interface.
  */
-public class CustomUIPane extends TactilePane implements GestureCallBack {
-	/** Optional containing the last selected anchor. */
-	private Optional<OutputAnchor> anchor;
+public class CustomUIPane extends TactilePane {
 	private ObjectProperty<Optional<Block>> selectedBlock;
+	private ConnectionCreationManager connectionCreationManager;
 
 	/**
 	 * Constructs a new instance.
 	 */
 	public CustomUIPane() {
-		this.anchor = Optional.empty();
+		this.connectionCreationManager = new ConnectionCreationManager(this);
 		this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
-	}
-
-	/**
-	 * Sets the last selected anchor. This method should be called when an anchor is selected.
-	 * @param anchor The currently selected anchor. May be {@code null} if no anchor is selected.
-	 */
-	public final void setLastOutputAnchor(final OutputAnchor anchor) {
-		this.anchor = Optional.ofNullable(anchor);
-	}
-
-	/**
-	 * @return Optional containing the last selected output anchor.
-	 */
-	public final Optional<OutputAnchor> getLastOutputAnchor() {
-		return this.anchor;
-	}
-
-	@Override
-	public void handleCustomEvent(UIEvent event) {
 	}
 
 	/**
@@ -74,14 +52,15 @@ public class CustomUIPane extends TactilePane implements GestureCallBack {
 
 	/** Remove the given block from this UI pane, including its connections. */
 	public void removeBlock(Block block) {
+		Optional<Block> target = Optional.of(block);
 		ArrayList<Node> toRemove = new ArrayList<>();
 
 		for (Node node : getChildren()) {
 			if (node instanceof Connection) {
-				Block in = ((Connection) node).getInputBlock();
-				Block out = ((Connection) node).getOutputBlock();
+				Optional<Block> in = ((Connection) node).getInputBlock();
+				Optional<Block> out = ((Connection) node).getOutputBlock();
 
-				if (in.equals(block) || out.equals(block)) {
+				if (in.equals(target) || out.equals(target)) {
 					toRemove.add(node);
 				}
 			} else if (node.equals(block)) {
@@ -98,5 +77,9 @@ public class CustomUIPane extends TactilePane implements GestureCallBack {
 			this.removeBlock(obj);
 			return obj;
 		});
+	}
+
+	public ConnectionCreationManager getConnectionCreationManager() {
+		return connectionCreationManager;
 	}
 }
