@@ -1,112 +1,182 @@
 package nl.utwente.group10.ui.components;
 
+import java.util.Optional;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.geometry.Point2D;
 
 /**
- * This class represents a connection between two different FunctionBlocks. The
- * output of one FunctionBlock will be used as input for another FunctionBlock
+ * This is a ConnectionLine that also stores a startAnchor and an endAnchor to
+ * keep track of origin points of the Line.
+ * 
+ * For Lines that connect inputs and outputs of Blocks see Connection.
  */
-public class Connection extends AnchoredConnectionLine implements ChangeListener<Number> , Initializable {
+public class Connection extends ConnectionLine implements
+		ChangeListener<Number> {
+	/** Starting point of this Line that can be Anchored onto other objects */
+	private OutputAnchor startAnchor;
+	/** Ending point of this Line that can be Anchored onto other objects */
+	private InputAnchor endAnchor;
 
-	/** The Block that inputs data into this connection */
-	private Block input;
-	/** The Block that we output data into from this connection */
-	private Block output;
-	private OutputAnchor outputAnchor;
-	private InputAnchor inputAnchor;	
-	
-	/** The argument field of the FunctionBlock that we are outputting data into */
-	private int outputarg;
-	/** The fxmlLoader responsible for loading the fxml.*/
-	private FXMLLoader fxmlLoader;
-
-	/**
-	 * Method that creates a new instance of this class along with it's visual
-	 * representation. 
-	 * @param from Anchor to start from.
-	 * @param toAnchor Anchor to end at.
-	 * @return a new instance of this class
-	 * @throws IOException
-	 */
-	public Connection(OutputAnchor from, InputAnchor to){
-		super();
-
-		input = from.getBlock();
-		output = to.getBlock();
-		inputAnchor = to;
-		outputAnchor = from;
-		
-		
-		input.layoutXProperty().addListener(this);
-		input.layoutYProperty().addListener(this);
-
-		output.layoutXProperty().addListener(this);
-		output.layoutYProperty().addListener(this);
-
+	public Connection(){
+	}
+	public Connection(OutputAnchor from){
 		this.setStartAnchor(from);
+		
+		double x = from.getCenterX();
+		double y = from.getCenterY();
+		Point2D point = startAnchor.localToScene(x, y);
+		setEndPosition(point.getX(), point.getY());
+	}
+	public Connection(InputAnchor to){
 		this.setEndAnchor(to);
 		
-		updateStartEndPositions();
-		inputAnchor.setConnection(this);
+		double x = to.getCenterX();
+		double y = to.getCenterY();
+		Point2D point = endAnchor.localToScene(x, y);
+		setStartPosition(point.getX(), point.getY());
+		
 	}
 	
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
+	public Connection(OutputAnchor from, InputAnchor to){
+		this.setStartAnchor(from);
+		this.setEndAnchor(to);
+	}
+	public Connection(InputAnchor to,OutputAnchor from){
+		this(from,to);
+	}
+	
+	public void setFreeEnds(double x, double y){
+		if(startAnchor==null){
+			setStartPosition(x,y);
+		}
+		if(endAnchor==null){
+			setEndPosition(x,y);
+		}
+	}
+	
+	public boolean addAnchor(ConnectionAnchor anchor){
+		if(startAnchor==null && anchor instanceof OutputAnchor){
+			setStartAnchor((OutputAnchor) anchor);
+		}else if(endAnchor==null && anchor instanceof InputAnchor){
+			setEndAnchor((InputAnchor) anchor);
+		}
+		return isConnected();
+	}
+	
+	public boolean isConnected(){
+		return startAnchor!=null && endAnchor!=null;
 	}
 	
 	/**
-	 * Private method that sets the input into this Connection
-	 * @param input source
+	 * Set the startAnchor for this line. After setting the StartPosition will
+	 * be updated.
+	 * 
+	 * @param Anchor
+	 *            to start at.
 	 */
-	private void setInput(FunctionBlock in) {
-		input = in;
+	public void setStartAnchor(OutputAnchor start) {
+		if (startAnchor != null) {
+			startAnchor.getBlock().layoutXProperty().removeListener(this);
+			startAnchor.getBlock().layoutYProperty().removeListener(this);
+		}
+		startAnchor = start;
+		startAnchor.setConnection(this);
+		
+		startAnchor.getBlock().layoutXProperty().addListener(this);
+		startAnchor.getBlock().layoutYProperty().addListener(this);
+		updateStartPosition();
 	}
 
 	/**
-	 * Private method that sets the FunctionBlock and argument 
-	 * that Connection will output into.
-	 * @param out FunctionBlock to output into
-	 * @param outarg Argument field to output into
+	 * Set the endAnchor for this line. After setting the EndPosition will be
+	 * updated.
+	 * 
+	 * @param Anchor
+	 *            to end at.
 	 */
-	private void setOutput(FunctionBlock out, int outarg) {
-		output = out;
-		outputarg = outarg;
+	public void setEndAnchor(InputAnchor end) {
+		if (endAnchor != null) {
+			endAnchor.getBlock().layoutXProperty().removeListener(this);
+			endAnchor.getBlock().layoutYProperty().removeListener(this);
+		}
+		endAnchor = end;
+		endAnchor.setConnection(this);
+		
+		endAnchor.getBlock().layoutXProperty().addListener(this);
+		endAnchor.getBlock().layoutYProperty().addListener(this);
+		updateEndPosition();
 	}
-	
+
 	/**
-	 * @return Block that is being used as input
+	 * Runs both the update Start end End position functions. Use when
+	 * refreshing UI representation of the Line.
 	 */
-	public Block getInputFunction() {
-		return input;
+	protected void updateStartEndPositions() {
+		updateStartPosition();
+		updateEndPosition();
 	}
-	
+
 	/**
-	 * @return Block that is being used as output
+	 * Refresh the Start position of this Line using startAnchor as a reference
+	 * point.
 	 */
-	public Block getOutputFunction() {
-		return output;
+	private void updateStartPosition() {
+		if (startAnchor != null) {
+			double x = startAnchor.getCenterX();
+			double y = startAnchor.getCenterY();
+			Point2D point = startAnchor.localToScene(x, y);
+
+			setStartPosition(point.getX(), point.getY());
+		}
+	}
+
+	/**
+	 * Refresh the End position of this Line using endAnchor as a reference
+	 * point.
+	 */
+	private void updateEndPosition() {
+		if (endAnchor != null) {
+			double x = endAnchor.getCenterX();
+			double y = endAnchor.getCenterY();
+			Point2D point = endAnchor.localToScene(x, y);
+
+			setEndPosition(point.getX(), point.getY());
+		}
 	}
 	
-	public OutputAnchor getOutputAnchor(){
-		return outputAnchor;
+	public Optional<OutputAnchor> getOutputAnchor(){
+		return Optional.ofNullable(startAnchor);
 	}
-	public InputAnchor getInputAnchor(){
-		return inputAnchor;
+	public Optional<InputAnchor> getInputAnchor(){
+		return Optional.ofNullable(endAnchor);
+	}
+
+	@Override
+	public void changed(ObservableValue<? extends Number> observable,
+			Number oldValue, Number newValue) {
+		updateStartEndPositions();
+	}
+	
+	public void disconnect(ConnectionAnchor anchor){
+		if(startAnchor!=null && startAnchor.equals(anchor)){
+			startAnchor.disconnect(this);
+			startAnchor = null;
+		}
+		if(endAnchor!=null && endAnchor.equals(anchor)){
+			endAnchor.disconnect(this);
+			endAnchor = null;
+		}
 	}
 	
 	public void disconnect(){
-		inputAnchor.setConnection(null);
+		disconnect(startAnchor);
+		disconnect(endAnchor);
 	}
 	
-
 	@Override
-	public void changed(ObservableValue<?extends Number> observable, Number oldValue, Number newValue) {
-		updateStartEndPositions();
+	public String toString(){
+		return "Connection connecting \n(out) "+startAnchor+"   to\n(in)  "+endAnchor;
 	}
 }

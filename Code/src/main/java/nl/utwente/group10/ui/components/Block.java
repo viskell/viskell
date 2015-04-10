@@ -66,6 +66,8 @@ public abstract class Block extends StackPane implements Initializable, GestureC
 		isSelected = selectedState;
 	}
 	
+	public abstract String getName();
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 	}

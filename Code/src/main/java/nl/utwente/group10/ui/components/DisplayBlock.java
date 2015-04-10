@@ -83,6 +83,7 @@ public class DisplayBlock extends Block {
 
 	@Override
 	public Expr asExpr() {
+		System.out.println(inputAnchor);
 		return inputAnchor.asExpr();
 	}
 
@@ -93,5 +94,10 @@ public class DisplayBlock extends Block {
 		} catch (GhciException e) {
 			setOutput("???");
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "DisplayBlock";
 	}
 }

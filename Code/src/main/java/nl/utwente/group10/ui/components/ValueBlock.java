@@ -72,4 +72,9 @@ public class ValueBlock extends Block {
         // TODO: support more types than floats
         return new Value(new ConstT("Float"), getValue());
     }
+
+	@Override
+	public String getName() {
+		return "Value: "+getValue();
+	}
 }

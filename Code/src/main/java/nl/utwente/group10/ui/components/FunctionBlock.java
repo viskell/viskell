@@ -99,6 +99,7 @@ public class FunctionBlock extends Block {
 	 * Get the name property of this FunctionBlock.
 	 * @return name
 	 */
+	@Override
 	public String getName() {
 		return name.get();
 	}

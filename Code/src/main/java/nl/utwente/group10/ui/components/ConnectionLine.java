@@ -3,6 +3,8 @@ package nl.utwente.group10.ui.components;
 import java.io.IOException;
 
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.shape.CubicCurve;
 
@@ -13,7 +15,7 @@ import javafx.scene.shape.CubicCurve;
  * For Lines based on Start and End anchors, see AnchoredConnectionLine For
  * Lines that connect inputs and outputs of Blocks see Connection.
  */
-public class ConnectionLine extends CubicCurve {
+public class ConnectionLine extends CubicCurve{
 	/**
 	 * Control offset for this bezier of this line. in simple terms: controls
 	 * the curviness of the line

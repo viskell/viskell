@@ -7,10 +7,17 @@ import nl.utwente.group10.ui.components.ConnectionLine;
 import nl.utwente.group10.ui.components.OutputAnchor;
 import nl.utwente.group10.ui.gestures.UIEvent;
 import nl.utwente.group10.ui.gestures.GestureCallBack;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 import java.util.Optional;
 
 public class CustomUIPane extends TactilePane implements GestureCallBack {	
+	
+	private ConnectionCreationManager connectionCreationManager;
+	
+	public CustomUIPane(){
+		connectionCreationManager = new ConnectionCreationManager(this); 
+	}
 	
 	@Override
 	public void handleCustomEvent(UIEvent event) {
@@ -23,5 +30,9 @@ public class CustomUIPane extends TactilePane implements GestureCallBack {
 				((DisplayBlock)node).invalidate();
 			}
 		}
+	}
+	
+	public ConnectionCreationManager getConnectionCreationManager(){
+		return connectionCreationManager;
 	}
 }
