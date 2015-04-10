@@ -6,6 +6,7 @@ import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 
 /**
@@ -15,7 +16,7 @@ import javafx.scene.shape.CubicCurve;
  * For Lines based on Start and End anchors, see AnchoredConnectionLine For
  * Lines that connect inputs and outputs of Blocks see Connection.
  */
-public class ConnectionLine extends CubicCurve{
+public class ConnectionLine extends CubicCurve {
 	/**
 	 * Control offset for this bezier of this line. in simple terms: controls
 	 * the curviness of the line
@@ -57,6 +58,10 @@ public class ConnectionLine extends CubicCurve{
 		setControlY1(y + BEZIER_CONTROL_OFFSET_Y);
 	}
 
+	public void setStartPosition(Point2D point) {
+		setStartPosition(point.getX(), point.getY());
+	}
+
 	/**
 	 * Sets the end position for this Line object.
 	 * 
@@ -70,5 +75,9 @@ public class ConnectionLine extends CubicCurve{
 		setEndY(y);
 		setControlX2(x);
 		setControlY2(y - BEZIER_CONTROL_OFFSET_Y);
+	}
+
+	public void setEndPosition(Point2D point) {
+		setEndPosition(point.getX(), point.getY());
 	}
 }

@@ -3,7 +3,6 @@ package nl.utwente.group10.ui.handlers;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import java.util.Optional;
 
 import javafx.geometry.Point2D;
@@ -29,53 +28,52 @@ public class ConnectionCreationManager {
 	 * point is dragging what line.
 	 */
 	private Map<Integer, Connection> connections;
-	
-	
-	public ConnectionCreationManager(CustomUIPane pane){
+
+	public ConnectionCreationManager(CustomUIPane pane) {
 		this.pane = pane;
 		connections = new HashMap<Integer, Connection>();
 	}
-	
 
 	public Connection createConnectionWith(int id, ConnectionAnchor anchor) {
 		Connection newConnection = null;
-		if(anchor instanceof OutputAnchor){
+		if (anchor instanceof OutputAnchor) {
 			newConnection = new Connection((OutputAnchor) anchor);
-		} else if(anchor instanceof InputAnchor){
+		} else if (anchor instanceof InputAnchor) {
 			newConnection = new Connection((InputAnchor) anchor);
 		}
 		pane.getChildren().add(newConnection);
 		anchor.startFullDrag();
-		connections.put(id,newConnection);
+		connections.put(id, newConnection);
 		return newConnection;
 	}
-	
-	public Connection finalizeConnection(int id, ConnectionAnchor anchor){
+
+	public Connection finishConnection(int id, ConnectionAnchor anchor) {
 		Connection connection = connections.get(id);
-		if(connection!=null){
-			if(anchor.canConnect() && connection.addAnchor(anchor)){
+		if (connection != null) {
+			if (anchor.canConnect() && connection.addAnchor(anchor)) {
 				pane.invalidate();
-			}else{
-				finalizeConnection(id);
+			} else {
+				finishConnection(id);
 			}
 		}
 		connections.put(id, null);
-		return connection;		
+		return connection;
 	}
-	public Connection finalizeConnection(int id){
+
+	public Connection finishConnection(int id) {
 		Connection connection = connections.get(id);
 		connections.put(id, null);
-		if(connection!=null){
+		if (connection != null) {
 			connection.disconnect();
 			pane.getChildren().remove(connection);
 		}
-		return null;		
+		return null;
 	}
-	
+
 	public void editConnection(int id, ConnectionAnchor anchor) {
 		Optional<ConnectionAnchor> anchorToKeep = anchor.getOtherAnchor();
-		if(anchor.isConnected() && anchorToKeep.isPresent()){
-			Connection connection = anchor.getConnection().get(); 
+		if (anchor.isConnected() && anchorToKeep.isPresent()) {
+			Connection connection = anchor.getConnection().get();
 			connection.disconnect(anchor);
 			anchorToKeep.get().startFullDrag();
 			connections.put(id, connection);
@@ -84,7 +82,7 @@ public class ConnectionCreationManager {
 	}
 
 	public void updateLine(int id, double x, double y) {
-		if(connections.get(id)!=null){
+		if (connections.get(id) != null) {
 			connections.get(id).setFreeEnds(x, y);
 		}
 	}

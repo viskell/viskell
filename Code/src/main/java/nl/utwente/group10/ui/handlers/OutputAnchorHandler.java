@@ -35,7 +35,7 @@ public class OutputAnchorHandler implements EventHandler<InputEvent> {
 			if (mEvent.getEventType()
 					.equals(MouseDragEvent.MOUSE_DRAG_RELEASED)) {
 				// Finalize connection
-				manager.finalizeConnection(ConnectionCreationManager.MOUSE_ID,
+				manager.finishConnection(ConnectionCreationManager.MOUSE_ID,
 						outputAnchor);
 			} else if (mEvent.getEventType().equals(MouseEvent.DRAG_DETECTED)) {
 				// Create connection
@@ -47,7 +47,7 @@ public class OutputAnchorHandler implements EventHandler<InputEvent> {
 						mEvent.getSceneX(), mEvent.getSceneY());
 			} else if (mEvent.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
 				// Remove visual-only line
-				manager.finalizeConnection(ConnectionCreationManager.MOUSE_ID);
+				manager.finishConnection(ConnectionCreationManager.MOUSE_ID);
 			}
 		}
 		event.consume();

@@ -36,18 +36,20 @@ public class InputAnchorHandler implements EventHandler<InputEvent> {
 	public void handle(InputEvent event) {
 		if (event instanceof MouseEvent) {
 			MouseEvent mEvent = (MouseEvent) event;
-			if (mEvent.getEventType().equals(
-				MouseDragEvent.MOUSE_DRAG_RELEASED)) {
+			if (mEvent.getEventType()
+					.equals(MouseDragEvent.MOUSE_DRAG_RELEASED)) {
 				// Finalize connection
-				manager.finalizeConnection(ConnectionCreationManager.MOUSE_ID, inputAnchor);
+				manager.finishConnection(ConnectionCreationManager.MOUSE_ID,
+						inputAnchor);
 			} else if (mEvent.getEventType().equals(MouseEvent.DRAG_DETECTED)) {
 				if (inputAnchor.getConnection().isPresent()) {
 					// Edit (move) existing connection
 					manager.editConnection(ConnectionCreationManager.MOUSE_ID,
 							inputAnchor);
-				}else{
+				} else {
 					// Create new connection
-					manager.createConnectionWith(ConnectionCreationManager.MOUSE_ID,inputAnchor);
+					manager.createConnectionWith(
+							ConnectionCreationManager.MOUSE_ID, inputAnchor);
 				}
 			} else if (mEvent.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
 				// Move in progress visual-only connection (follow cursor)
@@ -55,7 +57,7 @@ public class InputAnchorHandler implements EventHandler<InputEvent> {
 						mEvent.getSceneX(), mEvent.getSceneY());
 			} else if (mEvent.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
 				// Remove visual-only connection
-				manager.finalizeConnection(ConnectionCreationManager.MOUSE_ID);
+				manager.finishConnection(ConnectionCreationManager.MOUSE_ID);
 			}
 		}
 

@@ -15,60 +15,69 @@ import javafx.geometry.Point2D;
 public class Connection extends ConnectionLine implements
 		ChangeListener<Number> {
 	/** Starting point of this Line that can be Anchored onto other objects */
-	private OutputAnchor startAnchor;
+	private Optional<OutputAnchor> startAnchor = Optional.empty();
 	/** Ending point of this Line that can be Anchored onto other objects */
-	private InputAnchor endAnchor;
+	private Optional<InputAnchor> endAnchor = Optional.empty();
 
-	public Connection(){
+	public Connection() {
+		// Allow default constructor
 	}
-	public Connection(OutputAnchor from){
+
+	public Connection(OutputAnchor from) {
 		this.setStartAnchor(from);
-		
-		double x = from.getCenterX();
-		double y = from.getCenterY();
-		Point2D point = startAnchor.localToScene(x, y);
-		setEndPosition(point.getX(), point.getY());
+		setEndPosition(getScenePoint(from));
 	}
-	public Connection(InputAnchor to){
+
+	public Connection(InputAnchor to) {
 		this.setEndAnchor(to);
-		
-		double x = to.getCenterX();
-		double y = to.getCenterY();
-		Point2D point = endAnchor.localToScene(x, y);
-		setStartPosition(point.getX(), point.getY());
-		
+		setStartPosition(getScenePoint(to));
 	}
-	
-	public Connection(OutputAnchor from, InputAnchor to){
+
+	public Connection(OutputAnchor from, InputAnchor to) {
 		this.setStartAnchor(from);
 		this.setEndAnchor(to);
 	}
-	public Connection(InputAnchor to,OutputAnchor from){
-		this(from,to);
+
+	public Connection(InputAnchor to, OutputAnchor from) {
+		this(from, to);
 	}
-	
-	public void setFreeEnds(double x, double y){
-		if(startAnchor==null){
-			setStartPosition(x,y);
+
+	/**
+	 * Sets the free ends (empty anchors) to the specified position
+	 */
+	public void setFreeEnds(double x, double y) {
+		if (!startAnchor.isPresent()) {
+			setStartPosition(x, y);
 		}
-		if(endAnchor==null){
-			setEndPosition(x,y);
+		if (!endAnchor.isPresent()) {
+			setEndPosition(x, y);
 		}
 	}
-	
-	public boolean addAnchor(ConnectionAnchor anchor){
-		if(startAnchor==null && anchor instanceof OutputAnchor){
+
+	/**
+	 * Tries to add an unspecified ConnectionAnchor to the connection.
+	 * 
+	 * @param anchor
+	 *            Anchor to add
+	 * @return Whether or not the anchor was added.
+	 */
+	public boolean addAnchor(ConnectionAnchor anchor) {
+		boolean added = false;
+		if (!startAnchor.isPresent() && anchor instanceof OutputAnchor) {
 			setStartAnchor((OutputAnchor) anchor);
-		}else if(endAnchor==null && anchor instanceof InputAnchor){
+			added = true;
+		} else if (!endAnchor.isPresent() && anchor instanceof InputAnchor) {
 			setEndAnchor((InputAnchor) anchor);
+			added = true;
 		}
-		return isConnected();
+
+		return added;
 	}
-	
-	public boolean isConnected(){
-		return startAnchor!=null && endAnchor!=null;
+
+	public boolean isConnected() {
+		return startAnchor.isPresent() && endAnchor.isPresent();
 	}
-	
+
 	/**
 	 * Set the startAnchor for this line. After setting the StartPosition will
 	 * be updated.
@@ -77,15 +86,15 @@ public class Connection extends ConnectionLine implements
 	 *            to start at.
 	 */
 	public void setStartAnchor(OutputAnchor start) {
-		if (startAnchor != null) {
-			startAnchor.getBlock().layoutXProperty().removeListener(this);
-			startAnchor.getBlock().layoutYProperty().removeListener(this);
+		if (startAnchor.isPresent()) {
+			startAnchor.get().getBlock().layoutXProperty().removeListener(this);
+			startAnchor.get().getBlock().layoutYProperty().removeListener(this);
 		}
-		startAnchor = start;
-		startAnchor.setConnection(this);
-		
-		startAnchor.getBlock().layoutXProperty().addListener(this);
-		startAnchor.getBlock().layoutYProperty().addListener(this);
+		startAnchor = Optional.of(start);
+		startAnchor.get().setConnection(this);
+
+		startAnchor.get().getBlock().layoutXProperty().addListener(this);
+		startAnchor.get().getBlock().layoutYProperty().addListener(this);
 		updateStartPosition();
 	}
 
@@ -97,15 +106,15 @@ public class Connection extends ConnectionLine implements
 	 *            to end at.
 	 */
 	public void setEndAnchor(InputAnchor end) {
-		if (endAnchor != null) {
-			endAnchor.getBlock().layoutXProperty().removeListener(this);
-			endAnchor.getBlock().layoutYProperty().removeListener(this);
+		if (endAnchor.isPresent()) {
+			endAnchor.get().getBlock().layoutXProperty().removeListener(this);
+			endAnchor.get().getBlock().layoutYProperty().removeListener(this);
 		}
-		endAnchor = end;
-		endAnchor.setConnection(this);
-		
-		endAnchor.getBlock().layoutXProperty().addListener(this);
-		endAnchor.getBlock().layoutYProperty().addListener(this);
+		endAnchor = Optional.of(end);
+		endAnchor.get().setConnection(this);
+
+		endAnchor.get().getBlock().layoutXProperty().addListener(this);
+		endAnchor.get().getBlock().layoutYProperty().addListener(this);
 		updateEndPosition();
 	}
 
@@ -123,12 +132,8 @@ public class Connection extends ConnectionLine implements
 	 * point.
 	 */
 	private void updateStartPosition() {
-		if (startAnchor != null) {
-			double x = startAnchor.getCenterX();
-			double y = startAnchor.getCenterY();
-			Point2D point = startAnchor.localToScene(x, y);
-
-			setStartPosition(point.getX(), point.getY());
+		if (startAnchor.isPresent()) {
+			setStartPosition(getScenePoint(startAnchor.get()));
 		}
 	}
 
@@ -137,20 +142,23 @@ public class Connection extends ConnectionLine implements
 	 * point.
 	 */
 	private void updateEndPosition() {
-		if (endAnchor != null) {
-			double x = endAnchor.getCenterX();
-			double y = endAnchor.getCenterY();
-			Point2D point = endAnchor.localToScene(x, y);
-
-			setEndPosition(point.getX(), point.getY());
+		if (endAnchor.isPresent()) {
+			setEndPosition(getScenePoint(endAnchor.get()));
 		}
 	}
-	
-	public Optional<OutputAnchor> getOutputAnchor(){
-		return Optional.ofNullable(startAnchor);
+
+	public Point2D getScenePoint(ConnectionAnchor anchor) {
+		double x = anchor.getCenterX();
+		double y = anchor.getCenterY();
+		return anchor.localToScene(x, y);
 	}
-	public Optional<InputAnchor> getInputAnchor(){
-		return Optional.ofNullable(endAnchor);
+
+	public Optional<OutputAnchor> getOutputAnchor() {
+		return startAnchor;
+	}
+
+	public Optional<InputAnchor> getInputAnchor() {
+		return endAnchor;
 	}
 
 	@Override
@@ -158,25 +166,26 @@ public class Connection extends ConnectionLine implements
 			Number oldValue, Number newValue) {
 		updateStartEndPositions();
 	}
-	
-	public void disconnect(ConnectionAnchor anchor){
-		if(startAnchor!=null && startAnchor.equals(anchor)){
-			startAnchor.disconnect(this);
-			startAnchor = null;
+
+	public void disconnect(ConnectionAnchor anchor) {
+		if (startAnchor.isPresent() && startAnchor.get().equals(anchor)) {
+			startAnchor.get().disconnect(this);
+			startAnchor = Optional.empty();
 		}
-		if(endAnchor!=null && endAnchor.equals(anchor)){
-			endAnchor.disconnect(this);
-			endAnchor = null;
+		if (endAnchor.isPresent() && endAnchor.get().equals(anchor)) {
+			endAnchor.get().disconnect(this);
+			endAnchor = Optional.empty();
 		}
 	}
-	
-	public void disconnect(){
-		disconnect(startAnchor);
-		disconnect(endAnchor);
+
+	public void disconnect() {
+		disconnect(startAnchor.orElse(null));
+		disconnect(endAnchor.orElse(null));
 	}
-	
+
 	@Override
-	public String toString(){
-		return "Connection connecting \n(out) "+startAnchor+"   to\n(in)  "+endAnchor;
+	public String toString() {
+		return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  "
+				+ endAnchor;
 	}
 }

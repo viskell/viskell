@@ -12,12 +12,13 @@ public class InputAnchor extends ConnectionAnchor {
 
 	public InputAnchor(Block block, CustomUIPane pane) throws IOException {
 		super(block, pane);
-		new InputAnchorHandler(pane.getConnectionCreationManager(),this);
+		new InputAnchorHandler(pane.getConnectionCreationManager(), this);
 	}
 
 	public Expr asExpr() {
 		if (isConnected()) {
-			return getConnection().get().getOutputAnchor().get().getBlock().asExpr();
+			return getConnection().get().getOutputAnchor().get().getBlock()
+					.asExpr();
 		} else {
 			return new Ident("undefined");
 		}
@@ -25,43 +26,38 @@ public class InputAnchor extends ConnectionAnchor {
 
 	@Override
 	public Optional<Connection> createConnectionWith(ConnectionAnchor other) {
-		if(other instanceof OutputAnchor){
+		if (other instanceof OutputAnchor) {
 			return createConnectionFrom((OutputAnchor) other);
-		}else{
+		} else {
 			return Optional.empty();
 		}
 	}
-	
-	public Optional<Connection> createConnectionFrom(OutputAnchor other){
-		if(!isConnected()){
+
+	public Optional<Connection> createConnectionFrom(OutputAnchor other) {
+		if (!isConnected()) {
 			new Connection(this, (OutputAnchor) other);
 			getPane().getChildren().add(getConnection().get());
 			getPane().invalidate();
 			return getConnection();
-		}else{
+		} else {
 			return Optional.empty();
 		}
 	}
-	
+
 	@Override
-	public String toString(){
-    	return "InputAnchor belonging to "+getBlock().getName();
-    }
+	public String toString() {
+		return "InputAnchor belonging to " + getBlock().getName();
+	}
 
 	@Override
 	public boolean canConnect() {
-		//InputAnchors only support 1 connection;
+		// InputAnchors only support 1 connection;
 		return !isConnected();
 	}
 
 	@Override
 	public void disconnect(Connection connection) {
-		if(connection.equals(getConnection().get())){
-			setConnection(null);
-		}else{
-			throw new MultipleConnectionsException();
-		}
+		assert connection.equals(getConnection().get());
+		setConnection(null);
 	}
-	
-	public class MultipleConnectionsException extends RuntimeException{}
 }
