@@ -56,7 +56,7 @@ public class ConnectionCreationManager {
 				finishConnection(id);
 			}
 		}
-		connections.put(id, null);
+		connections.remove(id);
 		return connection;
 	}
 
@@ -66,6 +66,7 @@ public class ConnectionCreationManager {
 		if (connection != null) {
 			connection.disconnect();
 			pane.getChildren().remove(connection);
+			connections.remove(id);
 		}
 		return null;
 	}
