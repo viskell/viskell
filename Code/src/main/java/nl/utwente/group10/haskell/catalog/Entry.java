@@ -16,6 +16,9 @@ public class Entry implements Comparable<Entry> {
 
     /** The documentation string for this Entry. */
     private final String documentation;
+    
+    /** The block type of this Entry. */
+    private final String blockType;
 
     /**
      * Creates a new Entry instance.
@@ -24,11 +27,12 @@ public class Entry implements Comparable<Entry> {
      * @param signature The signature of this Entry.
      * @param documentation The documentation for this Entry.
      */
-    Entry(final String name, final String category, final String signature, final String documentation) {
+    Entry(final String name, final String category, final String signature, final String documentation, final String blockType) {
         this.name = name;
         this.category = category;
         this.signature = signature;
         this.documentation = documentation;
+        this.blockType = blockType;
     }
 
     /**
@@ -57,6 +61,13 @@ public class Entry implements Comparable<Entry> {
      */
     public final String getDocumentation() {
         return this.documentation;
+    }
+    
+    /**
+     * @return The block type of this Entry.
+     */
+    public final String getBlockType() {
+        return this.blockType;
     }
 
     /**
