@@ -58,7 +58,7 @@ public class ConnectionLine extends CubicCurve {
 	public void setStartPosition(double x, double y) {
 		setStartX(x);
 		setStartY(y);
-		setBezierOffset();
+		updateBezierControlPoints();
 	}
 
 	public void setStartPosition(Point2D point) {
@@ -76,7 +76,7 @@ public class ConnectionLine extends CubicCurve {
 	public void setEndPosition(double x, double y) {
 		setEndX(x);
 		setEndY(y);
-		setBezierOffset();
+		updateBezierControlPoints();
 	}
 
 	public void setEndPosition(Point2D point) {
@@ -86,7 +86,7 @@ public class ConnectionLine extends CubicCurve {
 	/**
 	 * Updates the Bezier offset (curviness) according to the current start and end positions.
 	 */
-	public void setBezierOffset() {
+	private void updateBezierControlPoints() {
 		setControlX1(getStartX());
 		setControlY1(getStartY() + getCurrentBezierOffset());
 		setControlX2(getEndX());
@@ -96,7 +96,7 @@ public class ConnectionLine extends CubicCurve {
 	/**
 	 * @return The current bezier offset based on the current start and end positions.
 	 */
-	public double getCurrentBezierOffset() {
+	private double getCurrentBezierOffset() {
 		double unclamped = BEZIER_CONTROL_OFFSET_MULTIPLIER
 				* getStraightLineLength();
 		return Math.max(Math.min(unclamped, BEZIER_CONTROL_OFFSET_MAXIMUM),
