@@ -6,7 +6,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import nl.utwente.group10.haskell.catalog.Entry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.ui.components.DisplayBlock;
 import nl.utwente.group10.ui.components.FunctionBlock;
+import nl.utwente.group10.ui.components.ValueBlock;
 
 import java.io.IOException;
 
@@ -38,8 +40,17 @@ public class MainMenu extends ContextMenu {
 
 	private void addFunctionBlock(Entry entry) {
 		try {
-			FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), parent);
-			parent.getChildren().add(fb);
+			if(entry.getBlockType().equals("function_basic")){
+				FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), parent);
+				parent.getChildren().add(fb);
+			}else if(entry.getBlockType().equals("display")){
+				DisplayBlock db = new DisplayBlock(parent);
+				parent.getChildren().add(db);
+				parent.invalidate();
+			}else if(entry.getBlockType().equals("value")){
+				ValueBlock vb = new ValueBlock(parent);
+				parent.getChildren().add(vb);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

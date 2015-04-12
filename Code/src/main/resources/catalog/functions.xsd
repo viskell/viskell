@@ -20,6 +20,7 @@
       <xs:extension base="xs:token">
         <xs:attribute type="xs:token" name="name" use="required"/>
         <xs:attribute type="xs:token" name="signature" use="required"/>
+        <xs:attribute type="xs:token" name="blocktype" use="required"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>

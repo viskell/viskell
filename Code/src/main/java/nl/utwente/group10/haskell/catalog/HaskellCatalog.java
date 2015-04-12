@@ -74,8 +74,9 @@ public class HaskellCatalog {
                 String funcName = funcAttributes.getNamedItem("name").getTextContent();
                 String funcSig = funcAttributes.getNamedItem("signature").getTextContent();
                 String funcCat = func.getParentNode().getAttributes().getNamedItem("name").getTextContent();
+                String funcBlock = funcAttributes.getNamedItem("blocktype").getTextContent();
 
-                Entry e = new Entry(funcName, funcCat, funcSig, func.getTextContent());
+                Entry e = new Entry(funcName, funcCat, funcSig, func.getTextContent(),funcBlock);
 
                 this.byName.put(funcName, e);
                 this.byCategory.put(funcCat, e);
