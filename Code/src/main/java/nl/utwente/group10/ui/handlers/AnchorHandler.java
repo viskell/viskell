@@ -52,19 +52,19 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 		if (pickResult != null && inputId >= 0) {
 			if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)
 					|| event.getEventType().equals(TouchEvent.TOUCH_PRESSED)) {
-				inputPressed(inputId,pickResult,x,y);
+				inputPressed(inputId);
 			} else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)
 					|| event.getEventType().equals(TouchEvent.TOUCH_MOVED)) {
-				inputMoved(inputId,pickResult,x,y);
+				inputMoved(inputId,x,y);
 			} else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)
 					|| event.getEventType().equals(TouchEvent.TOUCH_RELEASED)) {
-				inputReleased(inputId,pickResult,x,y);
+				inputReleased(inputId,pickResult);
 			}
 		}
 		event.consume();
 	}
 	
-	public void inputPressed(int inputId, Node pickResult, double x, double y){
+	private void inputPressed(int inputId){
 		if (anchor.getConnection().isPresent() && !anchor.canConnect()) {
 			manager.editConnection(inputId, anchor);
 		} else {
@@ -72,17 +72,17 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 		}
 	}
 	
-	public void inputMoved(int inputId, Node pickResult, double x, double y){
+	private void inputMoved(int inputId, double x, double y){
 		manager.updateLine(inputId, x, y);
 	}
 	
-	public void inputReleased(int inputId, Node pickResult, double x, double y){
+	private void inputReleased(int inputId, Node pickResult){
 		if (pickResult instanceof ConnectionAnchor) {
 			manager.finishConnection(
-					ConnectionCreationManager.MOUSE_ID,
+					inputId,
 					(ConnectionAnchor) pickResult);
 		} else {
-			manager.removeConnection(ConnectionCreationManager.MOUSE_ID);
+			manager.removeConnection(inputId);
 		}
 	}
 }
