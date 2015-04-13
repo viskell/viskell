@@ -1,11 +1,11 @@
 package nl.utwente.group10.ui.components;
 
+import java.io.IOException;
+import java.util.Optional;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.shape.Circle;
 import nl.utwente.group10.ui.CustomUIPane;
-
-import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Represent an Anchor point on either a Block or a Line Integers are currently
@@ -69,7 +69,11 @@ public abstract class ConnectionAnchor extends Circle {
 
 	public abstract boolean canConnect();
 
-	public abstract void disconnect(Connection connection);
+	/**
+	 * Disconnects itself from the connection
+	 * @param connection Connection to disconnect from.
+	 */
+	public abstract void disconnectFrom(Connection connection);
 
 	public Optional<ConnectionAnchor> getOtherAnchor() {
 		if (isConnected()) {

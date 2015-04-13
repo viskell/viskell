@@ -1,17 +1,17 @@
 package nl.utwente.group10.haskell.typeparser;
 
-import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.haskell.type.VarT;
-import nl.utwente.group10.haskell.type.FuncT;
-import nl.utwente.group10.haskell.type.TupleT;
-import nl.utwente.group10.haskell.type.ListT;
-import nl.utwente.group10.haskell.type.ConstT;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
+
+import nl.utwente.group10.haskell.type.ConstT;
+import nl.utwente.group10.haskell.type.FuncT;
+import nl.utwente.group10.haskell.type.ListT;
+import nl.utwente.group10.haskell.type.TupleT;
+import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.haskell.type.VarT;
 
 /**
  * ANTLR listener that builds Type instances.

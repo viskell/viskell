@@ -1,14 +1,14 @@
 package nl.utwente.group10.ui.handlers;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.Connection;
 import nl.utwente.group10.ui.components.ConnectionAnchor;
 import nl.utwente.group10.ui.components.InputAnchor;
 import nl.utwente.group10.ui.components.OutputAnchor;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 public class ConnectionCreationManager {
 
@@ -25,6 +25,12 @@ public class ConnectionCreationManager {
 	 */
 	private Map<Integer, Connection> connections;
 
+	/**
+	 * When set to true, the connection to create can override existing
+	 * connections to a ConnectionAnchor.
+	 */
+	public static final boolean CONNECTIONS_OVERRIDE_EXISTING = true;
+
 	public ConnectionCreationManager(CustomUIPane pane) {
 		this.pane = pane;
 		connections = new HashMap<Integer, Connection>();
@@ -38,7 +44,6 @@ public class ConnectionCreationManager {
 			newConnection = new Connection((InputAnchor) anchor);
 		}
 		pane.getChildren().add(newConnection);
-		anchor.startFullDrag();
 		connections.put(id, newConnection);
 		return newConnection;
 	}
@@ -46,17 +51,26 @@ public class ConnectionCreationManager {
 	public Connection finishConnection(int id, ConnectionAnchor anchor) {
 		Connection connection = connections.get(id);
 		if (connection != null) {
+			if (CONNECTIONS_OVERRIDE_EXISTING) {
+				Optional<Connection> existingConnection = anchor
+						.getConnection();
+				if (existingConnection.isPresent()) {
+					existingConnection.get().disconnect();
+					pane.getChildren().remove(existingConnection.get());
+				}
+			}
 			if (anchor.canConnect() && connection.addAnchor(anchor)) {
+				// Succesfully made connection.
 				pane.invalidate();
 			} else {
-				finishConnection(id);
+				removeConnection(id);
 			}
 		}
 		connections.remove(id);
 		return connection;
 	}
 
-	public Connection finishConnection(int id) {
+	public Connection removeConnection(int id) {
 		Connection connection = connections.get(id);
 		connections.put(id, null);
 		if (connection != null) {
@@ -72,7 +86,6 @@ public class ConnectionCreationManager {
 		if (anchor.isConnected() && anchorToKeep.isPresent()) {
 			Connection connection = anchor.getConnection().get();
 			connection.disconnect(anchor);
-			anchorToKeep.get().startFullDrag();
 			connections.put(id, connection);
 			pane.invalidate();
 		}

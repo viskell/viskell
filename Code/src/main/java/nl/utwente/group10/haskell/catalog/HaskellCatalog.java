@@ -1,22 +1,28 @@
 package nl.utwente.group10.haskell.catalog;
 
-import com.google.common.collect.Ordering;
-import com.google.common.collect.TreeMultimap;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.validation.SchemaFactory;
+
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.validation.SchemaFactory;
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
+import com.google.common.collect.TreeMultimap;
 
 /**
  * Provides a convenient interface to the XML catalog of available Haskell functions.

@@ -1,12 +1,12 @@
 package nl.utwente.group10.ui.components;
 
+import java.io.IOException;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
-
-import java.io.IOException;
 
 /**
  * Base UI Component that other visual elements will extend from. If common functionality is found it should be

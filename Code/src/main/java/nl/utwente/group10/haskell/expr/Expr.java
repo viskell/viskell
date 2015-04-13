@@ -1,12 +1,12 @@
 package nl.utwente.group10.haskell.expr;
 
+import java.util.logging.Logger;
+
 import nl.utwente.group10.haskell.HaskellObject;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.Type;
-
-import java.util.logging.Logger;
 
 /**
  * An expression in Haskell.

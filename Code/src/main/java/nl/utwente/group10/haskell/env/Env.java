@@ -1,8 +1,8 @@
 package nl.utwente.group10.haskell.env;
 
-import nl.utwente.group10.haskell.type.Type;
-
 import java.util.HashMap;
+
+import nl.utwente.group10.haskell.type.Type;
 
 /**
  * Haskell Environment.

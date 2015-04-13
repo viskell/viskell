@@ -1,6 +1,5 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.Map;
 
 /**
  * List type.

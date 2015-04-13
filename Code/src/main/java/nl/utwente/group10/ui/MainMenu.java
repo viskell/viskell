@@ -1,5 +1,7 @@
 package nl.utwente.group10.ui;
 
+import java.io.IOException;
+
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -7,8 +9,6 @@ import javafx.scene.control.SeparatorMenuItem;
 import nl.utwente.group10.haskell.catalog.Entry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.FunctionBlock;
-
-import java.io.IOException;
 
 public class MainMenu extends ContextMenu {
 	private CustomUIPane parent;

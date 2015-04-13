@@ -1,5 +1,8 @@
 package nl.utwente.group10.tcc;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import javafx.application.Application;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,9 +18,6 @@ import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.VarT;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
-
-import java.net.URL;
-import java.util.ResourceBundle;
 
 /**
  * User interface for the Haskell type checker.

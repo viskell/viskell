@@ -1,10 +1,10 @@
 package nl.utwente.group10.ui.components;
 
+import java.util.Optional;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
-
-import java.util.Optional;
 
 /**
  * This is a ConnectionLine that also stores a startAnchor and an endAnchor to
@@ -58,19 +58,26 @@ public class Connection extends ConnectionLine implements
 	 * Tries to add an unspecified ConnectionAnchor to the connection.
 	 *
 	 * @param anchor Anchor to add
+	 * @param override If set will override (possible) existing Anchor.
 	 * @return Whether or not the anchor was added.
 	 */
-	public boolean addAnchor(ConnectionAnchor anchor) {
+	public boolean addAnchor(ConnectionAnchor anchor, boolean override) {
 		boolean added = false;
-		if (!startAnchor.isPresent() && anchor instanceof OutputAnchor) {
+		if ((!startAnchor.isPresent() || override) && anchor instanceof OutputAnchor) {
+			disconnect(startAnchor);
 			setStartAnchor((OutputAnchor) anchor);
 			added = true;
-		} else if (!endAnchor.isPresent() && anchor instanceof InputAnchor) {
+		} else if ((!endAnchor.isPresent() || override) && anchor instanceof InputAnchor) {
+			disconnect(endAnchor);
 			setEndAnchor((InputAnchor) anchor);
 			added = true;
 		}
 
 		return added;
+	}
+	
+	public boolean addAnchor(ConnectionAnchor anchor) {
+		return addAnchor(anchor, false);
 	}
 
 	/**
@@ -175,18 +182,22 @@ public class Connection extends ConnectionLine implements
 
 	public final void disconnect(ConnectionAnchor anchor) {
 		if (startAnchor.isPresent() && startAnchor.get().equals(anchor)) {
-			startAnchor.get().disconnect(this);
+			startAnchor.get().disconnectFrom(this);
 			startAnchor = Optional.empty();
 		}
 		if (endAnchor.isPresent() && endAnchor.get().equals(anchor)) {
-			endAnchor.get().disconnect(this);
+			endAnchor.get().disconnectFrom(this);
 			endAnchor = Optional.empty();
 		}
 	}
+	
+	public final void disconnect(Optional<? extends ConnectionAnchor> anchor){
+		disconnect(anchor.orElse(null));
+	}
 
 	public final void disconnect() {
-		disconnect(startAnchor.orElse(null));
-		disconnect(endAnchor.orElse(null));
+		disconnect(startAnchor);
+		disconnect(endAnchor);
 	}
 
 	@Override

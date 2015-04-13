@@ -1,8 +1,8 @@
 package nl.utwente.group10.haskell.type;
 
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class FuncTTest {
     @Test

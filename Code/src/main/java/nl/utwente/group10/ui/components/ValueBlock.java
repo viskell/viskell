@@ -1,5 +1,7 @@
 package nl.utwente.group10.ui.components;
 
+import java.io.IOException;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -8,8 +10,6 @@ import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Value;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.ui.CustomUIPane;
-
-import java.io.IOException;
 
 /**
  * ValueBlock is an extension of Block that contains only a value and does not accept input of any kind. A single output

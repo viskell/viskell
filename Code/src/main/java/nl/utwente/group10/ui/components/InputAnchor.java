@@ -1,12 +1,12 @@
 package nl.utwente.group10.ui.components;
 
+import java.io.IOException;
+import java.util.Optional;
+
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.handlers.InputAnchorHandler;
-
-import java.io.IOException;
-import java.util.Optional;
+import nl.utwente.group10.ui.handlers.AnchorHandler;
 
 /**
  * Anchor that specifically functions as an input.
@@ -19,7 +19,7 @@ public class InputAnchor extends ConnectionAnchor {
      */
     public InputAnchor(Block block, CustomUIPane pane) throws IOException {
         super(block, pane);
-        new InputAnchorHandler(pane.getConnectionCreationManager(), this);
+        new AnchorHandler(pane.getConnectionCreationManager(), this);
     }
 
     /**
@@ -46,7 +46,7 @@ public class InputAnchor extends ConnectionAnchor {
     }
 
     @Override
-    public void disconnect(Connection connection) {
+    public void disconnectFrom(Connection connection) {
         assert connection.equals(getConnection().get());
         setConnection(null);
     }
@@ -57,4 +57,10 @@ public class InputAnchor extends ConnectionAnchor {
         return !isConnected();
     }
 
+
+
+	@Override
+	public String toString() {
+		return "InputAnchor for " + getBlock();
+	}
 }

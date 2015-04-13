@@ -1,13 +1,17 @@
 package nl.utwente.group10.haskell.expr;
 
+import static org.junit.Assert.assertEquals;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.hindley.GenSet;
-import nl.utwente.group10.haskell.type.*;
+import nl.utwente.group10.haskell.type.ConstT;
+import nl.utwente.group10.haskell.type.FuncT;
+import nl.utwente.group10.haskell.type.ListT;
+import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.haskell.type.VarT;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 public class ExprTest {
     private final Type alpha = new VarT("a");

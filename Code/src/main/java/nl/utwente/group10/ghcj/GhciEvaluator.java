@@ -1,10 +1,5 @@
 package nl.utwente.group10.ghcj;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.exceptions.HaskellSyntaxError;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +7,12 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellSyntaxError;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 
 /**
  * Evaluator for ghci that pushes code to the ghci environment and can evaluate expressions and return a result.

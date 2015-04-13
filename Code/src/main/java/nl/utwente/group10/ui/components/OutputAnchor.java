@@ -1,10 +1,10 @@
 package nl.utwente.group10.ui.components;
 
-import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.handlers.OutputAnchorHandler;
-
 import java.io.IOException;
 import java.util.Optional;
+
+import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.handlers.AnchorHandler;
 
 /**
  * Anchor that specifically functions as an output.
@@ -17,7 +17,7 @@ public class OutputAnchor extends ConnectionAnchor {
 	 */
 	public OutputAnchor(Block block, CustomUIPane pane) throws IOException {
 		super(block, pane);
-		new OutputAnchorHandler(pane.getConnectionCreationManager(),this);
+		new AnchorHandler(pane.getConnectionCreationManager(),this);
 	}
 
 	public Connection createConnectionTo(InputAnchor other) {
@@ -45,7 +45,7 @@ public class OutputAnchor extends ConnectionAnchor {
 	}
 
 	@Override
-	public void disconnect(Connection connection) {
+	public void disconnectFrom(Connection connection) {
 		// Currently does not keep track of its connections.
 	}
 }

@@ -1,8 +1,8 @@
 package nl.utwente.group10.ghcj;
 
 import nl.utwente.group10.haskell.exceptions.HaskellException;
+
 import org.junit.Assert;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,12 +1,13 @@
 package nl.utwente.group10.ui.components;
 
-import nl.utwente.group10.ui.CustomUIPane;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import nl.utwente.group10.ui.CustomUIPane;
+
+import org.junit.Test;
 
 public class ValueBlockTest extends ComponentTest {
     @Test

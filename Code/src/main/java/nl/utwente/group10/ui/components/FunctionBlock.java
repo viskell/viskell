@@ -1,5 +1,8 @@
 package nl.utwente.group10.ui.components;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -12,9 +15,6 @@ import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Main building block for the visual interface, this class
