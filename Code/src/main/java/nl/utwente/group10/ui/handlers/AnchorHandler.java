@@ -8,70 +8,81 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import nl.utwente.group10.ui.components.ConnectionAnchor;
 
-	public class AnchorHandler implements EventHandler<InputEvent> {
+public class AnchorHandler implements EventHandler<InputEvent> {
 
-		private ConnectionCreationManager manager;
-		private ConnectionAnchor anchor;
+	private ConnectionCreationManager manager;
+	private ConnectionAnchor anchor;
 
-		public AnchorHandler(ConnectionCreationManager manager,
-				ConnectionAnchor anchor) {
-			this.manager = manager;
-			this.anchor = anchor;
+	public AnchorHandler(ConnectionCreationManager manager,
+			ConnectionAnchor anchor) {
+		this.manager = manager;
+		this.anchor = anchor;
 
-			anchor.addEventFilter(MouseEvent.MOUSE_PRESSED, this);
-			anchor.addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
-			anchor.addEventFilter(MouseEvent.MOUSE_RELEASED, this);
-			
-			anchor.addEventFilter(TouchEvent.TOUCH_PRESSED, this);
-			anchor.addEventFilter(TouchEvent.TOUCH_MOVED, this);
-			anchor.addEventFilter(TouchEvent.TOUCH_RELEASED, this);
+		anchor.addEventFilter(MouseEvent.MOUSE_PRESSED, this);
+		anchor.addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
+		anchor.addEventFilter(MouseEvent.MOUSE_RELEASED, this);
+
+		anchor.addEventFilter(TouchEvent.TOUCH_PRESSED, this);
+		anchor.addEventFilter(TouchEvent.TOUCH_MOVED, this);
+		anchor.addEventFilter(TouchEvent.TOUCH_RELEASED, this);
+	}
+
+	@Override
+	public void handle(InputEvent event) {
+		Node pickResult = null;
+		int inputId = -1;
+		double x = 0;
+		double y = 0;
+
+		if (event instanceof MouseEvent
+				&& !((MouseEvent) event).isSynthesized()) {
+			MouseEvent mEvent = ((MouseEvent) event);
+			pickResult = mEvent.getPickResult().getIntersectedNode();
+			inputId = ConnectionCreationManager.MOUSE_ID;
+			x = mEvent.getSceneX();
+			y = mEvent.getSceneY();
+		} else if (event instanceof TouchEvent) {
+			TouchPoint tp = ((TouchEvent) event).getTouchPoint();
+			pickResult = tp.getPickResult().getIntersectedNode();
+			inputId = tp.getId();
+			x = tp.getSceneX();
+			y = tp.getSceneY();
 		}
 
-		@Override
-		public void handle(InputEvent event) {
-			Node pickResult = null;
-			int inputId = -1;
-			double x = 0;
-			double y = 0;
-
-			if (event instanceof MouseEvent
-					&& !((MouseEvent) event).isSynthesized()) {
-				MouseEvent mEvent = ((MouseEvent) event);
-				pickResult = mEvent.getPickResult().getIntersectedNode();
-				inputId = ConnectionCreationManager.MOUSE_ID;
-				x = mEvent.getSceneX();
-				y = mEvent.getSceneY();
-			} else if (event instanceof TouchEvent) {
-				TouchPoint tp = ((TouchEvent) event).getTouchPoint();
-				pickResult = tp.getPickResult().getIntersectedNode();
-				inputId = tp.getId();
-				x = tp.getSceneX();
-				y = tp.getSceneY();
+		if (pickResult != null && inputId >= 0) {
+			if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)
+					|| event.getEventType().equals(TouchEvent.TOUCH_PRESSED)) {
+				inputPressed(inputId,pickResult,x,y);
+			} else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)
+					|| event.getEventType().equals(TouchEvent.TOUCH_MOVED)) {
+				inputMoved(inputId,pickResult,x,y);
+			} else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)
+					|| event.getEventType().equals(TouchEvent.TOUCH_RELEASED)) {
+				inputReleased(inputId,pickResult,x,y);
 			}
-
-			if (pickResult != null && inputId >= 0) {
-				if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)
-						|| event.getEventType().equals(TouchEvent.TOUCH_PRESSED)) {
-					if (anchor.getConnection().isPresent() && !anchor.canConnect()) {
-						manager.editConnection(inputId, anchor);
-					} else {
-						manager.createConnectionWith(inputId, anchor);
-					}
-				} else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)
-						|| event.getEventType().equals(TouchEvent.TOUCH_MOVED)) {
-					manager.updateLine(inputId, x, y);
-				} else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)
-						|| event.getEventType().equals(TouchEvent.TOUCH_RELEASED)) {
-					// Complete connection build progress
-					if (pickResult instanceof ConnectionAnchor) {
-						manager.finishConnection(
-								ConnectionCreationManager.MOUSE_ID,
-								(ConnectionAnchor) pickResult);
-					} else {
-						manager.removeConnection(ConnectionCreationManager.MOUSE_ID);
-					}
-				}
-			}
-			event.consume();
+		}
+		event.consume();
+	}
+	
+	public void inputPressed(int inputId, Node pickResult, double x, double y){
+		if (anchor.getConnection().isPresent() && !anchor.canConnect()) {
+			manager.editConnection(inputId, anchor);
+		} else {
+			manager.createConnectionWith(inputId, anchor);
 		}
 	}
+	
+	public void inputMoved(int inputId, Node pickResult, double x, double y){
+		manager.updateLine(inputId, x, y);
+	}
+	
+	public void inputReleased(int inputId, Node pickResult, double x, double y){
+		if (pickResult instanceof ConnectionAnchor) {
+			manager.finishConnection(
+					ConnectionCreationManager.MOUSE_ID,
+					(ConnectionAnchor) pickResult);
+		} else {
+			manager.removeConnection(ConnectionCreationManager.MOUSE_ID);
+		}
+	}
+}

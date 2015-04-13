@@ -24,9 +24,10 @@ public class ConnectionCreationManager {
 	 * point is dragging what line.
 	 */
 	private Map<Integer, Connection> connections;
-	
+
 	/**
-	 * When set to true, the connection to create can override existing connections to a ConnectionAnchor.
+	 * When set to true, the connection to create can override existing
+	 * connections to a ConnectionAnchor.
 	 */
 	public static final boolean CONNECTIONS_OVERRIDE_EXISTING = true;
 
@@ -50,9 +51,10 @@ public class ConnectionCreationManager {
 	public Connection finishConnection(int id, ConnectionAnchor anchor) {
 		Connection connection = connections.get(id);
 		if (connection != null) {
-			if(CONNECTIONS_OVERRIDE_EXISTING){
-				Optional<Connection> existingConnection = anchor.getConnection();
-				if(existingConnection.isPresent()){
+			if (CONNECTIONS_OVERRIDE_EXISTING) {
+				Optional<Connection> existingConnection = anchor
+						.getConnection();
+				if (existingConnection.isPresent()) {
 					existingConnection.get().disconnect();
 					pane.getChildren().remove(existingConnection.get());
 				}
@@ -88,6 +90,7 @@ public class ConnectionCreationManager {
 			pane.invalidate();
 		}
 	}
+
 	public void updateLine(int id, double x, double y) {
 		if (connections.get(id) != null) {
 			connections.get(id).setFreeEnds(x, y);

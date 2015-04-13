@@ -58,7 +58,7 @@ public class Connection extends ConnectionLine implements
 	 * Tries to add an unspecified ConnectionAnchor to the connection.
 	 *
 	 * @param anchor Anchor to add
-	 * @param ovveride If set will override (possible) existing Anchor.
+	 * @param override If set will override (possible) existing Anchor.
 	 * @return Whether or not the anchor was added.
 	 */
 	public boolean addAnchor(ConnectionAnchor anchor, boolean override) {
