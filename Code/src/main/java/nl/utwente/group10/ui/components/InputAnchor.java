@@ -57,4 +57,10 @@ public class InputAnchor extends ConnectionAnchor {
         return !isConnected();
     }
 
+
+
+	@Override
+	public String toString() {
+		return "InputAnchor for " + getBlock();
+	}
 }

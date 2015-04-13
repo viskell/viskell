@@ -42,6 +42,18 @@ public class ConnectionCreationManager {
 		connections.put(id, newConnection);
 		return newConnection;
 	}
+	
+	public Connection createTouchConnectionWith(int id, ConnectionAnchor anchor) {
+		Connection newConnection = null;
+		if (anchor instanceof OutputAnchor) {
+			newConnection = new Connection((OutputAnchor) anchor);
+		} else if (anchor instanceof InputAnchor) {
+			newConnection = new Connection((InputAnchor) anchor);
+		}
+		pane.getChildren().add(newConnection);
+		connections.put(id, newConnection);
+		return newConnection;
+	}
 
 	public Connection finishConnection(int id, ConnectionAnchor anchor) {
 		Connection connection = connections.get(id);
@@ -52,6 +64,7 @@ public class ConnectionCreationManager {
 				finishConnection(id);
 			}
 		}
+		System.out.println(connection);
 		connections.remove(id);
 		return connection;
 	}
@@ -73,6 +86,18 @@ public class ConnectionCreationManager {
 			Connection connection = anchor.getConnection().get();
 			connection.disconnect(anchor);
 			anchorToKeep.get().startFullDrag();
+			connections.put(id, connection);
+			pane.invalidate();
+		}
+	}
+	
+	public void editConnectionTouch(int id, ConnectionAnchor anchor) {
+		Optional<ConnectionAnchor> anchorToKeep = anchor.getOtherAnchor();
+		System.out.println("Editing1: "+anchor.getConnection());
+		if (anchor.isConnected() && anchorToKeep.isPresent()) {
+			Connection connection = anchor.getConnection().get();
+			System.out.println("Editing2: "+connection);
+			connection.disconnect(anchor);
 			connections.put(id, connection);
 			pane.invalidate();
 		}
