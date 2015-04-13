@@ -2,6 +2,7 @@ package nl.utwente.group10.ui.components;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+
 import org.junit.BeforeClass;
 
 /**

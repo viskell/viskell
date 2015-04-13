@@ -1,14 +1,13 @@
 package nl.utwente.group10.ghcj;
 
 import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.expr.*;
+import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Ident;
+import nl.utwente.group10.haskell.expr.Value;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.ConstT;
-import nl.utwente.group10.haskell.type.FuncT;
-import nl.utwente.group10.haskell.type.Type;
+
 import org.junit.Assert;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 

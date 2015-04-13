@@ -1,5 +1,8 @@
 package nl.utwente.group10.ui;
 
+import java.util.ArrayList;
+import java.util.Optional;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
@@ -8,9 +11,6 @@ import nl.utwente.group10.ui.components.Block;
 import nl.utwente.group10.ui.components.Connection;
 import nl.utwente.group10.ui.components.DisplayBlock;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
-
-import java.util.ArrayList;
-import java.util.Optional;
 
 /**
  * Extension of TactilePane that keeps state for the user interface.

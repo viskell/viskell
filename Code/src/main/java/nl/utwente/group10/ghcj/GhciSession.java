@@ -1,12 +1,13 @@
 package nl.utwente.group10.ghcj;
 
-import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.exceptions.HaskellSyntaxError;
-import nl.utwente.group10.haskell.expr.*;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Optional;
+
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellSyntaxError;
+import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Ident;
 
 /**
  * A conversation with an instance of ghci.

@@ -1,13 +1,13 @@
 package nl.utwente.group10.haskell.expr;
 
+import static org.junit.Assert.assertEquals;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.ConstT;
-
 import nl.utwente.group10.haskell.type.Type;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class ValueTest {
     private final Type integer = new ConstT("Integer");

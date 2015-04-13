@@ -1,5 +1,7 @@
 package nl.utwente.group10.ui.components;
 
+import java.io.IOException;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -8,8 +10,6 @@ import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
-
-import java.io.IOException;
 
 /**
  * DisplayBlock is an extension of Block that only provides a display of the

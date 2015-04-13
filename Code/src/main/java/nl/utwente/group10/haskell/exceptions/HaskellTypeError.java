@@ -1,8 +1,9 @@
 package nl.utwente.group10.haskell.exceptions;
 
-import com.google.common.base.Optional;
 import nl.utwente.group10.haskell.HaskellObject;
 import nl.utwente.group10.haskell.type.Type;
+
+import com.google.common.base.Optional;
 
 /**
  * Exception that is thrown when a Haskell type error is detected.

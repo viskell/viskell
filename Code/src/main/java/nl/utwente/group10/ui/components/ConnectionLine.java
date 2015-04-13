@@ -1,11 +1,11 @@
 package nl.utwente.group10.ui.components;
 
+import java.io.IOException;
+
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
-
-import java.io.IOException;
 
 /**
  * This class represent a Connection-Line visual object in the UI. Each UI

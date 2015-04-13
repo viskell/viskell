@@ -1,7 +1,5 @@
 package nl.utwente.ewi.caes.tactilefx.debug;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;

@@ -1,12 +1,12 @@
 package nl.utwente.group10.haskell.hindley;
 
+import java.util.logging.Logger;
+
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.VarT;
-
-import java.util.logging.Logger;
 
 /**
  * Implementation of the Hindley-Milner type system for Haskell types and expressions.
