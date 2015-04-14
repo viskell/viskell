@@ -6,6 +6,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import nl.utwente.group10.haskell.catalog.Entry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.ui.components.Block;
+import nl.utwente.group10.ui.components.ValueBlock;
+import nl.utwente.group10.ui.components.DisplayBlock;
 import nl.utwente.group10.ui.components.FunctionBlock;
 
 import java.io.IOException;
@@ -28,21 +31,46 @@ public class MainMenu extends ContextMenu {
 			this.getItems().addAll(submenu);
 		}
 
+		MenuItem valueBlockItem = new MenuItem("Value Block");
+		MenuItem displayBlockItem = new MenuItem("Display Block");
+		valueBlockItem.setOnAction(event -> addValueBlock());
+		displayBlockItem.setOnAction(event -> addDisplayBlock());
+		
 		MenuItem quitItem = new MenuItem("Quit");
 		quitItem.setOnAction(event -> System.exit(0));
 
 		SeparatorMenuItem sep = new SeparatorMenuItem();
 
-		this.getItems().addAll(sep, quitItem);
+		this.getItems().addAll(valueBlockItem, displayBlockItem, sep, quitItem);
 	}
 
 	private void addFunctionBlock(Entry entry) {
 		try {
 			FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), parent);
-			parent.getChildren().add(fb);
+			addBlock(fb);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void addValueBlock() {
+		try {
+			addBlock(new ValueBlock(parent));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void addDisplayBlock() {
+		try {
+			addBlock(new DisplayBlock(parent));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void addBlock(Block block) {
+		parent.getChildren().add(block);
 	}
 
 }
