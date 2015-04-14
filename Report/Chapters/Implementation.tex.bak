@@ -1,0 +1,32 @@
+\chapter{Implementation}
+
+\section{Front end}
+
+\section{Back end}
+
+\subsection{GHC integration}
+
+The front end enables the user to construct Haskell expressions in a convenient manner.
+The visual representation is converted into a tree of expression (Expr) objects and passed to the back end. \index{Expr}
+The back end, finally, integrates with the Glasgow Haskell Compiler (\gls{GHC}) to do the actual computation.
+
+The GHC integration is very simplistic.
+The back end launches an instance of GHCi, the interactive read-eval-print-loop. \index{REPL}
+This \gls{REPL} is then drip-fed the expressions over its standard input stream, converted from the intermediate representation into actual Haskell program code.
+If the expression compiles and executes without problems, the result is returned to the front end.
+
+\subsection{Type checker}
+
+From our own experience as beginning Haskell programmers, we often encountered type errors, and therefore GHC's type error messages.
+Very early in the project, we decided that the back end had to do at least some type-related work itself, to provide better errors to the user, and also to be able to show type hints, without having to parse GHC's error messages.
+Not long thereafter, it was decided that such a home-grown type checker would not need to support the entirety of Haskell's type system.
+
+After some iterations, we have arrived at an approach that could probably be described as a subset of Hindley-Milner type inference. \index{Hindley-Milner} \index{type inference}
+
+Our (Java) implementation of Hindley-Milner type inference is based on an implementation in Scala by Andrew Forrest\cite{forrest}.
+This implementation was in turn based on an implementation in Perl by Nikita Borisov\cite{borisov}.
+The Perl implementation was heavily inspired by a Modula-2 implementation from 1987 by Luca Cardelli\cite{cardelli}.
+Some ideas were also taken from the chapter on types from the programming languages book by Krishnamurthi\cite{plai}.
+
+As mentioned, the type checker is not nearly powerful enough to understand or even represent the entire complexity of Haskell's type system.
+However, we have found it to be `good enough' for our purposes.
