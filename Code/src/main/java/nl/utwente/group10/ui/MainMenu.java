@@ -11,38 +11,38 @@ import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 
 public class MainMenu extends ContextMenu {
-	private CustomUIPane parent;
+    private CustomUIPane parent;
 
-	public MainMenu(HaskellCatalog catalog, CustomUIPane tactilePane) {
-		parent = tactilePane;
+    public MainMenu(HaskellCatalog catalog, CustomUIPane tactilePane) {
+        parent = tactilePane;
 
-		for (String category : catalog.getCategories()) {
-			Menu submenu = new Menu(category);
+        for (String category : catalog.getCategories()) {
+            Menu submenu = new Menu(category);
 
-			for (Entry entry : catalog.getCategory(category)) {
-				MenuItem item = new MenuItem(entry.getName());
-				item.setOnAction(event -> addFunctionBlock(entry));
-				submenu.getItems().add(item);
-			}
+            for (Entry entry : catalog.getCategory(category)) {
+                MenuItem item = new MenuItem(entry.getName());
+                item.setOnAction(event -> addFunctionBlock(entry));
+                submenu.getItems().add(item);
+            }
 
-			this.getItems().addAll(submenu);
-		}
+            this.getItems().addAll(submenu);
+        }
 
-		MenuItem quitItem = new MenuItem("Quit");
-		quitItem.setOnAction(event -> System.exit(0));
+        MenuItem quitItem = new MenuItem("Quit");
+        quitItem.setOnAction(event -> System.exit(0));
 
-		SeparatorMenuItem sep = new SeparatorMenuItem();
+        SeparatorMenuItem sep = new SeparatorMenuItem();
 
-		this.getItems().addAll(sep, quitItem);
-	}
+        this.getItems().addAll(sep, quitItem);
+    }
 
-	private void addFunctionBlock(Entry entry) {
-		try {
-			FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), parent);
-			parent.getChildren().add(fb);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    private void addFunctionBlock(Entry entry) {
+        try {
+            FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), parent);
+            parent.getChildren().add(fb);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

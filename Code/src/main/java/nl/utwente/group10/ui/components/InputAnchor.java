@@ -60,8 +60,8 @@ public class InputAnchor extends ConnectionAnchor {
 
 
 
-	@Override
-	public String toString() {
-		return "InputAnchor for " + getBlock();
-	}
+    @Override
+    public String toString() {
+        return "InputAnchor for " + getBlock();
+    }
 }

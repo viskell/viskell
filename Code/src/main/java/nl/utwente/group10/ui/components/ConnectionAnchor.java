@@ -15,14 +15,14 @@ import nl.utwente.group10.ui.components.blocks.Block;
  * Other data types will be supported in the future
  */
 public abstract class ConnectionAnchor extends Circle {
-	/** The pane on which this Anchor resides. */
-	private CustomUIPane pane;
+    /** The pane on which this Anchor resides. */
+    private CustomUIPane pane;
 
     /** The block this Anchor is connected to. */
-	private Block block;
+    private Block block;
 
-	/** The possible connection linked to this anchor */
-	private Optional<Connection> connection;
+    /** The possible connection linked to this anchor */
+    private Optional<Connection> connection;
 
     /**
      * @param block The block where this Anchor is connected to.
@@ -33,13 +33,13 @@ public abstract class ConnectionAnchor extends Circle {
         this.block = block;
         this.pane = pane;
 
-		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ConnectionAnchor.fxml"));
-		fxmlLoader.setRoot(this);
-		fxmlLoader.setController(this);
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ConnectionAnchor.fxml"));
+        fxmlLoader.setRoot(this);
+        fxmlLoader.setController(this);
 
-		fxmlLoader.load();
-		setConnection(null);
-	}
+        fxmlLoader.load();
+        setConnection(null);
+    }
 
 
     /**
@@ -56,44 +56,44 @@ public abstract class ConnectionAnchor extends Circle {
         return pane;
     }
 
-	public void setConnection(Connection connection) {
-		this.connection = Optional.ofNullable(connection);
-	}
+    public void setConnection(Connection connection) {
+        this.connection = Optional.ofNullable(connection);
+    }
 
-	public boolean isConnected() {
-		return connection.isPresent();
-	}
+    public boolean isConnected() {
+        return connection.isPresent();
+    }
 
-	public Optional<Connection> getConnection() {
-		return connection;
-	}
+    public Optional<Connection> getConnection() {
+        return connection;
+    }
 
-	public abstract boolean canConnect();
+    public abstract boolean canConnect();
 
-	/**
-	 * Disconnects itself from the connection
-	 * @param connection Connection to disconnect from.
-	 */
-	public abstract void disconnectFrom(Connection connection);
+    /**
+     * Disconnects itself from the connection
+     * @param connection Connection to disconnect from.
+     */
+    public abstract void disconnectFrom(Connection connection);
 
-	public Optional<ConnectionAnchor> getOtherAnchor() {
-		if (isConnected()) {
-			Optional<OutputAnchor> out = getConnection().get()
-					.getOutputAnchor();
-			Optional<InputAnchor> in = getConnection().get().getInputAnchor();
-			if (in.isPresent() && out.get().equals(this)) {
-				// Re-wrap Optional to change from InputAnchor to
-				// ConnectionAnchor
-				return Optional.of(in.get());
-			} else if (out.isPresent() && in.get().equals(this)) {
-				return Optional.of(out.get());
-			}
-		}
-		return Optional.empty();
-	}
+    public Optional<ConnectionAnchor> getOtherAnchor() {
+        if (isConnected()) {
+            Optional<OutputAnchor> out = getConnection().get()
+                    .getOutputAnchor();
+            Optional<InputAnchor> in = getConnection().get().getInputAnchor();
+            if (in.isPresent() && out.get().equals(this)) {
+                // Re-wrap Optional to change from InputAnchor to
+                // ConnectionAnchor
+                return Optional.of(in.get());
+            } else if (out.isPresent() && in.get().equals(this)) {
+                return Optional.of(out.get());
+            }
+        }
+        return Optional.empty();
+    }
 
-	@Override
-	public String toString() {
-		return "ConnectionAnchor for " + getBlock();
-	}
+    @Override
+    public String toString() {
+        return "ConnectionAnchor for " + getBlock();
+    }
 }
