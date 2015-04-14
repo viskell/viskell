@@ -8,51 +8,50 @@ import java.io.IOException;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class FunctionBlockTest extends ComponentTest {
 
-	private FunctionBlock functionBlock;
+    private FunctionBlock functionBlock;
 
-	/**
-	 * Before each test reset all the FunctionBlock instances
-	 * to have a clear batch to test against.
-	 * @throws IOException
-	 */
-	@Before
-	public void setUp() throws IOException{
-		FuncT func = new FuncT(new ConstT("Int"), new FuncT(new ConstT("Int"), new ConstT("Int")));
+    /**
+     * Before each test reset all the FunctionBlock instances
+     * to have a clear batch to test against.
+     * @throws IOException
+     */
+    @Before
+    public void setUp() throws IOException{
+        FuncT func = new FuncT(new ConstT("Int"), new FuncT(new ConstT("Int"), new ConstT("Int")));
 
-		functionBlock = new FunctionBlock("", func, new CustomUIPane());
-	}
+        functionBlock = new FunctionBlock("", func, new CustomUIPane());
+    }
 
-	/**
-	 * Test to see if instantiation of FunctionBlocks works
-	 * for both instantiate variants.
-	 */
-	@Test
-	public void instantiateTest() {
-		assertNotNull(functionBlock);
-	}
+    /**
+     * Test to see if instantiation of FunctionBlocks works
+     * for both instantiate variants.
+     */
+    @Test
+    public void instantiateTest() {
+        assertNotNull(functionBlock);
+    }
 
-	/**
-	 * Test the setName and getName methods of FunctionBlock
-	 */
-	@Test
-	public void nameTest() {
-		functionBlock.setName("name change");
-		assertEquals(functionBlock.getName(), "name change");
-	}
+    /**
+     * Test the setName and getName methods of FunctionBlock
+     */
+    @Test
+    public void nameTest() {
+        functionBlock.setName("name change");
+        assertEquals(functionBlock.getName(), "name change");
+    }
 
-	/**
-	 * Test if all input anchors have been properly initialized
-	 */
-	@Test
-	public void inputsTest() {
-		assertNotNull(functionBlock.getInputs());
-		assertEquals(functionBlock.getInputs().length, 2);
-	}
+    /**
+     * Test if all input anchors have been properly initialized
+     */
+    @Test
+    public void inputsTest() {
+        assertNotNull(functionBlock.getInputs());
+        assertEquals(functionBlock.getInputs().length, 2);
+    }
 }
