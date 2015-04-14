@@ -1,8 +1,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<?import nl.utwente.group10.ui.components.ValueBlock?>
-<fx:root type="nl.utwente.group10.ui.components.ValueBlock" xmlns:fx="http://javafx.com/fxml/">
+<?import nl.utwente.group10.ui.components.blocks.ValueBlock?>
+<fx:root type="nl.utwente.group10.ui.components.blocks.ValueBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane>
         <center>
             <BorderPane styleClass="value, block">

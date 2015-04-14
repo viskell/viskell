@@ -4,8 +4,8 @@
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import nl.utwente.group10.ui.components.FunctionBlock?>
-<fx:root type="nl.utwente.group10.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
+<?import nl.utwente.group10.ui.components.blocks.FunctionBlock?>
+<fx:root type="nl.utwente.group10.ui.components.blocks.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
     <BorderPane>
         <top>
             <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10"/>
