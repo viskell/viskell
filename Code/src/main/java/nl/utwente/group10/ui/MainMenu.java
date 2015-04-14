@@ -14,63 +14,63 @@ import nl.utwente.group10.ui.components.FunctionBlock;
 import java.io.IOException;
 
 public class MainMenu extends ContextMenu {
-	private CustomUIPane parent;
+    private CustomUIPane parent;
 
-	public MainMenu(HaskellCatalog catalog, CustomUIPane tactilePane) {
-		parent = tactilePane;
+    public MainMenu(HaskellCatalog catalog, CustomUIPane tactilePane) {
+        parent = tactilePane;
 
-		for (String category : catalog.getCategories()) {
-			Menu submenu = new Menu(category);
+        for (String category : catalog.getCategories()) {
+            Menu submenu = new Menu(category);
 
-			for (Entry entry : catalog.getCategory(category)) {
-				MenuItem item = new MenuItem(entry.getName());
-				item.setOnAction(event -> addFunctionBlock(entry));
-				submenu.getItems().add(item);
-			}
+            for (Entry entry : catalog.getCategory(category)) {
+                MenuItem item = new MenuItem(entry.getName());
+                item.setOnAction(event -> addFunctionBlock(entry));
+                submenu.getItems().add(item);
+        }
 
-			this.getItems().addAll(submenu);
-		}
+            this.getItems().addAll(submenu);
+        }
 
-		MenuItem valueBlockItem = new MenuItem("Value Block");
-		MenuItem displayBlockItem = new MenuItem("Display Block");
-		valueBlockItem.setOnAction(event -> addValueBlock());
-		displayBlockItem.setOnAction(event -> addDisplayBlock());
-		
-		MenuItem quitItem = new MenuItem("Quit");
-		quitItem.setOnAction(event -> System.exit(0));
+        MenuItem valueBlockItem = new MenuItem("Value Block");
+        valueBlockItem.setOnAction(event -> addValueBlock());
+        MenuItem displayBlockItem = new MenuItem("Display Block");
+        displayBlockItem.setOnAction(event -> addDisplayBlock());
 
-		SeparatorMenuItem sep = new SeparatorMenuItem();
+        MenuItem quitItem = new MenuItem("Quit");
+        quitItem.setOnAction(event -> System.exit(0));
 
-		this.getItems().addAll(valueBlockItem, displayBlockItem, sep, quitItem);
-	}
+        SeparatorMenuItem sep = new SeparatorMenuItem();
 
-	private void addFunctionBlock(Entry entry) {
-		try {
-			FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), parent);
-			addBlock(fb);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void addValueBlock() {
-		try {
-			addBlock(new ValueBlock(parent));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void addDisplayBlock() {
-		try {
-			addBlock(new DisplayBlock(parent));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void addBlock(Block block) {
-		parent.getChildren().add(block);
-	}
+        this.getItems().addAll(valueBlockItem, displayBlockItem, sep, quitItem);
+    }
+
+    private void addFunctionBlock(Entry entry) {
+        try {
+            FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), parent);
+            addBlock(fb);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addValueBlock() {
+        try {
+            addBlock(new ValueBlock(parent));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addDisplayBlock() {
+        try {
+            addBlock(new DisplayBlock(parent));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addBlock(Block block) {
+        parent.getChildren().add(block);
+    }
 
 }
