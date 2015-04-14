@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.blocks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,6 +8,7 @@ import java.io.IOException;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 
 import org.junit.Before;
 import org.junit.Test;

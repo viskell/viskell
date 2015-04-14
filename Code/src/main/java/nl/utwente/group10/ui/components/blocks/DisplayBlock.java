@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.blocks;
 
 import java.io.IOException;
 
@@ -10,6 +10,8 @@ import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.components.ConnectionAnchor;
+import nl.utwente.group10.ui.components.InputAnchor;
 
 /**
  * DisplayBlock is an extension of Block that only provides a display of the

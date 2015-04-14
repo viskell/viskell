@@ -2,8 +2,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
-<?import nl.utwente.group10.ui.components.DisplayBlock?>
-<fx:root type="nl.utwente.group10.ui.components.DisplayBlock" xmlns:fx="http://javafx.com/fxml/">
+<?import nl.utwente.group10.ui.components.blocks.DisplayBlock?>
+<fx:root type="nl.utwente.group10.ui.components.blocks.DisplayBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane>
         <top>
             <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="center"/>

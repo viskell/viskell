@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.blocks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.components.blocks.ValueBlock;
 
 import org.junit.Test;
 

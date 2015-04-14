@@ -8,7 +8,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import nl.utwente.group10.haskell.catalog.Entry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
-import nl.utwente.group10.ui.components.FunctionBlock;
+import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 
 public class MainMenu extends ContextMenu {
 	private CustomUIPane parent;

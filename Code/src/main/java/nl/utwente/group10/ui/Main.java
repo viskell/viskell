@@ -10,8 +10,8 @@ import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
-import nl.utwente.group10.ui.components.DisplayBlock;
-import nl.utwente.group10.ui.components.ValueBlock;
+import nl.utwente.group10.ui.components.blocks.DisplayBlock;
+import nl.utwente.group10.ui.components.blocks.ValueBlock;
 
 /**
  * Main application class for the GUI.

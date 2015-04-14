@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.blocks;
 
 import java.io.IOException;
 

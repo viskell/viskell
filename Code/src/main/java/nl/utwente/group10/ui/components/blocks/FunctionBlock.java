@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.blocks;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +15,8 @@ import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.components.ConnectionAnchor;
+import nl.utwente.group10.ui.components.InputAnchor;
 
 /**
  * Main building block for the visual interface, this class

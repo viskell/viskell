@@ -6,6 +6,7 @@ import java.util.Optional;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.shape.Circle;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.components.blocks.Block;
 
 /**
  * Represent an Anchor point on either a Block or a Line Integers are currently

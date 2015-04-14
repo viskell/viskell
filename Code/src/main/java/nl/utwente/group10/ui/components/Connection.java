@@ -2,6 +2,7 @@ package nl.utwente.group10.ui.components;
 
 import java.util.Optional;
 
+import nl.utwente.group10.ui.components.blocks.Block;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
