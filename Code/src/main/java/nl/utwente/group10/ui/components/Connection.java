@@ -94,7 +94,8 @@ public class Connection extends ConnectionLine implements
         }
         startAnchor = Optional.of(start);
         startAnchor.get().setConnection(this);
-
+        checkError();
+        
         startAnchor.get().getBlock().layoutXProperty().addListener(this);
         startAnchor.get().getBlock().layoutYProperty().addListener(this);
         updateStartPosition();
@@ -113,6 +114,7 @@ public class Connection extends ConnectionLine implements
         }
         endAnchor = Optional.of(end);
         endAnchor.get().setConnection(this);
+        checkError();
 
         endAnchor.get().getBlock().layoutXProperty().addListener(this);
         endAnchor.get().getBlock().layoutYProperty().addListener(this);
@@ -205,5 +207,22 @@ public class Connection extends ConnectionLine implements
     public String toString() {
         return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  "
                 + endAnchor;
+    }
+    
+    /**
+     * This method evaluates the validity of the created connection.
+     * If the connection results in an invalid operation a visual
+     * error will be displayed.
+     */
+    public void checkError() {
+        if(startAnchor!=null && endAnchor!=null) {
+            //Can this method be used to evaluate validity of the operation?
+            //endAnchor.get().getBlock().asExpr().analyze(env, genSet);
+            if (true) {
+                this.setStyle("-fx-stroke: black;");
+            } else {
+                this.setStyle("-fx-stroke: red;");
+            }
+        }
     }
 }
