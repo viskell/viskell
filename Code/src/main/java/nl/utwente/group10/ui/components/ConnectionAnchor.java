@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.shape.Circle;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 
 /**
  * Represent an Anchor point on either a Block or a Line Integers are currently
@@ -58,6 +59,9 @@ public abstract class ConnectionAnchor extends Circle {
 
     public void setConnection(Connection connection) {
         this.connection = Optional.ofNullable(connection);
+        if(this.connection.isPresent() && block instanceof FunctionBlock){
+        	((FunctionBlock) block).invalidate();
+        }
     }
 
     public boolean isConnected() {

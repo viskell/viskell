@@ -5,24 +5,43 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import nl.utwente.group10.ui.components.blocks.FunctionBlock?>
-<fx:root type="nl.utwente.group10.ui.components.blocks.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
-    <BorderPane>
-        <top>
-            <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10"/>
-        </top>
-        <center>
-            <HBox styleClass="function, block">
-                <HBox>
-                    <padding><Insets top="5" right="10" bottom="5" left="10"/></padding>
-                    <Label text="${controller.name}" styleClass="title" />
-                </HBox>
-                <HBox fx:id="argumentSpace" spacing="5">
-                    <padding><Insets top="5" right="5" bottom="5" left="5"/></padding>
-                </HBox>
-            </HBox>
-        </center>
-        <bottom>
-            <VBox fx:id="outputSpace" alignment = "center"/>
-        </bottom>
-    </BorderPane>
+<fx:root type="nl.utwente.group10.ui.components.blocks.FunctionBlock"
+	xmlns:fx="http://javafx.com/fxml/1">
+	<BorderPane>
+		<top>
+			<FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50"
+				hgap="10" />
+		</top>
+
+		<center>
+			<BorderPane>
+				<top>
+					<FlowPane fx:id="inputTypes" prefWrapLength="100" vgap="50"
+				hgap="10" />
+				</top>
+				<center>
+					<HBox styleClass="function, block">
+						<HBox>
+							<padding>
+								<Insets top="5" right="10" bottom="5" left="10" />
+							</padding>
+							<Label text="${controller.name}" styleClass="title" />
+						</HBox>
+						<HBox fx:id="argumentSpace" spacing="5">
+							<padding>
+								<Insets top="5" right="5" bottom="5" left="5" />
+							</padding>
+						</HBox>
+					</HBox>
+				</center>
+				<bottom>
+					<FlowPane fx:id="outputTypes" prefWrapLength="100" vgap="50"
+				hgap="10" />
+				</bottom>
+			</BorderPane>
+		</center>
+		<bottom>
+			<VBox fx:id="outputSpace" alignment="center" />
+		</bottom>
+	</BorderPane>
 </fx:root>

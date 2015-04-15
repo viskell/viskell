@@ -28,7 +28,7 @@ public class InputAnchor extends ConnectionAnchor {
      */
     public final Expr asExpr() {
         if (isConnected()) {
-            return getConnection().get().getOutputAnchor().get().getBlock()
+            return getOtherAnchor().get().getBlock()
                     .asExpr();
         } else {
             return new Ident("undefined");
