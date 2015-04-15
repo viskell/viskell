@@ -98,12 +98,12 @@ public class Connection extends ConnectionLine implements
         }
         startAnchor = Optional.of(start);
         startAnchor.get().setConnection(this);
-        
+
         startAnchor.get().getBlock().layoutXProperty().addListener(this);
         startAnchor.get().getBlock().layoutYProperty().addListener(this);
-        
+
         checkError();
-        
+
         updateStartPosition();
     }
 

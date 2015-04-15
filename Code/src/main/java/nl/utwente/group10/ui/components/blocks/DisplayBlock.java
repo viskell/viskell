@@ -94,4 +94,9 @@ public class DisplayBlock extends Block {
             setOutput("???");
         }
     }
+    
+    @Override
+    public void error() {
+        this.getStyleClass().add("error");
+    }
 }

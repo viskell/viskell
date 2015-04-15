@@ -37,6 +37,14 @@ public class CustomUIPane extends TactilePane {
             }
         }
     }
+    
+    public final void errorAll() {
+        for (Node node : getChildren()) {
+            if (node instanceof Block) {
+                ((Block)node).error();
+            }
+        }
+    }
 
     public Optional<Block> getSelectedBlock() {
         return selectedBlock.get();
