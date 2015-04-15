@@ -2,6 +2,10 @@ package nl.utwente.group10.ui.components;
 
 import java.util.Optional;
 
+import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.ui.components.blocks.Block;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -94,10 +98,12 @@ public class Connection extends ConnectionLine implements
         }
         startAnchor = Optional.of(start);
         startAnchor.get().setConnection(this);
-        checkError();
         
         startAnchor.get().getBlock().layoutXProperty().addListener(this);
         startAnchor.get().getBlock().layoutYProperty().addListener(this);
+        
+        checkError();
+        
         updateStartPosition();
     }
 
@@ -214,14 +220,16 @@ public class Connection extends ConnectionLine implements
      * If the connection results in an invalid operation a visual
      * error will be displayed.
      */
-    public void checkError() {
-        if(startAnchor!=null && endAnchor!=null) {
-            //Can this method be used to evaluate validity of the operation?
-            //endAnchor.get().getBlock().asExpr().analyze(env, genSet);
-            if (true) {
-                this.setStyle("-fx-stroke: black;");
-            } else {
-                this.setStyle("-fx-stroke: red;");
+    private void checkError() {
+        if(startAnchor.isPresent() && endAnchor.isPresent()) {
+            try {
+                //TODO Obviously this will cause errors, we need a way to access the Env
+                endAnchor.get().getBlock().asExpr().analyze(new Env(), new GenSet());
+                this.getStyleClass().remove("error");
+            } catch (HaskellTypeError e) {
+                this.getStyleClass().add("error");
+            } catch (HaskellException e) {
+                e.printStackTrace();
             }
         }
     }
