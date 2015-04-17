@@ -27,11 +27,11 @@ public class InputAnchor extends ConnectionAnchor {
      * @return The expression carried by the connection connected to this anchor.
      */
     public final Expr asExpr() {
-        if (isConnected() && isFullyConnected()) {
+        if (isFullyConnected()) {
             return getOtherAnchor().get().getBlock()
                     .asExpr();
         } else {
-            return new Ident("undefined");
+            return Block.getInvalidExpression();
         }
     }
 

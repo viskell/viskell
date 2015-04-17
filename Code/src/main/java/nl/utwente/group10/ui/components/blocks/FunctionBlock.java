@@ -54,8 +54,6 @@ public class FunctionBlock extends Block {
 
 	@FXML
 	private Pane argumentSpace;
-	
-	private boolean initialized = false;
 
 	/**
 	 * Method that creates a newInstance of this class along with it's visual
@@ -103,11 +101,7 @@ public class FunctionBlock extends Block {
 		lbl.getStyleClass().add("result");
 		argumentSpace.getChildren().add(lbl);
 		outputSpace.getChildren().add(this.getOutputAnchor());
-		
-		
-		//TODO meh, maybe do different
-		initialized = true;
-		
+
 		invalidate();
 	}
 
@@ -192,102 +186,106 @@ public class FunctionBlock extends Block {
 		return index;
 	}
 
+	/**
+	 * @return The current (output) expression belonging to this block. If input
+	 *         number n is filled in, this output assumes all inputs till number n are also
+	 *         filled in.
+	 */
 	@Override
 	public final Expr asExpr() {
 		Expr expr = new Ident(getName());
-		int undefined = 0;
-		for (InputAnchor in : getInputs()) {
-			if(in!=null){
-				Expr inputExpr = in.asExpr();
-				//TODO check for something else than undefined (thus pass something else than an undefined Ident)
-				if(!inputExpr.toHaskell().equals("undefined")){
-					for(int i=0;i<undefined;i++){
-						expr = new Apply(expr,new Ident("undefined"));
-					}
-					undefined = -1;
+		// Find last input that is filled in
+		for (int a = getInputs().length - 1; a >= 0; a--) {
+			InputAnchor in = getInputs()[a];
+			Expr inputExpr = in.asExpr();
+			// Fill in all inputs till the filled in input.
+			if (in != null && Block.isValidExpression(inputExpr)) {
+				for (int b = 0; b <= a; b++) {
+					in = getInputs()[b];
+					inputExpr = in.asExpr();
 					expr = new Apply(expr, inputExpr);
-				}else{
-					if(undefined>=0){
-						undefined++;
-					}
 				}
+				a = -1; // Break loop
 			}
 		}
 		return expr;
 	}
-	
-	public final boolean isInitialized(){
-		return true;
-	}
-	
-	public final Expr getNakedExpr(){
+
+	public final Expr getFullExpr() {
 		return new Ident(getName());
 	}
 
-
 	@Override
-	public void invalidate(){
-		invalidate(getPane().getEnvInstance(),new GenSet());
+	public void invalidate() {
+		invalidate(getPane().getEnvInstance(), new GenSet());
 	}
-	
-	public void invalidate(Env env, GenSet genSet) {
-		if(isInitialized()){
-			Type nakedType = null;
-			Type currentType = null;
-			try{
-				nakedType = this.getNakedExpr().analyze(env, genSet);
-			}catch(HaskellException e){
-				//Function is wrongly specified in catalogus
-				e.printStackTrace();
-			}
-			try {
-				currentType = this.asExpr().analyze(env,genSet).prune();
 
-				invalidateInput(env,genSet,currentType,nakedType);
+	public void invalidate(Env env, GenSet genSet) {
+
+		// TODO not clear and re-add all labels every invalidate()
+		try {
+			Type nakedType = this.getFullExpr().analyze(env, genSet);
+			try {
+				Type currentType = this.asExpr().analyze(env, genSet).prune();
+
+				invalidateInput(env, genSet, currentType, nakedType);
 				invalidateOutput(currentType);
-			}catch (HaskellTypeError e1){
+			} catch (HaskellTypeError e1) {
 				// One of the inputs arguments is of the wrong type.
 				System.out.println("Type mismatch!");
-				//TODO display type mismatch.
+				// TODO display type mismatch.
 			} catch (HaskellException e2) {
 				// TODO are there other exceptions?
 				e2.printStackTrace();
 			}
+		} catch (HaskellException e) {
+			// Function is wrongly specified in catalogus
+			e.printStackTrace();
 		}
 	}
-	
-	private void invalidateInput(Env env, GenSet genSet, Type currentType, Type nakedType){
-		//TODO not clear and re-add all labels every invalidate()
+
+	/**
+	 * Updates the input types to the Block's new state.
+	 * 
+	 * @param env
+	 * @param genSet
+	 * @param outputType
+	 *            The current output type of the function (with inputs applied)
+	 * @param fullType
+	 *            The full type of the fuction (no inputs applied).
+	 */
+	private void invalidateInput(Env env, GenSet genSet, Type outputType,
+			Type fullType) {
 		inputTypes.getChildren().clear();
 		InputAnchor[] inputs = getInputs();
-		for(int i=0;i<inputs.length;i++){
+		for (int i = 0; i < inputs.length; i++) {
 			InputAnchor in = inputs[i];
 			Expr expr = in.asExpr();
-			
-			//TODO pass something other than an undefined Ident
+
 			Type type = null;
-			if(!expr.toHaskell().equals("undefined")){
+			if (Block.isValidExpression(expr)) {
 				try {
-					type = expr.analyze(env,genSet).prune();
+					type = expr.analyze(env, genSet).prune();
 				} catch (HaskellException e) {
 					e.printStackTrace();
-					//TODO is this the right thing to do?
-					// type = ((ConstT) nakedType).getArgs()[i];
+					// TODO now what?
 				}
-			}else{
-				//TODO does this cast always work?
-				Type[] types = ((ConstT) nakedType).getArgs();
-				for(int depth = 1; depth<=i;depth++){
-					types = ((ConstT) types[1]).getArgs();
+			} else {
+				// If this cast fails, the fullType is wrongly specified.
+				if (fullType instanceof ConstT) {
+					type = ((ConstT) fullType).dive(i + 1);
+				} else {
+					type = fullType;
+					System.err.println("Fulltype is wrongly specified!");
+					// TODO do something useful
 				}
-				type = types[0];				
 			}
 			inputTypes.getChildren().add(new Label(type.toHaskellType()));
 		}
 	}
-	
-	private void invalidateOutput(Type currentType){
+
+	private void invalidateOutput(Type outputType) {
 		outputTypes.getChildren().clear();
-		outputTypes.getChildren().add(new Label(currentType.toHaskellType()));
+		outputTypes.getChildren().add(new Label(outputType.toHaskellType()));
 	}
 }
