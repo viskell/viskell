@@ -34,11 +34,11 @@ public class ApplyTest {
         this.env = new Env();
         this.genSet = new GenSet();
 
-        this.env.put("id", new FuncT(this.gamma, this.gamma));
-        this.env.put("(+)", new FuncT(this.integer, new FuncT(this.integer, this.integer)));
-        this.env.put("map", new FuncT(new FuncT(this.alpha, this.beta), new FuncT(this.alphaList, this.betaList)));
-        this.env.put("zip", new FuncT(this.alphaList, new FuncT(this.betaList, new ListT(new TupleT(this.alpha, this.beta)))));
-        this.env.put("lcm", new FuncT(this.alpha, new FuncT(this.alpha, this.alpha)));
+        this.env.getExprTypes().put("id", new FuncT(this.gamma, this.gamma));
+        this.env.getExprTypes().put("(+)", new FuncT(this.integer, new FuncT(this.integer, this.integer)));
+        this.env.getExprTypes().put("map", new FuncT(new FuncT(this.alpha, this.beta), new FuncT(this.alphaList, this.betaList)));
+        this.env.getExprTypes().put("zip", new FuncT(this.alphaList, new FuncT(this.betaList, new ListT(new TupleT(this.alpha, this.beta)))));
+        this.env.getExprTypes().put("lcm", new FuncT(this.alpha, new FuncT(this.alpha, this.alpha)));
     }
 
     @Test

@@ -24,7 +24,7 @@ public class IdentTest {
         this.env = new Env();
         this.genSet = new GenSet();
 
-        this.env.put("id", new FuncT(this.alpha, this.alpha));
+        this.env.getExprTypes().put("id", new FuncT(this.alpha, this.alpha));
     }
 
     @Test

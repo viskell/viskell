@@ -146,7 +146,7 @@ public class HaskellCatalog {
         final Env env = new Env();
 
         for (Entry entry : this.byName.values()) {
-            env.put(entry.getName(), entry.getType());
+            env.getExprTypes().put(entry.getName(), entry.getType());
         }
 
         return env;

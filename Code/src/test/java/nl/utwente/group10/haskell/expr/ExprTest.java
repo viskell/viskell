@@ -40,8 +40,8 @@ public class ExprTest {
         this.env = new Env();
         this.genSet = new GenSet();
 
-        this.env.put("(*)", new FuncT(this.integer, new FuncT(this.integer, this.integer)));
-        this.env.put("map", new FuncT(new FuncT(this.alpha, this.beta), new FuncT(this.alphaList, this.betaList)));
+        this.env.getExprTypes().put("(*)", new FuncT(this.integer, new FuncT(this.integer, this.integer)));
+        this.env.getExprTypes().put("map", new FuncT(new FuncT(this.alpha, this.beta), new FuncT(this.alphaList, this.betaList)));
     }
 
     @Test
