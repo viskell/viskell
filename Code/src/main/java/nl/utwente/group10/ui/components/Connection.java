@@ -2,6 +2,10 @@ package nl.utwente.group10.ui.components;
 
 import java.util.Optional;
 
+import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.ui.components.blocks.Block;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -97,6 +101,9 @@ public class Connection extends ConnectionLine implements
 
         startAnchor.get().getBlock().layoutXProperty().addListener(this);
         startAnchor.get().getBlock().layoutYProperty().addListener(this);
+
+        checkError();
+
         updateStartPosition();
     }
 
@@ -113,6 +120,7 @@ public class Connection extends ConnectionLine implements
         }
         endAnchor = Optional.of(end);
         endAnchor.get().setConnection(this);
+        checkError();
 
         endAnchor.get().getBlock().layoutXProperty().addListener(this);
         endAnchor.get().getBlock().layoutYProperty().addListener(this);
@@ -205,5 +213,24 @@ public class Connection extends ConnectionLine implements
     public String toString() {
         return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  "
                 + endAnchor;
+    }
+    
+    /**
+     * This method evaluates the validity of the created connection.
+     * If the connection results in an invalid operation a visual
+     * error will be displayed.
+     */
+    private void checkError() {
+        if(startAnchor.isPresent() && endAnchor.isPresent()) {
+            try {
+                //TODO Obviously this will cause errors, we need a way to access the Env
+                endAnchor.get().getBlock().asExpr().analyze(new Env(), new GenSet());
+                this.getStyleClass().remove("error");
+            } catch (HaskellTypeError e) {
+                this.getStyleClass().add("error");
+            } catch (HaskellException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

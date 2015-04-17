@@ -70,4 +70,12 @@ public abstract class Block extends StackPane {
      * @return an expression that evaluates to what this block is.
      */
     public abstract Expr asExpr();
+
+    /** @return the parent of this Block. */
+    public CustomUIPane getPane() {
+        return parentPane;
+    }
+    
+    /** DEBUG METHOD trigger the error state for this Block */
+    public abstract void error();
 }

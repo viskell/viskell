@@ -158,9 +158,20 @@ public class FunctionBlock extends Block {
     @Override
     public final Expr asExpr() {
         Expr expr = new Ident(getName());
-
         for (InputAnchor in : getInputs()) expr = new Apply(expr, in.asExpr());
-
+        
         return expr;
+    }
+
+    @Override
+    public final void error() {
+            for (InputAnchor in : getInputs()) {
+                if (!in.isConnected()) {
+                    argumentSpace.getChildren().get(getArgumentIndex(in)).getStyleClass().add("error");
+                } else if (in.isConnected()){
+                    argumentSpace.getChildren().get(getArgumentIndex(in)).getStyleClass().remove("error");
+                }
+            }
+            this.getStyleClass().add("error");
     }
 }

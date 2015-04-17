@@ -66,4 +66,9 @@ public class ValueBlock extends Block {
         // TODO: support more types than floats
         return new Value(new ConstT("Float"), getValue());
     }
+
+    @Override
+    public void error() {
+        this.getStyleClass().add("error");
+    }
 }
