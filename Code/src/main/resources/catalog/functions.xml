@@ -44,6 +44,7 @@
         <function name="pi" signature="Float"></function>
     </category>
     <category name="Maps, folds and lists">
+        <function name="map" signature="(a -> b) -> [a] -> [b]" ></function>
         <function name="head" signature="[a] -> a">
             Extract the first element of a list, which must be non-empty.
         </function>
@@ -55,5 +56,6 @@
         <function name="const" signature="a -> b -> a">
             Constant function.
         </function>
+        <function name="undefined" signature="a"></function>
     </category>
 </catalog>

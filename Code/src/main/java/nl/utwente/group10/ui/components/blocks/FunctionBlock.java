@@ -14,6 +14,7 @@ import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
@@ -53,6 +54,8 @@ public class FunctionBlock extends Block {
 
 	@FXML
 	private Pane argumentSpace;
+	
+	private boolean initialized = false;
 
 	/**
 	 * Method that creates a newInstance of this class along with it's visual
@@ -100,6 +103,12 @@ public class FunctionBlock extends Block {
 		lbl.getStyleClass().add("result");
 		argumentSpace.getChildren().add(lbl);
 		outputSpace.getChildren().add(this.getOutputAnchor());
+		
+		
+		//TODO meh, maybe do different
+		initialized = true;
+		
+		invalidate();
 	}
 
 	/**
@@ -186,45 +195,68 @@ public class FunctionBlock extends Block {
 	@Override
 	public final Expr asExpr() {
 		Expr expr = new Ident(getName());
+		int undefined = 0;
 		for (InputAnchor in : getInputs()) {
-			Expr inputExpr = in.asExpr();
-			//TODO check for something else than undefined (this pass something else than an undefined Ident)
-			if(!inputExpr.toHaskell().equals("undefined")){
-				expr = new Apply(expr, inputExpr);
+			if(in!=null){
+				Expr inputExpr = in.asExpr();
+				//TODO check for something else than undefined (thus pass something else than an undefined Ident)
+				if(!inputExpr.toHaskell().equals("undefined")){
+					for(int i=0;i<undefined;i++){
+						expr = new Apply(expr,new Ident("undefined"));
+					}
+					undefined = -1;
+					expr = new Apply(expr, inputExpr);
+				}else{
+					if(undefined>=0){
+						undefined++;
+					}
+				}
 			}
 		}
-
 		return expr;
+	}
+	
+	public final boolean isInitialized(){
+		return true;
 	}
 	
 	public final Expr getNakedExpr(){
 		return new Ident(getName());
 	}
 
-	public void invalidate() {
-		System.out.println(getName()+".invalidate()");
-		//TODO refactor
-		
-		//TODO get env + genSet from somewhere
-		GenSet genSet = new GenSet();
-		Env env = null;
-		Type nakedType = null;
-		Type currentType = null;
-		try {
-			env = new HaskellCatalog().asEnvironment();
-			nakedType = this.getNakedExpr().analyze(env, genSet);
-			currentType = this.asExpr().analyze(env,genSet).prune();
-		} catch (HaskellException e1) {
-			// TODO Do something meaningful when this fails
-			// Currently it is assumed this always works.
-			e1.printStackTrace();
+
+	@Override
+	public void invalidate(){
+		invalidate(getPane().getEnvInstance(),new GenSet());
+	}
+	
+	public void invalidate(Env env, GenSet genSet) {
+		if(isInitialized()){
+			Type nakedType = null;
+			Type currentType = null;
+			try{
+				nakedType = this.getNakedExpr().analyze(env, genSet);
+			}catch(HaskellException e){
+				//Function is wrongly specified in catalogus
+				e.printStackTrace();
+			}
+			try {
+				currentType = this.asExpr().analyze(env,genSet).prune();
+
+				invalidateInput(env,genSet,currentType,nakedType);
+				invalidateOutput(currentType);
+			}catch (HaskellTypeError e1){
+				// One of the inputs arguments is of the wrong type.
+				System.out.println("Type mismatch!");
+				//TODO display type mismatch.
+			} catch (HaskellException e2) {
+				// TODO are there other exceptions?
+				e2.printStackTrace();
+			}
 		}
-		if(currentType==null){
-			currentType = nakedType;
-		}
-		System.out.println("NakedType: "+nakedType.toHaskellType());
-		System.out.println(Arrays.toString(((ConstT) nakedType).getArgs()));
-		
+	}
+	
+	private void invalidateInput(Env env, GenSet genSet, Type currentType, Type nakedType){
 		//TODO not clear and re-add all labels every invalidate()
 		inputTypes.getChildren().clear();
 		InputAnchor[] inputs = getInputs();
@@ -252,10 +284,10 @@ public class FunctionBlock extends Block {
 			}
 			inputTypes.getChildren().add(new Label(type.toHaskellType()));
 		}
-		
-		
+	}
+	
+	private void invalidateOutput(Type currentType){
 		outputTypes.getChildren().clear();
-		Type type = currentType;
-		outputTypes.getChildren().add(new Label(type.toHaskellType()));
+		outputTypes.getChildren().add(new Label(currentType.toHaskellType()));
 	}
 }

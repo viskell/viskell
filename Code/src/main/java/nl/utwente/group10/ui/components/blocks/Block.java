@@ -47,6 +47,10 @@ public abstract class Block extends StackPane {
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::select);
     }
 
+    protected CustomUIPane getPane(){
+    	return parentPane;
+    }
+    
     /** Sets this block as the selected block. */
     private void select(MouseEvent mouseEvent) {
         parentPane.setSelectedBlock(this);
@@ -70,4 +74,6 @@ public abstract class Block extends StackPane {
      * @return an expression that evaluates to what this block is.
      */
     public abstract Expr asExpr();
+
+	public abstract void invalidate();
 }

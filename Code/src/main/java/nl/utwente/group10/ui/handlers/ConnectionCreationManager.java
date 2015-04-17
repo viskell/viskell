@@ -82,7 +82,7 @@ public class ConnectionCreationManager {
 	}
 
 	public void editConnection(int id, ConnectionAnchor anchor) {
-		Optional<ConnectionAnchor> anchorToKeep = anchor.getOtherAnchor();
+		Optional<? extends ConnectionAnchor> anchorToKeep = anchor.getOtherAnchor();
 		if (anchor.isConnected() && anchorToKeep.isPresent()) {
 			Connection connection = anchor.getConnection().get();
 			connection.disconnect(anchor);

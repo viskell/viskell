@@ -59,13 +59,20 @@ public abstract class ConnectionAnchor extends Circle {
 
     public void setConnection(Connection connection) {
         this.connection = Optional.ofNullable(connection);
-        if(this.connection.isPresent() && block instanceof FunctionBlock){
-        	((FunctionBlock) block).invalidate();
-        }
     }
 
+    /**
+     * @return True if this ConnectionAnchor is connected to a Connection
+     */
     public boolean isConnected() {
         return connection.isPresent();
+    }
+    
+    /**
+     * @return True if this ConnectionAnchor is connected to a Connection and that connection is fully connected.
+     */
+    public boolean isFullyConnected() {
+        return isConnected() && getConnection().get().isConnected();
     }
 
     public Optional<Connection> getConnection() {
@@ -80,17 +87,15 @@ public abstract class ConnectionAnchor extends Circle {
      */
     public abstract void disconnectFrom(Connection connection);
 
-    public Optional<ConnectionAnchor> getOtherAnchor() {
+    public Optional<? extends ConnectionAnchor> getOtherAnchor() {
         if (isConnected()) {
             Optional<OutputAnchor> out = getConnection().get()
                     .getOutputAnchor();
             Optional<InputAnchor> in = getConnection().get().getInputAnchor();
-            if (in.isPresent() && out.get().equals(this)) {
-                // Re-wrap Optional to change from InputAnchor to
-                // ConnectionAnchor
-                return Optional.of(in.get());
-            } else if (out.isPresent() && in.get().equals(this)) {
-                return Optional.of(out.get());
+            if (out.isPresent() && out.get().equals(this)) {
+                return in;
+            } else if (in.isPresent() && in.get().equals(this)) {
+                return out;
             }
         }
         return Optional.empty();

@@ -73,7 +73,7 @@ public class Connection extends ConnectionLine implements
             setEndAnchor((InputAnchor) anchor);
             added = true;
         }
-
+        
         return added;
     }
     
@@ -180,6 +180,12 @@ public class Connection extends ConnectionLine implements
             Number oldValue, Number newValue) {
         updateStartEndPositions();
     }
+    
+    
+    public final boolean isConnected(){
+    	return startAnchor.isPresent() && endAnchor.isPresent();
+    }
+    
 
     public final void disconnect(ConnectionAnchor anchor) {
         if (startAnchor.isPresent() && startAnchor.get().equals(anchor)) {

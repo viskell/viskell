@@ -7,6 +7,9 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.ui.components.Connection;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
@@ -19,6 +22,8 @@ public class CustomUIPane extends TactilePane {
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
 
+    private Env envInstance;
+    
     /**
      * Constructs a new instance.
      */
@@ -26,14 +31,27 @@ public class CustomUIPane extends TactilePane {
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
     }
+    
+    public Env getEnvInstance(){
+    	if(envInstance==null){
+    		try {
+				envInstance = new HaskellCatalog().asEnvironment();
+			} catch (CatalogException e) {
+				// TODO Think of something smart to do when this happens.
+				e.printStackTrace();
+			}
+    	}
+    	return envInstance;
+    }
+    
 
     /**
      * Re-evaluate all display blocks.
      */
     public final void invalidate() {
         for (Node node : getChildren()) {
-            if (node instanceof DisplayBlock) {
-                ((DisplayBlock)node).invalidate();
+            if (node instanceof Block) {
+                ((Block)node).invalidate();
             }
         }
     }
