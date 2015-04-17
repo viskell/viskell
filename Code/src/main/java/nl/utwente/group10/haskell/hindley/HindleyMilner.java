@@ -40,7 +40,9 @@ public final class HindleyMilner {
 
         if (a instanceof VarT && !a.equals(b)) {
             // Example: we have to unify (for example) α and Int.
-            // Do so by stating that α must be Int.
+            // Do so by stating that α must be Int
+            // IFF Int is in the type classes of α.
+
             ((VarT) a).setInstance(b);
         } else if (a instanceof ConstT && b instanceof VarT) {
             // Example: we have to unify Int and α.

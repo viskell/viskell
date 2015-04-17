@@ -1,6 +1,8 @@
 package nl.utwente.group10.haskell.type;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Variable type.
@@ -17,13 +19,20 @@ public class VarT extends Type {
     private Optional<Type> instance;
 
     /**
+     * The type constraints for this type.
+     */
+    private Set<Type> constraints;
+
+    /**
      * @param name Identifier for this type. Identifiers are not used in the type checking progress, different
      *             {@code VarT} instances with the same name are not equal.
      * @param instance The instance of this type.
+     * @param constraints The set of constraints for this type.
      */
-    public VarT(final String name, final Type instance) {
+    public VarT(final String name, final Type instance, final Set<Type> constraints) {
         this.name = name.toLowerCase();
         this.instance = Optional.ofNullable(instance);
+        this.constraints = constraints;
     }
 
     /**
@@ -31,7 +40,7 @@ public class VarT extends Type {
      *             {@code VarT} instances with the same name are not equal.
      */
     public VarT(final String name) {
-        this(name, null);
+        this(name, null, new HashSet<Type>());
     }
 
     /**
@@ -46,6 +55,22 @@ public class VarT extends Type {
      */
     public final Optional<Type> getInstance() {
         return this.instance;
+    }
+
+    /**
+     * Checks whether the given type is within the constraints. If the set of constraints is empty, every type is within
+     * the constraints.
+     * @param type The type to check.
+     * @return Whether the given type is within the constraints of this type.
+     */
+    public final boolean hasConstraint(Type type) {
+        boolean out = true;
+
+        if (!this.constraints.isEmpty()) {
+            out = this.constraints.contains(type);
+        }
+
+        return out;
     }
 
     /**
@@ -77,5 +102,20 @@ public class VarT extends Type {
     @Override
     public final String toString() {
         return this.instance.isPresent() ? String.format("%s:%s", this.name, this.instance.get()) : this.name;
+    }
+
+    /**
+     * Builts a constraints set from a list of type classes.
+     * @param typeclasses The type classes.
+     * @return The constraints set.
+     */
+    public static Set<Type> buildConstraints(TypeClass ... typeclasses) {
+        Set<Type> constraints = new HashSet<Type>();
+
+        for (TypeClass typeclass : typeclasses) {
+            constraints.addAll(typeclass.getTypes());
+        }
+
+        return constraints;
     }
 }
