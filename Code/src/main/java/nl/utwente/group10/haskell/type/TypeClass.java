@@ -44,24 +44,6 @@ public class TypeClass extends HaskellObject {
         return this.types.contains(type);
     }
 
-    /**
-     * Calculates the intersection of two type classes and returns the set of matching types.
-     * @param a The first type class.
-     * @param b The second type class.
-     * @return The set of types that are in both type classes.
-     */
-    public static Set<Type> intersect(TypeClass a, TypeClass b) {
-        final Set<Type> intersection = new HashSet<Type>();
-
-        for (Type t : a.getTypes()) {
-            if (b.hasType(t)) {
-                intersection.add(t);
-            }
-        }
-
-        return intersection;
-    }
-
     public final String toString() {
         return String.format("%s%s", this.name, this.types.toString());
     }
