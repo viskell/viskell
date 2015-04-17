@@ -92,21 +92,8 @@ public class Connection extends ConnectionLine implements
      * @param start The OutputAnchor to start at.
      */
     public void setStartAnchor(OutputAnchor start) {
-        if (startAnchor.isPresent()) {
-            startAnchor.get().getBlock().layoutXProperty().removeListener(this);
-            startAnchor.get().getBlock().layoutYProperty().removeListener(this);
-        }
-        startAnchor = Optional.of(start);
-        startAnchor.get().setConnection(this);
-
-        startAnchor.get().getBlock().layoutXProperty().addListener(this);
-        startAnchor.get().getBlock().layoutYProperty().addListener(this);
-
-        checkError();
-
-        updateStartPosition();
+            setAnchor(startAnchor, start);
     }
-
     /**
      * Set the endAnchor for this line. After setting the EndPosition will be
      * updated.
@@ -114,17 +101,23 @@ public class Connection extends ConnectionLine implements
      * @param end the InputAnchor to end at.
      */
     public void setEndAnchor(InputAnchor end) {
-        if (endAnchor.isPresent()) {
-            endAnchor.get().getBlock().layoutXProperty().removeListener(this);
-            endAnchor.get().getBlock().layoutYProperty().removeListener(this);
+        setAnchor(endAnchor, end);
+    }
+    
+    private void setAnchor(Optional anchor, ConnectionAnchor newAnchor) {
+        if (anchor.isPresent()) {
+            ((Optional<ConnectionAnchor>) anchor).get().getBlock().layoutXProperty().removeListener(this);
+            ((Optional<ConnectionAnchor>) anchor).get().getBlock().layoutYProperty().removeListener(this);
         }
-        endAnchor = Optional.of(end);
-        endAnchor.get().setConnection(this);
+        anchor = Optional.of(newAnchor);
+        ((Optional<ConnectionAnchor>) anchor).get().setConnection(this);
+
+        ((Optional<ConnectionAnchor>) anchor).get().getBlock().layoutXProperty().addListener(this);
+        ((Optional<ConnectionAnchor>) anchor).get().getBlock().layoutYProperty().addListener(this);
+
         checkError();
 
-        endAnchor.get().getBlock().layoutXProperty().addListener(this);
-        endAnchor.get().getBlock().layoutYProperty().addListener(this);
-        updateEndPosition();
+        updateStartPosition();
     }
 
     /**
