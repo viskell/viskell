@@ -29,11 +29,6 @@ public class OutputAnchor extends ConnectionAnchor {
     }
 
     @Override
-    public String toString() {
-        return "OutputAnchor for " + getBlock();
-    }
-
-    @Override
     public boolean canConnect() {
         // OutputAnchors can have multiple connections;
         return true;

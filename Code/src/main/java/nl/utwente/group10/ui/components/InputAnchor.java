@@ -57,11 +57,4 @@ public class InputAnchor extends ConnectionAnchor {
         // InputAnchors only support 1 connection;
         return !isConnected();
     }
-
-
-
-    @Override
-    public String toString() {
-        return "InputAnchor for " + getBlock();
-    }
 }

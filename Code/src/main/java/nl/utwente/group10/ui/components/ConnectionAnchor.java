@@ -39,6 +39,8 @@ public abstract class ConnectionAnchor extends Circle {
 
         fxmlLoader.load();
         setConnection(null);
+        
+        System.out.println(this.toString());
     }
 
 
@@ -94,6 +96,6 @@ public abstract class ConnectionAnchor extends Circle {
 
     @Override
     public String toString() {
-        return "ConnectionAnchor for " + getBlock();
+        return String.format("%s for %s", this.getClass().getSimpleName(), getBlock());
     }
 }
