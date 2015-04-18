@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+import nl.utwente.group10.ui.components.ComponentLoader;
 
 /**
  * This class represent a Connection-Line visual object in the UI. Each UI
@@ -14,7 +15,7 @@ import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
  * For Lines based on Start and End anchors, see AnchoredConnectionLine For
  * Lines that connect inputs and outputs of Blocks see Connection.
  */
-public class ConnectionLine extends CubicCurve {
+public class ConnectionLine extends CubicCurve implements ComponentLoader {
     /**
      * Control offset for this bezier of this line. in simple terms: controls
      * the curviness of the line.
@@ -31,16 +32,12 @@ public class ConnectionLine extends CubicCurve {
     private FXMLLoader fxmlLoader;
 
     public ConnectionLine() {
-        try {
-            fxmlLoader = new FXMLLoader(getClass().getResource(
-                    "/ui/ConnectionLine.fxml"));
-            fxmlLoader.setRoot(this);
-            fxmlLoader.setController(this);
-            fxmlLoader.load();
-        } catch (IOException e) {
-            // TODO clean up loading fxml
-            e.printStackTrace();
-        }
+            try {
+                getFXMLLoader("ConnectionLine").load();
+            } catch (IOException e) {
+                // TODO Find a good way to handle this
+                e.printStackTrace();
+            }
 
         TactilePane.setDraggable(this, false);
         TactilePane.setGoToForegroundOnContact(this, false);

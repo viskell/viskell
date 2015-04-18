@@ -39,11 +39,11 @@ public class DisplayBlock extends Block {
      * @throws IOException when the FXML definition for this block cannot be loaded.
      */
     public DisplayBlock(CustomUIPane pane) throws IOException {
-        super("DisplayBlock", pane);
+        super(pane);
 
         output = new SimpleStringProperty("New Output");
 
-        this.getLoader().load();
+        this.getFXMLLoader("DisplayBlock").load();
 
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
@@ -94,7 +94,7 @@ public class DisplayBlock extends Block {
             setOutput("???");
         }
     }
-    
+
     @Override
     public void error() {
         this.getStyleClass().add("error");

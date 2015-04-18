@@ -48,12 +48,12 @@ public class FunctionBlock extends Block {
      * @throws IOException when the FXML defenition for this Block cannot be loaded.
      */
     public FunctionBlock(String name, Type type, CustomUIPane pane) throws IOException {
-        super("FunctionBlock", pane);
+        super(pane);
 
         this.name = new SimpleStringProperty(name);
         this.type = new SimpleStringProperty(type.toHaskellType());
 
-        this.getLoader().load();
+        this.getFXMLLoader("FunctionBlock").load();
 
         // Collect argument types
         ArrayList<String> args = new ArrayList<>();
@@ -159,7 +159,7 @@ public class FunctionBlock extends Block {
     public final Expr asExpr() {
         Expr expr = new Ident(getName());
         for (InputAnchor in : getInputs()) expr = new Apply(expr, in.asExpr());
-        
+
         return expr;
     }
 
