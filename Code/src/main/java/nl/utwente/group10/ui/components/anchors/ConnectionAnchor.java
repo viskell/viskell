@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.anchors;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.shape.Circle;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.lines.Connection;
 
 /**
  * Represent an Anchor point on either a Block or a Line Integers are currently
@@ -39,8 +40,6 @@ public abstract class ConnectionAnchor extends Circle {
 
         fxmlLoader.load();
         setConnection(null);
-        
-        System.out.println(this.toString());
     }
 
 

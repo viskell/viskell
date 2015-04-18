@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.lines;
 
 import java.util.Optional;
 
@@ -6,6 +6,9 @@ import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.hindley.GenSet;
+import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
+import nl.utwente.group10.ui.components.anchors.InputAnchor;
+import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -80,7 +83,7 @@ public class Connection extends ConnectionLine implements
 
         return added;
     }
-    
+
     public boolean addAnchor(ConnectionAnchor anchor) {
         return addAnchor(anchor, false);
     }
@@ -92,8 +95,21 @@ public class Connection extends ConnectionLine implements
      * @param start The OutputAnchor to start at.
      */
     public void setStartAnchor(OutputAnchor start) {
-            setAnchor(startAnchor, start);
+        if (startAnchor.isPresent()) {
+            startAnchor.get().getBlock().layoutXProperty().removeListener(this);
+            startAnchor.get().getBlock().layoutYProperty().removeListener(this);
+        }
+        startAnchor = Optional.of(start);
+        startAnchor.get().setConnection(this);
+
+        startAnchor.get().getBlock().layoutXProperty().addListener(this);
+        startAnchor.get().getBlock().layoutYProperty().addListener(this);
+
+        checkError();
+
+        updateStartPosition();
     }
+
     /**
      * Set the endAnchor for this line. After setting the EndPosition will be
      * updated.
@@ -101,9 +117,20 @@ public class Connection extends ConnectionLine implements
      * @param end the InputAnchor to end at.
      */
     public void setEndAnchor(InputAnchor end) {
-        setAnchor(endAnchor, end);
+        if (endAnchor.isPresent()) {
+            endAnchor.get().getBlock().layoutXProperty().removeListener(this);
+            endAnchor.get().getBlock().layoutYProperty().removeListener(this);
+        }
+        endAnchor = Optional.of(end);
+        endAnchor.get().setConnection(this);
+        checkError();
+
+        endAnchor.get().getBlock().layoutXProperty().addListener(this);
+        endAnchor.get().getBlock().layoutYProperty().addListener(this);
+        updateEndPosition();
     }
-    
+
+    //TODO debug this method, why is this going wrong?
     private void setAnchor(Optional anchor, ConnectionAnchor newAnchor) {
         if (anchor.isPresent()) {
             ((Optional<ConnectionAnchor>) anchor).get().getBlock().layoutXProperty().removeListener(this);
@@ -192,7 +219,7 @@ public class Connection extends ConnectionLine implements
             endAnchor = Optional.empty();
         }
     }
-    
+
     public final void disconnect(Optional<? extends ConnectionAnchor> anchor){
         disconnect(anchor.orElse(null));
     }
@@ -207,7 +234,7 @@ public class Connection extends ConnectionLine implements
         return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  "
                 + endAnchor;
     }
-    
+
     /**
      * This method evaluates the validity of the created connection.
      * If the connection results in an invalid operation a visual

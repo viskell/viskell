@@ -7,7 +7,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.OutputAnchor;
+import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 
 /**
  * Base UI Component that other visual elements will extend from. If common functionality is found it should be

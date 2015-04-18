@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.lines;
 
 import java.io.IOException;
 
@@ -18,7 +18,7 @@ public class ConnectionLine extends CubicCurve {
     /**
      * Control offset for this bezier of this line. in simple terms: controls
      * the curviness of the line.
-     * 
+     *
      * A higher offset equates to a more curved line. The offset is a function
      * of the offset multiplier and the straight line length. The offset will
      * always be between the defined minimum and maximum.
@@ -49,11 +49,8 @@ public class ConnectionLine extends CubicCurve {
 
     /**
      * Sets the start position for this Line object
-     *
-     * @param x
-     *            coordinate
-     * @param y
-     *            coordinate
+     * @param x coordinate
+     * @param y coordinate
      */
     public void setStartPosition(double x, double y) {
         setStartX(x);
@@ -67,11 +64,8 @@ public class ConnectionLine extends CubicCurve {
 
     /**
      * Sets the end position for this Line object.
-     *
-     * @param x
-     *            coordinate
-     * @param y
-     *            coordinate
+     * @param x coordinate
+     * @param y coordinate
      */
     public void setEndPosition(double x, double y) {
         setEndX(x);
