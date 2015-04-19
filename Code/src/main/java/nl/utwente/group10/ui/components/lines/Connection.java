@@ -12,7 +12,6 @@ import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.geometry.Point2D;
 
 /**
  * This is a ConnectionLine that also stores a startAnchor and an endAnchor to
@@ -33,12 +32,12 @@ public class Connection extends ConnectionLine implements
 
     public Connection(OutputAnchor from) {
         this.setStartAnchor(from);
-        setEndPosition(getScenePoint(from));
+        setEndPosition(from.getCenterInPane());
     }
 
     public Connection(InputAnchor to) {
         this.setEndAnchor(to);
-        setStartPosition(getScenePoint(to));
+        setStartPosition(to.getCenterInPane());
     }
 
     public Connection(OutputAnchor from, InputAnchor to) {
@@ -125,8 +124,8 @@ public class Connection extends ConnectionLine implements
                 endAnchor.get().getBlock().layoutYProperty().removeListener(this);
             }
             endAnchor = Optional.of((InputAnchor)newAnchor);
-        } 
-        
+        }
+
         checkError();
         updateStartEndPositions();
     }
@@ -136,35 +135,8 @@ public class Connection extends ConnectionLine implements
      * refreshing UI representation of the Line.
      */
     private void updateStartEndPositions() {
-        updateStartPosition();
-        updateEndPosition();
-    }
-
-    /**
-     * Refresh the Start position of this Line using startAnchor as a reference
-     * point.
-     */
-    private void updateStartPosition() {
-        if (startAnchor.isPresent()) {
-            setStartPosition(getScenePoint(startAnchor.get()));
-        }
-    }
-
-    /**
-     * Refresh the End position of this Line using endAnchor as a reference
-     * point.
-     */
-    private void updateEndPosition() {
-        if (endAnchor.isPresent()) {
-            setEndPosition(getScenePoint(endAnchor.get()));
-        }
-    }
-
-    /** @return the scene-relative Point location of this anchor. */
-    private Point2D getScenePoint(ConnectionAnchor anchor) {
-        double x = anchor.getCenterX();
-        double y = anchor.getCenterY();
-        return anchor.localToScene(x, y);
+        startAnchor.ifPresent(a -> setStartPosition(a.getCenterInPane()));
+        endAnchor.ifPresent(a -> setEndPosition(a.getCenterInPane()));
     }
 
     /** @return this connection's start anchor, if any. */

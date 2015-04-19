@@ -86,8 +86,8 @@ class PhysicsTimer extends AnimationTimer {
                 Node other = bond.getBondNode();
                 if (other == node) continue;
                 
-                Bounds nodeBounds = node.localToScene(node.getBoundsInLocal());
-                Bounds otherBounds = other.localToScene(other.getBoundsInLocal());
+                Bounds nodeBounds = node.getBoundsInLocal();
+                Bounds otherBounds = other.getBoundsInLocal();
 
                 double nodeX = nodeBounds.getMinX() + nodeBounds.getWidth() / 2;
                 double nodeY = nodeBounds.getMinY() + nodeBounds.getHeight() / 2;
@@ -107,7 +107,7 @@ class PhysicsTimer extends AnimationTimer {
             // If anchored, update the node's position according to its anchor
             else if (anchor != null) {
                 Node anchorNode = anchor.getAnchorNode();
-                Bounds anchorBounds = pane.sceneToLocal(anchorNode.localToScene(anchorNode.getBoundsInLocal()));
+                Bounds anchorBounds = anchorNode.getBoundsInLocal();
                 Bounds nodeBounds = node.getBoundsInParent();
                 
                 // Relocate anchored Node
@@ -237,7 +237,7 @@ class PhysicsTimer extends AnimationTimer {
         pane.quadTree.update();
 
         for (Node thisNode : pane.getActiveNodes()) {
-            Bounds thisBounds = thisNode.localToScene(thisNode.getBoundsInLocal());
+            Bounds thisBounds = thisNode.getBoundsInLocal();
             Bounds proximityBounds = null;
             
             double pt = pane.getProximityThreshold();
@@ -251,7 +251,7 @@ class PhysicsTimer extends AnimationTimer {
 
             List<Node> otherNodes = pane.quadTree.retrieve(thisNode);
             for (Node otherNode : otherNodes) {
-                Bounds otherBounds = otherNode.localToScene(otherNode.getBoundsInLocal());
+                Bounds otherBounds = otherNode.getBoundsInLocal();
 
                 if (thisBounds.intersects(otherBounds)) {
                     if (TactilePane.getNodesColliding(thisNode).add(otherNode)) {

@@ -5,7 +5,10 @@ import java.util.Optional;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
@@ -18,6 +21,8 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 public class CustomUIPane extends TactilePane {
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
+    private Point2D dragStart;
+    private Point2D offset;
 
     /**
      * Constructs a new instance.
@@ -25,6 +30,41 @@ public class CustomUIPane extends TactilePane {
     public CustomUIPane() {
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
+        this.dragStart = Point2D.ZERO;
+        this.offset = Point2D.ZERO;
+
+        this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
+        this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
+        this.addEventHandler(ScrollEvent.SCROLL, this::handleScroll);
+    }
+
+    private void handlePress(MouseEvent mouseEvent) {
+        offset = new Point2D(this.getTranslateX(), this.getTranslateY());
+        dragStart = new Point2D(mouseEvent.getScreenX(), mouseEvent.getScreenY());
+    }
+
+    private void handleDrag(MouseEvent mouseEvent) {
+        Point2D dragCurrent = new Point2D(mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        Point2D delta = dragStart.subtract(dragCurrent);
+
+        this.setTranslateX(offset.getX() - delta.getX());
+        this.setTranslateY(offset.getY() - delta.getY());
+    }
+
+    private void handleScroll(ScrollEvent scrollEvent) {
+        double scale = this.getScaleX();
+        double ratio = 1.0;
+
+        if (scrollEvent.getDeltaY() > 0 && scale < 8) {
+            ratio = 1.25;
+        } else if (scrollEvent.getDeltaY() < 0 && scale > 0.5) {
+            ratio = 0.8;
+        }
+
+        this.setScaleX(scale * ratio);
+        this.setScaleY(scale * ratio);
+        this.setTranslateX(this.getTranslateX() * ratio);
+        this.setTranslateY(this.getTranslateY() * ratio);
     }
 
     /**
@@ -83,10 +123,7 @@ public class CustomUIPane extends TactilePane {
 
     /** Remove the selected block, if any. */
     public void removeSelected() {
-        this.getSelectedBlock().map(obj -> {
-            this.removeBlock(obj);
-            return obj;
-        });
+        this.getSelectedBlock().ifPresent(this::removeBlock);
     }
 
     public ConnectionCreationManager getConnectionCreationManager() {
