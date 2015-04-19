@@ -1,5 +1,6 @@
 \documentclass[twoside,openright]{report}
 
+\usepackage[english]{babel}
 \usepackage[a4paper]{geometry}
 \usepackage[sc]{mathpazo}
 \usepackage[utf8]{inputenc}
@@ -7,17 +8,24 @@
 \usepackage{Alegreya}
 \usepackage{microtype}
 \usepackage{lipsum}
+\usepackage{graphicx}
 \usepackage{titling}
 \usepackage{imakeidx}
 \usepackage{parskip}
 \usepackage{cite}
 \usepackage{url}
+\usepackage{fancyhdr}
+\usepackage{appendix}
+\usepackage{fancyref}
 \usepackage[nottoc]{tocbibind}
 \usepackage[hidelinks]{hyperref}
 \usepackage[toc,section=chapter]{glossaries}
 
 \makeindex
 \makeglossaries
+
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
 
 \input{Chapters/Glossary}
 
@@ -38,10 +46,15 @@
 \urlstyle{same}
 
 \begin{titlepage}
-	{\Huge \thetitle} \\
-	\vfill
-	\theauthor \\
-	\thedate
+    {\Huge \thetitle} \\
+    \vfill
+    \begin{center}
+        \makebox[\textwidth]{\includegraphics[width=230mm]{Images/front}}
+    \end{center}
+    \vfill
+    {Design project}\\
+    \theauthor \\
+    \thedate
 \end{titlepage}
 
 % Inhoudsopgave
@@ -50,6 +63,8 @@
 \include{Chapters/Summary}
 
 \include{Chapters/Introduction}
+
+\include{Chapters/Process}
 
 \include{Chapters/Requirements}
 
@@ -65,11 +80,15 @@
 
 \include{Chapters/Recommendations}
 
-\bibliographystyle{unsrt}
-\bibliography{Chapters/Bibliography}
-
 \printindex
 
 \printglossaries
+
+\bibliographystyle{unsrt}
+\bibliography{Chapters/Bibliography}
+
+\begin{appendices}
+\include{Chapters/Manual}
+\end{appendices}
 
 \end{document}
