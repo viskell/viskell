@@ -10,8 +10,8 @@ import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.ConnectionAnchor;
-import nl.utwente.group10.ui.components.InputAnchor;
+import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
+import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
 /**
  * DisplayBlock is an extension of Block that only provides a display of the
@@ -39,11 +39,11 @@ public class DisplayBlock extends Block {
      * @throws IOException when the FXML definition for this block cannot be loaded.
      */
     public DisplayBlock(CustomUIPane pane) throws IOException {
-        super("DisplayBlock", pane);
+        super(pane);
 
         output = new SimpleStringProperty("New Output");
 
-        this.getLoader().load();
+        this.getFXMLLoader("DisplayBlock").load();
 
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
@@ -94,7 +94,7 @@ public class DisplayBlock extends Block {
             setOutput("???");
         }
     }
-    
+
     @Override
     public void error() {
         this.getStyleClass().add("error");

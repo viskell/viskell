@@ -1,12 +1,13 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.anchors;
 
 import java.io.IOException;
 import java.util.Optional;
 
-import javafx.fxml.FXMLLoader;
 import javafx.scene.shape.Circle;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.lines.Connection;
 
 /**
  * Represent an Anchor point on either a Block or a Line Integers are currently
@@ -14,7 +15,7 @@ import nl.utwente.group10.ui.components.blocks.Block;
  *
  * Other data types will be supported in the future
  */
-public abstract class ConnectionAnchor extends Circle {
+public abstract class ConnectionAnchor extends Circle implements ComponentLoader {
     /** The pane on which this Anchor resides. */
     private CustomUIPane pane;
 
@@ -29,15 +30,16 @@ public abstract class ConnectionAnchor extends Circle {
      * @param pane The pane this Anchor belongs to.
      * @throws IOException when the FXML definitions cannot be loaded.
      */
-    public ConnectionAnchor(Block block, CustomUIPane pane) throws IOException {
+    public ConnectionAnchor(Block block, CustomUIPane pane) {
         this.block = block;
         this.pane = pane;
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ui/ConnectionAnchor.fxml"));
-        fxmlLoader.setRoot(this);
-        fxmlLoader.setController(this);
-
-        fxmlLoader.load();
+        try {
+            getFXMLLoader("ConnectionAnchor").load();
+        } catch (IOException e) {
+            // TODO Find a good way to handle this
+            e.printStackTrace();
+        }
         setConnection(null);
     }
 
@@ -94,6 +96,6 @@ public abstract class ConnectionAnchor extends Circle {
 
     @Override
     public String toString() {
-        return "ConnectionAnchor for " + getBlock();
+        return String.format("%s for %s", this.getClass().getSimpleName(), getBlock());
     }
 }
