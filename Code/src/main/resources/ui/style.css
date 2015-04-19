@@ -1,3 +1,7 @@
+CustomUIPane {
+    -fx-background-image: url('grid.png');
+}
+
 .block {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
