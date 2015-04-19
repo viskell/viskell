@@ -30,6 +30,13 @@ public class TypeClass extends HaskellObject {
     }
 
     /**
+     * @return The name of this type class.
+     */
+    public final String getName() {
+        return this.name;
+    }
+
+    /**
      * @return The types in this type class.
      */
     public final Set<Type> getTypes() {

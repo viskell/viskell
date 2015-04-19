@@ -111,7 +111,27 @@ public class VarT extends Type {
 
     @Override
     public final String toHaskellType() {
-        return this.name;
+        final StringBuilder out = new StringBuilder();
+
+        if (this.constraints.isEmpty()) {
+            out.append(this.name);
+        } else {
+            out.append("(");
+
+            int i = 0;
+
+            for (TypeClass tc : this.constraints) {
+                out.append(String.format("%s %s", tc.getName(), this.name));
+                if (i + 1 < this.constraints.size()) {
+                    out.append(", ");
+                }
+                i++;
+            }
+
+            out.append(")");
+        }
+
+        return out.toString();
     }
 
     @Override
