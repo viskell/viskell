@@ -54,7 +54,7 @@ public final class HindleyMilner {
             if (b instanceof VarT) {
                 final Set<TypeClass> intersection = VarT.intersect((VarT) a, (VarT) b);
 
-                if (intersection.isEmpty() && !(((VarT) a).hasConstraints() && ((VarT) b).hasConstraints())) {
+                if (intersection.isEmpty() && ((VarT) a).hasConstraints()) {
                     HindleyMilner.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
                     throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context, a, b);
                 }
@@ -62,7 +62,7 @@ public final class HindleyMilner {
                 ((VarT) a).setInstance(HindleyMilner.makeVariable(intersection));
             } else if (!((VarT) a).hasConstraint(b)) {
                 HindleyMilner.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
-                throw new HaskellTypeError(String.format("%s ∉ constraints of %s", a, b), context, a, b);
+                throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context, a, b);
             }
 
             ((VarT) a).setInstance(b);
