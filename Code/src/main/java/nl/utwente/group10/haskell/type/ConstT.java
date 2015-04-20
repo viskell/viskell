@@ -41,32 +41,6 @@ public class ConstT extends Type {
 		return this.args;
 	}
 
-	/**
-	 * @param steps
-	 *            Amount of steps to dive
-	 * @return The First argument in this function with steps more depth than this
-	 *         function.
-	 *         
-	 *         example:
-	 *         (a -> (b -> (c -> d))).dive(2) = b
-	 *         
-	 *         If it is impossible to dive the amount of steps provided, it
-	 *         returns the closest result to that.
-	 */
-	public Type dive(int steps) {
-		if(steps==1){
-			return args[0];
-		}else if(steps > 1){		
-			Type next = args[1];
-			if (steps > 1) {
-				if (next instanceof ConstT) {
-					return ((ConstT) next).dive(steps - 1);
-				}
-			}
-		}
-		return this;
-	}
-
 	@Override
 	public final Type prune() {
 		for (int i = 0; i < this.args.length; i++) {

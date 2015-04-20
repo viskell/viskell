@@ -59,7 +59,7 @@ public class ConnectionCreationManager {
 					pane.getChildren().remove(existingConnection.get());
 				}
 			}
-			if (anchor.canConnect() && connection.addAnchor(anchor)) {
+			if (anchor.canConnect() && connection.tryAddAnchor(anchor)) {
 				// Succesfully made connection.
 				pane.invalidate();
 			} else {

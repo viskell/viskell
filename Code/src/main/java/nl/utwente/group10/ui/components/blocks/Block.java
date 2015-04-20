@@ -6,7 +6,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.expr.Expr;
-import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.OutputAnchor;
 
@@ -23,11 +22,7 @@ public abstract class Block extends StackPane {
 
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
-    
-    /**
-     * The Env name for an invalid expression.
-     */
-	public static final String EXPR_INVALID = "undefined";
+
 
     /**
      * @param blockName Name of this block. The name is used to load the FXML definition for this block.
@@ -85,21 +80,5 @@ public abstract class Block extends StackPane {
      * Tells the block that its current state (considering connections) has changed. 
      */
 	public abstract void invalidate();
-	
-	
-	/**
-	 * An invalid Expression is equal to an Expression that does nothing.
-	 * @return
-	 */
-	public static Expr getInvalidExpression(){
-		return new Ident(EXPR_INVALID);
-	}
-	
-	/**
-	 * @param expr
-	 * @return True if the given expression is not invalid.
-	 */
-    public static final boolean isValidExpression(Expr expr){
-    	return !expr.toHaskell().equals(EXPR_INVALID);
-    }
+
 }

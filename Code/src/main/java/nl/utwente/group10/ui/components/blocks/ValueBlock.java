@@ -6,9 +6,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Value;
+import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.ConstT;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 
 /**
@@ -65,6 +68,17 @@ public class ValueBlock extends Block {
     public Expr asExpr() {
         // TODO: support more types than floats
         return new Value(new ConstT("Float"), getValue());
+    }
+    
+    public Type getOutputType(){
+    	try {
+			return asExpr().analyze(getPane().getEnvInstance(), new GenSet());
+		} catch (HaskellException e) {
+			// ValueBlock would be wrongly defined.
+			e.printStackTrace();
+			//TODO return invalid Type?
+			return null;
+		}
     }
     
     

@@ -8,7 +8,11 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Ident;
+import nl.utwente.group10.haskell.hindley.GenSet;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ConnectionAnchor;
 import nl.utwente.group10.ui.components.InputAnchor;
@@ -94,4 +98,14 @@ public class DisplayBlock extends Block {
             setOutput("???");
         }
     }
+
+	public Type getInputType(InputAnchor anchor) {
+		try {
+			return new Ident("undefined").analyze(getPane().getEnvInstance(), new GenSet());
+		} catch (HaskellException e) {
+			// TODO return invalid Type?
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

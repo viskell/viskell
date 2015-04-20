@@ -5,9 +5,9 @@ import java.util.Optional;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.shape.Circle;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 
 /**
  * Represent an Anchor point on either a Block or a Line Integers are currently
@@ -49,6 +49,8 @@ public abstract class ConnectionAnchor extends Circle {
     public final Block getBlock() {
         return block;
     }
+    
+    public abstract Type getType();
 
     /**
      * @return The pane this anchor resides on.

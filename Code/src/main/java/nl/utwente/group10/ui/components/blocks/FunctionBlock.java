@@ -2,17 +2,13 @@ package nl.utwente.group10.ui.components.blocks;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
-import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Apply;
@@ -22,6 +18,7 @@ import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.ui.BackendUtils;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ConnectionAnchor;
 import nl.utwente.group10.ui.components.InputAnchor;
@@ -199,7 +196,7 @@ public class FunctionBlock extends Block {
 			InputAnchor in = getInputs()[a];
 			Expr inputExpr = in.asExpr();
 			// Fill in all inputs till the filled in input.
-			if (in != null && Block.isValidExpression(inputExpr)) {
+			if (in != null && BackendUtils.isValidExpression(inputExpr)) {
 				for (int b = 0; b <= a; b++) {
 					in = getInputs()[b];
 					inputExpr = in.asExpr();
@@ -211,8 +208,33 @@ public class FunctionBlock extends Block {
 		return expr;
 	}
 
-	public final Expr getFullExpr() {
-		return new Ident(getName());
+	public Type getFunctionSignature(){
+		return getFunctionSignature(getPane().getEnvInstance(),new GenSet());
+	}
+	
+	public Type getFunctionSignature(Env env, GenSet genSet) {
+		try {
+			return new Ident(getName()).analyze(env, genSet);
+		} catch (HaskellException e) {
+			// Only happens when function is incorrectly declared in catalog.
+			e.printStackTrace();
+			//TODO return something more meaningful?
+			return null;
+		}
+	}
+	
+	public Type getOutputType(){
+		return getOutputType(getPane().getEnvInstance(),new GenSet());
+	}
+	
+	public Type getOutputType(Env env, GenSet genSet){
+		try {
+			return this.asExpr().analyze(env, genSet);
+		} catch (HaskellException e) {
+			// TODO: Current connections are wrong, now what?
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
@@ -221,26 +243,20 @@ public class FunctionBlock extends Block {
 	}
 
 	public void invalidate(Env env, GenSet genSet) {
-
 		// TODO not clear and re-add all labels every invalidate()
+		Type nakedType = getFunctionSignature();
 		try {
-			Type nakedType = this.getFullExpr().analyze(env, genSet);
-			try {
-				Type currentType = this.asExpr().analyze(env, genSet).prune();
+			Type currentType = this.asExpr().analyze(env, genSet).prune();
 
-				invalidateInput(env, genSet, currentType, nakedType);
-				invalidateOutput(currentType);
-			} catch (HaskellTypeError e1) {
-				// One of the inputs arguments is of the wrong type.
-				System.out.println("Type mismatch!");
-				// TODO display type mismatch.
-			} catch (HaskellException e2) {
-				// TODO are there other exceptions?
-				e2.printStackTrace();
-			}
-		} catch (HaskellException e) {
-			// Function is wrongly specified in catalogus
-			e.printStackTrace();
+			invalidateInput(env, genSet, currentType, nakedType);
+			invalidateOutput(currentType);
+		} catch (HaskellTypeError e1) {
+			// One of the inputs arguments is of the wrong type.
+			System.out.println("Type mismatch!");
+			// TODO display type mismatch.
+		} catch (HaskellException e2) {
+			// TODO are there other exceptions?
+			e2.printStackTrace();
 		}
 	}
 
@@ -263,7 +279,7 @@ public class FunctionBlock extends Block {
 			Expr expr = in.asExpr();
 
 			Type type = null;
-			if (Block.isValidExpression(expr)) {
+			if (BackendUtils.isValidExpression(expr)) {
 				try {
 					type = expr.analyze(env, genSet).prune();
 				} catch (HaskellException e) {
@@ -271,9 +287,9 @@ public class FunctionBlock extends Block {
 					// TODO now what?
 				}
 			} else {
-				// If this cast fails, the fullType is wrongly specified.
+				// If this cast fails, the function signature is wrongly specified.
 				if (fullType instanceof ConstT) {
-					type = ((ConstT) fullType).dive(i + 1);
+					type = getInputType(i);
 				} else {
 					type = fullType;
 					System.err.println("Fulltype is wrongly specified!");
@@ -282,6 +298,25 @@ public class FunctionBlock extends Block {
 			}
 			inputTypes.getChildren().add(new Label(type.toHaskellType()));
 		}
+	}
+	
+	public Type getInputType(int index){
+		if(index>=0 && index <inputs.length){
+			//TODO what if fullType != ConstT
+			return BackendUtils.dive((ConstT) getFunctionSignature(),index + 1);
+		}else{
+			return null;
+		}
+	}
+	
+	public Type getInputType(InputAnchor input){
+		for(int i=0;i<getInputs().length;i++){
+			if(getInputs()[i].equals(input)){
+				return getInputType(i);
+			}
+		}
+		//TODO return invalid type?
+		return null;
 	}
 
 	private void invalidateOutput(Type outputType) {

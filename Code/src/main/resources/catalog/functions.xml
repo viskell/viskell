@@ -57,5 +57,6 @@
             Constant function.
         </function>
         <function name="undefined" signature="a"></function>
+        <function name="invalid" signature="a">Temporary fix</function>
     </category>
 </catalog>

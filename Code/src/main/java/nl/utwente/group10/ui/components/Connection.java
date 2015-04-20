@@ -2,7 +2,11 @@ package nl.utwente.group10.ui.components;
 
 import java.util.Optional;
 
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
@@ -62,23 +66,62 @@ public class Connection extends ConnectionLine implements
      * @param override If set will override (possible) existing Anchor.
      * @return Whether or not the anchor was added.
      */
-    public boolean addAnchor(ConnectionAnchor anchor, boolean override) {
+    public boolean tryAddAnchor(ConnectionAnchor anchor, boolean override) {
         boolean added = false;
         if ((!startAnchor.isPresent() || override) && anchor instanceof OutputAnchor) {
             disconnect(startAnchor);
-            setStartAnchor((OutputAnchor) anchor);
-            added = true;
+            
+            if(typesMatch(anchor) || override){
+	            setStartAnchor((OutputAnchor) anchor);
+	            added = true;
+            }else{
+            	//TODO type mismatch
+            	System.out.println("Type mismatch!");
+            }
         } else if ((!endAnchor.isPresent() || override) && anchor instanceof InputAnchor) {
             disconnect(endAnchor);
-            setEndAnchor((InputAnchor) anchor);
-            added = true;
+            
+            if(typesMatch(anchor) || override){
+                setEndAnchor((InputAnchor) anchor);
+	            added = true;
+            }else{
+            	//TODO type mismatch
+            	System.out.println("Type mismatch!");
+            }
         }
         
         return added;
     }
     
-    public boolean addAnchor(ConnectionAnchor anchor) {
-        return addAnchor(anchor, false);
+    public boolean tryAddAnchor(ConnectionAnchor anchor) {
+        return tryAddAnchor(anchor, false);
+    }
+    
+    public final boolean typesMatch(ConnectionAnchor anchor){
+    	//TODO refactor this.
+    	if(anchor instanceof InputAnchor){
+    		if(startAnchor.isPresent()){
+    			try{
+    				HindleyMilner.unify(startAnchor.get().getType(), anchor.getType());
+    				return true;
+    			}catch(HaskellTypeError e){
+    				return false;
+    			}
+    		}else{
+    			return true;
+    		}
+    	}else if(anchor instanceof OutputAnchor){
+    		if(endAnchor.isPresent()){
+    			try{
+    				HindleyMilner.unify(endAnchor.get().getType(), anchor.getType());
+    			}catch(HaskellTypeError e){
+    				return true;
+    			}
+    		}else{
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
     /**
@@ -87,7 +130,7 @@ public class Connection extends ConnectionLine implements
      *
      * @param start The OutputAnchor to start at.
      */
-    public void setStartAnchor(OutputAnchor start) {
+    private void setStartAnchor(OutputAnchor start) {
         if (startAnchor.isPresent()) {
             startAnchor.get().getBlock().layoutXProperty().removeListener(this);
             startAnchor.get().getBlock().layoutYProperty().removeListener(this);
@@ -106,7 +149,7 @@ public class Connection extends ConnectionLine implements
      *
      * @param end the InputAnchor to end at.
      */
-    public void setEndAnchor(InputAnchor end) {
+    private void setEndAnchor(InputAnchor end) {
         if (endAnchor.isPresent()) {
             endAnchor.get().getBlock().layoutXProperty().removeListener(this);
             endAnchor.get().getBlock().layoutYProperty().removeListener(this);
