@@ -1,8 +1,11 @@
 package nl.utwente.group10.haskell.expr;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.*;
 
@@ -17,6 +20,7 @@ public class ExprTest {
     private final ConstT integer = new ConstT("Int");
     private final ConstT floating = new ConstT("Float");
     private final ConstT doubl = new ConstT("Double");
+    private final ConstT string = new ConstT("String");
 
     private final TypeClass num = new TypeClass("Num", integer, floating, doubl);
     private final Type numT = new VarT("n", num);
@@ -48,6 +52,21 @@ public class ExprTest {
     @Test
     public final void testAnalyze() throws HaskellException {
         assertEquals("[(Int -> Int)]", this.expr.analyze(this.env, this.genSet).prune().toHaskellType());
+    }
+
+    @Test(expected = HaskellTypeError.class)
+    public final void testTypeclassError() throws HaskellException {
+        expr = new Apply(
+                new Apply(
+                        new Ident("map"),
+                        new Ident("(*)")
+                ),
+                new Value(
+                        new ListT(this.string),
+                        "[\"a\", \"b\", \"c\"]"
+                )
+        );
+        assertNotEquals("[(String -> String)]", expr.analyze(this.env, this.genSet).prune().toHaskellType());
     }
 
     @Test
