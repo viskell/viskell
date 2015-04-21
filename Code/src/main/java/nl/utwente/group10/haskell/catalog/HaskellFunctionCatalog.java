@@ -16,6 +16,7 @@ import javax.xml.validation.SchemaFactory;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 
+import nl.utwente.group10.haskell.type.TypeClass;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -140,13 +141,14 @@ public class HaskellFunctionCatalog {
 
     /**
      * Creates a new environment and adds all entries in this catalog to the environment.
+     * @param typeClasses A map of available type classes prior to this catalog.
      * @return The new environment.
      */
-    public final Env asEnvironment() {
+    public final Env asEnvironment(final Map<String, TypeClass> typeClasses) {
         final Env env = new Env();
 
         for (FunctionEntry entry : this.byName.values()) {
-            env.getExprTypes().put(entry.getName(), entry.getType());
+            env.getExprTypes().put(entry.getName(), entry.getType(typeClasses));
         }
 
         return env;
