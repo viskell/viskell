@@ -6,8 +6,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import nl.utwente.group10.haskell.catalog.Entry;
-import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.haskell.catalog.FunctionEntry;
+import nl.utwente.group10.haskell.catalog.HaskellFunctionCatalog;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
@@ -16,13 +16,13 @@ import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 public class MainMenu extends ContextMenu {
     private CustomUIPane parent;
 
-    public MainMenu(HaskellCatalog catalog, CustomUIPane tactilePane) {
+    public MainMenu(HaskellFunctionCatalog catalog, CustomUIPane tactilePane) {
         parent = tactilePane;
 
         for (String category : catalog.getCategories()) {
             Menu submenu = new Menu(category);
 
-            for (Entry entry : catalog.getCategory(category)) {
+            for (FunctionEntry entry : catalog.getCategory(category)) {
                 MenuItem item = new MenuItem(entry.getName());
                 item.setOnAction(event -> addFunctionBlock(entry));
                 submenu.getItems().add(item);
@@ -44,7 +44,7 @@ public class MainMenu extends ContextMenu {
         this.getItems().addAll(valueBlockItem, displayBlockItem, sep, quitItem);
     }
 
-    private void addFunctionBlock(Entry entry) {
+    private void addFunctionBlock(FunctionEntry entry) {
         try {
             FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), parent);
             addBlock(fb);

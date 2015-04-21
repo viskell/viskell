@@ -1,10 +1,13 @@
 package nl.utwente.group10.haskell.catalog;
 
 import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.haskell.type.TypeClass;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 
+import java.util.Map;
+
 /** A function entry in the Haskell catalog. */
-public class Entry implements Comparable<Entry> {
+public class FunctionEntry implements Comparable<FunctionEntry> {
     /** The name of this Entry. */
     private final String name;
 
@@ -24,7 +27,7 @@ public class Entry implements Comparable<Entry> {
      * @param signature The signature of this Entry.
      * @param documentation The documentation for this Entry.
      */
-    Entry(final String name, final String category, final String signature, final String documentation) {
+    FunctionEntry(final String name, final String category, final String signature, final String documentation) {
         this.name = name;
         this.category = category;
         this.signature = signature;
@@ -61,15 +64,24 @@ public class Entry implements Comparable<Entry> {
 
     /**
      * Parses and returns the Type of the function in this Entry.
+     * @param typeClasses The available type classes.
      * @return The Type of this Entry.
      */
-    public final Type getType() {
-        TypeBuilder builder = new TypeBuilder();
+    public final Type getType(Map<String, TypeClass> typeClasses) {
+        TypeBuilder builder = new TypeBuilder(typeClasses);
         return builder.build(this.getSignature());
     }
 
+    /**
+     * Parses and returns the Type of the function in this Entry.
+     * @return The Type of this Entry.
+     */
+    public final Type getType() {
+        return this.getType(null);
+    }
+
     @Override
-    public int compareTo(Entry entry) {
+    public int compareTo(FunctionEntry entry) {
         return this.getName().compareTo(entry.getName());
     }
 }
