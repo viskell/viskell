@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
-import nl.utwente.group10.haskell.catalog.HaskellFunctionCatalog;
+import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 
@@ -29,7 +29,7 @@ public class Main extends Application {
 
         tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
 
-        HaskellFunctionCatalog catalog = new HaskellFunctionCatalog();
+        HaskellCatalog catalog = new HaskellCatalog();
 
         tactilePane.getChildren().add(new ValueBlock(tactilePane));
         tactilePane.getChildren().add(new DisplayBlock(tactilePane));

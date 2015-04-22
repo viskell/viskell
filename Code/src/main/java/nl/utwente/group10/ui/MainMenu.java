@@ -6,8 +6,9 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
-import nl.utwente.group10.haskell.catalog.HaskellFunctionCatalog;
+import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
@@ -16,7 +17,7 @@ import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 public class MainMenu extends ContextMenu {
     private CustomUIPane parent;
 
-    public MainMenu(HaskellFunctionCatalog catalog, CustomUIPane tactilePane) {
+    public MainMenu(HaskellCatalog catalog, CustomUIPane tactilePane) {
         parent = tactilePane;
 
         for (String category : catalog.getCategories()) {
@@ -50,7 +51,7 @@ public class MainMenu extends ContextMenu {
 
     private void addFunctionBlock(FunctionEntry entry) {
         try {
-            FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getType(), parent);
+            FunctionBlock fb = new FunctionBlock(entry.getName(), entry.asHaskellObject(new Context()), parent); // TODO: Once the Env is available, the type should be pulled from the Env here (don't just calculate it over and over). Or just pass the signature String.
             addBlock(fb);
         } catch (IOException e) {
             e.printStackTrace();
