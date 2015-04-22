@@ -35,13 +35,17 @@ public class MainMenu extends ContextMenu {
         valueBlockItem.setOnAction(event -> addValueBlock());
         MenuItem displayBlockItem = new MenuItem("Display Block");
         displayBlockItem.setOnAction(event -> addDisplayBlock());
+        
+        //TODO remove this item when debugging of visualFeedback is done
+        MenuItem errorItem = new MenuItem("Error all Blocks");
+        errorItem.setOnAction(event -> parent.errorAll());
 
         MenuItem quitItem = new MenuItem("Quit");
         quitItem.setOnAction(event -> System.exit(0));
 
         SeparatorMenuItem sep = new SeparatorMenuItem();
 
-        this.getItems().addAll(valueBlockItem, displayBlockItem, sep, quitItem);
+        this.getItems().addAll(valueBlockItem, displayBlockItem, sep, errorItem, quitItem);
     }
 
     private void addFunctionBlock(FunctionEntry entry) {

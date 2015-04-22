@@ -1,10 +1,11 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.anchors;
 
 import java.io.IOException;
 import java.util.Optional;
 
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.AnchorHandler;
 
 /**
@@ -26,11 +27,6 @@ public class OutputAnchor extends ConnectionAnchor {
         getPane().getChildren().add(getConnection().get());
         getPane().invalidate();
         return getConnection().get();
-    }
-
-    @Override
-    public String toString() {
-        return "OutputAnchor for " + getBlock();
     }
 
     @Override

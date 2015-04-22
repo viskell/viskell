@@ -29,18 +29,16 @@ public class ValueBlock extends Block {
      * @throws IOException when the FXML definition cannot be loaded.
      */
     public ValueBlock(CustomUIPane pane) throws IOException {
-        super("ValueBlock", pane);
+        super(pane);
 
         value = new SimpleStringProperty("5.0");
 
-        this.getLoader().load();
+        this.getFXMLLoader("ValueBlock").load();
 
         outputSpace.getChildren().add(this.getOutputAnchor());
     }
 
-    /**
-     * @param value The value of this block to be used as output.
-     */
+    /** @param value The value of this block to be used as output. */
     public final void setValue(String value) {
         this.value.set(value);
     }
@@ -65,5 +63,10 @@ public class ValueBlock extends Block {
     public Expr asExpr() {
         // TODO: support more types than floats
         return new Value(new ConstT("Float"), getValue());
+    }
+
+    @Override
+    public void error() {
+        this.getStyleClass().add("error");
     }
 }

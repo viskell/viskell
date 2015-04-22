@@ -15,8 +15,8 @@ import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.ConnectionAnchor;
-import nl.utwente.group10.ui.components.InputAnchor;
+import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
+import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
 /**
  * Main building block for the visual interface, this class
@@ -48,12 +48,12 @@ public class FunctionBlock extends Block {
      * @throws IOException when the FXML defenition for this Block cannot be loaded.
      */
     public FunctionBlock(String name, Type type, CustomUIPane pane) throws IOException {
-        super("FunctionBlock", pane);
+        super(pane);
 
         this.name = new SimpleStringProperty(name);
         this.type = new SimpleStringProperty(type.toHaskellType());
 
-        this.getLoader().load();
+        this.getFXMLLoader("FunctionBlock").load();
 
         // Collect argument types
         ArrayList<String> args = new ArrayList<>();
@@ -158,9 +158,20 @@ public class FunctionBlock extends Block {
     @Override
     public final Expr asExpr() {
         Expr expr = new Ident(getName());
-
         for (InputAnchor in : getInputs()) expr = new Apply(expr, in.asExpr());
 
         return expr;
+    }
+
+    @Override
+    public final void error() {
+            for (InputAnchor in : getInputs()) {
+                if (!in.isConnected()) {
+                    argumentSpace.getChildren().get(getArgumentIndex(in)).getStyleClass().add("error");
+                } else if (in.isConnected()){
+                    argumentSpace.getChildren().get(getArgumentIndex(in)).getStyleClass().remove("error");
+                }
+            }
+            this.getStyleClass().add("error");
     }
 }

@@ -6,7 +6,7 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
-import nl.utwente.group10.ui.components.ConnectionAnchor;
+import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 
 public class AnchorHandler implements EventHandler<InputEvent> {
 

@@ -5,10 +5,10 @@ import java.util.Map;
 import java.util.Optional;
 
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.Connection;
-import nl.utwente.group10.ui.components.ConnectionAnchor;
-import nl.utwente.group10.ui.components.InputAnchor;
-import nl.utwente.group10.ui.components.OutputAnchor;
+import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
+import nl.utwente.group10.ui.components.anchors.InputAnchor;
+import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.lines.Connection;
 
 public class ConnectionCreationManager {
 

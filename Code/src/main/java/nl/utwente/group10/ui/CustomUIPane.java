@@ -7,9 +7,9 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
-import nl.utwente.group10.ui.components.Connection;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
+import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 /**
@@ -34,6 +34,14 @@ public class CustomUIPane extends TactilePane {
         for (Node node : getChildren()) {
             if (node instanceof DisplayBlock) {
                 ((DisplayBlock)node).invalidate();
+            }
+        }
+    }
+    
+    public final void errorAll() {
+        for (Node node : getChildren()) {
+            if (node instanceof Block) {
+                ((Block)node).error();
             }
         }
     }

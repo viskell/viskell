@@ -1,7 +1,14 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.lines;
 
 import java.util.Optional;
 
+import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.hindley.GenSet;
+import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
+import nl.utwente.group10.ui.components.anchors.InputAnchor;
+import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -76,7 +83,7 @@ public class Connection extends ConnectionLine implements
 
         return added;
     }
-    
+
     public boolean addAnchor(ConnectionAnchor anchor) {
         return addAnchor(anchor, false);
     }
@@ -88,16 +95,7 @@ public class Connection extends ConnectionLine implements
      * @param start The OutputAnchor to start at.
      */
     public void setStartAnchor(OutputAnchor start) {
-        if (startAnchor.isPresent()) {
-            startAnchor.get().getBlock().layoutXProperty().removeListener(this);
-            startAnchor.get().getBlock().layoutYProperty().removeListener(this);
-        }
-        startAnchor = Optional.of(start);
-        startAnchor.get().setConnection(this);
-
-        startAnchor.get().getBlock().layoutXProperty().addListener(this);
-        startAnchor.get().getBlock().layoutYProperty().addListener(this);
-        updateStartPosition();
+        setAnchor(startAnchor, start);
     }
 
     /**
@@ -107,16 +105,30 @@ public class Connection extends ConnectionLine implements
      * @param end the InputAnchor to end at.
      */
     public void setEndAnchor(InputAnchor end) {
-        if (endAnchor.isPresent()) {
-            endAnchor.get().getBlock().layoutXProperty().removeListener(this);
-            endAnchor.get().getBlock().layoutYProperty().removeListener(this);
-        }
-        endAnchor = Optional.of(end);
-        endAnchor.get().setConnection(this);
+        setAnchor(endAnchor, end);
+    }
 
-        endAnchor.get().getBlock().layoutXProperty().addListener(this);
-        endAnchor.get().getBlock().layoutYProperty().addListener(this);
-        updateEndPosition();
+    private void setAnchor(Optional anchor, ConnectionAnchor newAnchor) {
+        newAnchor.setConnection(this);
+        newAnchor.getBlock().layoutXProperty().addListener(this);
+        newAnchor.getBlock().layoutYProperty().addListener(this);
+
+        if (newAnchor instanceof OutputAnchor) {
+            if (startAnchor.isPresent()) {
+                startAnchor.get().getBlock().layoutXProperty().removeListener(this);
+                startAnchor.get().getBlock().layoutYProperty().removeListener(this);
+            }
+            startAnchor = Optional.of((OutputAnchor)newAnchor);
+        } else if (newAnchor instanceof InputAnchor) {
+            if (endAnchor.isPresent()) {
+                endAnchor.get().getBlock().layoutXProperty().removeListener(this);
+                endAnchor.get().getBlock().layoutYProperty().removeListener(this);
+            }
+            endAnchor = Optional.of((InputAnchor)newAnchor);
+        } 
+        
+        checkError();
+        updateStartEndPositions();
     }
 
     /**
@@ -191,7 +203,7 @@ public class Connection extends ConnectionLine implements
             endAnchor = Optional.empty();
         }
     }
-    
+
     public final void disconnect(Optional<? extends ConnectionAnchor> anchor){
         disconnect(anchor.orElse(null));
     }
@@ -205,5 +217,24 @@ public class Connection extends ConnectionLine implements
     public String toString() {
         return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  "
                 + endAnchor;
+    }
+
+    /**
+     * This method evaluates the validity of the created connection.
+     * If the connection results in an invalid operation a visual
+     * error will be displayed.
+     */
+    private void checkError() {
+        if(startAnchor.isPresent() && endAnchor.isPresent()) {
+            try {
+                //TODO Obviously this will cause errors, we need a way to access the Env
+                endAnchor.get().getBlock().asExpr().analyze(new Env(), new GenSet());
+                this.getStyleClass().remove("error");
+            } catch (HaskellTypeError e) {
+                this.getStyleClass().add("error");
+            } catch (HaskellException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
