@@ -10,6 +10,7 @@
                         font-family: sans-serif;
                         font-size: 10pt;
                         color: #333;
+                        line-height: 1.5;
                     }
 
                     h1 {
@@ -49,10 +50,31 @@
                         background-color: #f5f5f5;
                         border: 1px solid #e5e5e5;
                         padding: 1px 3px;
-                        margin: 0 1px;
+                        margin-right: 1px;
                         line-height: 1.4em;
                         font-family: monospace;
                         color: firebrick;
+                    }
+
+                    h1 code, h2 code, h3 code, h4 code {
+                        margin: 0;
+                        padding: 0;
+                        border: none;
+                        color: #333;
+                        line-height: 1.5;
+                    }
+
+                    .brand {
+                        color: teal;
+                        font-family: serif;
+                        font-style: italic;
+                        font-weight: bold;
+                    }
+
+                    h1.brand {
+                        background: transparent;
+                        font-size: 3em;
+                        margin: 20px;
                     }
 
                     .content {
@@ -72,9 +94,14 @@
                         font-weight: bold;
                     }
                     ol.toc > li {
-                        margin-left: 0;
+                        column-break-inside: avoid;
+                    }
+                    ol.toc > li > h4 {
+                        margin: 0;
+                        line-height: 2.5;
                     }
                     ol.toc ol {
+                        line-height: 1.75;
                         font-weight: normal;
                     }
 
@@ -83,6 +110,8 @@
                         border: 1px solid #ddd;
                         border-collapse: collapse;
                         font-size: 10pt;
+                        display: block;
+                        overflow-x: auto;
                     }
                     table.data th, table.data td {
                         border: 1px solid #ddd;
@@ -91,14 +120,22 @@
                         vertical-align: baseline;
                     }
                     table.data th {
+                        background-color: #f5f5f5;
                         font-weight: bold;
                     }
                     table.data th h4 {
                         margin: 0;
                     }
+
+                    @media screen and (max-width: 320px) {
+                        body {
+                            margin: 20px 0;
+                        }
+                    }
                 </style>
             </head>
             <body>
+                <h1 class="brand" style="text-align: center;">Viskell</h1>
                 <div class="content">
                     <h1>Haskell Catalog <small>v.<xsl:value-of select="/catalog/@version"/></small></h1>
                     <h3>Table of contents</h3>
@@ -186,6 +223,7 @@
                         </tbody>
                     </table>
                 </div>
+                <p style="text-align: center;">Haskell catalog provided by <span class="brand">Viskell</span> (<a href="https://github.com/wandernauta/Groep10">GitHub</a>).</p>
             </body>
         </html>
     </xsl:template>

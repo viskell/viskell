@@ -30,20 +30,46 @@
             <instance name="Float"/>
             <instance name="Double"/>
         </class>
+        <class name="Eq">
+            <instance name="Int"/>
+            <instance name="Ordering"/>
+            <instance name="Float"/>
+            <instance name="Double"/>
+            <instance name="Char"/>
+            <instance name="Bool"/>
+        </class>
     </classes>
     <functions>
         <category name="Equality">
-            <function name="(&lt;)" signature="Eq a => a -> a -> Bool"></function>
-            <function name="(==)" signature="Eq a => a -> a -> Bool"></function>
-            <function name="(>)" signature="Eq a => a -> a -> Bool"></function>
+            <function name="(&lt;)" signature="Eq a => a -> a -> Bool">
+                Less than
+            </function>
+            <function name="(==)" signature="Eq a => a -> a -> Bool">
+                Equal
+            </function>
+            <function name="(/=)" signature="Eq a => a -> a -> Bool">
+                Not equal
+            </function>
+            <function name="(>)" signature="Eq a => a -> a -> Bool">
+                Greater than
+            </function>
         </category>
         <category name="Math">
-            <function name="(*)" signature="Num a => a -> a -> a"></function>
-            <function name="(+)" signature="Num a => a -> a -> a"></function>
-            <function name="(-)" signature="Num a => a -> a -> a"></function>
-            <function name="(/)" signature="Fractional a => a -> a -> a"></function>
-            <function name="(/=)" signature="Eq a => a -> a -> Bool"></function>
-            <function name="(^)" signature="(Num a, Integral b) => a -> b -> a"></function>
+            <function name="(*)" signature="Num a => a -> a -> a">
+                Multiplication
+            </function>
+            <function name="(+)" signature="Num a => a -> a -> a">
+                Addition
+            </function>
+            <function name="(-)" signature="Num a => a -> a -> a">
+                Subtraction
+            </function>
+            <function name="(/)" signature="Fractional a => a -> a -> a">
+                Division
+            </function>
+            <function name="(^)" signature="(Num a, Integral b) => a -> b -> a">
+                Involution
+            </function>
 
             <function name="abs" signature="Num a => a -> a"></function>
             <function name="acos" signature="Floating a => a -> a"></function>
@@ -72,7 +98,9 @@
             <function name="tanh" signature="Floating a => a -> a"></function>
             <function name="truncate" signature="(RealFrac a, Integral b) => a -> b"></function>
 
-            <function name="pi" signature="Floating a => a"></function>
+            <function name="pi" signature="Floating a => a">
+                The number &#960;
+            </function>
         </category>
         <category name="Maps, folds and lists">
             <function name="head" signature="[a] -> a">
