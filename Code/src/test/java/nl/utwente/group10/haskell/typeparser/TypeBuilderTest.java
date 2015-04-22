@@ -34,9 +34,12 @@ public class TypeBuilderTest {
     @Test public void testTypeClass()   {
         Map<String, TypeClass> typeClasses = new HashMap<>();
         typeClasses.put("Num", new TypeClass("Num", new ConstT("Int"), new ConstT("Float"), new ConstT("Double")));
+        typeClasses.put("Eq", new TypeClass("Eq", new ConstT("Int"), new ConstT("Float"), new ConstT("Double"), new ConstT("Char"), new ConstT("Bool")));
         TypeBuilder builder = new TypeBuilder(typeClasses);
 
         Assert.assertEquals("(Num a)", builder.build("Num a => a").toHaskellType());
         Assert.assertEquals("((Num a) -> (Num a))", builder.build("(Num a) => (a -> a)").toHaskellType());
+        Assert.assertEquals("((Num a) -> b)", builder.build("(Num a, Nonexistent b) => a -> b").toHaskellType());
+        Assert.assertEquals("((Num a) -> (Eq b))", builder.build("(Num a, Eq b) => a -> b").toHaskellType());
     }
 }

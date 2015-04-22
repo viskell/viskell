@@ -47,6 +47,11 @@ class TypeBuilderListener extends TypeBaseListener {
     }
 
     @Override
+    public void enterTypeWithClass(TypeParser.TypeWithClassContext ctx) {
+        this.typeClass = Optional.empty();
+    }
+
+    @Override
     public void exitClassedType(TypeParser.ClassedTypeContext ctx) {
         if (this.typeClass.isPresent()) {
             this.constraints.put(ctx.getText(), this.typeClass.get());
