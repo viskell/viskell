@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Context for the catalog.
  */
-class Context {
+public class Context {
     /** Available type classes. */
     Map<String, TypeClass> typeClasses;
 

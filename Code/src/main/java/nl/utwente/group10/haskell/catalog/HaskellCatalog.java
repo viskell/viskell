@@ -6,36 +6,27 @@ import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
-import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.validation.SchemaFactory;
-import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 
 /**
  * Haskell catalog containing available type classes and functions.
  */
 public class HaskellCatalog extends Catalog {
-    private final Map<String, ClassEntry> classes = new HashMap<>();
+    private Map<String, ClassEntry> classes;
 
-    private final Map<String, FunctionEntry> functions = new HashMap<>();
+    private Map<String, FunctionEntry> functions;
 
-    private final Multimap<String, FunctionEntry> categories = HashMultimap.create();
+    private Multimap<String, FunctionEntry> categories;
 
     /** Default path to the XML file. */
-    public static final String XML_PATH = "catalog/catalog.xml";
+    public static final String XML_PATH = "/catalog/catalog.xml";
 
     /** Default path to the XSD file. */
-    public static final String XSD_PATH = "catalog/catalog.xsd";
+    public static final String XSD_PATH = "/catalog/catalog.xsd";
 
     /**
      * Constructs a Haskell catalog using the given file location.
@@ -172,7 +163,7 @@ public class HaskellCatalog extends Catalog {
      * @param entries The entries to set.
      */
     protected final void setClasses(Set<ClassEntry> entries) {
-        this.classes.clear();
+        this.classes = new HashMap<>();
 
         for (ClassEntry entry : entries) {
             this.classes.put(entry.getName(), entry);
@@ -184,8 +175,8 @@ public class HaskellCatalog extends Catalog {
      * @param entries The entries to set.
      */
     protected final void setFunctions(Set<FunctionEntry> entries) {
-        this.functions.clear();
-        this.categories.clear();
+        this.functions = new HashMap<>();
+        this.categories = HashMultimap.create();
 
         for (FunctionEntry entry : entries) {
             this.functions.put(entry.getName(), entry);

@@ -23,8 +23,8 @@ public abstract class Catalog {
      * @throws CatalogException
      */
     protected Catalog(final String XMLPath, final String XSDPath) throws CatalogException {
-        URL xmlFile = HaskellCatalog.class.getResource(XMLPath);
-        URL schemaFile = HaskellCatalog.class.getResource(XSDPath);
+        URL xmlFile = Catalog.class.getResource(XMLPath);
+        URL schemaFile = Catalog.class.getResource(XSDPath);
 
         try {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
