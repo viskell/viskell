@@ -1,154 +1,187 @@
 package nl.utwente.group10.haskell.catalog;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.validation.SchemaFactory;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
-
+import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.haskell.type.TypeClass;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import com.google.common.collect.TreeMultimap;
+import java.util.*;
 
 /**
- * Provides a convenient interface to the XML catalog of available Haskell functions.
+ * Haskell catalog containing available type classes and functions.
  */
-public class HaskellCatalog {
-    /** Map from category to entry for use in getCategories and getCategory. */
-    private final TreeMultimap<String, Entry> byCategory;
+public class HaskellCatalog extends Catalog {
+    private Map<String, ClassEntry> classes;
 
-    /** Map from function name to entry for use in get() and friends. */
-    private final Map<String, Entry> byName;
+    private Map<String, FunctionEntry> functions;
 
-    /** The default XML data source path. */
-    public static final String XML_PATH = "/catalog/functions.xml";
+    private Multimap<String, FunctionEntry> categories;
 
-    /** The resource path for the XML Schema definition. */
-    public static final String XSD_PATH = "/catalog/functions.xsd";
+    /** Default path to the XML file. */
+    public static final String XML_PATH = "/catalog/catalog.xml";
 
-    /**
-     * Construct a HaskellCatalog using the default path.
-     * @throws CatalogException when the default XML file can't be found, read, or parsed.
-     */
-    public HaskellCatalog() throws CatalogException {
-        this(XML_PATH);
-    }
+    /** Default path to the XSD file. */
+    public static final String XSD_PATH = "/catalog/catalog.xsd";
 
     /**
-     * Construct a HaskellCatalog from an XML file at the specified path.
-     * @param path The path to the XML file containing the collection.
-     * @throws CatalogException when the XML file can't be found, read, or parsed.
+     * Constructs a Haskell catalog using the given file location.
+     * @param path The path to the catalog XML file.
+     * @throws CatalogException
      */
     public HaskellCatalog(final String path) throws CatalogException {
-        URL functions = HaskellCatalog.class.getResource(path);
-        URL xmlschema = HaskellCatalog.class.getResource(XSD_PATH);
+        this.classes = new HashMap<>();
+        this.functions = new HashMap<>();
+        this.categories = HashMultimap.create();
 
-        this.byName = new HashMap<>();
-        this.byCategory = TreeMultimap.create();
+        Document doc = Catalog.getDocument(path, HaskellCatalog.XSD_PATH);
 
-        try {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            SchemaFactory sFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+        NodeList classNodes = doc.getElementsByTagName("class");
+        NodeList functionNodes = doc.getElementsByTagName("function");
 
-            dbFactory.setIgnoringElementContentWhitespace(true);
-            dbFactory.setIgnoringComments(true);
-            dbFactory.setSchema(sFactory.newSchema(xmlschema));
+        Set<ClassEntry> classes = this.parseClasses(classNodes);
+        Set<FunctionEntry> functions = this.parseFunctions(functionNodes);
 
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(functions.getPath());
-
-            NodeList funcNodes = doc.getElementsByTagName("function");
-
-            for (int j = 0; j < funcNodes.getLength(); j++) {
-                Node func = funcNodes.item(j);
-                NamedNodeMap funcAttributes = func.getAttributes();
-
-                String funcName = funcAttributes.getNamedItem("name").getTextContent();
-                String funcSig = funcAttributes.getNamedItem("signature").getTextContent();
-                String funcCat = func.getParentNode().getAttributes().getNamedItem("name").getTextContent();
-
-                Entry e = new Entry(funcName, funcCat, funcSig, func.getTextContent());
-
-                this.byName.put(funcName, e);
-                this.byCategory.put(funcCat, e);
-            }
-
-        } catch (IOException | ParserConfigurationException | SAXException e) {
-            throw new CatalogException(e);
-        }
+        this.setClasses(classes);
+        this.setFunctions(functions);
     }
 
     /**
-     * Get a single Entry by its function name.
-     * @param key The name of the Entry.
-     * @return The Entry with the specified name.
-     * @throws java.util.NoSuchElementException when the function is not defined.
+     * Constructs a Haskell catalog using the default file location.
+     * @throws CatalogException
      */
-    public final Entry getEntry(final String key) {
-        return this.byName.get(key);
+    public HaskellCatalog() throws CatalogException {
+        this(HaskellCatalog.XML_PATH);
     }
 
     /**
-     * Get a single Entry if it exists, or return the default.
-     * @param key The name of the Entry to get,
-     * @param defaultValue The default value to return when the Entry does not exist.
-     * @return The Entry if it exists, or the specified default.
-     */
-    public final Entry getOrDefault(final String key, final Entry defaultValue) {
-        return this.byName.getOrDefault(key, defaultValue);
-    }
-
-    /**
-     * Get an Optional value with a single Entry if it exists.
-     * @param key The name of the Entry.
-     * @return An optional that contains the Entry if it exists.
-     */
-    public final Optional<Entry> getMaybe(final String key) {
-        return Optional.ofNullable(this.getOrDefault(key, null));
-    }
-
-    /**
-     * Returns a Set of the known categories.
-     * @return The Set of known categories.
+     * @return The set of category names.
      */
     public final Set<String> getCategories() {
-        return this.byCategory.keySet();
+        return this.categories.keySet();
     }
 
     /**
-     * Returns all functions in the given category, or an empty collection.
-     * @param name The category name.
-     * @return The collection of functions in the given cateagory.
+     * @param key The name of the category.
+     * @return A set of the entries in the given category.
      */
-    public final Collection<Entry> getCategory(String name) {
-        return this.byCategory.get(name);
+    public final Collection<FunctionEntry> getCategory(final String key) {
+        return this.categories.get(key);
     }
 
     /**
-     * Creates a new environment and adds all entries in this catalog to the environment.
-     * @return The new environment.
+     * @return A new environment based on the entries of this catalog.
      */
     public final Env asEnvironment() {
-        final Env env = new Env();
+        Map<String, TypeClass> classes = new HashMap<>();
+        Map<String, Type> functions = new HashMap<>();
+        Context ctx = new Context();
 
-        for (Entry entry : this.byName.values()) {
-            env.getExprTypes().put(entry.getName(), entry.getType());
+        // Build type class map
+        for (ClassEntry entry : this.classes.values()) {
+            classes.put(entry.getName(), entry.asHaskellObject(ctx));
         }
 
-        return env;
+        // Add type classes to context
+        ctx.typeClasses = classes;
+
+        // Build function type map
+        for (FunctionEntry entry : this.functions.values()) {
+            functions.put(entry.getName(), entry.asHaskellObject(ctx));
+        }
+
+        return new Env(functions, classes.values());
+    }
+
+    /**
+     * Parses a list of class nodes into ClassEntry objects.
+     * @param nodes The nodes to parse.
+     * @return A set of ClassEntry objects for the given nodes.
+     */
+    protected final Set<ClassEntry> parseClasses(NodeList nodes) {
+        Set<ClassEntry> entries = new HashSet<>();
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            NamedNodeMap attributes = node.getAttributes();
+
+            String name = attributes.getNamedItem("name").getTextContent();
+            Set<String> instances = this.parseInstances(node.getChildNodes());
+
+            entries.add(new ClassEntry(name, instances));
+        }
+
+        return entries;
+    }
+
+    /**
+     * Parses a list of instance nodes for ClassEntry objects.
+     * @param nodes The nodes to parse.
+     * @return A set of String objects for the given nodes.
+     */
+    protected final Set<String> parseInstances(NodeList nodes) {
+        Set<String> instances = new HashSet<>();
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            NamedNodeMap attributes = node.getAttributes();
+
+            instances.add(attributes.getNamedItem("name").getTextContent());
+        }
+
+        return instances;
+    }
+    
+    /**
+     * Parses a list of function nodes into FunctionEntry objects.
+     * @param nodes The nodes to parse.
+     * @return A set of FunctionEntry objects for the given nodes.
+     */
+    protected final Set<FunctionEntry> parseFunctions(NodeList nodes) {
+        Set<FunctionEntry> entries = new HashSet<>();
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+            NamedNodeMap attributes = node.getAttributes();
+
+            String name = attributes.getNamedItem("name").getTextContent();
+            String signature = attributes.getNamedItem("signature").getTextContent();
+            String category = node.getParentNode().getAttributes().getNamedItem("name").getTextContent();
+            String documentation = node.getTextContent();
+
+            entries.add(new FunctionEntry(name, category, signature, documentation));
+        }
+
+        return entries;
+    }
+
+    /**
+     * Sets the type classes for this catalog. Clears out any existing information.
+     * @param entries The entries to set.
+     */
+    protected final void setClasses(Set<ClassEntry> entries) {
+        this.classes.clear();
+
+        for (ClassEntry entry : entries) {
+            this.classes.put(entry.getName(), entry);
+        }
+    }
+
+    /**
+     * Sets the functions and categories for this catalog. Clears out any existing information.
+     * @param entries The entries to set.
+     */
+    protected final void setFunctions(Set<FunctionEntry> entries) {
+        this.functions.clear();
+        this.categories.clear();
+
+        for (FunctionEntry entry : entries) {
+            this.functions.put(entry.getName(), entry);
+            this.categories.put(entry.getCategory(), entry);
+        }
     }
 }

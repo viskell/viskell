@@ -1,5 +1,6 @@
 package nl.utwente.group10.haskell.env;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -23,9 +24,21 @@ public class Env {
      */
     private HashMultimap<Type, TypeClass> typeClasses;
 
+    /**
+     * @param exprTypes Map of Expr types.
+     * @param typeClasses Multimap of type classes.
+     */
+    public Env(Map<String, Type> exprTypes, HashMultimap<Type, TypeClass> typeClasses) {
+        this.exprTypes = exprTypes;
+        this.typeClasses = typeClasses;
+    }
+
+    public Env(Map<String, Type> exprTypes, Collection<TypeClass> typeClasses) {
+        this(exprTypes, Env.buildTypeClasses(typeClasses));
+    }
+
     public Env() {
-        this.exprTypes = new HashMap<String, Type>();
-        this.typeClasses = HashMultimap.create();
+        this(new HashMap<String, Type>(), HashMultimap.create());
     }
 
     /**
@@ -51,5 +64,35 @@ public class Env {
      */
     public final Set<TypeClass> getTypeClasses(Type type) {
         return this.typeClasses.get(type);
+    }
+
+    /**
+     * @return A mapping between the name of a type class and its object.
+     */
+    public final Map<String, TypeClass> getTypeClasses() {
+        Map<String, TypeClass> typeClasses = new HashMap<>();
+
+        for (TypeClass tc : this.typeClasses.values()) {
+            typeClasses.put(tc.getName(), tc);
+        }
+
+        return typeClasses;
+    }
+
+    /**
+     * Builds a Multimap from Type to TypeClass given a set of TypeClass objects.
+     * @param typeClasses The TypeClass objects to include.
+     * @return A Multimap containing the given TypeClass objects.
+     */
+    public static HashMultimap<Type, TypeClass> buildTypeClasses(final Collection<TypeClass> typeClasses) {
+        HashMultimap<Type, TypeClass> result = HashMultimap.create();
+
+        for (TypeClass typeClass : typeClasses) {
+            for (Type type : typeClass.getTypes()) {
+                result.put(type, typeClass);
+            }
+        }
+
+        return result;
     }
 }

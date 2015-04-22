@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="catalog.xsl" ?>
+<catalog version="0.4">
+    <classes>
+        <class name="Num">
+            <instance name="Int"/>
+            <instance name="Float"/>
+            <instance name="Double"/>
+        </class>
+        <class name="Fractional">
+            <instance name="Float"/>
+            <instance name="Double"/>
+        </class>
+        <class name="Floating">
+            <instance name="Float"/>
+            <instance name="Double"/>
+        </class>
+        <class name="Integral">
+            <instance name="Int"/>
+        </class>
+        <class name="RealFrac">
+            <instance name="Float"/>
+            <instance name="Double"/>
+        </class>
+        <class name="Enum">
+            <instance name="Ordering"/>
+            <instance name="Int"/>
+            <instance name="Char"/>
+            <instance name="Bool"/>
+            <instance name="Float"/>
+            <instance name="Double"/>
+        </class>
+    </classes>
+    <functions>
+        <category name="Equality">
+            <function name="(&lt;)" signature="Eq a => a -> a -> Bool"></function>
+            <function name="(==)" signature="Eq a => a -> a -> Bool"></function>
+            <function name="(>)" signature="Eq a => a -> a -> Bool"></function>
+        </category>
+        <category name="Math">
+            <function name="(*)" signature="Num a => a -> a -> a"></function>
+            <function name="(+)" signature="Num a => a -> a -> a"></function>
+            <function name="(-)" signature="Num a => a -> a -> a"></function>
+            <function name="(/)" signature="Fractional a => a -> a -> a"></function>
+            <function name="(/=)" signature="Eq a => a -> a -> Bool"></function>
+            <function name="(^)" signature="(Num a, Integral b) => a -> b -> a"></function>
+
+            <function name="abs" signature="Num a => a -> a"></function>
+            <function name="acos" signature="Floating a => a -> a"></function>
+            <function name="acosh" signature="Floating a => a -> a"></function>
+            <function name="asin" signature="Floating a => a -> a"></function>
+            <function name="asinh" signature="Floating a => a -> a"></function>
+            <function name="atan" signature="Floating a => a -> a"></function>
+            <function name="atanh" signature="Floating a => a -> a"></function>
+            <function name="ceiling" signature="(RealFrac a, Integral b) => a -> b"></function>
+            <function name="cos" signature="Floating a => a -> a"></function>
+            <function name="cosh" signature="Floating a => a -> a"></function>
+            <function name="exp" signature="Floating a => a -> a"></function>
+            <function name="floor" signature="(RealFrac a, Integral b) => a -> b"></function>
+            <function name="log" signature="Floating a => a -> a"></function>
+            <function name="logBase" signature="Floating a => a -> a -> a"></function>
+            <function name="negate" signature="Num a => a -> a"></function>
+            <function name="pred" signature="Enum a => a -> a"></function>
+            <function name="recip" signature="Fractional a => a -> a"></function>
+            <function name="round" signature="(RealFrac a, Integral b) => a -> b"></function>
+            <function name="signum" signature="Num a => a -> a"></function>
+            <function name="sin" signature="Floating a => a -> a"></function>
+            <function name="sinh" signature="Floating a => a -> a"></function>
+            <function name="sqrt" signature="Floating a => a -> a"></function>
+            <function name="succ" signature="Enum a => a -> a"></function>
+            <function name="tan" signature="Floating a => a -> a"></function>
+            <function name="tanh" signature="Floating a => a -> a"></function>
+            <function name="truncate" signature="(RealFrac a, Integral b) => a -> b"></function>
+
+            <function name="pi" signature="Floating a => a"></function>
+        </category>
+        <category name="Maps, folds and lists">
+            <function name="head" signature="[a] -> a">
+                Extract the first element of a list, which must be non-empty.
+            </function>
+        </category>
+        <category name="Assorted">
+            <function name="id" signature="a -> a" >
+                Identity function.
+            </function>
+            <function name="const" signature="a -> b -> a">
+                Constant function.
+            </function>
+        </category>
+    </functions>
+</catalog>

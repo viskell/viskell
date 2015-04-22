@@ -1,17 +1,10 @@
 package nl.utwente.group10.haskell.typeparser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
-import nl.utwente.group10.haskell.type.ConstT;
-import nl.utwente.group10.haskell.type.FuncT;
-import nl.utwente.group10.haskell.type.ListT;
-import nl.utwente.group10.haskell.type.TupleT;
-import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.haskell.type.VarT;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import nl.utwente.group10.haskell.type.*;
 
 /**
  * ANTLR listener that builds Type instances.
@@ -23,9 +16,46 @@ class TypeBuilderListener extends TypeBaseListener {
     /** Temporary reference store for variable types. */
     private final HashMap<String, VarT> vars = new HashMap<>();
 
-    /** Build a TypeBuilderListener. */
-    protected TypeBuilderListener() {
+    /** Temporary reference store for type classes. */
+    private final Multimap<String, TypeClass> constraints = HashMultimap.create();
+
+    /** Temporary store for the last type class. */
+    private Optional<TypeClass> typeClass = Optional.empty();
+
+    /** The available type classes. */
+    private final Map<String, TypeClass> typeClasses;
+
+    /**
+     * Build a TypeBuilderListener.
+     * @param typeClasses The available type classes.
+     */
+    protected TypeBuilderListener(Map<String, TypeClass> typeClasses) {
+        this.typeClasses = typeClasses;
         this.enter();
+    }
+
+    /** Build a TypeBuilderListener without type class support. */
+    protected TypeBuilderListener() {
+        this(new HashMap<>());
+    }
+
+    @Override
+    public void exitTypeClasses(TypeParser.TypeClassesContext ctx) {
+        for (String varName : this.constraints.keySet()) {
+            vars.put(varName, new VarT(varName, (Set<TypeClass>) this.constraints.get(varName), null));
+        }
+    }
+
+    @Override
+    public void exitClassedType(TypeParser.ClassedTypeContext ctx) {
+        if (this.typeClass.isPresent()) {
+            this.constraints.put(ctx.getText(), this.typeClass.get());
+        }
+    }
+
+    @Override
+    public void exitTypeClass(TypeParser.TypeClassContext ctx) {
+        this.typeClass = Optional.ofNullable(this.typeClasses.getOrDefault(ctx.getText(), null));
     }
 
     @Override

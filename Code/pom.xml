@@ -112,8 +112,8 @@
             </validationSet>
             <validationSet>
               <dir>src/main/resources/catalog/</dir>
-              <includes><include>functions.xml</include></includes>
-              <systemId>src/main/resources/catalog/functions.xsd</systemId>
+              <includes><include>catalog.xml</include></includes>
+              <systemId>src/main/resources/catalog/catalog.xsd</systemId>
             </validationSet>
           </validationSets>
         </configuration>
