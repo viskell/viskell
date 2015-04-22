@@ -34,7 +34,20 @@ public class HaskellCatalog extends Catalog {
      * @throws CatalogException
      */
     public HaskellCatalog(final String path) throws CatalogException {
-        super(path, HaskellCatalog.XSD_PATH);
+        this.classes = new HashMap<>();
+        this.functions = new HashMap<>();
+        this.categories = HashMultimap.create();
+
+        Document doc = Catalog.getDocument(path, HaskellCatalog.XSD_PATH);
+
+        NodeList classNodes = doc.getElementsByTagName("class");
+        NodeList functionNodes = doc.getElementsByTagName("function");
+
+        Set<ClassEntry> classes = this.parseClasses(classNodes);
+        Set<FunctionEntry> functions = this.parseFunctions(functionNodes);
+
+        this.setClasses(classes);
+        this.setFunctions(functions);
     }
 
     /**
@@ -82,18 +95,6 @@ public class HaskellCatalog extends Catalog {
         }
 
         return new Env(functions, classes.values());
-    }
-
-    @Override
-    protected final void parse(final Document doc) {
-        NodeList classNodes = doc.getElementsByTagName("class");
-        NodeList functionNodes = doc.getElementsByTagName("function");
-
-        Set<ClassEntry> classes = this.parseClasses(classNodes);
-        Set<FunctionEntry> functions = this.parseFunctions(functionNodes);
-
-        this.setClasses(classes);
-        this.setFunctions(functions);
     }
 
     /**
@@ -163,7 +164,7 @@ public class HaskellCatalog extends Catalog {
      * @param entries The entries to set.
      */
     protected final void setClasses(Set<ClassEntry> entries) {
-        this.classes = new HashMap<>();
+        this.classes.clear();
 
         for (ClassEntry entry : entries) {
             this.classes.put(entry.getName(), entry);
@@ -175,8 +176,8 @@ public class HaskellCatalog extends Catalog {
      * @param entries The entries to set.
      */
     protected final void setFunctions(Set<FunctionEntry> entries) {
-        this.functions = new HashMap<>();
-        this.categories = HashMultimap.create();
+        this.functions.clear();
+        this.categories.clear();
 
         for (FunctionEntry entry : entries) {
             this.functions.put(entry.getName(), entry);

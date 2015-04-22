@@ -16,13 +16,13 @@ import java.net.URL;
  */
 public abstract class Catalog {
     /**
-     * Constructs a new Catalog and loads the given XML file and schema. Parses the XML file by calling the
-     * {@code parse} method which is implemented by subclasses.
+     * Loads the given XML catalog into a document.
      * @param XMLPath The path to the XML file.
      * @param XSDPath The path to the XSD file.
+     * @return The document for the XML file.
      * @throws CatalogException
      */
-    protected Catalog(final String XMLPath, final String XSDPath) throws CatalogException {
+    protected static Document getDocument(final String XMLPath, final String XSDPath) throws CatalogException {
         URL xmlFile = Catalog.class.getResource(XMLPath);
         URL schemaFile = Catalog.class.getResource(XSDPath);
 
@@ -35,17 +35,10 @@ public abstract class Catalog {
             dbFactory.setSchema(sFactory.newSchema(schemaFile));
 
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(xmlFile.getPath());
 
-            this.parse(doc);
+            return dBuilder.parse(xmlFile.getPath());
         } catch (IOException | ParserConfigurationException | SAXException e) {
             throw new CatalogException(e);
         }
     }
-
-    /**
-     * Parses an XML document and saves the result to the class. This method is called from the constructor.
-     * @param doc The document to parse.
-     */
-    protected abstract void parse(final Document doc);
 }
