@@ -36,6 +36,7 @@ public class TypeBuilderTest {
         typeClasses.put("Num", new TypeClass("Num", new ConstT("Int"), new ConstT("Float"), new ConstT("Double")));
         TypeBuilder builder = new TypeBuilder(typeClasses);
 
+        Assert.assertEquals("(Num a)", builder.build("Num a => a").toHaskellType());
         Assert.assertEquals("((Num a) -> (Num a))", builder.build("(Num a) => (a -> a)").toHaskellType());
     }
 }
