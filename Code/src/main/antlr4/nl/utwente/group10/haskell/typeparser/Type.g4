@@ -17,7 +17,7 @@ constantType : typeConstructor (WS* innerType)* ;
 typeConstructor : CT ;
 variableType : VT ;
 
-typeClasses : '(' typeWithClass (',' typeWithClass)* ')' '=>' ;
+typeClasses : '(' typeWithClass (',' typeWithClass)* ')' '=>' | typeWithClass '=>' ;
 typeWithClass : typeClass WS* classedType ;
 classedType : VT ;
 typeClass : CT ;
