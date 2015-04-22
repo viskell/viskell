@@ -1,5 +1,6 @@
 package nl.utwente.group10.haskell.env;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,10 @@ public class Env {
     public Env(Map<String, Type> exprTypes, HashMultimap<Type, TypeClass> typeClasses) {
         this.exprTypes = exprTypes;
         this.typeClasses = typeClasses;
+    }
+
+    public Env(Map<String, Type> exprTypes, Collection<TypeClass> typeClasses) {
+        this(exprTypes, Env.buildTypeClasses(typeClasses));
     }
 
     public Env() {
@@ -75,13 +80,19 @@ public class Env {
     }
 
     /**
-     * Joins two environments in a special way. Returns a new Env with the expression types from the first Env and the
-     * type classes from the second Env.
-     * @param exprEnv The first environment.
-     * @param classEnv The second environment.
-     * @return A new environment containing the expressions from the first Env and the type classes from the second Env.
+     * Builds a Multimap from Type to TypeClass given a set of TypeClass objects.
+     * @param typeClasses The TypeClass objects to include.
+     * @return A Multimap containing the given TypeClass objects.
      */
-    public static Env join(Env exprEnv, Env classEnv) {
-        return new Env(exprEnv.exprTypes, classEnv.typeClasses);
+    public static HashMultimap<Type, TypeClass> buildTypeClasses(final Collection<TypeClass> typeClasses) {
+        HashMultimap<Type, TypeClass> result = HashMultimap.create();
+
+        for (TypeClass typeClass : typeClasses) {
+            for (Type type : typeClass.getTypes()) {
+                result.put(type, typeClass);
+            }
+        }
+
+        return result;
     }
 }

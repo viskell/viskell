@@ -1,51 +1,41 @@
 package nl.utwente.group10.haskell.catalog;
 
-import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-/** A class entry in the Haskell catalog. */
-public class ClassEntry implements Comparable<ClassEntry> {
-    /** The name of this entry. */
-    private String name;
-
-    /** The instances of this class entry. */
+/**
+ * A type class in the Haskell catalog.
+ */
+public class ClassEntry extends Entry {
+    /** The string representations of the instances of this type class. */
     private Set<String> instances;
 
     /**
-     * @param name The name of this entry.
-     * @param instances The instances of this entry.
+     * @param name The name of this type class.
+     * @param instances The string representations of the instances of this type class.
      */
     public ClassEntry(final String name, final Set<String> instances) {
-        this.name = name;
+        super(name);
         this.instances = instances;
     }
 
     /**
-     * @return The name of the type class of this entry.
-     */
-    public final String getName() {
-        return this.name;
-    }
-
-    /**
-     * @return The names of the instances of the type class of this entry.
+     * @return The string representations of the instances of this type class.
      */
     public final Set<String> getInstances() {
         return this.instances;
     }
 
     /**
-     * Parses and returns the TypeClass for this Entry.
-     * @param typeClasses The available type classes.
-     * @return The TypeClass for this Entry.
+     * Parses, constructs and returns the type class for this entry.
+     * @param ctx The context to use.
+     * @return The type class for this entry.
      */
-    public final TypeClass getTypeClass(Map<String, TypeClass> typeClasses) {
-        TypeBuilder builder = new TypeBuilder(typeClasses);
+    @Override
+    public final TypeClass asHaskellObject(final Context ctx) {
+        TypeBuilder builder = new TypeBuilder(ctx.typeClasses);
         TypeClass tc = new TypeClass(this.getName());
 
         for (String instance : this.instances) {
@@ -53,18 +43,5 @@ public class ClassEntry implements Comparable<ClassEntry> {
         }
 
         return tc;
-    }
-
-    /**
-     * Parses and returns the TypeClass for this Entry.
-     * @return The TypeClass for this Entry.
-     */
-    public final TypeClass getTypeClass() {
-        return this.getTypeClass(null);
-    }
-
-    @Override
-    public int compareTo(ClassEntry entry) {
-        return this.getName().compareTo(entry.getName());
     }
 }

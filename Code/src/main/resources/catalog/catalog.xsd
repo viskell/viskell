@@ -9,6 +9,7 @@
       <xs:element type="classesType" name="classes" maxOccurs="1" minOccurs="0"/>
       <xs:element type="functionsType" name="functions" maxOccurs="1" minOccurs="0"/>
     </xs:sequence>
+    <xs:attribute type="xs:token" name="version" use="required"/>
   </xs:complexType>
   <xs:complexType name="classesType">
     <xs:sequence>

@@ -20,6 +20,9 @@
                         background-color: teal;
                         color: white;
                     }
+                    h1 small {
+                        font-size: 0.65em;
+                    }
                     h2 {
                         font-size: 1.5em;
                     }
@@ -43,19 +46,25 @@
                     }
 
                     code {
-                        background-color: #eee;
-                        border: 1px solid #ddd;
+                        background-color: #f5f5f5;
+                        border: 1px solid #e5e5e5;
                         padding: 1px 3px;
+                        margin: 0 1px;
+                        line-height: 1.4em;
                         font-family: monospace;
-                        color: darkred;
+                        color: firebrick;
                     }
 
                     .content {
-                        max-width: 800px;
+                        max-width: 1200px;
                         margin: auto;
                         padding: 20px;
                         background-color: #fff;
                         border: 1px solid #ddd;
+                    }
+
+                    .subtle {
+                        color: #aaa;
                     }
 
                     ol.toc {
@@ -84,11 +93,14 @@
                     table.data th {
                         font-weight: bold;
                     }
+                    table.data th h4 {
+                        margin: 0;
+                    }
                 </style>
             </head>
             <body>
                 <div class="content">
-                    <h1>Catalog</h1>
+                    <h1>Haskell Catalog <small>v.<xsl:value-of select="/catalog/@version"/></small></h1>
                     <h3>Table of contents</h3>
                     <ol class="toc">
                         <li>
@@ -121,7 +133,7 @@
 
                     <hr/>
 
-                    <h2><a id="classes"/>Type classes</h2>
+                    <h2 id="classes">Type classes</h2>
 
                     <table class="data">
                         <tbody>
@@ -142,7 +154,7 @@
                         </tbody>
                     </table>
 
-                    <h2><a id="functions"/>Functions</h2>
+                    <h2 id="functions">Functions</h2>
                     <p>The functions are separated by category.</p>
 
                     <table class="data">
@@ -158,10 +170,15 @@
                                             </th>
                                         </xsl:if>
                                         <td>
-                                            <code><xsl:value-of select="@name"/></code>
+                                            <code><xsl:value-of select="@name"/> :: <xsl:value-of select="@signature"/></code>
                                         </td>
                                         <td>
-                                            <p><xsl:value-of select="."/></p>
+                                            <p>
+                                                <xsl:value-of select="."/>
+                                                <xsl:if test=". = ''">
+                                                    <em class="subtle">No documentation provided.</em>
+                                                </xsl:if>
+                                            </p>
                                         </td>
                                     </tr>
                                 </xsl:for-each>
