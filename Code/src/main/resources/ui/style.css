@@ -69,6 +69,10 @@ CustomUIPane {
 
 .connection {
     -fx-stroke-width: 3px;
-    -fx-stroke: red;
+    -fx-stroke: white;
     -fx-fill: null;
+}
+
+.connection.error {
+    -fx-stroke: orange;
 }
