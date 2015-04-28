@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
+import javafx.scene.shape.Line;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 
@@ -108,5 +109,16 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
 
     public double getDeltaY() {
         return this.getEndY() - this.getStartY();
+    }
+    
+    /**
+     * @returns a point which lies in the middle between the start point and the end point.
+     */
+    public Point2D getMidPoint() {
+        Point2D start = new Point2D(this.getStartX(), this.getStartY());
+        Point2D end = new Point2D(this.getEndX(), this.getEndY());
+        
+        return start.midpoint(end);
+        
     }
 }
