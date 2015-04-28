@@ -10,9 +10,11 @@ import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.CustomUIPane;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.Line;
 
 /**
  * This is a ConnectionLine that also stores a startAnchor and an endAnchor to
@@ -26,7 +28,9 @@ public class Connection extends ConnectionLine implements
     private Optional<OutputAnchor> startAnchor = Optional.empty();
     /** Ending point of this Line that can be Anchored onto other objects */
     private Optional<InputAnchor> endAnchor = Optional.empty();
-
+    /** Error indication Line */
+    private Optional<Line> errorLine = Optional.empty();
+    
     public Connection() {
         // Allow default constructor
     }
@@ -148,8 +152,9 @@ public class Connection extends ConnectionLine implements
         if (startAnchor.isPresent()) {
             setStartPosition(getScenePoint(startAnchor.get()));
         }
+        updateErrorLines();
     }
-
+    
     /**
      * Refresh the End position of this Line using endAnchor as a reference
      * point.
@@ -158,6 +163,7 @@ public class Connection extends ConnectionLine implements
         if (endAnchor.isPresent()) {
             setEndPosition(getScenePoint(endAnchor.get()));
         }
+        updateErrorLines();
     }
 
     /** @return the scene-relative Point location of this anchor. */
@@ -206,6 +212,9 @@ public class Connection extends ConnectionLine implements
 
     public final void disconnect(Optional<? extends ConnectionAnchor> anchor){
         disconnect(anchor.orElse(null));
+        if (errorLine.isPresent()){
+        ((CustomUIPane)this.getParent()).getChildren().remove(errorLine.get());
+        }
     }
 
     public final void disconnect() {
@@ -226,15 +235,21 @@ public class Connection extends ConnectionLine implements
      */
     private void checkError() {
         if(startAnchor.isPresent() && endAnchor.isPresent()) {
-            try {
-                //TODO Obviously this will cause errors, we need a way to access the Env
-                endAnchor.get().getBlock().asExpr().analyze(new Env(), new GenSet());
-                this.getStyleClass().remove("error");
-            } catch (HaskellTypeError e) {
-                this.getStyleClass().add("error");
-            } catch (HaskellException e) {
-                e.printStackTrace();
-            }
+            //TODO for debugging this line will always error
+            this.getStyleClass().add("error");
+            Point2D midPoint = getMidPoint();
+            errorLine = Optional.of(new Line(midPoint.getX()-10, midPoint.getY()-10, midPoint.getX()+10, midPoint.getY()+10));
+            ((CustomUIPane)this.getParent()).getChildren().add(errorLine.get());
+        }
+    }
+    
+    /** Updates the position of the error line*/
+    private void updateErrorLines() {
+        if (errorLine.isPresent()) {
+            errorLine.get().setStartX(getMidPoint().getX()-10);
+            errorLine.get().setStartY(getMidPoint().getY()-10);
+            errorLine.get().setEndX(getMidPoint().getX()+10);
+            errorLine.get().setEndY(getMidPoint().getY()+10);
         }
     }
 }
