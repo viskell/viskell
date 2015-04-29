@@ -29,12 +29,12 @@ public class Connection extends ConnectionLine implements
     }
 
     public Connection(OutputAnchor from) {
-        this.setStartAnchor(from);
+    	tryAddAnchor(from);
         setEndPosition(getScenePoint(from));
     }
 
     public Connection(InputAnchor to) {
-        this.setEndAnchor(to);
+    	tryAddAnchor(to);
         setStartPosition(getScenePoint(to));
     }
 
@@ -97,27 +97,34 @@ public class Connection extends ConnectionLine implements
         return tryAddAnchor(anchor, false);
     }
     
-    public final boolean typesMatch(ConnectionAnchor anchor){
-    	//TODO refactor this.
-    	if(anchor instanceof InputAnchor){
+    public final boolean typesMatch(ConnectionAnchor potentialAnchor){
+    	//TODO Let this return mismatch information?
+    	if(potentialAnchor instanceof InputAnchor){
     		if(startAnchor.isPresent()){
     			try{
-    				HindleyMilner.unify(startAnchor.get().getType(), anchor.getType());
+    				HindleyMilner.unify(startAnchor.get().getType(), potentialAnchor.getType());
+    				//Types successfully unified
     				return true;
     			}catch(HaskellTypeError e){
+    				//Unable to unify types;
     				return false;
     			}
     		}else{
+    			//First anchor to be added
     			return true;
     		}
-    	}else if(anchor instanceof OutputAnchor){
+    	}else if(potentialAnchor instanceof OutputAnchor){
     		if(endAnchor.isPresent()){
     			try{
-    				HindleyMilner.unify(endAnchor.get().getType(), anchor.getType());
-    			}catch(HaskellTypeError e){
+    				HindleyMilner.unify(endAnchor.get().getType(), potentialAnchor.getType());
+    				//Types successfully unified
     				return true;
+    			}catch(HaskellTypeError e){
+    				//Unable to unify types;
+    				return false;
     			}
     		}else{
+    			//First anchor to be added
     			return true;
     		}
     	}

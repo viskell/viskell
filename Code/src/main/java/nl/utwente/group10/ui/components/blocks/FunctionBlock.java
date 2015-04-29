@@ -183,58 +183,140 @@ public class FunctionBlock extends Block {
 		return index;
 	}
 
+	public boolean inputsAreConnected() {
+		for (int i = 0; i < getInputs().length; i++) {
+			if (!inputIsConnected(i)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean inputIsConnected(int index) {
+		if (index >= 0 && index < getInputs().length) {
+			return getInputs()[index] != null
+					&& getInputs()[index].isFullyConnected();
+		}
+		return false;
+	}
+
 	/**
 	 * @return The current (output) expression belonging to this block. If input
-	 *         number n is filled in, this output assumes all inputs till number n are also
-	 *         filled in.
+	 *         number n is filled in, this output assumes all inputs till number
+	 *         n are also filled in.
 	 */
 	@Override
 	public final Expr asExpr() {
 		Expr expr = new Ident(getName());
 		// Find last input that is filled in
-		for (int a = getInputs().length - 1; a >= 0; a--) {
-			InputAnchor in = getInputs()[a];
-			Expr inputExpr = in.asExpr();
-			// Fill in all inputs till the filled in input.
-			if (in != null && BackendUtils.isValidExpression(inputExpr)) {
-				for (int b = 0; b <= a; b++) {
-					in = getInputs()[b];
-					inputExpr = in.asExpr();
-					expr = new Apply(expr, inputExpr);
-				}
-				a = -1; // Break loop
+		for (InputAnchor in : getInputs()) {
+			if (in != null) {
+				Expr inputExpr = in.asExpr();
+				expr = new Apply(expr, inputExpr);
 			}
 		}
 		return expr;
 	}
 
-	public Type getFunctionSignature(){
-		return getFunctionSignature(getPane().getEnvInstance(),new GenSet());
-	}
+	/*
+	 * Signature = non unified type, ie: a->b
+	 * 
+	 * (Current)Type = unified type, ie Int -> Float (This can still have
+	 * signature a->b)
+	 * 
+	 * These are not the same, but are related. The Type has to conform to the
+	 * signature.
+	 */
 	
+	public Type getFunctionSignature() {
+		return getFunctionSignature(getPane().getEnvInstance(), new GenSet());
+	}
+
 	public Type getFunctionSignature(Env env, GenSet genSet) {
 		try {
 			return new Ident(getName()).analyze(env, genSet);
 		} catch (HaskellException e) {
 			// Only happens when function is incorrectly declared in catalog.
 			e.printStackTrace();
-			//TODO return something more meaningful?
+			// TODO return something more meaningful?
 			return null;
 		}
 	}
-	
-	public Type getOutputType(){
-		return getOutputType(getPane().getEnvInstance(),new GenSet());
+
+	public Type getOutputSignature() {
+		return getOutputSignature(getPane().getEnvInstance(), new GenSet());
 	}
-	
-	public Type getOutputType(Env env, GenSet genSet){
-		try {
-			return this.asExpr().analyze(env, genSet);
-		} catch (HaskellException e) {
-			// TODO: Current connections are wrong, now what?
-			e.printStackTrace();
+
+	public Type getOutputSignature(Env env, GenSet genSet) {
+		Type type = getFunctionSignature();
+		for (int i = 0; i < getInputs().length; i++) {
+			type = ((ConstT) type).getArgs()[1];
 		}
+		return type;
+	}
+
+	public Type getInputSignature(InputAnchor input) {
+		for (int i = 0; i < getInputs().length; i++) {
+			if (getInputs()[i].equals(input)) {
+				return getInputSignature(i);
+			}
+		}
+		// TODO return invalid type?
 		return null;
+	}
+
+	public Type getInputSignature(int index) {
+		if (index >= 0 && index < inputs.length) {
+			// TODO what if fullType != ConstT?
+			return BackendUtils
+					.dive((ConstT) getFunctionSignature(), index + 1);
+		} else {
+			// TODO return invalid type?
+			return null;
+		}
+	}
+
+	public Type getInputType(InputAnchor input) {
+		for (int i = 0; i < getInputs().length; i++) {
+			if (getInputs()[i].equals(input)) {
+				return getInputType(i);
+			}
+		}
+		// TODO return invalid type?
+		return null;
+	}
+
+	public Type getInputType(int index) {
+		return getInputSignature(index);
+		// TODO make this type instead of signature;
+	}
+
+	public Type getOutputType() {
+		return getOutputType(getPane().getEnvInstance(), new GenSet());
+	}
+
+	public Type getOutputType(Env env, GenSet genSet) {
+		try {
+			Type type;
+			// TODO dynamically update (unify) output type with available
+			// information.
+			if (inputsAreConnected()) {
+				type = asExpr().analyze(env, genSet).prune();
+			} else {
+				type = getFunctionSignature();
+			}
+
+			while (type instanceof ConstT
+					&& ((ConstT) type).getArgs().length == 2) {
+				type = ((ConstT) type).getArgs()[1];
+			}
+			return type;
+		} catch (HaskellException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			// TODO return invalid type?
+			return null;
+		}
 	}
 
 	@Override
@@ -245,19 +327,9 @@ public class FunctionBlock extends Block {
 	public void invalidate(Env env, GenSet genSet) {
 		// TODO not clear and re-add all labels every invalidate()
 		Type nakedType = getFunctionSignature();
-		try {
-			Type currentType = this.asExpr().analyze(env, genSet).prune();
-
-			invalidateInput(env, genSet, currentType, nakedType);
-			invalidateOutput(currentType);
-		} catch (HaskellTypeError e1) {
-			// One of the inputs arguments is of the wrong type.
-			System.out.println("Type mismatch!");
-			// TODO display type mismatch.
-		} catch (HaskellException e2) {
-			// TODO are there other exceptions?
-			e2.printStackTrace();
-		}
+		Type currentType = getOutputSignature();
+		invalidateInput(env, genSet, currentType, nakedType);
+		invalidateOutput();
 	}
 
 	/**
@@ -275,52 +347,14 @@ public class FunctionBlock extends Block {
 		inputTypes.getChildren().clear();
 		InputAnchor[] inputs = getInputs();
 		for (int i = 0; i < inputs.length; i++) {
-			InputAnchor in = inputs[i];
-			Expr expr = in.asExpr();
-
-			Type type = null;
-			if (BackendUtils.isValidExpression(expr)) {
-				try {
-					type = expr.analyze(env, genSet).prune();
-				} catch (HaskellException e) {
-					e.printStackTrace();
-					// TODO now what?
-				}
-			} else {
-				// If this cast fails, the function signature is wrongly specified.
-				if (fullType instanceof ConstT) {
-					type = getInputType(i);
-				} else {
-					type = fullType;
-					System.err.println("Fulltype is wrongly specified!");
-					// TODO do something useful
-				}
-			}
-			inputTypes.getChildren().add(new Label(type.toHaskellType()));
+			inputTypes.getChildren().add(
+					new Label(getInputSignature(i).toHaskellType()));
 		}
-	}
-	
-	public Type getInputType(int index){
-		if(index>=0 && index <inputs.length){
-			//TODO what if fullType != ConstT
-			return BackendUtils.dive((ConstT) getFunctionSignature(),index + 1);
-		}else{
-			return null;
-		}
-	}
-	
-	public Type getInputType(InputAnchor input){
-		for(int i=0;i<getInputs().length;i++){
-			if(getInputs()[i].equals(input)){
-				return getInputType(i);
-			}
-		}
-		//TODO return invalid type?
-		return null;
 	}
 
-	private void invalidateOutput(Type outputType) {
+	private void invalidateOutput() {
 		outputTypes.getChildren().clear();
-		outputTypes.getChildren().add(new Label(outputType.toHaskellType()));
+		outputTypes.getChildren().add(
+				new Label(getOutputType().toHaskellType()));
 	}
 }

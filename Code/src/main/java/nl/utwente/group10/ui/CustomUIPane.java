@@ -33,9 +33,11 @@ public class CustomUIPane extends TactilePane {
     }
     
     public Env getEnvInstance(){
+    	
     	if(envInstance==null){
     		try {
-				envInstance = new HaskellCatalog().asEnvironment();
+				//envInstance = new HaskellCatalog().asEnvironment();
+    			return new HaskellCatalog().asEnvironment();
 			} catch (CatalogException e) {
 				// TODO Think of something smart to do when this happens.
 				e.printStackTrace();

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.BackendUtils;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -37,7 +38,7 @@ public class InputAnchor extends ConnectionAnchor {
 		if (isFullyConnected()) {
 			return getOtherAnchor().get().getBlock().asExpr();
 		} else {
-			return BackendUtils.getInvalidExpression();
+			return new Ident("undefined");
 		}
 	}
 
