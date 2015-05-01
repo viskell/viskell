@@ -237,4 +237,9 @@ public class Connection extends ConnectionLine implements
             }
         }
     }
+    
+    /** DEBUG METHOD trigger the error state for this Connection */
+    public void error() {
+        this.getStyleClass().add("error");
+    }
 }

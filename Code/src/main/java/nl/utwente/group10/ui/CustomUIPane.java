@@ -42,6 +42,9 @@ public class CustomUIPane extends TactilePane {
         for (Node node : getChildren()) {
             if (node instanceof Block) {
                 ((Block)node).error();
+            } else if (node instanceof Connection) {
+                System.out.println("derp");
+                ((Connection)node).error();
             }
         }
     }

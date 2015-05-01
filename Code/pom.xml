@@ -29,6 +29,16 @@
       <version>4.5</version>
       <type>maven-plugin</type>
     </dependency>
+    <dependency>
+    	<groupId>org.jfxtras</groupId>
+    	<artifactId>jfxtras-common</artifactId>
+    	<version>8.0-r3</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.jfxtras</groupId>
+    	<artifactId>jfxtras-menu</artifactId>
+    	<version>8.0-r3</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
