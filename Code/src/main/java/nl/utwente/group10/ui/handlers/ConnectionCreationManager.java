@@ -31,6 +31,12 @@ public class ConnectionCreationManager {
 	 */
 	public static final boolean CONNECTIONS_OVERRIDE_EXISTING = true;
 
+	/**
+	 * When set to true a connection can be made with input type and output type
+	 * not matching.
+	 */
+	public static final boolean CONNECTIONS_ALLOW_TYPE_MISMATCH = true;
+
 	public ConnectionCreationManager(CustomUIPane pane) {
 		this.pane = pane;
 		connections = new HashMap<Integer, Connection>();
@@ -82,7 +88,8 @@ public class ConnectionCreationManager {
 	}
 
 	public void editConnection(int id, ConnectionAnchor anchor) {
-		Optional<? extends ConnectionAnchor> anchorToKeep = anchor.getOtherAnchor();
+		Optional<? extends ConnectionAnchor> anchorToKeep = anchor
+				.getOtherAnchor();
 		if (anchor.isConnected() && anchorToKeep.isPresent()) {
 			Connection connection = anchor.getConnection().get();
 			connection.disconnect(anchor);

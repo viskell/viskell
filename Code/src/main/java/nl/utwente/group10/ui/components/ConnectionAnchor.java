@@ -50,6 +50,9 @@ public abstract class ConnectionAnchor extends Circle {
         return block;
     }
     
+    /**
+     * @return Input or output type of the block associated with this anchor.
+     */
     public abstract Type getType();
 
     /**

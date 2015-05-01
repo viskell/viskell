@@ -7,6 +7,7 @@ import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.FunctionBlock;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
@@ -66,25 +67,29 @@ public class Connection extends ConnectionLine implements
      * @param override If set will override (possible) existing Anchor.
      * @return Whether or not the anchor was added.
      */
-    public boolean tryAddAnchor(ConnectionAnchor anchor, boolean override) {
+    public boolean tryAddAnchor(ConnectionAnchor anchor, boolean overrideExisting, boolean allowTypeMismatch) {
         boolean added = false;
-        if ((!startAnchor.isPresent() || override) && anchor instanceof OutputAnchor) {
+        if ((!startAnchor.isPresent() || overrideExisting) && anchor instanceof OutputAnchor) {
             disconnect(startAnchor);
             
-            if(typesMatch(anchor) || override){
+            boolean typesMatch = typesMatch(anchor);
+            if(typesMatch || allowTypeMismatch){
 	            setStartAnchor((OutputAnchor) anchor);
 	            added = true;
-            }else{
+            }
+            if(!typesMatch){
             	//TODO type mismatch
             	System.out.println("Type mismatch!");
             }
-        } else if ((!endAnchor.isPresent() || override) && anchor instanceof InputAnchor) {
+        } else if ((!endAnchor.isPresent() || overrideExisting) && anchor instanceof InputAnchor) {
             disconnect(endAnchor);
             
-            if(typesMatch(anchor) || override){
+            boolean typesMatch = typesMatch(anchor);
+            if(typesMatch || allowTypeMismatch){
                 setEndAnchor((InputAnchor) anchor);
 	            added = true;
-            }else{
+            }
+            if(!typesMatch){
             	//TODO type mismatch
             	System.out.println("Type mismatch!");
             }
@@ -94,7 +99,7 @@ public class Connection extends ConnectionLine implements
     }
     
     public boolean tryAddAnchor(ConnectionAnchor anchor) {
-        return tryAddAnchor(anchor, false);
+        return tryAddAnchor(anchor, ConnectionCreationManager.CONNECTIONS_OVERRIDE_EXISTING, ConnectionCreationManager.CONNECTIONS_ALLOW_TYPE_MISMATCH);
     }
     
     public final boolean typesMatch(ConnectionAnchor potentialAnchor){

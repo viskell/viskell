@@ -5,15 +5,7 @@ import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
 
-public class BackendUtils {
-    
-    /**
-     * The Env name for an invalid expression.
-     */
-	//TODO make this prettier
-	public static final String EXPR_INVALID = "invalid";
-	
-	
+public class BackendUtils {	
 	/**
 	 * @param steps
 	 *            Amount of steps to dive
@@ -39,21 +31,4 @@ public class BackendUtils {
 		}
 		return function;
 	}
-	
-	/**
-	 * An invalid Expression is equal to an Expression that does nothing.
-	 * @return
-	 */
-	public static Expr getInvalidExpression(){
-		return new Ident(EXPR_INVALID);
-	}
-	
-	/**
-	 * @param expr
-	 * @return True if the given expression is not invalid.
-	 */
-    public static final boolean isValidExpression(Expr expr){
-    	return !expr.toHaskell().equals(EXPR_INVALID);
-    }
-	
 }

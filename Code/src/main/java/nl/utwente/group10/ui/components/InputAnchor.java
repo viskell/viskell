@@ -11,6 +11,7 @@ import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.FunctionBlock;
+import nl.utwente.group10.ui.components.blocks.InputBlock;
 import nl.utwente.group10.ui.handlers.AnchorHandler;
 
 /**
@@ -72,12 +73,9 @@ public class InputAnchor extends ConnectionAnchor {
 
 	@Override
 	public Type getType() {
-		if (getBlock() instanceof FunctionBlock) {
-			return ((FunctionBlock) getBlock()).getInputType(this);
-		} else if (getBlock() instanceof DisplayBlock) {
-			return ((DisplayBlock) getBlock()).getInputType(this);
-		} else {
-			// TODO return invalid type?
+		if(getBlock() instanceof InputBlock){
+			return ((InputBlock) getBlock()).getInputType(this);
+		}else{
 			return null;
 		}
 	}

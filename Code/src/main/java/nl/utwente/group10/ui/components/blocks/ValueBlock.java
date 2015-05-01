@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
+import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Value;
@@ -20,7 +21,7 @@ import nl.utwente.group10.ui.CustomUIPane;
  *
  * Extensions of ValueBlock should never accept inputs, if desired the class Block should be extended instead.
  */
-public class ValueBlock extends Block {
+public class ValueBlock extends Block implements OutputBlock{
     /** The value of this ValueBlock.*/
     private StringProperty value;
 
@@ -69,21 +70,39 @@ public class ValueBlock extends Block {
         // TODO: support more types than floats
         return new Value(new ConstT("Float"), getValue());
     }
+
     
+    
+    @Override
+    public final void invalidate(){
+    	//ValueBlock doesn't have a state to update.
+    }
+
+    
+    @Override
     public Type getOutputType(){
+    	return getOutputType(getPane().getEnvInstance(), new GenSet());
+    }
+    
+	@Override
+	public Type getOutputType(Env env, GenSet genSet) {
+		return getOutputSignature(env,genSet);
+	}
+
+	@Override
+	public Type getOutputSignature() {
+		return getOutputSignature(getPane().getEnvInstance(), new GenSet());
+	}
+
+	@Override
+	public Type getOutputSignature(Env env, GenSet genSet) {
     	try {
-			return asExpr().analyze(getPane().getEnvInstance(), new GenSet());
+			return asExpr().analyze(env,genSet);
 		} catch (HaskellException e) {
 			// ValueBlock would be wrongly defined.
 			e.printStackTrace();
 			//TODO return invalid Type?
 			return null;
 		}
-    }
-    
-    
-    @Override
-    public final void invalidate(){
-    	//ValueBlock doesn't have a state.
-    }
+	}
 }

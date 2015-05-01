@@ -8,11 +8,13 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
+import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.haskell.type.VarT;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ConnectionAnchor;
 import nl.utwente.group10.ui.components.InputAnchor;
@@ -24,8 +26,8 @@ import nl.utwente.group10.ui.components.InputAnchor;
  * the value can be altered at any time by providing a different input source
  * using a Connection.
  */
-public class DisplayBlock extends Block {
-    /** The Block for which this DisplayBlock displays the output. **/
+public class DisplayBlock extends Block implements InputBlock, OutputBlock {
+    /** The output String to display **/
     private StringProperty output;
 
     /** The Anchor that is used as input. */
@@ -78,10 +80,6 @@ public class DisplayBlock extends Block {
         return output;
     }
 
-    public ConnectionAnchor getInputAnchor() {
-        return inputAnchor;
-    }
-
     @Override
     public final Expr asExpr() {
         return inputAnchor.asExpr();
@@ -99,6 +97,7 @@ public class DisplayBlock extends Block {
         }
     }
 
+    @Override
 	public Type getInputType(InputAnchor anchor) {
 		try {
 			return new Ident("undefined").analyze(getPane().getEnvInstance(), new GenSet());
@@ -107,5 +106,65 @@ public class DisplayBlock extends Block {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	private Type getInputSignature(){
+		//Is this correct?
+		return new VarT("a");
+	}
+	
+	@Override
+	public Type getInputSignature(InputAnchor input) {
+		return getInputSignature();
+	}
+
+	@Override
+	public Type getInputSignature(int index) {
+		return getInputSignature();
+	}
+
+	@Override
+	public Type getInputType(int index) {
+		return getInputSignature();
+	}
+
+	@Override
+	public InputAnchor[] getInputs() {
+		return new InputAnchor[]{inputAnchor};
+	}
+
+	@Override
+	public int getInputIndex(InputAnchor anchor) {
+		return 0;
+	}
+
+	@Override
+	public boolean inputsAreConnected() {
+		return inputIsConnected(0);
+	}
+
+	@Override
+	public boolean inputIsConnected(int index) {
+		return inputAnchor.isFullyConnected();
+	}
+
+	@Override
+	public Type getOutputType() {
+		return getOutputType(getPane().getEnvInstance(),new GenSet());
+	}
+
+	@Override
+	public Type getOutputType(Env env, GenSet genSet) {
+		return getInputType(0);
+	}
+
+	@Override
+	public Type getOutputSignature() {
+		return getOutputSignature(getPane().getEnvInstance(),new GenSet());
+	}
+
+	@Override
+	public Type getOutputSignature(Env env, GenSet genSet) {
+		return getInputSignature();
 	}
 }

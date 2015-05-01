@@ -7,6 +7,7 @@ import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.FunctionBlock;
+import nl.utwente.group10.ui.components.blocks.OutputBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 import nl.utwente.group10.ui.handlers.AnchorHandler;
 
@@ -55,12 +56,10 @@ public class OutputAnchor extends ConnectionAnchor {
 
 	@Override
 	public Type getType() {
-		if(getBlock() instanceof FunctionBlock){
-			return ((FunctionBlock)getBlock()).getOutputType();
-		}else if(getBlock() instanceof ValueBlock){
-			return ((ValueBlock)getBlock()).getOutputType();
+		if(getBlock() instanceof OutputBlock){
+			return ((OutputBlock)getBlock()).getOutputType();
+		}else{
+			return null;
 		}
-		//TODO return invalid type?
-		return null;
 	}
 }

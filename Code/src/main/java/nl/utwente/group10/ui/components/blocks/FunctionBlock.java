@@ -27,7 +27,7 @@ import nl.utwente.group10.ui.components.InputAnchor;
  * Main building block for the visual interface, this class represents a Haskell
  * function together with it's arguments and visual representation.
  */
-public class FunctionBlock extends Block {
+public class FunctionBlock extends Block implements InputBlock, OutputBlock{
 	/** The inputs for this FunctionBlock. **/
 	private InputAnchor[] inputs;
 
@@ -161,6 +161,7 @@ public class FunctionBlock extends Block {
 	/**
 	 * @return The array of input anchors for this function block.
 	 */
+	@Override
 	public final InputAnchor[] getInputs() {
 		return inputs;
 	}
@@ -172,7 +173,8 @@ public class FunctionBlock extends Block {
 	 *            The anchor to look up.
 	 * @return The index of the given Anchor in the input anchor array.
 	 */
-	public final int getArgumentIndex(ConnectionAnchor anchor) {
+	@Override
+	public final int getInputIndex(InputAnchor anchor) {
 		int index = 0;
 		/**
 		 * @invariant index < inputs.length
@@ -183,6 +185,7 @@ public class FunctionBlock extends Block {
 		return index;
 	}
 
+	@Override
 	public boolean inputsAreConnected() {
 		for (int i = 0; i < getInputs().length; i++) {
 			if (!inputIsConnected(i)) {
@@ -192,6 +195,7 @@ public class FunctionBlock extends Block {
 		return true;
 	}
 
+	@Override
 	public boolean inputIsConnected(int index) {
 		if (index >= 0 && index < getInputs().length) {
 			return getInputs()[index] != null
@@ -243,10 +247,12 @@ public class FunctionBlock extends Block {
 		}
 	}
 
+	@Override
 	public Type getOutputSignature() {
 		return getOutputSignature(getPane().getEnvInstance(), new GenSet());
 	}
 
+	@Override
 	public Type getOutputSignature(Env env, GenSet genSet) {
 		Type type = getFunctionSignature();
 		for (int i = 0; i < getInputs().length; i++) {
@@ -255,16 +261,12 @@ public class FunctionBlock extends Block {
 		return type;
 	}
 
+	@Override
 	public Type getInputSignature(InputAnchor input) {
-		for (int i = 0; i < getInputs().length; i++) {
-			if (getInputs()[i].equals(input)) {
-				return getInputSignature(i);
-			}
-		}
-		// TODO return invalid type?
-		return null;
+		return getInputSignature(getInputIndex(input));
 	}
 
+	@Override
 	public Type getInputSignature(int index) {
 		if (index >= 0 && index < inputs.length) {
 			// TODO what if fullType != ConstT?
@@ -276,25 +278,23 @@ public class FunctionBlock extends Block {
 		}
 	}
 
+	@Override
 	public Type getInputType(InputAnchor input) {
-		for (int i = 0; i < getInputs().length; i++) {
-			if (getInputs()[i].equals(input)) {
-				return getInputType(i);
-			}
-		}
-		// TODO return invalid type?
-		return null;
+		return getInputType(getInputIndex(input));
 	}
 
+	@Override
 	public Type getInputType(int index) {
 		return getInputSignature(index);
 		// TODO make this type instead of signature;
 	}
 
+	@Override
 	public Type getOutputType() {
 		return getOutputType(getPane().getEnvInstance(), new GenSet());
 	}
 
+	@Override
 	public Type getOutputType(Env env, GenSet genSet) {
 		try {
 			Type type;
@@ -314,8 +314,7 @@ public class FunctionBlock extends Block {
 		} catch (HaskellException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			// TODO return invalid type?
-			return null;
+			return getOutputSignature();
 		}
 	}
 
