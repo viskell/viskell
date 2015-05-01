@@ -9,6 +9,7 @@ import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.menu.CircleMenu;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.
@@ -29,9 +30,10 @@ public abstract class Block extends StackPane implements ComponentLoader {
 
     /** The output of this Block. **/
     private OutputAnchor output;
-
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
+    /** The context menu associated with this block instance. */
+    private CircleMenu contextMenu;
 
     /**
      * @param blockName
@@ -46,7 +48,6 @@ public abstract class Block extends StackPane implements ComponentLoader {
         try {
             output = new OutputAnchor(this, pane);
         } catch (IOException e) {
-            // TODO Find a good way to handle this
             e.printStackTrace();
         }
 
@@ -63,16 +64,30 @@ public abstract class Block extends StackPane implements ComponentLoader {
                         });
 
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::select);
+
+        this.createContextMenu();
     }
 
-    /** Sets this block as the selected block. */
-    private void select(MouseEvent mouseEvent) {
-        parentPane.setSelectedBlock(this);
+    private void createContextMenu() {
+        contextMenu = new CircleMenu(this);
     }
 
     /** Returns the output Anchor for this Block. */
     public final OutputAnchor getOutputAnchor() {
         return output;
+    }
+
+    /**
+     * Sets this block as the selected block. When this block has already been
+     * selected it spawns a contextMenu instead.
+     */
+    private void select(MouseEvent mouseEvent) {
+        if (parentPane.getSelectedBlock().isPresent()
+                && parentPane.getSelectedBlock().get().equals(this)) {
+            contextMenu.show(mouseEvent);
+        } else {
+            parentPane.setSelectedBlock(this);
+        }
     }
 
     /** Returns the parent pane of this Component. */
