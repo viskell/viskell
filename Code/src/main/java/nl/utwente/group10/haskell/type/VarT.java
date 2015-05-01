@@ -156,4 +156,9 @@ public class VarT extends Type {
 
         return intersection;
     }
+
+    @Override
+    public int compareTo(final Type type) {
+        return this.equals(type) ? 0 : -1;
+    }
 }

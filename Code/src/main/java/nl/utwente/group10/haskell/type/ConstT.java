@@ -1,6 +1,7 @@
 package nl.utwente.group10.haskell.type;
 
 import com.google.common.base.Joiner;
+import com.sun.org.apache.xpath.internal.functions.FuncFalse;
 
 /**
  * Constant, concrete type. However, it may consist of variable types.
@@ -67,6 +68,28 @@ public class ConstT extends Type {
             return String.format("(%s %s)", this.constructor, Joiner.on(' ').join(this.args));
         } else {
             return this.constructor;
+        }
+    }
+
+    @Override
+    public int compareTo(final Type type) {
+        if (type instanceof ConstT) {
+            if (this.constructor.compareTo(((ConstT) type).constructor) == 0) {
+                if (this.args.length == ((ConstT) type).args.length) {
+                    for (int i = 0; i < this.args.length; i++) {
+                        if (this.args[i].compareTo(((ConstT) type).args[i]) != 0) {
+                            return -1;
+                        }
+                    }
+                    return 0;
+                } else {
+                    return -1;
+                }
+            } else {
+                return this.constructor.compareTo(((ConstT) type).constructor);
+            }
+        } else {
+            return -1;
         }
     }
 }

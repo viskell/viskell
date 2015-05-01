@@ -25,4 +25,18 @@ public class ConstTTest {
         assertNotEquals(integer, a);
         assertEquals(integer, a.prune());
     }
+
+    @Test
+    public final void testCompareTo() {
+        final ConstT integer = new ConstT("Integer");
+        final ConstT weird = new ConstT("Weird", new ConstT("Integer"));
+
+        assertEquals(0, integer.compareTo(integer));
+        assertEquals(0, integer.compareTo(new ConstT("Integer")));
+        assertNotEquals(0, integer.compareTo(new ConstT("Integer", new ConstT("Integer"))));
+
+        assertEquals(0, weird.compareTo(weird));
+        assertEquals(0, weird.compareTo(new ConstT("Weird", new ConstT("Integer"))));
+        assertNotEquals(0, weird.compareTo(new ConstT("Weird")));
+    }
 }
