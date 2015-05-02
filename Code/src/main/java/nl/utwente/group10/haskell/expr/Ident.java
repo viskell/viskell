@@ -28,8 +28,9 @@ public class Ident extends Expr {
         // Rule [Var]:
         // IFF  we know (from the env) that the type of this expr is x
         // THEN the type of this expr is x.
-        if (env.getExprTypes().containsKey(this.name)) {
-            return env.getExprTypes().get(this.name);
+        Type type = env.getFreshExprType(this.name);
+        if (type != null) {
+            return type;
         } else {
             Expr.logger.warning(String.format("Expression %s is not in the environment, but it is assumed to be.", this));
             throw new HaskellException("Expression not in environment", this);
