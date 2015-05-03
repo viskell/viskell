@@ -36,7 +36,7 @@ public abstract class Catalog {
 
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 
-            return dBuilder.parse(xmlFile.getPath());
+            return dBuilder.parse(xmlFile.openStream());
         } catch (IOException | ParserConfigurationException | SAXException e) {
             throw new CatalogException(e);
         }
