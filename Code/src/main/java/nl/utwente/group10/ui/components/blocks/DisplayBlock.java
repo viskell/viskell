@@ -1,6 +1,7 @@
 package nl.utwente.group10.ui.components.blocks;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -88,8 +89,11 @@ public class DisplayBlock extends Block {
      */
     public final void invalidate() {
         try {
-            GhciSession ghci = GhciSession.getInstance();
-            setOutput(ghci.pull(inputAnchor.asExpr()));
+            Optional<GhciSession> ghci = getPane().getGhciSession();
+
+            if (ghci.isPresent()) {
+                setOutput(ghci.get().pull(inputAnchor.asExpr()));
+            }
         } catch (GhciException e) {
             setOutput("???");
         }

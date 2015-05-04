@@ -3,8 +3,6 @@ package nl.utwente.group10.ui.components.blocks;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -19,10 +17,9 @@ public class FunctionBlockTest extends ComponentTest {
     /**
      * Before each test reset all the FunctionBlock instances
      * to have a clear batch to test against.
-     * @throws IOException
      */
     @Before
-    public void setUp() throws IOException{
+    public void setUp() throws Exception {
         FuncT func = new FuncT(new ConstT("Int"), new FuncT(new ConstT("Int"), new ConstT("Int")));
 
         functionBlock = new FunctionBlock("", func, new CustomUIPane());

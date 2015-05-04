@@ -10,6 +10,8 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+import nl.utwente.group10.ghcj.GhciException;
+import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
@@ -21,6 +23,8 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 public class CustomUIPane extends TactilePane {
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
+    private Optional<GhciSession> ghci;
+
     private Point2D dragStart;
     private Point2D offset;
 
@@ -32,6 +36,12 @@ public class CustomUIPane extends TactilePane {
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
+
+        try {
+            this.ghci = Optional.of(new GhciSession());
+        } catch (GhciException e) {
+            this.ghci = Optional.empty();
+        }
 
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
@@ -65,6 +75,7 @@ public class CustomUIPane extends TactilePane {
         this.setScaleY(scale * ratio);
         this.setTranslateX(this.getTranslateX() * ratio);
         this.setTranslateY(this.getTranslateY() * ratio);
+
     }
 
     /**
@@ -128,5 +139,9 @@ public class CustomUIPane extends TactilePane {
 
     public ConnectionCreationManager getConnectionCreationManager() {
         return connectionCreationManager;
+    }
+
+    public Optional<GhciSession> getGhciSession() {
+        return ghci;
     }
 }
