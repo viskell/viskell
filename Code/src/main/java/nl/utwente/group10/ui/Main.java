@@ -17,6 +17,7 @@ import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.CustomAlert;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
+import nl.utwente.group10.ui.menu.MainMenu;
 
 /**
  * Main application class for the GUI.

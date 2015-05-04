@@ -13,14 +13,15 @@ import jfxtras.scene.layout.CircularPane;
 import jfxtras.scene.menu.CirclePopupMenu;
 
 /**
- * Circle menu is a context based menu implementation for block classes.
- * Preferably each block class has it's own instance if a circle menu. When a
+ * Circle menu is a context based menu implementation for {@link Block} classes.
+ * Preferably each block class has it's own instance of circle menu. When a
  * block based class has significant differences to other block classes that
- * result in different context based actions it should use an specialized
+ * result in different context based actions it should use a specialized
  * extension of circle menu instead of this one.
- * 
- * Current context based features include delete. During development undo, redo
- * and newFunction features will be listed here.
+ * <p>
+ * Current context based features include delete. Copy, Paste and Save
+ * functionality is under development.
+ * </p>
  */
 public class CircleMenu extends CirclePopupMenu {
 
@@ -30,61 +31,69 @@ public class CircleMenu extends CirclePopupMenu {
         super((StackPane) block, null);
         this.block = block;
 
-        // TODO implement undo and redo if time permits.
-        // TODO consider copy/cut/paste as context actions?
-
         // Define menu items
 
-        // Undo Option
-        MenuItem undo = new MenuItem("undo", new ImageView(new Image(this
+        // Copy Option
+        MenuItem copy = new MenuItem("copy", new ImageView(new Image(this
                 .getClass().getResourceAsStream("/ui/undo.png"))));
-        undo.setOnAction(t -> undo());
+        copy.setOnAction(t -> copy());
 
-        // Redo Option
-        MenuItem redo = new MenuItem("redo", new ImageView(new Image(this
+        // Paste Option
+        MenuItem paste = new MenuItem("paste", new ImageView(new Image(this
                 .getClass().getResourceAsStream("/ui/undo.png"))));
-        redo.setOnAction(t -> redo());
+        paste.setOnAction(t -> paste());
 
         // Delete Option
         MenuItem delete = new MenuItem("delete", new ImageView(new Image(this
                 .getClass().getResourceAsStream("/ui/undo.png"))));
         delete.setOnAction(t -> delete());
 
-        // Drawer Option
-        MenuItem openDrawer = new MenuItem("openDrawer", new ImageView(
-                new Image(this.getClass().getResourceAsStream("/ui/undo.png"))));
-        openDrawer.setOnAction(t -> newFunction());
-
         // Save Option
         MenuItem save = new MenuItem("save", new ImageView(new Image(this
                 .getClass().getResourceAsStream("/ui/undo.png"))));
+        save.setOnAction(t -> saveBlock());
 
         // Registration
-        this.getItems().addAll(undo, redo, delete, openDrawer, save);
+        this.getItems().addAll(copy, paste, delete, save);
 
         // Animation
-        this.setAnimationInterpolation(CircularPane::animateOverTheArcWithFade);
+        this.setAnimationInterpolation(CircularPane::animateFromTheOriginWithFadeRotate);
     }
 
-    /** Undo last action. */
-    public void undo() {
-        // TODO placeholder, will not be implemented
-        System.out.println("Clicked Undo!");
+    /** Copy the {@link Block} in this context. */
+    public void copy() {
+        // TODO implement clipBoard in main app.
     }
 
-    /** Redo last undone action. */
-    public void redo() {
-        // TODO placeholder, will not be implemented
-        System.out.println("Clicked Redo!");
+    /** Paste {@link Block} from memory. */
+    public void paste() {
     }
 
-    /** Delete the Block in this context. */
+    /** Delete the {@link Block} in this context. */
     public void delete() {
         block.getPane().removeBlock(block);
     }
 
+    /** Saves the {@link Block} in this context. */
+    public void saveBlock() {
+        // TODO store block in custom catalog?
+    }
+
+    /*
+     * Below functions should probably be factored out to a more centralized,
+     * non contextual menu. TODO implement undo and redo if time permits.
+     */
+
+    /** Undo last action. */
+    public void undo() {
+    }
+
+    /** Redo last undone action. */
+    public void redo() {
+    }
+
     /** Spawn a new Function drawer. */
-    public void newFunction() {
+    public void functionDrawer() {
         // TODO spawn function list
         System.out.println("Clicked Drawer!");
     }
