@@ -86,6 +86,7 @@ CustomUIPane {
 
 .alert .msg {
     -fx-text-fill: black;
+    -fx-line-spacing: 0.2em;
 }
 
 .alert .btn {
