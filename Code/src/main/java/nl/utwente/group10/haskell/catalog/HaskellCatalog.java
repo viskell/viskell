@@ -79,6 +79,7 @@ public class HaskellCatalog extends Catalog {
     public final Env asEnvironment() {
         Map<String, TypeClass> classes = new HashMap<>();
         Map<String, Type> functions = new HashMap<>();
+        Map<String, String> signatures = new HashMap<>();
         Context ctx = new Context();
 
         // Build type class map
@@ -92,9 +93,10 @@ public class HaskellCatalog extends Catalog {
         // Build function type map
         for (FunctionEntry entry : this.functions.values()) {
             functions.put(entry.getName(), entry.asHaskellObject(ctx));
+            signatures.put(entry.getName(), entry.getSignature());
         }
 
-        return new Env(functions, classes.values());
+        return new Env(functions, signatures, classes.values());
     }
 
     /**

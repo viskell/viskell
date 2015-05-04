@@ -114,6 +114,9 @@
             <function name="const" signature="a -> b -> a">
                 Constant function.
             </function>
+            <function name="undefined" signature="a">
+                Undefined function.
+            </function>
         </category>
     </functions>
 </catalog>

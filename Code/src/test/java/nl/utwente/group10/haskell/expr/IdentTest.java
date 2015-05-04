@@ -14,7 +14,6 @@ import org.junit.Test;
 
 public class IdentTest {
     private final Type alpha = new VarT("a");
-    private final Type integer = new ConstT("Integer");
 
     private Env env;
     private GenSet genSet;
@@ -24,7 +23,7 @@ public class IdentTest {
         this.env = new Env();
         this.genSet = new GenSet();
 
-        this.env.getExprTypes().put("id", new FuncT(this.alpha, this.alpha));
+        this.env.addExpr("id", "a -> a");
     }
 
     @Test

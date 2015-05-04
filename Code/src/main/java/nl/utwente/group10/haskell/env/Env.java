@@ -1,14 +1,14 @@
 package nl.utwente.group10.haskell.env;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
+import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 
 /**
  * Haskell Environment.
@@ -20,25 +20,32 @@ public class Env {
     private Map<String, Type> exprTypes;
 
     /**
+     * Map containing the string representation of the types of the expressions known to the environment.
+     */
+    private Map<String, String> exprStringTypes;
+
+    /**
      * Map containing the types for each type class.
      */
     private HashMultimap<Type, TypeClass> typeClasses;
 
     /**
      * @param exprTypes Map of Expr types.
+     * @param exprStringTypes Map of Expr types in original string representation.
      * @param typeClasses Multimap of type classes.
      */
-    public Env(Map<String, Type> exprTypes, HashMultimap<Type, TypeClass> typeClasses) {
+    public Env(Map<String, Type> exprTypes, Map<String, String> exprStringTypes, HashMultimap<Type, TypeClass> typeClasses) {
         this.exprTypes = exprTypes;
+        this.exprStringTypes = exprStringTypes;
         this.typeClasses = typeClasses;
     }
 
-    public Env(Map<String, Type> exprTypes, Collection<TypeClass> typeClasses) {
-        this(exprTypes, Env.buildTypeClasses(typeClasses));
+    public Env(Map<String, Type> exprTypes, Map<String, String> exprStringTypes, Collection<TypeClass> typeClasses) {
+        this(exprTypes, exprStringTypes, Env.buildTypeClasses(typeClasses));
     }
 
     public Env() {
-        this(new HashMap<String, Type>(), HashMultimap.create());
+        this(new HashMap<String, Type>(), new HashMap<String, String>(), HashMultimap.create());
     }
 
     /**
@@ -46,6 +53,33 @@ public class Env {
      */
     public final Map<String, Type> getExprTypes() {
         return this.exprTypes;
+    }
+
+    /**
+     * @param name The name of the expression.
+     * @return An Optional containing the Type for the given expression, if any.
+     */
+    public final Optional<Type> getFreshExprType(String name) {
+        if (this.exprStringTypes.containsKey(name)) {
+            TypeBuilder builder = new TypeBuilder(this.getTypeClasses());
+            return Optional.ofNullable(builder.build(this.exprStringTypes.get(name)));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Adds an expression to this environment.
+     * @param name The name of the expression.
+     * @param signature The signature of the expression.
+     * @return Expression to use in the future.
+     */
+    public final Ident addExpr(String name, String signature) {
+        TypeBuilder builder = new TypeBuilder(this.getTypeClasses());
+        Type type = builder.build(signature);
+        this.exprStringTypes.put(name, signature);
+        this.exprTypes.put(name, type);
+        return new Ident(name);
     }
 
     /**
