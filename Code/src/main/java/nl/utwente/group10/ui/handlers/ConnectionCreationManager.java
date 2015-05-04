@@ -43,7 +43,7 @@ public class ConnectionCreationManager {
 		} else if (anchor instanceof InputAnchor) {
 			newConnection = new Connection((InputAnchor) anchor);
 		}
-		pane.getChildren().add(newConnection);
+		pane.getChildren().add(0, newConnection);
 		connections.put(id, newConnection);
 		return newConnection;
 	}
