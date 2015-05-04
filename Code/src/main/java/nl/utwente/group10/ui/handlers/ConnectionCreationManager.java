@@ -4,11 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import javafx.geometry.Point2D;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.Connection;
-import nl.utwente.group10.ui.components.ConnectionAnchor;
-import nl.utwente.group10.ui.components.InputAnchor;
-import nl.utwente.group10.ui.components.OutputAnchor;
+import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
+import nl.utwente.group10.ui.components.anchors.InputAnchor;
+import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.lines.Connection;
 
 public class ConnectionCreationManager {
 
@@ -49,7 +50,7 @@ public class ConnectionCreationManager {
 		} else if (anchor instanceof InputAnchor) {
 			newConnection = new Connection((InputAnchor) anchor);
 		}
-		pane.getChildren().add(newConnection);
+		pane.getChildren().add(0, newConnection);
 		connections.put(id, newConnection);
 		return newConnection;
 	}
@@ -99,8 +100,10 @@ public class ConnectionCreationManager {
 	}
 
 	public void updateLine(int id, double x, double y) {
+		Point2D localPos = pane.sceneToLocal(x, y);
+
 		if (connections.get(id) != null) {
-			connections.get(id).setFreeEnds(x, y);
+			connections.get(id).setFreeEnds(localPos.getX(), localPos.getY());
 		}
 	}
 }

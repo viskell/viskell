@@ -1,6 +1,7 @@
 package nl.utwente.group10.ui.components.blocks;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -16,8 +17,8 @@ import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.VarT;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.ConnectionAnchor;
-import nl.utwente.group10.ui.components.InputAnchor;
+import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
+import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
 /**
  * DisplayBlock is an extension of Block that only provides a display of the
@@ -45,11 +46,11 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
      * @throws IOException when the FXML definition for this block cannot be loaded.
      */
     public DisplayBlock(CustomUIPane pane) throws IOException {
-        super("DisplayBlock", pane);
+        super(pane);
 
         output = new SimpleStringProperty("New Output");
 
-        this.getLoader().load();
+        this.getFXMLLoader("DisplayBlock").load();
 
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
@@ -90,8 +91,11 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
      */
     public final void invalidate() {
         try {
-            GhciSession ghci = GhciSession.getInstance();
-            setOutput(ghci.pull(inputAnchor.asExpr()));
+            Optional<GhciSession> ghci = getPane().getGhciSession();
+
+            if (ghci.isPresent()) {
+                setOutput(ghci.get().pull(inputAnchor.asExpr()));
+            }
         } catch (GhciException e) {
             setOutput("???");
         }
@@ -167,4 +171,8 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
 	public Type getOutputSignature(Env env, GenSet genSet) {
 		return getInputSignature();
 	}
+	
+    public void error() {
+        this.getStyleClass().add("error");
+    }
 }

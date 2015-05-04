@@ -63,13 +63,37 @@ public class ConstT extends Type {
 		return out.toString();
 	}
 
-	@Override
-	public String toString() {
-		if (this.args.length > 0) {
-			return String.format("(%s %s)", this.constructor, Joiner.on(' ')
-					.join(this.args));
-		} else {
-			return this.constructor;
-		}
-	}
+    @Override
+    public String toString() {
+        if (this.args.length > 0) {
+            return String.format("(%s %s)", this.constructor, Joiner.on(' ').join(this.args));
+        } else {
+            return this.constructor;
+        }
+    }
+
+    @Override
+    public int compareTo(final Type type) {
+        if (type == null) {
+            throw new NullPointerException();
+        } else if (type instanceof ConstT) {
+            final ConstT cType = (ConstT) type;
+            if (this.constructor.equals(cType.constructor)) {
+                if (this.args.length == cType.args.length) {
+                    for (int i = 0; i < this.args.length; i++) {
+                        if (this.args[i].compareTo(cType.args[i]) != 0) {
+                            return -1;
+                        }
+                    }
+                    return 0;
+                } else {
+                    return -1;
+                }
+            } else {
+                return this.constructor.compareTo(cType.constructor);
+            }
+        } else {
+            return -1;
+        }
+    }
 }

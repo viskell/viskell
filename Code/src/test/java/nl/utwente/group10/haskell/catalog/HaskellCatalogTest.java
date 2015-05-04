@@ -1,41 +1,26 @@
 package nl.utwente.group10.haskell.catalog;
 
-import org.junit.Assert;
+import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.exceptions.CatalogException;
 import org.junit.Test;
 
-/** Tests for the Haskell catalog. */
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class HaskellCatalogTest {
     @Test
-    public void basicCatalogTest() throws Exception {
-        HaskellCatalog hc = new HaskellCatalog();
-
-        // Test our sanity.
-        Assert.assertNotNull(hc);
-
-        // getEntry
-        Entry e = hc.getEntry("id");
-        Assert.assertNotNull(e);
-        Assert.assertEquals("id", e.getName());
-        Assert.assertEquals("a -> a", e.getSignature());
-        Assert.assertEquals("Identity function.", e.getDocumentation());
-        Assert.assertFalse(e.getCategory().isEmpty());
-
-        // getMaybe
-        Assert.assertTrue(hc.getMaybe("id").isPresent());
-        Assert.assertFalse(hc.getMaybe("\0").isPresent());
-
-        // getOrDefault
-        Assert.assertNotNull(hc.getOrDefault("id", null));
-        Assert.assertNull(hc.getOrDefault("\0", null));
+    public void basicCatalogTest() throws CatalogException {
+        HaskellCatalog c = new HaskellCatalog();
 
         // getCategories
-        Assert.assertNotNull(hc.getCategories());
-        Assert.assertFalse(hc.getCategories().isEmpty());
-        Assert.assertTrue(hc.getCategories().contains("Math"));
+        assertFalse(c.getCategories().isEmpty());
+        assertTrue(c.getCategories().contains("Math"));
 
-        // getCategory
-        Assert.assertNotNull(hc.getCategory("Math"));
-        Assert.assertFalse(hc.getCategory("Math").isEmpty());
-        Assert.assertFalse(hc.getCategory(e.getCategory()).isEmpty());
+        // asEnvironment
+        Env e = c.asEnvironment();
+        assertFalse(e.getExprTypes().isEmpty());
+        assertFalse(e.getTypeClasses().isEmpty());
+        assertTrue(e.getExprTypes().containsKey("id"));
+        assertTrue(e.getTypeClasses().containsKey("Num"));
     }
 }

@@ -1,0 +1,55 @@
+\chapter{Process and tools}
+
+In the early stage of the project, we settled on the process and tools we were going to use during the project. An evaluation of the process we used, with details on what worked out well for us and what didn't, can be found in \fref{chap:Evaluation}. \index{process}
+
+\section{Buzzword-compatible process}
+
+It was quickly decided that the development process we were going to use for the project should be entirely buzzword-compatible: no outdated waterfall models, no long and tedious iterations, but a quick, nimble development process. \index{buzzwords}
+
+\subsection{Sprints}
+
+Development goals were to be decided on for short periods of time. We dubbed these periods sprints, in line with Agile terminology. Every sprint was to be two weeks long. (During the project, we had some one-week sprints, for example when we expected that there would be more time available than in usual weeks.) \index{sprints}
+
+\section{Tasks and responsibilities}
+
+\subsection{Process tasks}
+
+In the very first meeting, we divided process-related tasks and responsibilities. Derk was to be the chairman, leading the biweekly meetings; Jan-Jelle became the chief of communications, responsible for keeping the customer and mentor happy and up to speed; Martijn was assigned to guard the project's progress; Wander was volunteered to do code integration and keep an eye on code quality, and Kristel offered to keep the records and write minutes during meetings. \index{tasks}
+
+Every process task was assigned to two team members, with one member carrying the responsibility and one member acting as a back-up in case the primary member wasn't available for whatever reason.
+
+\subsection{Implementation and design tasks}
+
+For the very first part of the project, Martijn, Kristel and Derk were assigned to start working on the program's front end design. Wander and Jan-Jelle were to tackle the beginnings of a usable back end, that is, getting the program designed in the front end to run. This split kept existing during most of the project.
+
+\section{Code tools}
+
+Software projects have a tendency to become quite large, and Java projects more than most. We decided to use some tools to help us manage the code base.
+
+\subsection{Maven}
+
+Larger Java projects usually have dependencies. These dependencies can also have dependencies. To make sure every team member was using the same versions of the libraries the project was no doubt going to use, we decided to use Maven, a Java build tool. Using Maven as a standardized build process also allowed team members to work from their preferred environment: the back end crew preferred IntelliJ IDEA by Jetbrains, while the front end developers worked mostly in Eclipse. \index{Maven}
+
+\subsection{Git, GitHub and GitHub Flow}
+
+For the version control system, we decided on git, with the central repository stored on GitHub. \index{git} \index{GitHub}
+
+As for a branching model, we decided on GitHub Flow\cite{githubflow}. In this model, small, independent changes are published to their own branches, tested, checked, then proposed as a Pull Request. At this point the person responsible for code integration (either Wander or Jan-Jelle) reviews the code and merge it into the master branch. \index{GitHub Flow}
+
+\subsection{Travis}
+
+It is no use having automated unit tests if they are never executed. To make sure we would get alerted to broken tests quickly, we decided to use Travis CI with the project to build every change and run the unit tests. Travis automatically sends email notifications when a build fails. It also integrates with GitHub's pull request feature, showing the build status there as well to help keep broken code out of the master branch. \index{Travis} \index{continuous integration}
+
+\section{Process tools}
+
+We also used quite a few tools to help us manage the project itself.
+
+\subsection{Trello}
+
+\subsection{Google Drive}
+
+Meeting minutes, design descriptions and related documents were stored in Google Drive to make sure every team member had easy access to them, when needed. \index{Google Drive}
+
+\subsection{Google Groups}
+
+We decided to set up a mailing list using Google Groups to make it easier to share important messages and files. Google Groups has an additional benefit that it allows one to browse and search old messages, making it something of a paper trail. \index {Google Groups}

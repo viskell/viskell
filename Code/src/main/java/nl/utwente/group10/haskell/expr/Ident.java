@@ -5,6 +5,8 @@ import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.Type;
 
+import java.util.Optional;
+
 /**
  * Expression contained in the environment.
  */
@@ -28,8 +30,9 @@ public class Ident extends Expr {
         // Rule [Var]:
         // IFF  we know (from the env) that the type of this expr is x
         // THEN the type of this expr is x.
-        if (env.containsKey(this.name)) {
-            return env.get(this.name);
+        Optional<Type> type = env.getFreshExprType(this.name);
+        if (type.isPresent()) {
+            return type.get();
         } else {
             Expr.logger.warning(String.format("Expression %s is not in the environment, but it is assumed to be.", this));
             throw new HaskellException("Expression not in environment", this);

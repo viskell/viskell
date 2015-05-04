@@ -5,7 +5,7 @@ import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.ui.components.OutputAnchor;
+import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 
 public interface OutputBlock {
 

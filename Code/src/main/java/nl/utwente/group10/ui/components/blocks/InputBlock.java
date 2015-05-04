@@ -1,7 +1,7 @@
 package nl.utwente.group10.ui.components.blocks;
 
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.ui.components.InputAnchor;
+import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
 public interface InputBlock {
 	

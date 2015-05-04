@@ -20,13 +20,14 @@ import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.BackendUtils;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.ConnectionAnchor;
-import nl.utwente.group10.ui.components.InputAnchor;
+import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
+import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
 /**
  * Main building block for the visual interface, this class represents a Haskell
  * function together with it's arguments and visual representation.
  */
+
 public class FunctionBlock extends Block implements InputBlock, OutputBlock{
 	/** The inputs for this FunctionBlock. **/
 	private InputAnchor[] inputs;
@@ -65,42 +66,39 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock{
 	 * @throws IOException
 	 *             when the FXML defenition for this Block cannot be loaded.
 	 */
-	public FunctionBlock(String name, Type type, CustomUIPane pane)
-			throws IOException {
-		super("FunctionBlock", pane);
+	public FunctionBlock(String name, Type type, CustomUIPane pane) throws IOException {
+        super(pane);
 
-		this.name = new SimpleStringProperty(name);
-		this.type = new SimpleStringProperty(type.toHaskellType());
+        this.name = new SimpleStringProperty(name);
+        this.type = new SimpleStringProperty(type.toHaskellType());
 
-		this.getLoader().load();
+        this.getFXMLLoader("FunctionBlock").load();
 
-		// Collect argument types
-		ArrayList<String> args = new ArrayList<>();
-		Type t = type;
-		while (t instanceof FuncT) {
-			FuncT ft = (FuncT) t;
-			args.add(ft.getArgs()[0].toHaskellType());
-			t = ft.getArgs()[1];
-		}
+        // Collect argument types
+        ArrayList<String> args = new ArrayList<>();
+        Type t = type;
+        while (t instanceof FuncT) {
+            FuncT ft = (FuncT) t;
+            args.add(ft.getArgs()[0].toHaskellType());
+            t = ft.getArgs()[1];
+        }
 
-		this.inputs = new InputAnchor[args.size()];
+        this.inputs = new InputAnchor[args.size()];
 
-		// Create anchors and labels for each argument
-		for (int i = 0; i < args.size(); i++) {
-			inputs[i] = new InputAnchor(this, pane);
-			anchorSpace.getChildren().add(inputs[i]);
+        // Create anchors and labels for each argument
+        for (int i = 0; i < args.size(); i++) {
+            inputs[i] = new InputAnchor(this, pane);
+            anchorSpace.getChildren().add(inputs[i]);
 
-			argumentSpace.getChildren().add(new Label(args.get(i)));
-		}
+            argumentSpace.getChildren().add(new Label(args.get(i)));
+        }
 
-		// Create an anchor and label for the result
-		Label lbl = new Label(t.toHaskellType());
-		lbl.getStyleClass().add("result");
-		argumentSpace.getChildren().add(lbl);
-		outputSpace.getChildren().add(this.getOutputAnchor());
-
-		invalidate();
-	}
+        // Create an anchor and label for the result
+        Label lbl = new Label(t.toHaskellType());
+        lbl.getStyleClass().add("result");
+        argumentSpace.getChildren().add(lbl);
+        outputSpace.getChildren().add(this.getOutputAnchor());
+    }
 
 	/**
 	 * Nest another Node object within this FunctionBlock
@@ -237,14 +235,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock{
 	}
 
 	public Type getFunctionSignature(Env env, GenSet genSet) {
-		try {
-			return new Ident(getName()).analyze(env, genSet);
-		} catch (HaskellException e) {
-			// Only happens when function is incorrectly declared in catalog.
-			e.printStackTrace();
-			// TODO return something more meaningful?
-			return null;
-		}
+		return env.getFreshExprType(this.getType()).get();
 	}
 
 	@Override
@@ -356,4 +347,16 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock{
 		outputTypes.getChildren().add(
 				new Label(getOutputType().toHaskellType()));
 	}
+
+    @Override
+    public final void error() {
+            for (InputAnchor in : getInputs()) {
+                if (!in.isConnected()) {
+                    argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().add("error");
+                } else if (in.isConnected()){
+                    argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().remove("error");
+                }
+            }
+            this.getStyleClass().add("error");
+    }
 }

@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components;
+package nl.utwente.group10.ui.components.anchors;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -12,6 +12,7 @@ import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 import nl.utwente.group10.ui.components.blocks.InputBlock;
+import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.AnchorHandler;
 
 /**
@@ -59,7 +60,6 @@ public class InputAnchor extends ConnectionAnchor {
 		assert connection.equals(getConnection().get());
 		setConnection(null);
 	}
-
 	@Override
 	public boolean canConnect() {
 		// InputAnchors only support 1 connection;
