@@ -3,6 +3,7 @@ package nl.utwente.group10.ui.components.anchors;
 import java.io.IOException;
 import java.util.Optional;
 
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Circle;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
@@ -92,6 +93,12 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
             }
         }
         return Optional.empty();
+    }
+
+    /** @return the position of the center of this Anchor relative to its pane. */
+    public Point2D getCenterInPane() {
+        Point2D scenePos = localToScene(getCenterX(), getCenterY());
+        return getPane().sceneToLocal(scenePos);
     }
 
     @Override

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javafx.geometry.Point2D;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -85,6 +86,8 @@ public class MainMenu extends ContextMenu {
 
     private void addBlock(Block block) {
         parent.getChildren().add(block);
+        Point2D panePos = parent.screenToLocal(this.getX(), this.getY());
+        block.relocate(panePos.getX(), panePos.getY());
     }
 
 }

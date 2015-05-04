@@ -559,7 +559,7 @@ public class TactilePane extends Control {
      */
     public static void moveAwayFrom(Node move, Node from, double force) {
         if (move.getParent() == null) return;
-        
+
         Node moveDraggable = move;
         while(!(moveDraggable.getParent() instanceof TactilePane)) {
             moveDraggable = moveDraggable.getParent();
@@ -575,8 +575,8 @@ public class TactilePane extends Control {
             }
         }
         
-        Bounds moveBounds = move.localToScene(move.getBoundsInLocal());
-        Bounds fromBounds = from.localToScene(from.getBoundsInLocal());
+        Bounds moveBounds = move.getBoundsInLocal();
+        Bounds fromBounds = from.getBoundsInLocal();
 
         double moveX = moveBounds.getMinX() + moveBounds.getWidth() / 2;
         double moveY = moveBounds.getMinY() + moveBounds.getHeight() / 2;
@@ -715,7 +715,7 @@ public class TactilePane extends Control {
                 }
             } else if (type == TouchEvent.TOUCH_MOVED) {
                 if (dragContext.touchId == event.getTouchPoint().getId()) {
-                    handleTouchMoved(node, event.getTouchPoint().getSceneX(), event.getTouchPoint().getSceneY());
+                    handleTouchMoved(node, event.getTouchPoint().getX(), event.getTouchPoint().getY());
                     event.consume();
                 }
             } else if (type == TouchEvent.TOUCH_RELEASED) {
@@ -741,7 +741,8 @@ public class TactilePane extends Control {
             } else if (type == MouseEvent.MOUSE_DRAGGED) {
                 
                 if (dragContext.touchId == DragContext.MOUSE_ID) {
-                    handleTouchMoved(node, event.getSceneX(), event.getSceneY());
+                    Point2D local = this.sceneToLocal(event.getSceneX(), event.getSceneY());
+                    handleTouchMoved(node, local.getX(), local.getY());
                     event.consume();
                 }
             } else if (type == MouseEvent.MOUSE_RELEASED) {
