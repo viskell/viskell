@@ -5,6 +5,7 @@ CustomUIPane {
 .block {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
+    -fx-font-family: Titillium;
     -fx-background-color: aliceblue;
     -fx-border-color: black;
     -fx-border-width: 2;

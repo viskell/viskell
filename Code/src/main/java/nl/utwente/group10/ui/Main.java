@@ -1,10 +1,12 @@
 package nl.utwente.group10.ui;
 
+import com.google.common.io.Resources;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
@@ -25,6 +27,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        Font.loadFont(this.getClass().getResourceAsStream("/ui/fonts/titillium.otf"), 20);
+
         tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
 
         tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
