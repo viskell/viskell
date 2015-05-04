@@ -1,6 +1,6 @@
 CustomUIPane {
     -fx-background-image: url('grid.png');
-    -fx-background-position: 5000 5000;
+    -fx-background-position: 2500 2500;
 }
 
 .block {

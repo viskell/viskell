@@ -7,6 +7,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
@@ -46,6 +47,33 @@ public class CustomUIPane extends TactilePane {
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
         this.addEventHandler(ScrollEvent.SCROLL, this::handleScroll);
+
+        this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
+    }
+
+    private void handleKey(KeyEvent keyEvent) {
+        int dist = 100;
+
+        switch (keyEvent.getCode()) {
+            case UP:     this.setTranslateY(this.getTranslateY() + dist); break;
+            case DOWN:   this.setTranslateY(this.getTranslateY() - dist); break;
+            case LEFT:   this.setTranslateX(this.getTranslateX() + dist); break;
+            case RIGHT:  this.setTranslateX(this.getTranslateX() - dist); break;
+
+            case H: // C&C-style
+            case BACK_SPACE: // SC-style
+                this.setTranslateX(0);
+                this.setTranslateY(0);
+                break;
+
+            case EQUALS: this.setScale(this.getScaleX() * 1.25); break;
+            case MINUS:  this.setScale(this.getScaleX() * 0.8); break;
+            case DIGIT1: this.setScale(1); break;
+
+            case DELETE:
+                removeSelected();
+                break;
+        }
     }
 
     private void handlePress(MouseEvent mouseEvent) {
@@ -61,6 +89,11 @@ public class CustomUIPane extends TactilePane {
         this.setTranslateY(offset.getY() - delta.getY());
     }
 
+    private void setScale(double scale) {
+        this.setScaleX(scale);
+        this.setScaleY(scale);
+    }
+
     private void handleScroll(ScrollEvent scrollEvent) {
         double scale = this.getScaleX();
         double ratio = 1.0;
@@ -71,8 +104,7 @@ public class CustomUIPane extends TactilePane {
             ratio = 0.8;
         }
 
-        this.setScaleX(scale * ratio);
-        this.setScaleY(scale * ratio);
+        this.setScale(scale * ratio);
         this.setTranslateX(this.getTranslateX() * ratio);
         this.setTranslateY(this.getTranslateY() * ratio);
 
@@ -133,7 +165,7 @@ public class CustomUIPane extends TactilePane {
     }
 
     /** Remove the selected block, if any. */
-    public void removeSelected() {
+    private void removeSelected() {
         this.getSelectedBlock().ifPresent(this::removeBlock);
     }
 

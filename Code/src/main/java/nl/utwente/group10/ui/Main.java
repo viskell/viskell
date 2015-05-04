@@ -66,7 +66,6 @@ public class Main extends Application {
 
         // Init scene
         Scene scene = new Scene(debug);
-        scene.addEventHandler(KeyEvent.KEY_RELEASED, this::handleKey);
 
         stage.setOnCloseRequest(event -> System.exit(0));
         stage.setScene(scene);
@@ -79,14 +78,7 @@ public class Main extends Application {
 
         // Invalidate
         tactilePane.invalidate();
-    }
-
-    private void handleKey(KeyEvent event) {
-        switch (event.getCode()) {
-            case DELETE:
-                tactilePane.removeSelected();
-                break;
-        }
+        tactilePane.requestFocus();
     }
 
     /**
