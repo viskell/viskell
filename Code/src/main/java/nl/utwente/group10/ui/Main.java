@@ -51,8 +51,7 @@ public class Main extends Application {
         stage.setOnCloseRequest(event -> System.exit(0));
         stage.setScene(scene);
 
-        stage.setWidth(800);
-        stage.setHeight(600);
+        stage.setMaximized(true);
         stage.show();
 
         valueBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2);
