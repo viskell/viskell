@@ -2,6 +2,7 @@ package nl.utwente.group10.ui.components.blocks;
 
 import java.io.IOException;
 
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
@@ -63,7 +64,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
                             }
                         });
 
-        this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::select);
+        this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseEvent);
 
         this.createContextMenu();
     }
@@ -81,10 +82,11 @@ public abstract class Block extends StackPane implements ComponentLoader {
      * Sets this block as the selected block. When this block has already been
      * selected it spawns a contextMenu instead.
      */
-    private void select(MouseEvent mouseEvent) {
+    private void handleMouseEvent(MouseEvent t) {
         if (parentPane.getSelectedBlock().isPresent()
-                && parentPane.getSelectedBlock().get().equals(this)) {
-            contextMenu.show(mouseEvent);
+                && parentPane.getSelectedBlock().get().equals(this)
+                && t.getButton().equals(MouseButton.PRIMARY)) {
+            contextMenu.show(t);
         } else {
             parentPane.setSelectedBlock(this);
         }
