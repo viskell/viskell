@@ -2,7 +2,6 @@ package nl.utwente.group10.ghcj;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Optional;
 
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellSyntaxError;
@@ -16,16 +15,13 @@ public final class GhciSession implements Closeable {
     /** The evaluator this GhciSession will communicate with. */
     private final GhciEvaluator ghci;
 
-    /** Singleton instance. */
-    private static Optional<GhciSession> instance = Optional.empty();
-
     /**
      * Builds a new communication session with ghci.
      *
      * @throws GhciException when ghci can not be found, can not be executed,
      *         or does not understand our setup sequence.
      */
-    private GhciSession() throws GhciException {
+    public GhciSession() throws GhciException {
         this.ghci = new GhciEvaluator();
     }
 
@@ -68,18 +64,5 @@ public final class GhciSession implements Closeable {
     @Override
     public void close() throws IOException {
         this.ghci.close();
-    }
-
-    /**
-     * @return An instance of GhciSession to work with.
-     * @throws GhciException when there is a problem setting up the connection with ghci, this usually means that ghci
-     *                       is not installed on your system.
-     */
-    public static GhciSession getInstance() throws GhciException {
-        if (!instance.isPresent()) {
-            instance = Optional.of(new GhciSession());
-        }
-
-        return instance.get();
     }
 }

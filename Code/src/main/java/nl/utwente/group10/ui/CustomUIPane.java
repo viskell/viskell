@@ -7,6 +7,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+import nl.utwente.group10.ghcj.GhciException;
+import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
@@ -18,6 +20,7 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 public class CustomUIPane extends TactilePane {
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
+    private Optional<GhciSession> ghci;
 
     /**
      * Constructs a new instance.
@@ -25,6 +28,12 @@ public class CustomUIPane extends TactilePane {
     public CustomUIPane() {
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
+
+        try {
+            this.ghci = Optional.of(new GhciSession());
+        } catch (GhciException e) {
+            this.ghci = Optional.empty();
+        }
     }
 
     /**
@@ -91,5 +100,9 @@ public class CustomUIPane extends TactilePane {
 
     public ConnectionCreationManager getConnectionCreationManager() {
         return connectionCreationManager;
+    }
+
+    public Optional<GhciSession> getGhciSession() {
+        return ghci;
     }
 }

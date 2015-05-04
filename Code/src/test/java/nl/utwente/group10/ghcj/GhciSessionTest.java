@@ -23,7 +23,7 @@ public class GhciSessionTest {
     public void setUp() throws GhciException {
         this.env = new Env();
         this.genSet = new GenSet();
-        this.ghci = GhciSession.getInstance();
+        this.ghci = new GhciSession();
 
         this.env.getExprTypes().put("my_pi", new ConstT("Float"));
         this.pi = new Value(new ConstT("Float"), "3.14");
