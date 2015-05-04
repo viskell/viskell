@@ -17,6 +17,7 @@ import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.FunctionBlock;
+import nl.utwente.group10.ui.export.Exporter;
 
 public class MainMenu extends ContextMenu {
     private CustomUIPane parent;
@@ -51,12 +52,23 @@ public class MainMenu extends ContextMenu {
         MenuItem errorItem = new MenuItem("Error all Blocks");
         errorItem.setOnAction(event -> parent.errorAll());
 
+        MenuItem saveItem = new MenuItem("Save");
+        saveItem.setOnAction(event -> save());
+
         MenuItem quitItem = new MenuItem("Quit");
         quitItem.setOnAction(event -> System.exit(0));
 
         SeparatorMenuItem sep = new SeparatorMenuItem();
 
-        this.getItems().addAll(valueBlockItem, displayBlockItem, sep, errorItem, quitItem);
+        this.getItems().addAll(valueBlockItem, displayBlockItem, sep, errorItem, saveItem, quitItem);
+    }
+
+    private void save() {
+        try {
+            new Exporter(parent).export("viskell.xml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void addFunctionBlock(FunctionEntry entry) {

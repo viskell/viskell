@@ -42,6 +42,8 @@
           <archive>
             <manifest>
               <mainClass>nl.utwente.group10.ui.Main</mainClass>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
             </manifest>
           </archive>
         </configuration>
