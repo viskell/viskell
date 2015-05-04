@@ -10,6 +10,7 @@ import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.ui.components.CustomAlert;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 
@@ -42,6 +43,9 @@ public class Main extends Application {
         // Init menu
         ContextMenu menu = new MainMenu(catalog, tactilePane);
         tactilePane.setContextMenu(menu);
+
+        // Show some warning
+        tactilePane.getChildren().add(new CustomAlert(tactilePane, "blabla"));
 
         // Init scene
         Scene scene = new Scene(debug);
