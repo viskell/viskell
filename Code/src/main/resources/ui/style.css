@@ -78,3 +78,25 @@ CustomUIPane {
 .connection.error {
     -fx-stroke: orange;
 }
+
+
+.alert {
+    -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-padding: 12;
+}
+
+.alert .msg {
+    -fx-text-fill: black;
+    -fx-line-spacing: 0.2em;
+}
+
+.alert .btn {
+    -fx-background-color: #2980b9;
+}
+
+.alert .btn Label {
+    -fx-padding: 6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}

@@ -11,7 +11,10 @@ import javafx.stage.Stage;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
+import nl.utwente.group10.ghcj.GhciEvaluator;
+import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.ui.components.CustomAlert;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 
@@ -47,6 +50,19 @@ public class Main extends Application {
         // Init menu
         ContextMenu menu = new MainMenu(catalog, tactilePane);
         tactilePane.setContextMenu(menu);
+
+        // Check if GHCI is available
+        try {
+            new GhciEvaluator().eval("");
+        } catch (GhciException e) {
+            String msg = "It seems the Glasgow Haskell Compiler, GHC, is not " +
+                    "available. Executing programs will not be enabled. We " +
+                    "strongly recommend you install GHC, for example by " +
+                    "installing the Haskell Platform (haskell.org/platform).";
+            tactilePane.getChildren().add(new CustomAlert(tactilePane, msg));
+
+            e.printStackTrace(); // In case it's not a file-not-found
+        }
 
         // Init scene
         Scene scene = new Scene(debug);
