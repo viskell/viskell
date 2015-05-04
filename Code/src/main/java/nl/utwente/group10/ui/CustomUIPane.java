@@ -33,7 +33,7 @@ public class CustomUIPane extends TactilePane {
     private Point2D offset;
 
     private Env envInstance;
-    
+
     /**
      * Constructs a new instance.
      */
@@ -60,34 +60,50 @@ public class CustomUIPane extends TactilePane {
         int dist = 100;
 
         switch (keyEvent.getCode()) {
-            case UP:     this.setTranslateY(this.getTranslateY() + dist); break;
-            case DOWN:   this.setTranslateY(this.getTranslateY() - dist); break;
-            case LEFT:   this.setTranslateX(this.getTranslateX() + dist); break;
-            case RIGHT:  this.setTranslateX(this.getTranslateX() - dist); break;
+        case UP:
+            this.setTranslateY(this.getTranslateY() + dist);
+            break;
+        case DOWN:
+            this.setTranslateY(this.getTranslateY() - dist);
+            break;
+        case LEFT:
+            this.setTranslateX(this.getTranslateX() + dist);
+            break;
+        case RIGHT:
+            this.setTranslateX(this.getTranslateX() - dist);
+            break;
 
-            case H: // C&C-style
-            case BACK_SPACE: // SC-style
-                this.setTranslateX(0);
-                this.setTranslateY(0);
-                break;
+        case H: // C&C-style
+        case BACK_SPACE: // SC-style
+            this.setTranslateX(0);
+            this.setTranslateY(0);
+            break;
 
-            case EQUALS: this.setScale(this.getScaleX() * 1.25); break;
-            case MINUS:  this.setScale(this.getScaleX() * 0.8); break;
-            case DIGIT1: this.setScale(1); break;
+        case EQUALS:
+            this.setScale(this.getScaleX() * 1.25);
+            break;
+        case MINUS:
+            this.setScale(this.getScaleX() * 0.8);
+            break;
+        case DIGIT1:
+            this.setScale(1);
+            break;
 
-            case DELETE:
-                removeSelected();
-                break;
+        case DELETE:
+            removeSelected();
+            break;
         }
     }
 
     private void handlePress(MouseEvent mouseEvent) {
         offset = new Point2D(this.getTranslateX(), this.getTranslateY());
-        dragStart = new Point2D(mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        dragStart = new Point2D(mouseEvent.getScreenX(),
+                mouseEvent.getScreenY());
     }
 
     private void handleDrag(MouseEvent mouseEvent) {
-        Point2D dragCurrent = new Point2D(mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        Point2D dragCurrent = new Point2D(mouseEvent.getScreenX(),
+                mouseEvent.getScreenY());
         Point2D delta = dragStart.subtract(dragCurrent);
 
         this.setTranslateX(offset.getX() - delta.getX());
@@ -114,21 +130,20 @@ public class CustomUIPane extends TactilePane {
         this.setTranslateY(this.getTranslateY() * ratio);
 
     }
-    
-    public Env getEnvInstance(){
-    	
-    	if(envInstance==null){
-    		try {
-				//envInstance = new HaskellCatalog().asEnvironment();
-    			return new HaskellCatalog().asEnvironment();
-			} catch (CatalogException e) {
-				// TODO Think of something smart to do when this happens.
-				e.printStackTrace();
-			}
-    	}
-    	return envInstance;
+
+    public Env getEnvInstance() {
+
+        if (envInstance == null) {
+            try {
+                // envInstance = new HaskellCatalog().asEnvironment();
+                return new HaskellCatalog().asEnvironment();
+            } catch (CatalogException e) {
+                // TODO Think of something smart to do when this happens.
+                e.printStackTrace();
+            }
+        }
+        return envInstance;
     }
-    
 
     /**
      * Re-evaluate all display blocks.
@@ -136,17 +151,17 @@ public class CustomUIPane extends TactilePane {
     public final void invalidate() {
         for (Node node : getChildren()) {
             if (node instanceof Block) {
-                ((Block)node).invalidate();
+                ((Block) node).invalidate();
             }
         }
     }
-    
+
     public final void errorAll() {
         for (Node node : getChildren()) {
             if (node instanceof Block) {
-                ((Block)node).error();
+                ((Block) node).error();
             } else if (node instanceof Connection) {
-                ((Connection)node).error();
+                ((Connection) node).error();
             }
         }
     }

@@ -17,7 +17,8 @@ import nl.utwente.group10.ui.components.lines.Connection;
  *
  * Other data types will be supported in the future
  */
-public abstract class ConnectionAnchor extends Circle implements ComponentLoader {
+public abstract class ConnectionAnchor extends Circle implements
+        ComponentLoader {
     /** The pane on which this Anchor resides. */
     private CustomUIPane pane;
 
@@ -28,9 +29,12 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     private Optional<Connection> connection;
 
     /**
-     * @param block The block where this Anchor is connected to.
-     * @param pane The pane this Anchor belongs to.
-     * @throws IOException when the FXML definitions cannot be loaded.
+     * @param block
+     *            The block where this Anchor is connected to.
+     * @param pane
+     *            The pane this Anchor belongs to.
+     * @throws IOException
+     *             when the FXML definitions cannot be loaded.
      */
     public ConnectionAnchor(Block block, CustomUIPane pane) {
         this.block = block;
@@ -45,14 +49,13 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         setConnection(null);
     }
 
-
     /**
      * @return The block this anchor belongs to.
      */
     public final Block getBlock() {
         return block;
     }
-    
+
     /**
      * @return Input or output type of the block associated with this anchor.
      */
@@ -75,9 +78,10 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     public boolean isConnected() {
         return connection.isPresent();
     }
-    
+
     /**
-     * @return True if this ConnectionAnchor is connected to a Connection and that connection is fully connected.
+     * @return True if this ConnectionAnchor is connected to a Connection and
+     *         that connection is fully connected.
      */
     public boolean isFullyConnected() {
         return isConnected() && getConnection().get().isConnected();
@@ -91,7 +95,9 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
 
     /**
      * Disconnects itself from the connection
-     * @param connection Connection to disconnect from.
+     * 
+     * @param connection
+     *            Connection to disconnect from.
      */
     public abstract void disconnectFrom(Connection connection);
 
@@ -117,6 +123,7 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
 
     @Override
     public String toString() {
-        return String.format("%s for %s", this.getClass().getSimpleName(), getBlock());
+        return String.format("%s for %s", this.getClass().getSimpleName(),
+                getBlock());
     }
 }

@@ -8,6 +8,7 @@ import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.OutputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
+import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 import nl.utwente.group10.ui.handlers.AnchorHandler;
 
 /**
@@ -15,13 +16,16 @@ import nl.utwente.group10.ui.handlers.AnchorHandler;
  */
 public class OutputAnchor extends ConnectionAnchor {
     /**
-     * @param block The block this Anchor is connected to.
-     * @param pane The parent pane on which this anchor resides.
-     * @throws IOException when the FXML definition of this anchor cannot be loaded.
+     * @param block
+     *            The block this Anchor is connected to.
+     * @param pane
+     *            The parent pane on which this anchor resides.
+     * @throws IOException
+     *             when the FXML definition of this anchor cannot be loaded.
      */
     public OutputAnchor(Block block, CustomUIPane pane) throws IOException {
         super(block, pane);
-        new AnchorHandler(pane.getConnectionCreationManager(),this);
+        new AnchorHandler(pane.getConnectionCreationManager(), this);
     }
 
     public Connection createConnectionTo(InputAnchor other) {
@@ -48,12 +52,12 @@ public class OutputAnchor extends ConnectionAnchor {
         // Currently does not keep track of its connections.
     }
 
-	@Override
-	public Type getType() {
-		if(getBlock() instanceof OutputBlock){
-			return ((OutputBlock)getBlock()).getOutputType();
-		}else{
-			return null;
-		}
-	}
+    @Override
+    public Type getType() {
+        if (getBlock() instanceof OutputBlock) {
+            return ((OutputBlock) getBlock()).getOutputType();
+        } else {
+            throw new TypeUnavailableException();
+        }
+    }
 }

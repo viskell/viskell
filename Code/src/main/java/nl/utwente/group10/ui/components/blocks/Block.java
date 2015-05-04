@@ -33,7 +33,6 @@ public abstract class Block extends StackPane implements ComponentLoader {
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
 
-
     /**
      * @param blockName
      *            Name of this block. The name is used to load the FXML
@@ -65,6 +64,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
 
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::select);
     }
+
     /** Sets this block as the selected block. */
     private void select(MouseEvent mouseEvent) {
         parentPane.setSelectedBlock(this);
@@ -82,10 +82,14 @@ public abstract class Block extends StackPane implements ComponentLoader {
 
     /** Returns an expression that evaluates to what this block is. */
     public abstract Expr asExpr();
+
     /**
-     * Tells the block that its current state (considering connections) has changed. 
+     * Tells the block that its current state (considering connections) has
+     * changed. Default implementation does not react to a potential state
+     * change.
      */
-	public abstract void invalidate();
+    public void invalidate() {
+    }
 
     /** DEBUG METHOD trigger the error state for this Block */
     public abstract void error();

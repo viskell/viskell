@@ -14,34 +14,46 @@ import org.junit.Test;
 
 public class UnificationTest {
 
-	@Test
-	public void testUnifyUndefined() throws CatalogException, HaskellException {
-		Expr e0 = new Ident("const");
-		Type t0 = e0.analyze(new HaskellCatalog().asEnvironment(), new GenSet()).prune();
-		assertEquals("(a -> (b -> a))", t0.toHaskellType());
-		
-		Expr e1 = new Apply(e0, new Ident("undefined"));
-		Type t1 = e1.analyze(new HaskellCatalog().asEnvironment(), new GenSet()).prune();
-		assertEquals("(b -> a)", t1.toHaskellType());
-		
-		Expr e2 = new Apply(e1, new Ident("undefined"));
-		Type t2 = e2.analyze(new HaskellCatalog().asEnvironment(), new GenSet()).prune();
-		assertEquals("a", t2.toHaskellType());
-	}
-	
-	@Test
-	public void testUnifyFloats() throws CatalogException, HaskellException {
-		Expr e0 = new Ident("const");
-		Type t0 = e0.analyze(new HaskellCatalog().asEnvironment(), new GenSet()).prune();
-		assertEquals("(a -> (b -> a))", t0.toHaskellType());
-		
-		Expr e1 = new Apply(e0, new Value(new ConstT("Float"), "5.0"));
-		Type t1 = e1.analyze(new HaskellCatalog().asEnvironment(), new GenSet()).prune();
-		assertEquals("(b -> Float)", t1.toHaskellType());
-		
-		Expr e2 = new Apply(e1, new Value(new ConstT("Float"), "5.0"));
-		Type t2 = e2.analyze(new HaskellCatalog().asEnvironment(), new GenSet()).prune();
-		assertEquals("Float", t2.toHaskellType());
-	}
+    @Test
+    public void testUnifyUndefined() throws CatalogException, HaskellException {
+        Expr e0 = new Ident("const");
+        Type t0 = e0
+                .analyze(new HaskellCatalog().asEnvironment(), new GenSet())
+                .prune();
+        assertEquals("(a -> (b -> a))", t0.toHaskellType());
+
+        Expr e1 = new Apply(e0, new Ident("undefined"));
+        Type t1 = e1
+                .analyze(new HaskellCatalog().asEnvironment(), new GenSet())
+                .prune();
+        assertEquals("(b -> a)", t1.toHaskellType());
+
+        Expr e2 = new Apply(e1, new Ident("undefined"));
+        Type t2 = e2
+                .analyze(new HaskellCatalog().asEnvironment(), new GenSet())
+                .prune();
+        assertEquals("a", t2.toHaskellType());
+    }
+
+    @Test
+    public void testUnifyFloats() throws CatalogException, HaskellException {
+        Expr e0 = new Ident("const");
+        Type t0 = e0
+                .analyze(new HaskellCatalog().asEnvironment(), new GenSet())
+                .prune();
+        assertEquals("(a -> (b -> a))", t0.toHaskellType());
+
+        Expr e1 = new Apply(e0, new Value(new ConstT("Float"), "5.0"));
+        Type t1 = e1
+                .analyze(new HaskellCatalog().asEnvironment(), new GenSet())
+                .prune();
+        assertEquals("(b -> Float)", t1.toHaskellType());
+
+        Expr e2 = new Apply(e1, new Value(new ConstT("Float"), "5.0"));
+        Type t2 = e2
+                .analyze(new HaskellCatalog().asEnvironment(), new GenSet())
+                .prune();
+        assertEquals("Float", t2.toHaskellType());
+    }
 
 }

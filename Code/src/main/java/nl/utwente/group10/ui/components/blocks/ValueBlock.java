@@ -14,23 +14,29 @@ import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 
 /**
- * ValueBlock is an extension of Block that contains only a value and does not accept input of any kind. A single output
- * source will be generated in order to connect a ValueBlock to another Block.
+ * ValueBlock is an extension of Block that contains only a value and does not
+ * accept input of any kind. A single output source will be generated in order
+ * to connect a ValueBlock to another Block.
  *
- * Extensions of ValueBlock should never accept inputs, if desired the class Block should be extended instead.
+ * Extensions of ValueBlock should never accept inputs, if desired the class
+ * Block should be extended instead.
  */
-public class ValueBlock extends Block implements OutputBlock{
-    /** The value of this ValueBlock.*/
+public class ValueBlock extends Block implements OutputBlock {
+    /** The value of this ValueBlock. */
     private StringProperty value;
 
     /** The space used for the output anchor. */
-    @FXML private Pane outputSpace;
+    @FXML
+    private Pane outputSpace;
 
     /**
-     * @param pane The parent pane this Block resides on.
-     * @throws IOException when the FXML definition cannot be loaded.
+     * @param pane
+     *            The parent pane this Block resides on.
+     * @throws IOException
+     *             when the FXML definition cannot be loaded.
      */
     public ValueBlock(CustomUIPane pane) throws IOException {
         super(pane);
@@ -42,13 +48,17 @@ public class ValueBlock extends Block implements OutputBlock{
         outputSpace.getChildren().add(this.getOutputAnchor());
     }
 
-    /** @param value The value of this block to be used as output. */
+    /**
+     * @param value
+     *            The value of this block to be used as output.
+     */
     public final void setValue(String value) {
         this.value.set(value);
     }
 
     /**
      * Returns the value that is outputted by this Block.
+     * 
      * @return output The value that is outputted by this Block.
      */
     public final String getValue() {
@@ -57,6 +67,7 @@ public class ValueBlock extends Block implements OutputBlock{
 
     /**
      * the StringProperty for the value of this ValueBlock.
+     * 
      * @return value
      */
     public final StringProperty valueProperty() {
@@ -68,39 +79,31 @@ public class ValueBlock extends Block implements OutputBlock{
         // TODO: support more types than floats
         return new Value(new ConstT("Float"), getValue());
     }
-    
+
     @Override
-    public final void invalidate(){
-    	//ValueBlock doesn't have a state to update.
+    public Type getOutputType() {
+        return getOutputType(getPane().getEnvInstance(), new GenSet());
     }
 
-    
     @Override
-    public Type getOutputType(){
-    	return getOutputType(getPane().getEnvInstance(), new GenSet());
+    public Type getOutputType(Env env, GenSet genSet) {
+        return getOutputSignature(env, genSet);
     }
-    
-	@Override
-	public Type getOutputType(Env env, GenSet genSet) {
-		return getOutputSignature(env,genSet);
-	}
 
-	@Override
-	public Type getOutputSignature() {
-		return getOutputSignature(getPane().getEnvInstance(), new GenSet());
-	}
+    @Override
+    public Type getOutputSignature() {
+        return getOutputSignature(getPane().getEnvInstance(), new GenSet());
+    }
 
-	@Override
-	public Type getOutputSignature(Env env, GenSet genSet) {
-    	try {
-			return asExpr().analyze(env,genSet);
-		} catch (HaskellException e) {
-			// ValueBlock would be wrongly defined.
-			e.printStackTrace();
-			//TODO return invalid Type?
-			return null;
-		}
-	}
+    @Override
+    public Type getOutputSignature(Env env, GenSet genSet) {
+        try {
+            return asExpr().analyze(env, genSet);
+        } catch (HaskellException e) {
+            throw new TypeUnavailableException();
+        }
+    }
+
     @Override
     public void error() {
         this.getStyleClass().add("error");

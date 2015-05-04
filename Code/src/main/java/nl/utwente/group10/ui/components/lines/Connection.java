@@ -37,12 +37,12 @@ public class Connection extends ConnectionLine implements
     }
 
     public Connection(OutputAnchor from) {
-    	tryAddAnchor(from);
+        tryAddAnchor(from);
         setEndPosition(getScenePoint(from));
     }
 
     public Connection(InputAnchor to) {
-    	tryAddAnchor(to);
+        tryAddAnchor(to);
         setStartPosition(getScenePoint(to));
     }
 
@@ -70,85 +70,96 @@ public class Connection extends ConnectionLine implements
     /**
      * Tries to add an unspecified ConnectionAnchor to the connection.
      *
-     * @param anchor Anchor to add
-     * @param override If set will override (possible) existing Anchor.
+     * @param anchor
+     *            Anchor to add
+     * @param override
+     *            If set will override (possible) existing Anchor.
      * @return Whether or not the anchor was added.
      */
-    public boolean tryAddAnchor(ConnectionAnchor anchor, boolean overrideExisting, boolean allowTypeMismatch) {
+    public boolean tryAddAnchor(ConnectionAnchor anchor,
+            boolean overrideExisting, boolean allowTypeMismatch) {
         boolean added = false;
-        if ((!startAnchor.isPresent() || overrideExisting) && anchor instanceof OutputAnchor) {
+        if ((!startAnchor.isPresent() || overrideExisting)
+                && anchor instanceof OutputAnchor) {
             disconnect(startAnchor);
-            
+
             boolean typesMatch = typesMatch(anchor);
-            if(typesMatch || allowTypeMismatch){
-	            setStartAnchor((OutputAnchor) anchor);
-	            added = true;
+            if (typesMatch || allowTypeMismatch) {
+                setStartAnchor((OutputAnchor) anchor);
+                added = true;
             }
-            if(!typesMatch){
-            	//TODO type mismatch
-            	System.out.println("Type mismatch!");
+            if (!typesMatch) {
+                // TODO type mismatch
+                System.out.println("Type mismatch!");
             }
-        } else if ((!endAnchor.isPresent() || overrideExisting) && anchor instanceof InputAnchor) {
+        } else if ((!endAnchor.isPresent() || overrideExisting)
+                && anchor instanceof InputAnchor) {
             disconnect(endAnchor);
-            
+
             boolean typesMatch = typesMatch(anchor);
-            if(typesMatch || allowTypeMismatch){
+            if (typesMatch || allowTypeMismatch) {
                 setEndAnchor((InputAnchor) anchor);
-	            added = true;
+                added = true;
             }
-            if(!typesMatch){
-            	//TODO type mismatch
-            	System.out.println("Type mismatch!");
+            if (!typesMatch) {
+                // TODO type mismatch
+                System.out.println("Type mismatch!");
             }
         }
-        
+
         updateStartEndPositions();
-        
+
         return added;
     }
+
     public boolean tryAddAnchor(ConnectionAnchor anchor) {
-        return tryAddAnchor(anchor, ConnectionCreationManager.CONNECTIONS_OVERRIDE_EXISTING, ConnectionCreationManager.CONNECTIONS_ALLOW_TYPE_MISMATCH);
+        return tryAddAnchor(anchor,
+                ConnectionCreationManager.CONNECTIONS_OVERRIDE_EXISTING,
+                ConnectionCreationManager.CONNECTIONS_ALLOW_TYPE_MISMATCH);
     }
-    
-    public final boolean typesMatch(ConnectionAnchor potentialAnchor){
-    	//TODO Let this return mismatch information?
-    	if(potentialAnchor instanceof InputAnchor){
-    		if(startAnchor.isPresent()){
-    			try{
-    				HindleyMilner.unify(startAnchor.get().getType(), potentialAnchor.getType());
-    				//Types successfully unified
-    				return true;
-    			}catch(HaskellTypeError e){
-    				//Unable to unify types;
-    				return false;
-    			}
-    		}else{
-    			//First anchor to be added
-    			return true;
-    		}
-    	}else if(potentialAnchor instanceof OutputAnchor){
-    		if(endAnchor.isPresent()){
-    			try{
-    				HindleyMilner.unify(endAnchor.get().getType(), potentialAnchor.getType());
-    				//Types successfully unified
-    				return true;
-    			}catch(HaskellTypeError e){
-    				//Unable to unify types;
-    				return false;
-    			}
-    		}else{
-    			//First anchor to be added
-    			return true;
-    		}
-    	}
-    	return false;
+
+    public final boolean typesMatch(ConnectionAnchor potentialAnchor) {
+        // TODO Let this return mismatch information?
+        if (potentialAnchor instanceof InputAnchor) {
+            if (startAnchor.isPresent()) {
+                try {
+                    HindleyMilner.unify(startAnchor.get().getType(),
+                            potentialAnchor.getType());
+                    // Types successfully unified
+                    return true;
+                } catch (HaskellTypeError e) {
+                    // Unable to unify types;
+                    return false;
+                }
+            } else {
+                // First anchor to be added
+                return true;
+            }
+        } else if (potentialAnchor instanceof OutputAnchor) {
+            if (endAnchor.isPresent()) {
+                try {
+                    HindleyMilner.unify(endAnchor.get().getType(),
+                            potentialAnchor.getType());
+                    // Types successfully unified
+                    return true;
+                } catch (HaskellTypeError e) {
+                    // Unable to unify types;
+                    return false;
+                }
+            } else {
+                // First anchor to be added
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
      * Set the startAnchor for this line. After setting the StartPosition will
      * be updated.
      *
-     * @param start The OutputAnchor to start at.
+     * @param start
+     *            The OutputAnchor to start at.
      */
     public void setStartAnchor(OutputAnchor start) {
         setAnchor(startAnchor, start);
@@ -158,7 +169,8 @@ public class Connection extends ConnectionLine implements
      * Set the endAnchor for this line. After setting the EndPosition will be
      * updated.
      *
-     * @param end the InputAnchor to end at.
+     * @param end
+     *            the InputAnchor to end at.
      */
     public void setEndAnchor(InputAnchor end) {
         setAnchor(endAnchor, end);
@@ -171,16 +183,20 @@ public class Connection extends ConnectionLine implements
 
         if (newAnchor instanceof OutputAnchor) {
             if (startAnchor.isPresent()) {
-                startAnchor.get().getBlock().layoutXProperty().removeListener(this);
-                startAnchor.get().getBlock().layoutYProperty().removeListener(this);
+                startAnchor.get().getBlock().layoutXProperty()
+                        .removeListener(this);
+                startAnchor.get().getBlock().layoutYProperty()
+                        .removeListener(this);
             }
-            startAnchor = Optional.of((OutputAnchor)newAnchor);
+            startAnchor = Optional.of((OutputAnchor) newAnchor);
         } else if (newAnchor instanceof InputAnchor) {
             if (endAnchor.isPresent()) {
-                endAnchor.get().getBlock().layoutXProperty().removeListener(this);
-                endAnchor.get().getBlock().layoutYProperty().removeListener(this);
+                endAnchor.get().getBlock().layoutXProperty()
+                        .removeListener(this);
+                endAnchor.get().getBlock().layoutYProperty()
+                        .removeListener(this);
             }
-            endAnchor = Optional.of((InputAnchor)newAnchor);
+            endAnchor = Optional.of((InputAnchor) newAnchor);
         }
 
         checkError();
@@ -221,16 +237,16 @@ public class Connection extends ConnectionLine implements
             Number oldValue, Number newValue) {
         updateStartEndPositions();
     }
-    
+
     /** @return the scene-relative Point location of this anchor. */
     private Point2D getScenePoint(ConnectionAnchor anchor) {
         double x = anchor.getCenterX();
         double y = anchor.getCenterY();
         return anchor.localToScene(x, y);
     }
-    
-    public final boolean isConnected(){
-    	return startAnchor.isPresent() && endAnchor.isPresent();
+
+    public final boolean isConnected() {
+        return startAnchor.isPresent() && endAnchor.isPresent();
     }
 
     public final void disconnect(ConnectionAnchor anchor) {
@@ -244,7 +260,7 @@ public class Connection extends ConnectionLine implements
         }
     }
 
-    public final void disconnect(Optional<? extends ConnectionAnchor> anchor){
+    public final void disconnect(Optional<? extends ConnectionAnchor> anchor) {
         disconnect(anchor.orElse(null));
     }
 
@@ -260,15 +276,17 @@ public class Connection extends ConnectionLine implements
     }
 
     /**
-     * This method evaluates the validity of the created connection.
-     * If the connection results in an invalid operation a visual
-     * error will be displayed.
+     * This method evaluates the validity of the created connection. If the
+     * connection results in an invalid operation a visual error will be
+     * displayed.
      */
     private void checkError() {
-        if(startAnchor.isPresent() && endAnchor.isPresent()) {
+        if (startAnchor.isPresent() && endAnchor.isPresent()) {
             try {
-                //TODO Obviously this will cause errors, we need a way to access the Env
-                endAnchor.get().getBlock().asExpr().analyze(new Env(), new GenSet());
+                // TODO Obviously this will cause errors, we need a way to
+                // access the Env
+                endAnchor.get().getBlock().asExpr()
+                        .analyze(new Env(), new GenSet());
                 this.getStyleClass().remove("error");
             } catch (HaskellTypeError e) {
                 this.getStyleClass().add("error");

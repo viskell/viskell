@@ -14,6 +14,7 @@ import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.hindley.GenSet;
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.VarT;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -35,15 +36,20 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
     private InputAnchor inputAnchor;
 
     /** The space containing the input anchor. */
-    @FXML private Pane anchorSpace;
+    @FXML
+    private Pane anchorSpace;
 
     /** The space containing the output anchor. */
-    @FXML private Pane outputSpace;
+    @FXML
+    private Pane outputSpace;
 
     /**
      * Creates a new instance of DisplayBlock.
-     * @param pane The pane on which this DisplayBlock resides.
-     * @throws IOException when the FXML definition for this block cannot be loaded.
+     * 
+     * @param pane
+     *            The pane on which this DisplayBlock resides.
+     * @throws IOException
+     *             when the FXML definition for this block cannot be loaded.
      */
     public DisplayBlock(CustomUIPane pane) throws IOException {
         super(pane);
@@ -59,7 +65,9 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
 
     /**
      * Sets the output flowing into the DisplayBlock and refresh the display.
-     * @param value The value to show.
+     * 
+     * @param value
+     *            The value to show.
      */
     public void setOutput(final String value) {
         output.set(value);
@@ -67,6 +75,7 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
 
     /**
      * Returns the output value this Block has.
+     * 
      * @return outputValue
      */
     public String getOutput() {
@@ -75,6 +84,7 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
 
     /**
      * Property getter for the output property.
+     * 
      * @return outputProperty
      */
     public StringProperty outputProperty() {
@@ -102,76 +112,78 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
     }
 
     @Override
-	public Type getInputType(InputAnchor anchor) {
-		try {
-			return new Ident("undefined").analyze(getPane().getEnvInstance(), new GenSet());
-		} catch (HaskellException e) {
-			// TODO return invalid Type?
-			e.printStackTrace();
-			return null;
-		}
-	}
+    public Type getInputType(InputAnchor anchor) {
+        try {
+            return new Ident("undefined").analyze(getPane().getEnvInstance(),
+                    new GenSet());
+        } catch (HaskellException e) {
+            // TODO return invalid Type?
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-	private Type getInputSignature(){
-		//Is this correct?
-		return new VarT("a");
-	}
-	
-	@Override
-	public Type getInputSignature(InputAnchor input) {
-		return getInputSignature();
-	}
+    private Type getInputSignature() {
+        // Return the type 'a', that matches anything.
+        // In the future this should probably be changed to '(Show a)'
+        return HindleyMilner.makeVariable();
+    }
 
-	@Override
-	public Type getInputSignature(int index) {
-		return getInputSignature();
-	}
+    @Override
+    public Type getInputSignature(InputAnchor input) {
+        return getInputSignature();
+    }
 
-	@Override
-	public Type getInputType(int index) {
-		return getInputSignature();
-	}
+    @Override
+    public Type getInputSignature(int index) {
+        return getInputSignature();
+    }
 
-	@Override
-	public InputAnchor[] getInputs() {
-		return new InputAnchor[]{inputAnchor};
-	}
+    @Override
+    public Type getInputType(int index) {
+        return getInputSignature();
+    }
 
-	@Override
-	public int getInputIndex(InputAnchor anchor) {
-		return 0;
-	}
+    @Override
+    public InputAnchor[] getInputs() {
+        return new InputAnchor[] { inputAnchor };
+    }
 
-	@Override
-	public boolean inputsAreConnected() {
-		return inputIsConnected(0);
-	}
+    @Override
+    public int getInputIndex(InputAnchor anchor) {
+        return 0;
+    }
 
-	@Override
-	public boolean inputIsConnected(int index) {
-		return inputAnchor.isFullyConnected();
-	}
+    @Override
+    public boolean inputsAreConnected() {
+        return inputIsConnected(0);
+    }
 
-	@Override
-	public Type getOutputType() {
-		return getOutputType(getPane().getEnvInstance(),new GenSet());
-	}
+    @Override
+    public boolean inputIsConnected(int index) {
+        return inputAnchor.isFullyConnected();
+    }
 
-	@Override
-	public Type getOutputType(Env env, GenSet genSet) {
-		return getInputType(0);
-	}
+    @Override
+    public Type getOutputType() {
+        return getOutputType(getPane().getEnvInstance(), new GenSet());
+    }
 
-	@Override
-	public Type getOutputSignature() {
-		return getOutputSignature(getPane().getEnvInstance(),new GenSet());
-	}
+    @Override
+    public Type getOutputType(Env env, GenSet genSet) {
+        return getInputType(0);
+    }
 
-	@Override
-	public Type getOutputSignature(Env env, GenSet genSet) {
-		return getInputSignature();
-	}
-	
+    @Override
+    public Type getOutputSignature() {
+        return getOutputSignature(getPane().getEnvInstance(), new GenSet());
+    }
+
+    @Override
+    public Type getOutputSignature(Env env, GenSet genSet) {
+        return getInputSignature();
+    }
+
     public void error() {
         this.getStyleClass().add("error");
     }
