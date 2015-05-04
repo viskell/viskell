@@ -157,6 +157,20 @@ public class VarT extends Type {
         return intersection;
     }
 
+    /**
+     * This method simply checks whether the given objects are the same (i.e. point to the same bit of memory). The
+     * uniqueness of VarTs depends on this because the meaning of the name is context sensitive. This is why we leave
+     * the task of using the right VarTs to the programmer that implements this type system - there would be no clear
+     * and easy way of doing this automagically.
+     *
+     * @param obj The object to compare with.
+     * @return Whether the given object is equal to this object.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
     @Override
     public int compareTo(final Type type) {
         return this.equals(type) ? 0 : -1;

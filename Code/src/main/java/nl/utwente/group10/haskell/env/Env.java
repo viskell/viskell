@@ -1,9 +1,6 @@
 package nl.utwente.group10.haskell.env;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -60,22 +57,14 @@ public class Env {
 
     /**
      * @param name The name of the expression.
-     * @return The type of the expression if known to the environment, else {@code null}.
+     * @return An Optional containing the Type for the given expression, if any.
      */
-    public final Type getExprType(String name) {
-        return this.exprTypes.get(name);
-    }
-
-    /**
-     * @param name The name of the expression.
-     * @return A new Type object for the type of the expression if known to the environment, else {@code null}.
-     */
-    public final Type getFreshExprType(String name) {
+    public final Optional<Type> getFreshExprType(String name) {
         if (this.exprStringTypes.containsKey(name)) {
             TypeBuilder builder = new TypeBuilder(this.getTypeClasses());
-            return builder.build(this.exprStringTypes.get(name));
+            return Optional.ofNullable(builder.build(this.exprStringTypes.get(name)));
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 
