@@ -18,6 +18,7 @@ import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 import nl.utwente.group10.ui.serialize.Loadable;
 
 /**
@@ -228,7 +229,6 @@ public class Connection extends ConnectionLine implements ChangeListener<Number>
 
     @Override
     public void fromBundle(Map<String, String> bundle) throws IllegalArgumentException {
-
     }
 
     @Override
@@ -237,11 +237,17 @@ public class Connection extends ConnectionLine implements ChangeListener<Number>
 
         ObservableList<Node> children = parentPane.getChildren();
 
-        String from = String.valueOf(children.indexOf(startAnchor.get().getBlock()));
-        String to = String.valueOf(children.indexOf(endAnchor.get().getBlock()));
+        String from = String.valueOf(children.indexOf(getOutputBlock().get()));
+        String to = String.valueOf(children.indexOf(getInputBlock().get()));
         String id = String.valueOf(children.indexOf(this));
+        String arg = "0";
 
-        return ImmutableMap.of("from", from, "to", to, "id", id);
+        if (getOutputBlock().get() instanceof FunctionBlock) {
+            FunctionBlock fblock = (FunctionBlock) getInputBlock().get();
+            arg = String.valueOf(fblock.getArgumentIndex(getInputAnchor().get()));
+        }
+
+        return ImmutableMap.of("from", from, "to", to, "id", id, "arg", arg);
     }
 
     /** DEBUG METHOD trigger the error state for this Connection */

@@ -61,7 +61,7 @@ public class Exporter {
             for (Node node : pane.getChildren()) {
                 if (node instanceof Loadable) {
                     Loadable loadable = (Loadable) node;
-                    Element element = doc.createElement(node.getClass().getSimpleName());
+                    Element element = doc.createElement(node.getClass().getName());
                     Map<String, String> bundle = loadable.toBundle();
 
                     for (String key : bundle.keySet()) {

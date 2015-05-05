@@ -87,7 +87,8 @@ public abstract class Block extends StackPane implements ComponentLoader, Loadab
     public abstract Expr asExpr();
 
     public void fromBundle(Map<String, String> bundle) throws IllegalArgumentException {
-
+        setLayoutX(Double.valueOf(bundle.get("x")));
+        setLayoutY(Double.valueOf(bundle.get("y")));
     }
 
     public Map<String, String> toBundle() throws IllegalStateException {
