@@ -10,6 +10,7 @@ import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -49,9 +50,7 @@ public class Connection extends ConnectionLine implements
         this(from, to);
     }
 
-    /**
-     * Sets the free ends (empty anchors) to the specified position
-     */
+    /** Sets the free ends (empty anchors) to the specified position. */
     public void setFreeEnds(double x, double y) {
         if (!startAnchor.isPresent()) {
             setStartPosition(x, y);
@@ -64,17 +63,21 @@ public class Connection extends ConnectionLine implements
     /**
      * Tries to add an unspecified ConnectionAnchor to the connection.
      *
-     * @param anchor Anchor to add
-     * @param override If set will override (possible) existing Anchor.
+     * @param anchor
+     *            Anchor to add
+     * @param override
+     *            If set will override (possible) existing Anchor.
      * @return Whether or not the anchor was added.
      */
     public boolean addAnchor(ConnectionAnchor anchor, boolean override) {
         boolean added = false;
-        if ((!startAnchor.isPresent() || override) && anchor instanceof OutputAnchor) {
+        if ((!startAnchor.isPresent() || override)
+                && anchor instanceof OutputAnchor) {
             disconnect(startAnchor);
             setStartAnchor((OutputAnchor) anchor);
             added = true;
-        } else if ((!endAnchor.isPresent() || override) && anchor instanceof InputAnchor) {
+        } else if ((!endAnchor.isPresent() || override)
+                && anchor instanceof InputAnchor) {
             disconnect(endAnchor);
             setEndAnchor((InputAnchor) anchor);
             added = true;
@@ -91,7 +94,8 @@ public class Connection extends ConnectionLine implements
      * Set the startAnchor for this line. After setting the StartPosition will
      * be updated.
      *
-     * @param start The OutputAnchor to start at.
+     * @param start
+     *            The OutputAnchor to start at.
      */
     public void setStartAnchor(OutputAnchor start) {
         setAnchor(startAnchor, start);
@@ -101,7 +105,8 @@ public class Connection extends ConnectionLine implements
      * Set the endAnchor for this line. After setting the EndPosition will be
      * updated.
      *
-     * @param end the InputAnchor to end at.
+     * @param end
+     *            the InputAnchor to end at.
      */
     public void setEndAnchor(InputAnchor end) {
         setAnchor(endAnchor, end);
@@ -114,16 +119,20 @@ public class Connection extends ConnectionLine implements
 
         if (newAnchor instanceof OutputAnchor) {
             if (startAnchor.isPresent()) {
-                startAnchor.get().getBlock().layoutXProperty().removeListener(this);
-                startAnchor.get().getBlock().layoutYProperty().removeListener(this);
+                startAnchor.get().getBlock().layoutXProperty()
+                        .removeListener(this);
+                startAnchor.get().getBlock().layoutYProperty()
+                        .removeListener(this);
             }
-            startAnchor = Optional.of((OutputAnchor)newAnchor);
+            startAnchor = Optional.of((OutputAnchor) newAnchor);
         } else if (newAnchor instanceof InputAnchor) {
             if (endAnchor.isPresent()) {
-                endAnchor.get().getBlock().layoutXProperty().removeListener(this);
-                endAnchor.get().getBlock().layoutYProperty().removeListener(this);
+                endAnchor.get().getBlock().layoutXProperty()
+                        .removeListener(this);
+                endAnchor.get().getBlock().layoutYProperty()
+                        .removeListener(this);
             }
-            endAnchor = Optional.of((InputAnchor)newAnchor);
+            endAnchor = Optional.of((InputAnchor) newAnchor);
         }
 
         checkError();
@@ -176,7 +185,7 @@ public class Connection extends ConnectionLine implements
         }
     }
 
-    public final void disconnect(Optional<? extends ConnectionAnchor> anchor){
+    public final void disconnect(Optional<? extends ConnectionAnchor> anchor) {
         disconnect(anchor.orElse(null));
     }
 
@@ -192,15 +201,17 @@ public class Connection extends ConnectionLine implements
     }
 
     /**
-     * This method evaluates the validity of the created connection.
-     * If the connection results in an invalid operation a visual
-     * error will be displayed.
+     * This method evaluates the validity of the created connection. If the
+     * connection results in an invalid operation a visual error will be
+     * displayed.
      */
     private void checkError() {
-        if(startAnchor.isPresent() && endAnchor.isPresent()) {
+        if (startAnchor.isPresent() && endAnchor.isPresent()) {
             try {
-                //TODO Obviously this will cause errors, we need a way to access the Env
-                endAnchor.get().getBlock().asExpr().analyze(new Env(), new GenSet());
+                // TODO Obviously this will cause errors, we need a way to
+                // access the Env
+                endAnchor.get().getBlock().asExpr()
+                        .analyze(new Env(), new GenSet());
                 this.getStyleClass().remove("error");
             } catch (HaskellTypeError e) {
                 this.getStyleClass().add("error");
