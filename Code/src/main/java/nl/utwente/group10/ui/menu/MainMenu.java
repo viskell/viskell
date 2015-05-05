@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui;
+package nl.utwente.group10.ui.menu;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,6 +13,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;

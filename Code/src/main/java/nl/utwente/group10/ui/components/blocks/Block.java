@@ -2,13 +2,15 @@ package nl.utwente.group10.ui.components.blocks;
 
 import java.io.IOException;
 
+import javafx.application.Platform;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.menu.CircleMenu;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.
@@ -29,9 +31,10 @@ public abstract class Block extends StackPane implements ComponentLoader {
 
     /** The output of this Block. **/
     private OutputAnchor output;
-
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
+    /** The context menu associated with this block instance. */
+    private CircleMenu circleMenu;
 
     /**
      * @param blockName
@@ -46,7 +49,6 @@ public abstract class Block extends StackPane implements ComponentLoader {
         try {
             output = new OutputAnchor(this, pane);
         } catch (IOException e) {
-            // TODO Find a good way to handle this
             e.printStackTrace();
         }
 
@@ -62,17 +64,32 @@ public abstract class Block extends StackPane implements ComponentLoader {
                             }
                         });
 
-        this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::select);
+        this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseEvent);
+
+        Platform.runLater(() -> (this.createCircleMenu()));
     }
 
-    /** Sets this block as the selected block. */
-    private void select(MouseEvent mouseEvent) {
-        parentPane.setSelectedBlock(this);
+    protected void createCircleMenu() {
+        circleMenu = new CircleMenu(this);
     }
 
     /** Returns the output Anchor for this Block. */
     public final OutputAnchor getOutputAnchor() {
         return output;
+    }
+
+    /**
+     * Sets this block as the selected block. When this block has already been
+     * selected it spawns a contextMenu instead.
+     */
+    private void handleMouseEvent(MouseEvent t) {
+        if (parentPane.getSelectedBlock().isPresent()
+                && parentPane.getSelectedBlock().get().equals(this)
+                && t.getButton().equals(MouseButton.PRIMARY)) {
+            circleMenu.show(t);
+        } else {
+            parentPane.setSelectedBlock(this);
+        }
     }
 
     /** Returns the parent pane of this Component. */
