@@ -40,11 +40,6 @@ public class Main extends Application {
         HaskellCatalog catalog = new HaskellCatalog();
         tactilePane.initialize(catalog);
 
-        ValueBlock valueBlock = new ValueBlock(tactilePane);
-        SliderBlock sliderBlock = new SliderBlock(tactilePane);
-        DisplayBlock displayBlock = new DisplayBlock(tactilePane);
-        tactilePane.getChildren().addAll(valueBlock, displayBlock, sliderBlock);
-
         // Init Debug
         debug = new DebugParent(tactilePane);
         debug.registerTactilePane(tactilePane);
@@ -75,10 +70,6 @@ public class Main extends Application {
 
         stage.setMaximized(true);
         stage.show();
-
-        valueBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2);
-        displayBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2 + 100);
-        sliderBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2 + 200);
 
         // Invalidate
         tactilePane.invalidate();

@@ -31,21 +31,24 @@ public class DisplayBlock extends Block implements InputBlock {
     private InputAnchor inputAnchor;
 
     /** The space containing the input anchor. */
-    @FXML private Pane anchorSpace;
+    @FXML protected Pane anchorSpace;
 
     /** The space containing the output anchor. */
-    @FXML private Pane outputSpace;
+    @FXML protected Pane outputSpace;
 
     /**
      * Creates a new instance of DisplayBlock.
      * @param pane The pane on which this DisplayBlock resides.
      */
     public DisplayBlock(CustomUIPane pane) {
+        this(pane, "DisplayBlock");
+    }
+    protected DisplayBlock(CustomUIPane pane, String fxml) {
         super(pane);
 
         output = new SimpleStringProperty("New Output");
 
-        this.loadFXML("DisplayBlock");
+        this.loadFXML(fxml);
 
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
@@ -85,7 +88,7 @@ public class DisplayBlock extends Block implements InputBlock {
     /**
      * Invalidates the outputted value and triggers re-evaluation of the value.
      */
-    public final void invalidate() {
+    public void invalidate() {
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
 

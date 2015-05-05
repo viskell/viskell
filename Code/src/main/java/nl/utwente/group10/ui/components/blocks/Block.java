@@ -44,6 +44,8 @@ public abstract class Block extends StackPane implements ComponentLoader {
                                 this.getStyleClass().removeAll("selected");
                             }
                         });
+
+        setOnMouseClicked(ev -> pane.setSelectedBlock(this));
     }
 
     /** Returns the parent pane of this Component. */
