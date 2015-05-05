@@ -1,7 +1,5 @@
 package nl.utwente.group10.ui.components.blocks;
 
-import java.io.IOException;
-
 import javafx.application.Platform;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -37,20 +35,13 @@ public abstract class Block extends StackPane implements ComponentLoader {
     private CircleMenu circleMenu;
 
     /**
-     * @param blockName
-     *            Name of this block. The name is used to load the FXML
-     *            definition for this block.
      * @param pane
      *            The pane this block belongs to.
      */
     public Block(CustomUIPane pane) {
         parentPane = pane;
 
-        try {
-            output = new OutputAnchor(this, pane);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        output = new OutputAnchor(this, pane);
 
         parentPane.selectedBlockProperty()
                 .addListener(
@@ -66,7 +57,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
 
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseEvent);
 
-        Platform.runLater(() -> (this.createCircleMenu()));
+        Platform.runLater(this::createCircleMenu);
     }
 
     protected void createCircleMenu() {

@@ -1,7 +1,5 @@
 package nl.utwente.group10.ui.components.lines;
 
-import java.io.IOException;
-
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
@@ -28,16 +26,8 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     public static final double BEZIER_CONTROL_OFFSET_MINIMUM = 10f;
     public static final double BEZIER_CONTROL_OFFSET_MAXIMUM = 200f;
 
-    /** The fxmlLoader responsible for loading the fxml. */
-    private FXMLLoader fxmlLoader;
-
     public ConnectionLine() {
-            try {
-                getFXMLLoader("ConnectionLine").load();
-            } catch (IOException e) {
-                // TODO Find a good way to handle this
-                e.printStackTrace();
-            }
+        this.loadFXML("ConnectionLine");
 
         TactilePane.setDraggable(this, false);
         TactilePane.setGoToForegroundOnContact(this, false);

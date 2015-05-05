@@ -1,6 +1,5 @@
 package nl.utwente.group10.ui.components.blocks;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -45,15 +44,14 @@ public class FunctionBlock extends Block {
      * @param name The name of the function.
      * @param type The function's type (usually a FuncT).
      * @param pane The parent pane in which this FunctionBlock exists.
-     * @throws IOException when the FXML defenition for this Block cannot be loaded.
      */
-    public FunctionBlock(String name, Type type, CustomUIPane pane) throws IOException {
+    public FunctionBlock(String name, Type type, CustomUIPane pane) {
         super(pane);
 
         this.name = new SimpleStringProperty(name);
         this.type = new SimpleStringProperty(type.toHaskellType());
 
-        this.getFXMLLoader("FunctionBlock").load();
+        this.loadFXML("FunctionBlock");
 
         // Collect argument types
         ArrayList<String> args = new ArrayList<>();

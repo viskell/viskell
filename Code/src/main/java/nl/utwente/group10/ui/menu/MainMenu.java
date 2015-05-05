@@ -1,9 +1,7 @@
 package nl.utwente.group10.ui.menu;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import javafx.geometry.Point2D;
 import javafx.scene.control.ContextMenu;
@@ -38,15 +36,15 @@ public class MainMenu extends ContextMenu {
                 MenuItem item = new MenuItem(entry.getName());
                 item.setOnAction(event -> addFunctionBlock(entry));
                 submenu.getItems().add(item);
-        }
+            }
 
             this.getItems().addAll(submenu);
         }
 
         MenuItem valueBlockItem = new MenuItem("Value Block");
-        valueBlockItem.setOnAction(event -> addValueBlock());
+        valueBlockItem.setOnAction(event -> addBlock(new ValueBlock(parent)));
         MenuItem displayBlockItem = new MenuItem("Display Block");
-        displayBlockItem.setOnAction(event -> addDisplayBlock());
+        displayBlockItem.setOnAction(event -> addBlock(new DisplayBlock(parent)));
         
         //TODO remove this item when debugging of visualFeedback is done
         MenuItem errorItem = new MenuItem("Error all Blocks");
@@ -61,28 +59,8 @@ public class MainMenu extends ContextMenu {
     }
 
     private void addFunctionBlock(FunctionEntry entry) {
-        try {
-            FunctionBlock fb = new FunctionBlock(entry.getName(), entry.asHaskellObject(new Context()), parent); // TODO: Once the Env is available, the type should be pulled from the Env here (don't just calculate it over and over). Or just pass the signature String.
-            addBlock(fb);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void addValueBlock() {
-        try {
-            addBlock(new ValueBlock(parent));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void addDisplayBlock() {
-        try {
-            addBlock(new DisplayBlock(parent));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        FunctionBlock fb = new FunctionBlock(entry.getName(), entry.asHaskellObject(new Context()), parent); // TODO: Once the Env is available, the type should be pulled from the Env here (don't just calculate it over and over). Or just pass the signature String.
+        addBlock(fb);
     }
 
     private void addBlock(Block block) {

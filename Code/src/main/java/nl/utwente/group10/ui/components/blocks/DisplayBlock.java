@@ -1,6 +1,5 @@
 package nl.utwente.group10.ui.components.blocks;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -37,14 +36,13 @@ public class DisplayBlock extends Block {
     /**
      * Creates a new instance of DisplayBlock.
      * @param pane The pane on which this DisplayBlock resides.
-     * @throws IOException when the FXML definition for this block cannot be loaded.
      */
-    public DisplayBlock(CustomUIPane pane) throws IOException {
+    public DisplayBlock(CustomUIPane pane) {
         super(pane);
 
         output = new SimpleStringProperty("New Output");
 
-        this.getFXMLLoader("DisplayBlock").load();
+        this.loadFXML("DisplayBlock");
 
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
