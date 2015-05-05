@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
@@ -15,17 +16,20 @@ import nl.utwente.group10.ui.menu.CircleMenu;
 /**
  * Base block shaped UI Component that other visual elements will extend from.
  * All components that can represent their information in a block always have at
- * least an output anchor. Input anchors are optionally implemented.
- * 
+ * least an {@link OutputAnchor}. {@link InputAnchors} are optionally implemented.
+ * <p>
  * Blocks should all have a way to indicate an error state that is relevant to
  * their implementation.
- * 
+ * </p>
+ * <p>
  * MouseEvents are used for setting the selection state of a block, single
  * clicks can toggle the state to selected. When a block has already been
  * selected and receives another single left click it will toggle a contextual
  * menu for the block.
- * 
+ * </p>
+ * <p>
  * Each block implementation should also feature it's own FXML implementation.
+ * </p>
  */
 public abstract class Block extends StackPane implements ComponentLoader {
 
@@ -73,14 +77,9 @@ public abstract class Block extends StackPane implements ComponentLoader {
         circleMenu = new CircleMenu(this);
     }
 
-    /** Returns the output Anchor for this Block. */
-    public final OutputAnchor getOutputAnchor() {
-        return output;
-    }
-
     /**
      * Sets this block as the selected block. When this block has already been
-     * selected it spawns a contextMenu instead.
+     * selected it spawns a {@link ContextMenu} instead.
      */
     private void handleMouseEvent(MouseEvent t) {
         if (parentPane.getSelectedBlock().isPresent()
@@ -92,7 +91,12 @@ public abstract class Block extends StackPane implements ComponentLoader {
         }
     }
 
-    /** Returns the parent pane of this Component. */
+    /** Returns the {@link OutputAnchor} for this block. */
+    public final OutputAnchor getOutputAnchor() {
+        return output;
+    }
+
+    /** Returns the parent pane of this component. */
     public final CustomUIPane getPane() {
         return parentPane;
     }
@@ -100,6 +104,6 @@ public abstract class Block extends StackPane implements ComponentLoader {
     /** Returns an expression that evaluates to what this block is. */
     public abstract Expr asExpr();
 
-    /** DEBUG METHOD trigger the error state for this Block */
+    /** DEBUG METHOD trigger the error state for this block */
     public abstract void error();
 }

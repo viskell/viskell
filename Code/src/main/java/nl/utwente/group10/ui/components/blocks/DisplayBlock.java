@@ -15,13 +15,14 @@ import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
 /**
- * DisplayBlock is an extension of Block that only provides a display of the
- * input it receives through it's inputAnchor. The input will be rendered
- * visually on the Block. DisplayBlock can be empty and contain no value at all,
- * the value can be altered at any time by providing a different input source
- * using a Connection.
+ * DisplayBlock is an extension of {@link Block} that only provides a display of
+ * the input it receives through it's {@link InputAnchor}. The input will be
+ * rendered visually on the Block. DisplayBlock can be empty and contain no
+ * value at all, the value can be altered at any time by providing a different
+ * input source using a {@link Connection}.
  */
 public class DisplayBlock extends Block {
+
     /** The Block for which this DisplayBlock displays the output. **/
     private StringProperty output;
 
@@ -29,15 +30,20 @@ public class DisplayBlock extends Block {
     private InputAnchor inputAnchor;
 
     /** The space containing the input anchor. */
-    @FXML private Pane anchorSpace;
+    @FXML
+    private Pane anchorSpace;
 
     /** The space containing the output anchor. */
-    @FXML private Pane outputSpace;
+    @FXML
+    private Pane outputSpace;
 
     /**
      * Creates a new instance of DisplayBlock.
-     * @param pane The pane on which this DisplayBlock resides.
-     * @throws IOException when the FXML definition for this block cannot be loaded.
+     * 
+     * @param pane
+     *            The pane on which this DisplayBlock resides.
+     * @throws IOException
+     *             when the FXML definition for this block cannot be loaded.
      */
     public DisplayBlock(CustomUIPane pane) throws IOException {
         super(pane);
@@ -53,30 +59,27 @@ public class DisplayBlock extends Block {
 
     /**
      * Sets the output flowing into the DisplayBlock and refresh the display.
-     * @param value The value to show.
+     * 
+     * @param value
+     *            The value to show.
      */
     public void setOutput(final String value) {
         output.set(value);
     }
 
-    /**
-     * Returns the output value this Block has.
-     * @return outputValue
-     */
+    /** Returns the InputAnchor belonging to this block. */
+    public ConnectionAnchor getInputAnchor() {
+        return inputAnchor;
+    }
+
+    /** Returns the output value this Block has. */
     public String getOutput() {
         return output.get();
     }
 
-    /**
-     * Property getter for the output property.
-     * @return outputProperty
-     */
+    /** Property getter for the output property. */
     public StringProperty outputProperty() {
         return output;
-    }
-
-    public ConnectionAnchor getInputAnchor() {
-        return inputAnchor;
     }
 
     @Override
@@ -84,9 +87,7 @@ public class DisplayBlock extends Block {
         return inputAnchor.asExpr();
     }
 
-    /**
-     * Invalidates the outputted value and triggers re-evaluation of the value.
-     */
+    /** Invalidates the outputted value and triggers re-evaluation of the value. */
     public final void invalidate() {
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
