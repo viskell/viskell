@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.export;
+package nl.utwente.group10.ui.serialize;
 
 import nl.utwente.group10.ui.CustomUIPane;
 

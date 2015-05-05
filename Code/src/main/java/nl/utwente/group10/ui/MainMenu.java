@@ -3,7 +3,6 @@ package nl.utwente.group10.ui;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import javafx.geometry.Point2D;
 import javafx.scene.control.ContextMenu;
@@ -17,7 +16,7 @@ import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.FunctionBlock;
-import nl.utwente.group10.ui.export.Exporter;
+import nl.utwente.group10.ui.serialize.Exporter;
 
 public class MainMenu extends ContextMenu {
     private CustomUIPane parent;

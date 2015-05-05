@@ -1,8 +1,7 @@
-package nl.utwente.group10.ui.export;
+package nl.utwente.group10.ui.serialize;
 
 import javafx.scene.Node;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.Main;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.FunctionBlock;
