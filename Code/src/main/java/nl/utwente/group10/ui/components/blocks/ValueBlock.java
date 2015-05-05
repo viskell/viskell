@@ -37,12 +37,16 @@ public class ValueBlock extends Block implements OutputBlock {
      * @throws IOException when the FXML definition cannot be loaded.
      */
     public ValueBlock(CustomUIPane pane) throws IOException {
+        this(pane, "ValueBlock");
+    }
+
+    protected ValueBlock(CustomUIPane pane, String fxml) throws IOException {
         super(pane);
 
         value = new SimpleStringProperty("5.0");
         output = new OutputAnchor(this, pane);
 
-        this.getFXMLLoader("ValueBlock").load();
+        this.getFXMLLoader(fxml).load();
 
         outputSpace.getChildren().add(this.getOutputAnchor());
     }

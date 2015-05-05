@@ -16,6 +16,7 @@ import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.CustomAlert;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
+import nl.utwente.group10.ui.components.blocks.SliderBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 
 /**
@@ -40,8 +41,9 @@ public class Main extends Application {
         tactilePane.initialize(catalog);
 
         ValueBlock valueBlock = new ValueBlock(tactilePane);
+        SliderBlock sliderBlock = new SliderBlock(tactilePane);
         DisplayBlock displayBlock = new DisplayBlock(tactilePane);
-        tactilePane.getChildren().addAll(valueBlock, displayBlock);
+        tactilePane.getChildren().addAll(valueBlock, displayBlock, sliderBlock);
 
         // Init Debug
         debug = new DebugParent(tactilePane);
@@ -76,6 +78,7 @@ public class Main extends Application {
 
         valueBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2);
         displayBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2 + 100);
+        sliderBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2 + 200);
 
         // Invalidate
         tactilePane.invalidate();

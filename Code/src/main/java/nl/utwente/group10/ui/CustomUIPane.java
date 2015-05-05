@@ -137,6 +137,14 @@ public class CustomUIPane extends TactilePane {
                 ((Block) node).invalidate();
             }
         }
+
+        this.layout();
+
+        for (Node node : getChildren()) {
+            if (node instanceof Connection) {
+                ((Connection) node).changed(null, 0, 0);
+            }
+        }
     }
 
     public final void errorAll() {

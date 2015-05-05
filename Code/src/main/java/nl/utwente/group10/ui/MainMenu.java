@@ -14,6 +14,7 @@ import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.SliderBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.FunctionBlock;
@@ -46,7 +47,9 @@ public class MainMenu extends ContextMenu {
         valueBlockItem.setOnAction(event -> addValueBlock());
         MenuItem displayBlockItem = new MenuItem("Display Block");
         displayBlockItem.setOnAction(event -> addDisplayBlock());
-        
+        MenuItem sliderBlockItem = new MenuItem("Slider Block");
+        sliderBlockItem.setOnAction(event -> addSliderBlock());
+
         //TODO remove this item when debugging of visualFeedback is done
         MenuItem errorItem = new MenuItem("Error all Blocks");
         errorItem.setOnAction(event -> parent.errorAll());
@@ -56,7 +59,15 @@ public class MainMenu extends ContextMenu {
 
         SeparatorMenuItem sep = new SeparatorMenuItem();
 
-        this.getItems().addAll(valueBlockItem, displayBlockItem, sep, errorItem, quitItem);
+        this.getItems().addAll(valueBlockItem, displayBlockItem, sliderBlockItem, sep, errorItem, quitItem);
+    }
+
+    private void addSliderBlock() {
+        try {
+            addBlock(new SliderBlock(parent));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void addFunctionBlock(FunctionEntry entry) {
