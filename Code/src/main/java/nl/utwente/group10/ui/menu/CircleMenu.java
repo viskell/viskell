@@ -25,6 +25,7 @@ import jfxtras.scene.menu.CirclePopupMenu;
  */
 public class CircleMenu extends CirclePopupMenu {
 
+    /** The context of the menu. */
     private Block block;
 
     public CircleMenu(Block block) {
@@ -33,31 +34,31 @@ public class CircleMenu extends CirclePopupMenu {
 
         // Define menu items
 
+        // Cut Option
+        MenuItem delete = new MenuItem("cut", new ImageView(new Image(this
+                .getClass().getResourceAsStream("/ui/cut32.png"))));
+        delete.setOnAction(t -> delete());
+
         // Copy Option
         MenuItem copy = new MenuItem("copy", new ImageView(new Image(this
-                .getClass().getResourceAsStream("/ui/undo.png"))));
+                .getClass().getResourceAsStream("/ui/copy32.png"))));
         copy.setOnAction(t -> copy());
 
         // Paste Option
         MenuItem paste = new MenuItem("paste", new ImageView(new Image(this
-                .getClass().getResourceAsStream("/ui/undo.png"))));
+                .getClass().getResourceAsStream("/ui/paste32.png"))));
         paste.setOnAction(t -> paste());
-
-        // Delete Option
-        MenuItem delete = new MenuItem("delete", new ImageView(new Image(this
-                .getClass().getResourceAsStream("/ui/undo.png"))));
-        delete.setOnAction(t -> delete());
 
         // Save Option
         MenuItem save = new MenuItem("save", new ImageView(new Image(this
-                .getClass().getResourceAsStream("/ui/undo.png"))));
+                .getClass().getResourceAsStream("/ui/save32.png"))));
         save.setOnAction(t -> saveBlock());
 
         // Registration
         this.getItems().addAll(copy, paste, delete, save);
 
         // Animation
-        this.setAnimationInterpolation(CircularPane::animateFromTheOriginWithFadeRotate);
+        this.setAnimationInterpolation(CircularPane::animateOverTheArcWithFade);
     }
 
     /** Copy the {@link Block} in this context. */
