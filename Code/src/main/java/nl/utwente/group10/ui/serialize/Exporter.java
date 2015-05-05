@@ -2,10 +2,6 @@ package nl.utwente.group10.ui.serialize;
 
 import javafx.scene.Node;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
-import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.FunctionBlock;
-import nl.utwente.group10.ui.components.lines.Connection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -22,8 +18,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
-import java.util.List;
+import java.util.Map;
 
 public class Exporter {
     CustomUIPane pane;
@@ -62,77 +57,25 @@ public class Exporter {
             Element rootElement = doc.createElement("Program");
             doc.appendChild(rootElement);
 
-            // Top-level tree
-            Element metaElement = doc.createElement("Meta");
-            Element blocksElement = doc.createElement("Blocks");
-            Element connectionsElement = doc.createElement("Connections");
-            rootElement.appendChild(metaElement);
-            rootElement.appendChild(blocksElement);
-            rootElement.appendChild(connectionsElement);
-
-            // Meta
-            Element datetime = doc.createElement("Date");
-            datetime.appendChild(doc.createTextNode(new Date().toString()));
-            metaElement.appendChild(datetime);
-
-            Element user = doc.createElement("User");
-            user.appendChild(doc.createTextNode(System.getProperty("user.name")));
-            metaElement.appendChild(user);
-
-            Element version = doc.createElement("Version");
-            String ver = this.getClass().getPackage().getImplementationVersion();
-            if (ver == null) ver = "Unknown";
-            version.appendChild(doc.createTextNode(ver));
-            metaElement.appendChild(version);
-
             // Blocks and connections
-            List<Node> children = pane.getChildren();
-            for (int i = 0; i < children.size(); i++) {
-                Node node = children.get(i);
+            for (Node node : pane.getChildren()) {
+                if (node instanceof Loadable) {
+                    Loadable loadable = (Loadable) node;
+                    Element element = doc.createElement(node.getClass().getSimpleName());
+                    Map<String, String> bundle = loadable.toBundle();
 
-                if (node instanceof Block) {
-                    Block block = (Block) node;
-
-                    Element blockElement = doc.createElement(block.getClass().getSimpleName());
-                    blockElement.setAttribute("x", String.valueOf(block.getLayoutX()));
-                    blockElement.setAttribute("y", String.valueOf(block.getLayoutY()));
-                    blockElement.setAttribute("id", String.valueOf(i));
-
-                    if (node instanceof FunctionBlock) {
-                        FunctionBlock fblock = (FunctionBlock) block;
-
-                        blockElement.setAttribute("name", fblock.getName());
+                    for (String key : bundle.keySet()) {
+                        element.setAttribute(key, bundle.get(key));
                     }
 
-                    blocksElement.appendChild(blockElement);
-                } else if (node instanceof Connection) {
-                    Connection conn = (Connection) node;
-
-                    if (conn.getInputAnchor().isPresent() && conn.getOutputAnchor().isPresent()) {
-                        Block from = conn.getOutputBlock().get();
-                        Block to = conn.getInputBlock().get();
-
-                        Element connElement = doc.createElement("Connection");
-                        connElement.setAttribute("from", String.valueOf(children.indexOf(from)));
-                        connElement.setAttribute("to", String.valueOf(children.indexOf(to)));
-                        connElement.setAttribute("id", String.valueOf(i));
-
-                        if (to instanceof FunctionBlock) {
-                            FunctionBlock fto = (FunctionBlock) to;
-                            ConnectionAnchor anchor = conn.getInputAnchor().get();
-                            connElement.setAttribute("argument", String.valueOf(fto.getArgumentIndex(anchor)));
-                        }
-
-                        connectionsElement.appendChild(connElement);
-                    }
+                    rootElement.appendChild(element);
                 }
             }
 
-            DOMSource source = new DOMSource(doc);
-            transformer.transform(source, result);
+            transformer.transform(new DOMSource(doc), result);
         } catch (ParserConfigurationException | TransformerException e) {
             // Highly unlikely.
-            e.printStackTrace();
+            throw new AssertionError(e);
         }
     }
 }

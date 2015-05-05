@@ -1,7 +1,9 @@
 package nl.utwente.group10.ui.components.blocks;
 
 import java.io.IOException;
+import java.util.Map;
 
+import com.google.common.collect.ImmutableMap;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
@@ -9,6 +11,7 @@ import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.serialize.Loadable;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.
@@ -25,7 +28,7 @@ import nl.utwente.group10.ui.components.anchors.OutputAnchor;
  * 
  * Each block implementation should also feature it's own FXML implementation.
  */
-public abstract class Block extends StackPane implements ComponentLoader {
+public abstract class Block extends StackPane implements ComponentLoader, Loadable {
 
     /** The output of this Block. **/
     private OutputAnchor output;
@@ -83,6 +86,19 @@ public abstract class Block extends StackPane implements ComponentLoader {
     /** Returns an expression that evaluates to what this block is. */
     public abstract Expr asExpr();
 
+    public void fromBundle(Map<String, String> bundle) throws IllegalArgumentException {
+
+    }
+
+    public Map<String, String> toBundle() throws IllegalStateException {
+        String x = String.valueOf(getLayoutX());
+        String y = String.valueOf(getLayoutY());
+        String id = String.valueOf(parentPane.getChildren().indexOf(this));
+
+        return ImmutableMap.of("x", x, "y", y, "id", id);
+    }
+
     /** DEBUG METHOD trigger the error state for this Block */
     public abstract void error();
+
 }

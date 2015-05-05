@@ -1,17 +1,24 @@
 package nl.utwente.group10.ui.components.lines;
 
+import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.collect.ImmutableMap;
+import javafx.beans.Observable;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.hindley.GenSet;
+import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import nl.utwente.group10.ui.serialize.Loadable;
 
 /**
  * This is a ConnectionLine that also stores a startAnchor and an endAnchor to
@@ -19,34 +26,43 @@ import javafx.beans.value.ObservableValue;
  *
  * For Lines that connect inputs and outputs of Blocks see Connection.
  */
-public class Connection extends ConnectionLine implements
-        ChangeListener<Number> {
+public class Connection extends ConnectionLine implements ChangeListener<Number>, Loadable {
     /** Starting point of this Line that can be Anchored onto other objects */
     private Optional<OutputAnchor> startAnchor = Optional.empty();
     /** Ending point of this Line that can be Anchored onto other objects */
     private Optional<InputAnchor> endAnchor = Optional.empty();
 
+    /** The pane that is used to hold state and place all components on. */
+    private CustomUIPane parentPane;
+
     public Connection() {
         // Allow default constructor
     }
 
-    public Connection(OutputAnchor from) {
+    public Connection(CustomUIPane pane) {
+        this.parentPane = pane;
+    }
+
+    public Connection(CustomUIPane pane, OutputAnchor from) {
+        this(pane);
         this.setStartAnchor(from);
         setEndPosition(from.getCenterInPane());
     }
 
-    public Connection(InputAnchor to) {
+    public Connection(CustomUIPane pane, InputAnchor to) {
+        this(pane);
         this.setEndAnchor(to);
         setStartPosition(to.getCenterInPane());
     }
 
-    public Connection(OutputAnchor from, InputAnchor to) {
+    public Connection(CustomUIPane pane, OutputAnchor from, InputAnchor to) {
+        this(pane);
         this.setStartAnchor(from);
         this.setEndAnchor(to);
     }
 
-    public Connection(InputAnchor to, OutputAnchor from) {
-        this(from, to);
+    public Connection(CustomUIPane pane, InputAnchor to, OutputAnchor from) {
+        this(pane, from, to);
     }
 
     /**
@@ -208,6 +224,24 @@ public class Connection extends ConnectionLine implements
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void fromBundle(Map<String, String> bundle) throws IllegalArgumentException {
+
+    }
+
+    @Override
+    public Map<String, String> toBundle() throws IllegalStateException {
+        assert startAnchor.isPresent() && endAnchor.isPresent();
+
+        ObservableList<Node> children = parentPane.getChildren();
+
+        String from = String.valueOf(children.indexOf(startAnchor.get().getBlock()));
+        String to = String.valueOf(children.indexOf(endAnchor.get().getBlock()));
+        String id = String.valueOf(children.indexOf(this));
+
+        return ImmutableMap.of("from", from, "to", to, "id", id);
     }
 
     /** DEBUG METHOD trigger the error state for this Connection */

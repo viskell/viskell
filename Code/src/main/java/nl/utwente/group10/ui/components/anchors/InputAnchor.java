@@ -38,7 +38,7 @@ public class InputAnchor extends ConnectionAnchor {
 
     public Optional<Connection> createConnectionFrom(OutputAnchor other) {
         if (!isConnected()) {
-            new Connection(this, other);
+            new Connection(getPane(), this, other);
             getPane().getChildren().add(getConnection().get());
             getPane().invalidate();
             return getConnection();
