@@ -1,6 +1,5 @@
 package nl.utwente.group10.ui.components.anchors;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import javafx.geometry.Point2D;
@@ -29,18 +28,12 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     /**
      * @param block The block where this Anchor is connected to.
      * @param pane The pane this Anchor belongs to.
-     * @throws IOException when the FXML definitions cannot be loaded.
      */
     public ConnectionAnchor(Block block, CustomUIPane pane) {
         this.block = block;
         this.pane = pane;
 
-        try {
-            getFXMLLoader("ConnectionAnchor").load();
-        } catch (IOException e) {
-            // TODO Find a good way to handle this
-            e.printStackTrace();
-        }
+        this.loadFXML("ConnectionAnchor");
         setConnection(null);
     }
 
