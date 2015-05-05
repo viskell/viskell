@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Circle;
+
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
@@ -12,8 +13,9 @@ import nl.utwente.group10.ui.components.lines.Connection;
 /**
  * Represent an Anchor point on either a Block or a Line Integers are currently
  * the only supported data type.
- *
- * Other data types will be supported in the future
+ * <p>
+ * Other data types will be supported in the future.
+ * </p>
  */
 public abstract class ConnectionAnchor extends Circle implements ComponentLoader {
     /** The pane on which this Anchor resides. */
@@ -26,8 +28,10 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     private Optional<Connection> connection;
 
     /**
-     * @param block The block where this Anchor is connected to.
-     * @param pane The pane this Anchor belongs to.
+     * @param block
+     *            The block where this Anchor is connected to.
+     * @param pane
+     *            The pane this Anchor belongs to.
      */
     public ConnectionAnchor(Block block, CustomUIPane pane) {
         this.block = block;
@@ -37,41 +41,32 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         setConnection(null);
     }
 
-
     /**
-     * @return The block this anchor belongs to.
+     * Set the connection this anchor is connected to.
+     *
+     * @param connection
      */
-    public final Block getBlock() {
-        return block;
-    }
-
-    /**
-     * @return The pane this anchor resides on.
-     */
-    public final CustomUIPane getPane() {
-        return pane;
-    }
-
     public void setConnection(Connection connection) {
         this.connection = Optional.ofNullable(connection);
     }
 
+    /**
+     * Disconnects the anchor from the connection
+     *
+     * @param connection
+     *            Connection to disconnect from.
+     */
+    public abstract void removeConnection(Connection connection);
+
+    /** Returns true if the anchor is connected to a connection. */
     public boolean isConnected() {
         return connection.isPresent();
     }
 
-    public Optional<Connection> getConnection() {
-        return connection;
-    }
-
+    /** Returns true if this anchor can connect to a connection. */
     public abstract boolean canConnect();
 
-    /**
-     * Disconnects itself from the connection
-     * @param connection Connection to disconnect from.
-     */
-    public abstract void disconnectFrom(Connection connection);
-
+    /** Returns the anchor on the other end of the connection if there is one. */
     public Optional<ConnectionAnchor> getOtherAnchor() {
         if (isConnected()) {
             Optional<OutputAnchor> out = getConnection().get()
@@ -88,10 +83,25 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         return Optional.empty();
     }
 
-    /** @return the position of the center of this Anchor relative to its pane. */
+    /** Returns the block this anchor belongs to. */
+    public final Block getBlock() {
+        return block;
+    }
+
+    /** Returns the connection this anchor is connected to. (if any) */
+    public Optional<Connection> getConnection() {
+        return connection;
+    }
+
+    /** Returns the position of the center of this anchor relative to its pane. */
     public Point2D getCenterInPane() {
         Point2D scenePos = localToScene(getCenterX(), getCenterY());
         return getPane().sceneToLocal(scenePos);
+    }
+
+    /** Returns the pane this anchor resides on. */
+    public final CustomUIPane getPane() {
+        return pane;
     }
 
     @Override

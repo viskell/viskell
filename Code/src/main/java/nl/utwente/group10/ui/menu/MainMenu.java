@@ -45,8 +45,8 @@ public class MainMenu extends ContextMenu {
         valueBlockItem.setOnAction(event -> addBlock(new ValueBlock(parent)));
         MenuItem displayBlockItem = new MenuItem("Display Block");
         displayBlockItem.setOnAction(event -> addBlock(new DisplayBlock(parent)));
-        
-        //TODO remove this item when debugging of visualFeedback is done
+
+        // TODO remove this item when debugging of visualFeedback is done
         MenuItem errorItem = new MenuItem("Error all Blocks");
         errorItem.setOnAction(event -> parent.errorAll());
 

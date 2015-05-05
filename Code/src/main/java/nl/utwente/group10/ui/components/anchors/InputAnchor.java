@@ -23,7 +23,8 @@ public class InputAnchor extends ConnectionAnchor {
     }
 
     /**
-     * @return The expression carried by the connection connected to this anchor.
+     * @return The expression carried by the connection connected to this
+     *         anchor.
      */
     public final Expr asExpr() {
         if (isConnected()) {
@@ -34,6 +35,15 @@ public class InputAnchor extends ConnectionAnchor {
         }
     }
 
+    /**
+     * Creates a {@link Connection} from another anchor to this one and returns
+     * the connection. If the current anchor is already part of a connection it
+     * returns {@link Optional#empty()}.
+     *
+     * @param other
+     *            The other anchor to establish a connection to.
+     * @return The connection or Optional.empty()
+     */
     public Optional<Connection> createConnectionFrom(OutputAnchor other) {
         if (!isConnected()) {
             new Connection(this, other);
@@ -46,7 +56,7 @@ public class InputAnchor extends ConnectionAnchor {
     }
 
     @Override
-    public void disconnectFrom(Connection connection) {
+    public void removeConnection(Connection connection) {
         assert connection.equals(getConnection().get());
         setConnection(null);
     }

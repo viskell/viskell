@@ -3,17 +3,19 @@ package nl.utwente.group10.ui.components.lines;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
+
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 
 /**
  * This class represent a Connection-Line visual object in the UI. Each UI
  * element that uses Connection-Line properties should extend this class.
- *
- * For Lines based on Start and End anchors, see AnchoredConnectionLine For
- * Lines that connect inputs and outputs of Blocks see Connection.
+ * <p>
+ * For Lines that connect inputs and outputs of Blocks see Connection.
+ * </p>
  */
 public class ConnectionLine extends CubicCurve implements ComponentLoader {
+
     /**
      * Control offset for this bezier of this line. in simple terms: controls
      * the curviness of the line.
@@ -35,13 +37,14 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     }
 
     /**
-     * Sets the start position for this Line object
-     * @param x coordinate
-     * @param y coordinate
+     * Sets the start coordinates for this Line object.
+     *
+     * @param xCoord
+     * @param yCoord
      */
-    public void setStartPosition(double x, double y) {
-        setStartX(x);
-        setStartY(y);
+    public void setStartPosition(double xCoord, double yCoord) {
+        setStartX(xCoord);
+        setStartY(yCoord);
         updateBezierControlPoints();
     }
 
@@ -50,13 +53,14 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     }
 
     /**
-     * Sets the end position for this Line object.
-     * @param x coordinate
-     * @param y coordinate
+     * Sets the end coordinate for this Line object.
+     *
+     * @param xCoord
+     * @param yCoord
      */
-    public void setEndPosition(double x, double y) {
-        setEndX(x);
-        setEndY(y);
+    public void setEndPosition(double xCoord, double yCoord) {
+        setEndX(xCoord);
+        setEndY(yCoord);
         updateBezierControlPoints();
     }
 
@@ -65,17 +69,8 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     }
 
     /**
-     * Updates the Bezier offset (curviness) according to the current start and end positions.
-     */
-    private void updateBezierControlPoints() {
-        setControlX1(getStartX());
-        setControlY1(getStartY() + getCurrentBezierOffset());
-        setControlX2(getEndX());
-        setControlY2(getEndY() - getCurrentBezierOffset());
-    }
-
-    /**
-     * @return The current bezier offset based on the current start and end positions.
+     * Returns the current bezier offset based on the current start and end
+     * positions.
      */
     private double getCurrentBezierOffset() {
         double unclamped = BEZIER_CONTROL_OFFSET_MULTIPLIER
@@ -85,18 +80,31 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     }
 
     /**
-     * @return The length of a direct line between the end and start point of
-     *         this CubicCurve
+     * Returns the length of a direct line between the end and start point of
+     * this CubicCurve
      */
     public double getStraightLineLength() {
         return Math.sqrt(getDeltaX() * getDeltaX() + getDeltaY() * getDeltaY());
     }
 
+    /** Returns the difference between the start and end X posistion. */
     public double getDeltaX() {
         return this.getEndX() - this.getStartX();
     }
 
+    /** Returns the difference between the start and end Y posistion. */
     public double getDeltaY() {
         return this.getEndY() - this.getStartY();
+    }
+
+    /**
+     * Updates the Bezier offset (curviness) according to the current start and
+     * end positions.
+     */
+    private void updateBezierControlPoints() {
+        setControlX1(getStartX());
+        setControlY1(getStartY() + getCurrentBezierOffset());
+        setControlX2(getEndX());
+        setControlY2(getEndY() - getCurrentBezierOffset());
     }
 }

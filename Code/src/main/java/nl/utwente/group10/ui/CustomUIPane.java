@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
@@ -76,13 +77,13 @@ public class CustomUIPane extends TactilePane {
         }
     }
 
-    private void handlePress(MouseEvent mouseEvent) {
+    private void handlePress(MouseEvent e) {
         offset = new Point2D(this.getTranslateX(), this.getTranslateY());
-        dragStart = new Point2D(mouseEvent.getScreenX(), mouseEvent.getScreenY());
+        dragStart = new Point2D(e.getScreenX(), e.getScreenY());
     }
 
-    private void handleDrag(MouseEvent mouseEvent) {
-        Point2D dragCurrent = new Point2D(mouseEvent.getScreenX(), mouseEvent.getScreenY());
+    private void handleDrag(MouseEvent e) {
+        Point2D dragCurrent = new Point2D(e.getScreenX(), e.getScreenY());
         Point2D delta = dragStart.subtract(dragCurrent);
 
         this.setTranslateX(offset.getX() - delta.getX());
@@ -116,17 +117,17 @@ public class CustomUIPane extends TactilePane {
     public final void invalidate() {
         for (Node node : getChildren()) {
             if (node instanceof DisplayBlock) {
-                ((DisplayBlock)node).invalidate();
+                ((DisplayBlock) node).invalidate();
             }
         }
     }
-    
+
     public final void errorAll() {
         for (Node node : getChildren()) {
             if (node instanceof Block) {
-                ((Block)node).error();
+                ((Block) node).error();
             } else if (node instanceof Connection) {
-                ((Connection)node).error();
+                ((Connection) node).error();
             }
         }
     }
