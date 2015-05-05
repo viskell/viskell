@@ -36,20 +36,15 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
     private InputAnchor inputAnchor;
 
     /** The space containing the input anchor. */
-    @FXML
-    private Pane anchorSpace;
+    @FXML private Pane anchorSpace;
 
     /** The space containing the output anchor. */
-    @FXML
-    private Pane outputSpace;
+    @FXML private Pane outputSpace;
 
     /**
      * Creates a new instance of DisplayBlock.
-     * 
-     * @param pane
-     *            The pane on which this DisplayBlock resides.
-     * @throws IOException
-     *             when the FXML definition for this block cannot be loaded.
+     * @param pane The pane on which this DisplayBlock resides.
+     * @throws IOException when the FXML definition for this block cannot be loaded.
      */
     public DisplayBlock(CustomUIPane pane) throws IOException {
         super(pane);
@@ -65,9 +60,7 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
 
     /**
      * Sets the output flowing into the DisplayBlock and refresh the display.
-     * 
-     * @param value
-     *            The value to show.
+     * @param value The value to show.
      */
     public void setOutput(final String value) {
         output.set(value);

@@ -26,10 +26,10 @@ import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 
 /**
- * Main building block for the visual interface, this class represents a Haskell
- * function together with it's arguments and visual representation.
+ * Main building block for the visual interface, this class
+ * represents a Haskell function together with it's arguments and
+ * visual representation.
  */
-
 public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** The inputs for this FunctionBlock. **/
     private InputAnchor[] inputs;
@@ -40,36 +40,25 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** The type of this Function. **/
     private StringProperty type;
 
-    @FXML
-    private Pane anchorSpace;
+    @FXML private Pane anchorSpace;
 
-    @FXML
-    private Pane outputSpace;
+    @FXML private Pane outputSpace;
 
-    @FXML
-    private Pane inputTypes;
+    @FXML private Pane argumentSpace;
 
-    @FXML
-    private Pane outputTypes;
+    @FXML private Pane inputTypes;
 
-    @FXML
-    private Pane argumentSpace;
+    @FXML private Pane outputTypes;
 
     /**
-     * Method that creates a newInstance of this class along with it's visual
-     * representation
+     * Method that creates a newInstance of this class along with it's visual representation
      *
-     * @param name
-     *            The name of the function.
-     * @param type
-     *            The function's type (usually a FuncT).
-     * @param pane
-     *            The parent pane in which this FunctionBlock exists.
-     * @throws IOException
-     *             when the FXML defenition for this Block cannot be loaded.
+     * @param name The name of the function.
+     * @param type The function's type (usually a FuncT).
+     * @param pane The parent pane in which this FunctionBlock exists.
+     * @throws IOException when the FXML defenition for this Block cannot be loaded.
      */
-    public FunctionBlock(String name, Type type, CustomUIPane pane)
-            throws IOException {
+    public FunctionBlock(String name, Type type, CustomUIPane pane) throws IOException {
         super(pane);
 
         this.name = new SimpleStringProperty(name);
@@ -105,9 +94,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     /**
      * Nest another Node object within this FunctionBlock
-     * 
-     * @param node
-     *            The node to nest.
+     * @param node The node to nest.
      */
     public final void nest(Node node) {
         throw new UnsupportedOperationException();
@@ -115,7 +102,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     /**
      * Get the name property of this FunctionBlock.
-     * 
      * @return name The name of this Block.
      */
     public final String getName() {
@@ -123,8 +109,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     /**
-     * @param name
-     *            The name of this FunctionBlock
+     * @param name The name of this FunctionBlock
      */
     public final void setName(String name) {
         this.name.set(name);
@@ -138,8 +123,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     /**
-     * @param type
-     *            The new Haskell type for this FunctionBlock.
+     * @param type The new Haskell type for this FunctionBlock.
      */
     public final void setType(String type) {
         this.type.set(type);
@@ -169,9 +153,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     /**
      * Returns the index of the argument matched to the Anchor.
-     * 
-     * @param anchor
-     *            The anchor to look up.
+     * @param anchor The anchor to look up.
      * @return The index of the given Anchor in the input anchor array.
      */
     @Override
@@ -206,9 +188,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     /**
-     * @return The current (output) expression belonging to this block. If input
-     *         number n is filled in, this output assumes all inputs till number
-     *         n are also filled in.
+     * @return The current (output) expression belonging to this block.
      */
     @Override
     public final Expr asExpr() {
@@ -351,15 +331,13 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public final void error() {
-        for (InputAnchor in : getInputs()) {
-            if (!in.isConnected()) {
-                argumentSpace.getChildren().get(getInputIndex(in))
-                        .getStyleClass().add("error");
-            } else if (in.isConnected()) {
-                argumentSpace.getChildren().get(getInputIndex(in))
-                        .getStyleClass().remove("error");
+            for (InputAnchor in : getInputs()) {
+                if (!in.isConnected()) {
+                    argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().add("error");
+                } else if (in.isConnected()){
+                    argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().remove("error");
+                }
             }
-        }
-        this.getStyleClass().add("error");
+            this.getStyleClass().add("error");
     }
 }
