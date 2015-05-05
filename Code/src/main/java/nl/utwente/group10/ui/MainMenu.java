@@ -1,5 +1,6 @@
 package nl.utwente.group10.ui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +10,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
@@ -17,6 +20,7 @@ import nl.utwente.group10.ui.components.blocks.ValueBlock;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 import nl.utwente.group10.ui.serialize.Exporter;
+import nl.utwente.group10.ui.serialize.Loader;
 
 public class MainMenu extends ContextMenu {
     private CustomUIPane parent;
@@ -51,7 +55,10 @@ public class MainMenu extends ContextMenu {
         MenuItem errorItem = new MenuItem("Error all Blocks");
         errorItem.setOnAction(event -> parent.errorAll());
 
-        MenuItem saveItem = new MenuItem("Save");
+        MenuItem openItem = new MenuItem("Open...");
+        openItem.setOnAction(event -> open());
+
+        MenuItem saveItem = new MenuItem("Save As...");
         saveItem.setOnAction(event -> save());
 
         MenuItem quitItem = new MenuItem("Quit");
@@ -59,13 +66,33 @@ public class MainMenu extends ContextMenu {
 
         SeparatorMenuItem sep = new SeparatorMenuItem();
 
-        this.getItems().addAll(valueBlockItem, displayBlockItem, sep, errorItem, saveItem, quitItem);
+        this.getItems().addAll(valueBlockItem, displayBlockItem, sep, errorItem, openItem, saveItem, quitItem);
+    }
+
+    private void open() {
+        try {
+            Window window = parent.getScene().getWindow();
+            File file = new FileChooser().showOpenDialog(window);
+
+            if (file != null) {
+                new Loader(parent).load(file);
+            }
+        } catch (IOException e) {
+            // TODO Maybe a CustomAlert?
+            e.printStackTrace();
+        }
     }
 
     private void save() {
         try {
-            new Exporter(parent).export("viskell.xml");
+            Window window = parent.getScene().getWindow();
+            File file = new FileChooser().showSaveDialog(window);
+
+            if (file != null) {
+                new Exporter(parent).export(file);
+            }
         } catch (IOException e) {
+            // TODO Show a CustomAlert perhaps?
             e.printStackTrace();
         }
     }
