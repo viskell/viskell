@@ -14,6 +14,7 @@ import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 
 /**
@@ -25,6 +26,8 @@ import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 public class ValueBlock extends Block implements OutputBlock {
     /** The value of this ValueBlock. */
     private StringProperty value;
+    
+    private OutputAnchor output;
 
     /** The space used for the output anchor. */
     @FXML private Pane outputSpace;
@@ -37,6 +40,7 @@ public class ValueBlock extends Block implements OutputBlock {
         super(pane);
 
         value = new SimpleStringProperty("5.0");
+        output = new OutputAnchor(this, pane);
 
         this.getFXMLLoader("ValueBlock").load();
 
@@ -72,23 +76,23 @@ public class ValueBlock extends Block implements OutputBlock {
 
     @Override
     public Type getOutputType() {
-        return getOutputType(getPane().getEnvInstance(), new GenSet());
+        return getOutputType(getPane().getEnvInstance());
     }
 
     @Override
-    public Type getOutputType(Env env, GenSet genSet) {
-        return getOutputSignature(env, genSet);
+    public Type getOutputType(Env env) {
+        return getOutputSignature(env);
     }
 
     @Override
     public Type getOutputSignature() {
-        return getOutputSignature(getPane().getEnvInstance(), new GenSet());
+        return getOutputSignature(getPane().getEnvInstance());
     }
 
     @Override
-    public Type getOutputSignature(Env env, GenSet genSet) {
+    public Type getOutputSignature(Env env) {
         try {
-            return asExpr().analyze(env, genSet);
+            return asExpr().analyze(env);
         } catch (HaskellException e) {
             throw new TypeUnavailableException();
         }
@@ -97,5 +101,10 @@ public class ValueBlock extends Block implements OutputBlock {
     @Override
     public void error() {
         this.getStyleClass().add("error");
+    }
+
+    @Override
+    public OutputAnchor getOutputAnchor() {
+        return output;
     }
 }

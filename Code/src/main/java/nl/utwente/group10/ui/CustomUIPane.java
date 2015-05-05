@@ -32,6 +32,7 @@ public class CustomUIPane extends TactilePane {
     private Point2D dragStart;
     private Point2D offset;
 
+    private HaskellCatalog catalog;
     private Env envInstance;
 
     /**
@@ -54,6 +55,10 @@ public class CustomUIPane extends TactilePane {
         this.addEventHandler(ScrollEvent.SCROLL, this::handleScroll);
 
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
+    }
+    
+    public void initialize(HaskellCatalog catalog){
+        this.catalog = catalog;
     }
 
     private void handleKey(KeyEvent keyEvent) {
@@ -118,13 +123,7 @@ public class CustomUIPane extends TactilePane {
     public Env getEnvInstance() {
 
         if (envInstance == null) {
-            try {
-                // envInstance = new HaskellCatalog().asEnvironment();
-                return new HaskellCatalog().asEnvironment();
-            } catch (CatalogException e) {
-                // TODO Think of something smart to do when this happens.
-                e.printStackTrace();
-            }
+            envInstance = catalog.asEnvironment();
         }
         return envInstance;
     }

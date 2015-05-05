@@ -19,12 +19,12 @@ public interface OutputBlock {
      */
     public Type getOutputType();
 
-    public Type getOutputType(Env env, GenSet genSet);
+    public Type getOutputType(Env env);
 
     /**
      * @return The output type as specified by the function's signature.
      */
     public Type getOutputSignature();
 
-    public Type getOutputSignature(Env env, GenSet genSet);
+    public Type getOutputSignature(Env env);
 }

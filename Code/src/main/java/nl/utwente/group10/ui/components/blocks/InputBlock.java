@@ -1,10 +1,11 @@
 package nl.utwente.group10.ui.components.blocks;
 
+import java.util.List;
+
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
 public interface InputBlock {
-
     /**
      * @param input
      *            The argument of which the type is desired.
@@ -26,7 +27,7 @@ public interface InputBlock {
     /**
      * @return The inputs of the block.
      */
-    public InputAnchor[] getInputs();
+    public List<InputAnchor> getInputs();
 
     /**
      * @return The index the specified anchor has (in getInputs())

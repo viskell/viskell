@@ -34,7 +34,7 @@ public class InputAnchor extends ConnectionAnchor {
      * @return The expression carried by the connection connected to this anchor.
      */
     public final Expr asExpr() {
-        if (isFullyConnected()) {
+        if (isConnected()) {
             return getOtherAnchor().get().getBlock().asExpr();
         } else {
             return new Ident("undefined");
@@ -42,7 +42,7 @@ public class InputAnchor extends ConnectionAnchor {
     }
 
     public Optional<Connection> createConnectionFrom(OutputAnchor other) {
-        if (!isConnected()) {
+        if (!hasConnection()) {
             new Connection(this, other);
             getPane().getChildren().add(getConnection().get());
             getPane().invalidate();
@@ -61,7 +61,7 @@ public class InputAnchor extends ConnectionAnchor {
     @Override
     public boolean canConnect() {
         // InputAnchors only support 1 connection;
-        return !isConnected();
+        return !hasConnection();
     }
 
     @Override

@@ -1,6 +1,8 @@
 package nl.utwente.group10.ui.components.blocks;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -20,6 +22,7 @@ import nl.utwente.group10.haskell.type.VarT;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
+import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 
 /**
  * DisplayBlock is an extension of Block that only provides a display of the
@@ -28,7 +31,7 @@ import nl.utwente.group10.ui.components.anchors.InputAnchor;
  * the value can be altered at any time by providing a different input source
  * using a Connection.
  */
-public class DisplayBlock extends Block implements InputBlock, OutputBlock {
+public class DisplayBlock extends Block implements InputBlock {
     /** The output String to display **/
     private StringProperty output;
 
@@ -50,12 +53,11 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
         super(pane);
 
         output = new SimpleStringProperty("New Output");
-
+        
         this.getFXMLLoader("DisplayBlock").load();
 
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
-        outputSpace.getChildren().add(this.getOutputAnchor());
     }
 
     /**
@@ -106,13 +108,10 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public Type getInputType(InputAnchor anchor) {
-        try {
-            return new Ident("undefined").analyze(getPane().getEnvInstance(),
-                    new GenSet());
-        } catch (HaskellException e) {
-            // TODO return invalid Type?
-            e.printStackTrace();
-            return null;
+        if(anchor.getOtherAnchor().isPresent()){
+            return anchor.getOtherAnchor().get().getType();
+        } else {
+            return getInputSignature();
         }
     }
 
@@ -138,8 +137,10 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
     }
 
     @Override
-    public InputAnchor[] getInputs() {
-        return new InputAnchor[] { inputAnchor };
+    public List<InputAnchor> getInputs() {
+        List<InputAnchor> list = new ArrayList<>();
+        list.add(inputAnchor);
+        return list;
     }
 
     @Override
@@ -154,27 +155,7 @@ public class DisplayBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public boolean inputIsConnected(int index) {
-        return inputAnchor.isFullyConnected();
-    }
-
-    @Override
-    public Type getOutputType() {
-        return getOutputType(getPane().getEnvInstance(), new GenSet());
-    }
-
-    @Override
-    public Type getOutputType(Env env, GenSet genSet) {
-        return getInputType(0);
-    }
-
-    @Override
-    public Type getOutputSignature() {
-        return getOutputSignature(getPane().getEnvInstance(), new GenSet());
-    }
-
-    @Override
-    public Type getOutputSignature(Env env, GenSet genSet) {
-        return getInputSignature();
+        return inputAnchor.isConnected();
     }
 
     public void error() {

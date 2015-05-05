@@ -27,9 +27,6 @@ import nl.utwente.group10.ui.components.anchors.OutputAnchor;
  */
 public abstract class Block extends StackPane implements ComponentLoader {
 
-    /** The output of this Block. **/
-    private OutputAnchor output;
-
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
 
@@ -43,12 +40,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
     public Block(CustomUIPane pane) {
         parentPane = pane;
 
-        try {
-            output = new OutputAnchor(this, pane);
-        } catch (IOException e) {
-            // TODO Find a good way to handle this
-            e.printStackTrace();
-        }
+        
 
         parentPane.selectedBlockProperty()
                 .addListener(
@@ -70,11 +62,6 @@ public abstract class Block extends StackPane implements ComponentLoader {
         parentPane.setSelectedBlock(this);
     }
 
-    /** Returns the output Anchor for this Block. */
-    public final OutputAnchor getOutputAnchor() {
-        return output;
-    }
-
     /** Returns the parent pane of this Component. */
     public final CustomUIPane getPane() {
         return parentPane;
@@ -84,7 +71,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
     public abstract Expr asExpr();
 
     /**
-     * Tells the block that its current state (considering connections) has
+     * Tells the block that its current state (considering connections) possibly has
      * changed. Default implementation does not react to a potential state
      * change.
      */

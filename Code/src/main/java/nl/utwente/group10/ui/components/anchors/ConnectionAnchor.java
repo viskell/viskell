@@ -71,7 +71,7 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     /**
      * @return True if this ConnectionAnchor is connected to a Connection
      */
-    public boolean isConnected() {
+    public boolean hasConnection() {
         return connection.isPresent();
     }
 
@@ -79,8 +79,8 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
      * @return True if this ConnectionAnchor is connected to a Connection and
      *         that connection is fully connected.
      */
-    public boolean isFullyConnected() {
-        return isConnected() && getConnection().get().isConnected();
+    public boolean isConnected() {
+        return hasConnection() && getConnection().get().isConnected();
     }
 
     public Optional<Connection> getConnection() {
@@ -96,7 +96,7 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     public abstract void disconnectFrom(Connection connection);
 
     public Optional<? extends ConnectionAnchor> getOtherAnchor() {
-        if (isConnected()) {
+        if (hasConnection()) {
             Optional<OutputAnchor> out = getConnection().get()
                     .getOutputAnchor();
             Optional<InputAnchor> in = getConnection().get().getInputAnchor();

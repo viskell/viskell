@@ -77,7 +77,7 @@ public class ConnectionCreationManager {
         return connection;
     }
 
-    public Connection removeConnection(int id) {
+    public void removeConnection(int id) {
         Connection connection = connections.get(id);
         connections.put(id, null);
         if (connection != null) {
@@ -85,12 +85,11 @@ public class ConnectionCreationManager {
             pane.getChildren().remove(connection);
             connections.remove(id);
         }
-        return null;
     }
 
     public void editConnection(int id, ConnectionAnchor anchor) {
         Optional<? extends ConnectionAnchor> anchorToKeep = anchor.getOtherAnchor();
-        if (anchor.isConnected() && anchorToKeep.isPresent()) {
+        if (anchor.hasConnection() && anchorToKeep.isPresent()) {
             Connection connection = anchor.getConnection().get();
             connection.disconnect(anchor);
             connections.put(id, connection);

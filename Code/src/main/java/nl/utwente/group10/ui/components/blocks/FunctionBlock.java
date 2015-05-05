@@ -2,6 +2,7 @@ package nl.utwente.group10.ui.components.blocks;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -23,6 +24,8 @@ import nl.utwente.group10.ui.BackendUtils;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
+import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.exceptions.FunctionDefinitionException;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 
 /**
@@ -32,7 +35,9 @@ import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
  */
 public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** The inputs for this FunctionBlock. **/
-    private InputAnchor[] inputs;
+    private List<InputAnchor> inputs;
+    
+    private OutputAnchor output;
 
     /** The function name. **/
     private StringProperty name;
@@ -75,12 +80,12 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             t = ft.getArgs()[1];
         }
 
-        this.inputs = new InputAnchor[args.size()];
+        this.inputs = new ArrayList<InputAnchor>();
 
         // Create anchors and labels for each argument
         for (int i = 0; i < args.size(); i++) {
-            inputs[i] = new InputAnchor(this, pane);
-            anchorSpace.getChildren().add(inputs[i]);
+            inputs.add(new InputAnchor(this, pane));
+            anchorSpace.getChildren().add(inputs.get(i));
 
             argumentSpace.getChildren().add(new Label(args.get(i)));
         }
@@ -89,7 +94,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         Label lbl = new Label(t.toHaskellType());
         lbl.getStyleClass().add("result");
         argumentSpace.getChildren().add(lbl);
-        outputSpace.getChildren().add(this.getOutputAnchor());
+        output = new OutputAnchor(this, pane);
+        outputSpace.getChildren().add(output);
     }
 
     /**
@@ -147,7 +153,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      * @return The array of input anchors for this function block.
      */
     @Override
-    public final InputAnchor[] getInputs() {
+    public final List<InputAnchor> getInputs() {
         return inputs;
     }
 
@@ -158,33 +164,17 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     @Override
     public final int getInputIndex(InputAnchor anchor) {
-        int index = 0;
-        /**
-         * @invariant index < inputs.length
-         */
-        while ((inputs[index] != anchor) && (index < inputs.length)) {
-            index++;
-        }
-        return index;
+        return inputs.indexOf(anchor);
     }
 
     @Override
     public boolean inputsAreConnected() {
-        for (int i = 0; i < getInputs().length; i++) {
-            if (!inputIsConnected(i)) {
-                return false;
-            }
-        }
-        return true;
+        return inputs.stream().allMatch(ConnectionAnchor::isConnected);
     }
 
     @Override
     public boolean inputIsConnected(int index) {
-        if (index >= 0 && index < getInputs().length) {
-            return getInputs()[index] != null
-                    && getInputs()[index].isFullyConnected();
-        }
-        return false;
+        return index>=0 && index < inputs.size() && inputs.get(index).isConnected();
     }
 
     /**
@@ -195,10 +185,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         Expr expr = new Ident(getName());
         // Find last input that is filled in
         for (InputAnchor in : getInputs()) {
-            if (in != null) {
-                Expr inputExpr = in.asExpr();
-                expr = new Apply(expr, inputExpr);
-            }
+            Expr inputExpr = in.asExpr();
+            expr = new Apply(expr, inputExpr);
         }
         return expr;
     }
@@ -214,23 +202,27 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
 
     public Type getFunctionSignature() {
-        return getFunctionSignature(getPane().getEnvInstance(), new GenSet());
+        return getFunctionSignature(getPane().getEnvInstance());
     }
 
-    public Type getFunctionSignature(Env env, GenSet genSet) {
+    public Type getFunctionSignature(Env env) {
         return env.getFreshExprType(this.getName()).get();
     }
 
     @Override
     public Type getOutputSignature() {
-        return getOutputSignature(getPane().getEnvInstance(), new GenSet());
+        return getOutputSignature(getPane().getEnvInstance());
     }
 
     @Override
-    public Type getOutputSignature(Env env, GenSet genSet) {
+    public Type getOutputSignature(Env env) {
         Type type = getFunctionSignature();
-        for (int i = 0; i < getInputs().length; i++) {
-            type = ((ConstT) type).getArgs()[1];
+        for (int i = 0; i < getInputs().size(); i++) {
+            if (type instanceof ConstT) {
+                type = ((ConstT) type).getArgs()[1];
+            } else {
+                throw new FunctionDefinitionException();
+            }
         }
         return type;
     }
@@ -242,10 +234,12 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public Type getInputSignature(int index) {
-        if (index >= 0 && index < inputs.length) {
-            // TODO what if fullType != ConstT?
-            return BackendUtils
-                    .dive((ConstT) getFunctionSignature(), index + 1);
+        if (index >= 0 && index < inputs.size()) {
+            if (getFunctionSignature() instanceof ConstT) {
+                return BackendUtils.dive((ConstT) getFunctionSignature(), index + 1);
+            } else {
+                throw new FunctionDefinitionException();
+            }
         } else {
             throw new TypeUnavailableException();
         }
@@ -260,21 +254,22 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     public Type getInputType(int index) {
         return getInputSignature(index);
         // TODO make this type instead of signature;
+        //      This boils down to unifying a type without applying.
     }
 
     @Override
     public Type getOutputType() {
-        return getOutputType(getPane().getEnvInstance(), new GenSet());
+        return getOutputType(getPane().getEnvInstance());
     }
 
     @Override
-    public Type getOutputType(Env env, GenSet genSet) {
+    public Type getOutputType(Env env) {
         try {
             Type type;
             // TODO dynamically update (unify) output type with available
             // information.
             if (inputsAreConnected()) {
-                type = asExpr().analyze(env, genSet).prune();
+                type = asExpr().analyze(env).prune();
             } else {
                 type = getFunctionSignature();
             }
@@ -316,8 +311,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     private void invalidateInput(Env env, GenSet genSet, Type outputType,
             Type fullType) {
         inputTypes.getChildren().clear();
-        InputAnchor[] inputs = getInputs();
-        for (int i = 0; i < inputs.length; i++) {
+        for (int i = 0; i < getInputs().size(); i++) {
             inputTypes.getChildren().add(
                     new Label(getInputSignature(i).toHaskellType()));
         }
@@ -332,12 +326,17 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public final void error() {
             for (InputAnchor in : getInputs()) {
-                if (!in.isConnected()) {
+                if (!in.hasConnection()) {
                     argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().add("error");
-                } else if (in.isConnected()){
+                } else if (in.hasConnection()){
                     argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().remove("error");
                 }
             }
             this.getStyleClass().add("error");
+    }
+
+    @Override
+    public OutputAnchor getOutputAnchor() {
+        return output;
     }
 }

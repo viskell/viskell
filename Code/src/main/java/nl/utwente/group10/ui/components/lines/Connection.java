@@ -38,12 +38,12 @@ public class Connection extends ConnectionLine implements
 
     public Connection(OutputAnchor from) {
         tryAddAnchor(from);
-        setEndPosition(getScenePoint(from));
+        setEndPosition(from.getCenterInPane());
     }
 
     public Connection(InputAnchor to) {
         tryAddAnchor(to);
-        setStartPosition(getScenePoint(to));
+        setStartPosition(to.getCenterInPane());
     }
 
     public Connection(OutputAnchor from, InputAnchor to) {
@@ -74,29 +74,16 @@ public class Connection extends ConnectionLine implements
      * @param override If set will override (possible) existing Anchor.
      * @return Whether or not the anchor was added.
      */
-    public boolean tryAddAnchor(ConnectionAnchor anchor,
-            boolean overrideExisting, boolean allowTypeMismatch) {
+    public boolean tryAddAnchor(ConnectionAnchor anchor, boolean overrideExisting, boolean allowTypeMismatch) {
         boolean added = false;
-        if ((!startAnchor.isPresent() || overrideExisting)
-                && anchor instanceof OutputAnchor) {
-            disconnect(startAnchor);
 
+        Optional<? extends ConnectionAnchor> slot = getAnchorSlot(anchor);
+
+        if (!slot.isPresent() || overrideExisting) {
+            disconnect(slot);
             boolean typesMatch = typesMatch(anchor);
             if (typesMatch || allowTypeMismatch) {
-                setStartAnchor((OutputAnchor) anchor);
-                added = true;
-            }
-            if (!typesMatch) {
-                // TODO type mismatch
-                System.out.println("Type mismatch!");
-            }
-        } else if ((!endAnchor.isPresent() || overrideExisting)
-                && anchor instanceof InputAnchor) {
-            disconnect(endAnchor);
-
-            boolean typesMatch = typesMatch(anchor);
-            if (typesMatch || allowTypeMismatch) {
-                setEndAnchor((InputAnchor) anchor);
+                setAnchor(anchor);
                 added = true;
             }
             if (!typesMatch) {
@@ -104,10 +91,19 @@ public class Connection extends ConnectionLine implements
                 System.out.println("Type mismatch!");
             }
         }
-
         updateStartEndPositions();
 
         return added;
+    }
+    
+    private Optional<? extends ConnectionAnchor> getAnchorSlot(ConnectionAnchor anchor){
+        if(anchor instanceof OutputAnchor){
+            return startAnchor;
+        } else if(anchor instanceof InputAnchor){
+            return endAnchor;
+        } else {
+            return Optional.empty();
+        }
     }
 
     public boolean tryAddAnchor(ConnectionAnchor anchor) {
@@ -159,7 +155,7 @@ public class Connection extends ConnectionLine implements
      * @param start The OutputAnchor to start at.
      */
     public void setStartAnchor(OutputAnchor start) {
-        setAnchor(startAnchor, start);
+        setAnchor(start);
     }
 
     /**
@@ -169,10 +165,10 @@ public class Connection extends ConnectionLine implements
      * @param end the InputAnchor to end at.
      */
     public void setEndAnchor(InputAnchor end) {
-        setAnchor(endAnchor, end);
+        setAnchor(end);
     }
 
-    private void setAnchor(Optional anchor, ConnectionAnchor newAnchor) {
+    private void setAnchor(ConnectionAnchor newAnchor) {
         newAnchor.setConnection(this);
         newAnchor.getBlock().layoutXProperty().addListener(this);
         newAnchor.getBlock().layoutYProperty().addListener(this);
@@ -230,13 +226,6 @@ public class Connection extends ConnectionLine implements
         updateStartEndPositions();
     }
 
-    /** @return the scene-relative Point location of this anchor. */
-    private Point2D getScenePoint(ConnectionAnchor anchor) {
-        double x = anchor.getCenterX();
-        double y = anchor.getCenterY();
-        return anchor.localToScene(x, y);
-    }
-
     public final boolean isConnected() {
         return startAnchor.isPresent() && endAnchor.isPresent();
     }
@@ -253,7 +242,7 @@ public class Connection extends ConnectionLine implements
     }
 
     public final void disconnect(Optional<? extends ConnectionAnchor> anchor) {
-        disconnect(anchor.orElse(null));
+        anchor.ifPresent(this::disconnect);
     }
 
     public final void disconnect() {
