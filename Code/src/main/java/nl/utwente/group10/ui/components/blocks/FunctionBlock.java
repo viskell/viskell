@@ -5,11 +5,11 @@ import java.util.ArrayList;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
-
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
@@ -165,8 +165,9 @@ public class FunctionBlock extends Block {
     @Override
     public final Expr asExpr() {
         Expr expr = new Ident(getName());
-        for (InputAnchor in : getInputs())
+        for (InputAnchor in : getInputs()) {
             expr = new Apply(expr, in.asExpr());
+        }
 
         return expr;
     }
@@ -174,12 +175,13 @@ public class FunctionBlock extends Block {
     @Override
     public final void error() {
         for (InputAnchor in : getInputs()) {
+            ObservableList<Node> children = argumentSpace.getChildren();
+            Node arg = children.get(getArgumentIndex(in));
+
             if (!in.isConnected()) {
-                argumentSpace.getChildren().get(getArgumentIndex(in))
-                        .getStyleClass().add("error");
+                arg.getStyleClass().add("error");
             } else if (in.isConnected()) {
-                argumentSpace.getChildren().get(getArgumentIndex(in))
-                        .getStyleClass().remove("error");
+                arg.getStyleClass().remove("error");
             }
         }
         this.getStyleClass().add("error");

@@ -10,10 +10,10 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-
 import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
@@ -32,8 +32,7 @@ public class MainMenu extends ContextMenu {
         for (String category : categories) {
             Menu submenu = new Menu(category);
 
-            ArrayList<FunctionEntry> entries = new ArrayList<>(
-                    catalog.getCategory(category));
+            ArrayList<FunctionEntry> entries = new ArrayList<>(catalog.getCategory(category));
             Collections.sort(entries);
 
             for (FunctionEntry entry : entries) {
@@ -59,8 +58,7 @@ public class MainMenu extends ContextMenu {
 
         SeparatorMenuItem sep = new SeparatorMenuItem();
 
-        this.getItems().addAll(valueBlockItem, displayBlockItem, sep,
-                errorItem, quitItem);
+        this.getItems().addAll(valueBlockItem, displayBlockItem, sep, errorItem, quitItem);
     }
 
     private void addFunctionBlock(FunctionEntry entry) {
@@ -68,8 +66,8 @@ public class MainMenu extends ContextMenu {
             // TODO: Once the Env is available, the type should be pulled from
             // the Env here (don't just calculate it over and over). Or just
             // pass the signature String.
-            FunctionBlock fb = new FunctionBlock(entry.getName(),
-                    entry.asHaskellObject(new Context()), parent);
+            Type type = entry.asHaskellObject(new Context());
+            FunctionBlock fb = new FunctionBlock(entry.getName(), type, parent);
             addBlock(fb);
         } catch (IOException e) {
             e.printStackTrace();

@@ -47,16 +47,14 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     }
 
     /**
-     * Sets the start position for this Line object
+     * Sets the start coordinates for this Line object.
      * 
-     * @param x
-     *            coordinate
-     * @param y
-     *            coordinate
+     * @param xCoord
+     * @param yCoord
      */
-    public void setStartPosition(double x, double y) {
-        setStartX(x);
-        setStartY(y);
+    public void setStartPosition(double xCoord, double yCoord) {
+        setStartX(xCoord);
+        setStartY(yCoord);
         updateBezierControlPoints();
     }
 
@@ -65,16 +63,14 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     }
 
     /**
-     * Sets the end position for this Line object.
+     * Sets the end coordinate for this Line object.
      * 
-     * @param x
-     *            coordinate
-     * @param y
-     *            coordinate
+     * @param xCoord
+     * @param yCoord
      */
-    public void setEndPosition(double x, double y) {
-        setEndX(x);
-        setEndY(y);
+    public void setEndPosition(double xCoord, double yCoord) {
+        setEndX(xCoord);
+        setEndY(yCoord);
         updateBezierControlPoints();
     }
 

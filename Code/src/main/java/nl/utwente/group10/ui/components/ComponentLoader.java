@@ -9,8 +9,7 @@ import javafx.fxml.FXMLLoader;
 public interface ComponentLoader {
 
     default FXMLLoader getFXMLLoader(String name) {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
-                String.format("/ui/%s.fxml", name)));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(String.format("/ui/%s.fxml", name)));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
 

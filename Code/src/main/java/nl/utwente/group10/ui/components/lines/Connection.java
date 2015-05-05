@@ -85,25 +85,23 @@ public class Connection extends ConnectionLine implements
         return addAnchor(anchor, false);
     }
 
-    private void setAnchor(Optional anchor, ConnectionAnchor newAnchor) {
+    private void setAnchor(ConnectionAnchor newAnchor) {
         newAnchor.setConnection(this);
         newAnchor.getBlock().layoutXProperty().addListener(this);
         newAnchor.getBlock().layoutYProperty().addListener(this);
 
         if (newAnchor instanceof OutputAnchor) {
             if (startAnchor.isPresent()) {
-                startAnchor.get().getBlock().layoutXProperty()
-                        .removeListener(this);
-                startAnchor.get().getBlock().layoutYProperty()
-                        .removeListener(this);
+                Block start = startAnchor.get().getBlock();
+                start.layoutXProperty().removeListener(this);
+                start.layoutYProperty().removeListener(this);
             }
             startAnchor = Optional.of((OutputAnchor) newAnchor);
         } else if (newAnchor instanceof InputAnchor) {
             if (endAnchor.isPresent()) {
-                endAnchor.get().getBlock().layoutXProperty()
-                        .removeListener(this);
-                endAnchor.get().getBlock().layoutYProperty()
-                        .removeListener(this);
+                Block end = endAnchor.get().getBlock();
+                end.layoutXProperty().removeListener(this);
+                end.layoutYProperty().removeListener(this);
             }
             endAnchor = Optional.of((InputAnchor) newAnchor);
         }
@@ -120,7 +118,7 @@ public class Connection extends ConnectionLine implements
      *            the InputAnchor to end at.
      */
     public void setEndAnchor(InputAnchor end) {
-        setAnchor(endAnchor, end);
+        setAnchor(end);
     }
 
     /**
@@ -131,7 +129,7 @@ public class Connection extends ConnectionLine implements
      *            The OutputAnchor to start at.
      */
     public void setStartAnchor(OutputAnchor start) {
-        setAnchor(startAnchor, start);
+        setAnchor(start);
     }
 
     /** Sets the free ends (empty anchors) to the specified position. */
@@ -215,8 +213,8 @@ public class Connection extends ConnectionLine implements
             try {
                 // TODO Obviously this will cause errors, we need a way to
                 // access the Env
-                endAnchor.get().getBlock().asExpr()
-                        .analyze(new Env(), new GenSet());
+                Block block = endAnchor.get().getBlock();
+                block.asExpr().analyze(new Env(), new GenSet());
                 this.getStyleClass().remove("error");
             } catch (HaskellTypeError e) {
                 this.getStyleClass().add("error");

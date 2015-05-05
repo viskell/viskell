@@ -116,7 +116,6 @@ public abstract class ConnectionAnchor extends Circle implements
 
     @Override
     public String toString() {
-        return String.format("%s for %s", this.getClass().getSimpleName(),
-                getBlock());
+        return String.format("%s for %s", this.getClass().getSimpleName(), getBlock());
     }
 }
