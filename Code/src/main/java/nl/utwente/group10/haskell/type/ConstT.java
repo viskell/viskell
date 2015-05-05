@@ -17,10 +17,12 @@ public class ConstT extends Type {
     private final Type[] args;
 
     /**
-     * @param constructor The constructor for this constant type.
-     * @param args The types of the arguments that this type accepts.
+     * @param constructor
+     *            The constructor for this constant type.
+     * @param args
+     *            The types of the arguments that this type accepts.
      */
-    public ConstT(final String constructor, final Type ... args) {
+    public ConstT(final String constructor, final Type... args) {
         this.constructor = constructor;
         this.args = args;
     }
@@ -64,7 +66,8 @@ public class ConstT extends Type {
     @Override
     public String toString() {
         if (this.args.length > 0) {
-            return String.format("(%s %s)", this.constructor, Joiner.on(' ').join(this.args));
+            return String.format("(%s %s)", this.constructor, Joiner.on(' ')
+                    .join(this.args));
         } else {
             return this.constructor;
         }

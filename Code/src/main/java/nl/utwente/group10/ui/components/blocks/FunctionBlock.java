@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
@@ -19,9 +20,8 @@ import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
 /**
- * Main building block for the visual interface, this class
- * represents a Haskell function together with it's arguments and
- * visual representation.
+ * Main building block for the visual interface, this class represents a Haskell
+ * function together with it's arguments and visual representation.
  */
 public class FunctionBlock extends Block {
     /** The inputs for this FunctionBlock. **/
@@ -33,21 +33,30 @@ public class FunctionBlock extends Block {
     /** The type of this Function. **/
     private StringProperty type;
 
-    @FXML private Pane anchorSpace;
+    @FXML
+    private Pane anchorSpace;
 
-    @FXML private Pane outputSpace;
+    @FXML
+    private Pane outputSpace;
 
-    @FXML private Pane argumentSpace;
+    @FXML
+    private Pane argumentSpace;
 
     /**
-     * Method that creates a newInstance of this class along with it's visual representation
+     * Method that creates a newInstance of this class along with it's visual
+     * representation
      *
-     * @param name The name of the function.
-     * @param type The function's type (usually a FuncT).
-     * @param pane The parent pane in which this FunctionBlock exists.
-     * @throws IOException when the FXML defenition for this Block cannot be loaded.
+     * @param name
+     *            The name of the function.
+     * @param type
+     *            The function's type (usually a FuncT).
+     * @param pane
+     *            The parent pane in which this FunctionBlock exists.
+     * @throws IOException
+     *             when the FXML defenition for this Block cannot be loaded.
      */
-    public FunctionBlock(String name, Type type, CustomUIPane pane) throws IOException {
+    public FunctionBlock(String name, Type type, CustomUIPane pane)
+            throws IOException {
         super(pane);
 
         this.name = new SimpleStringProperty(name);
@@ -83,65 +92,60 @@ public class FunctionBlock extends Block {
 
     /**
      * Nest another Node object within this FunctionBlock
-     * @param node The node to nest.
+     * 
+     * @param node
+     *            The node to nest.
      */
     public final void nest(Node node) {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Get the name property of this FunctionBlock.
-     * @return name The name of this Block.
-     */
+    /** Get the name property of this FunctionBlock. */
     public final String getName() {
         return name.get();
     }
 
     /**
-     * @param name The name of this FunctionBlock
+     * @param name
+     *            The name of this FunctionBlock
      */
     public final void setName(String name) {
         this.name.set(name);
     }
 
-    /**
-     * @return type The Haskell type of this FunctionBlock.
-     */
+    /** Return The Haskell type of this FunctionBlock. */
     public final String getType() {
         return type.get();
     }
 
     /**
-     * @param type The new Haskell type for this FunctionBlock.
+     * @param type
+     *            The new Haskell type for this FunctionBlock.
      */
     public final void setType(String type) {
         this.type.set(type);
     }
 
-    /**
-     * @return name The StringProperty for the name of the function.
-     */
+    /** Return name The StringProperty for the name of the function. */
     public final StringProperty nameProperty() {
         return name;
     }
 
-    /**
-     * @return type The StringProperty for the type of the function.
-     */
+    /** Return the StringProperty for the type of the function. */
     public final StringProperty typeProperty() {
         return type;
     }
 
-    /**
-     * @return The array of input anchors for this function block.
-     */
+    /** Return the array of input anchors for this function block. */
     public final InputAnchor[] getInputs() {
         return inputs;
     }
 
     /**
      * Returns the index of the argument matched to the Anchor.
-     * @param anchor The anchor to look up.
+     * 
+     * @param anchor
+     *            The anchor to look up.
      * @return The index of the given Anchor in the input anchor array.
      */
     public final int getArgumentIndex(ConnectionAnchor anchor) {
@@ -158,20 +162,23 @@ public class FunctionBlock extends Block {
     @Override
     public final Expr asExpr() {
         Expr expr = new Ident(getName());
-        for (InputAnchor in : getInputs()) expr = new Apply(expr, in.asExpr());
+        for (InputAnchor in : getInputs())
+            expr = new Apply(expr, in.asExpr());
 
         return expr;
     }
 
     @Override
     public final void error() {
-            for (InputAnchor in : getInputs()) {
-                if (!in.isConnected()) {
-                    argumentSpace.getChildren().get(getArgumentIndex(in)).getStyleClass().add("error");
-                } else if (in.isConnected()){
-                    argumentSpace.getChildren().get(getArgumentIndex(in)).getStyleClass().remove("error");
-                }
+        for (InputAnchor in : getInputs()) {
+            if (!in.isConnected()) {
+                argumentSpace.getChildren().get(getArgumentIndex(in))
+                        .getStyleClass().add("error");
+            } else if (in.isConnected()) {
+                argumentSpace.getChildren().get(getArgumentIndex(in))
+                        .getStyleClass().remove("error");
             }
-            this.getStyleClass().add("error");
+        }
+        this.getStyleClass().add("error");
     }
 }

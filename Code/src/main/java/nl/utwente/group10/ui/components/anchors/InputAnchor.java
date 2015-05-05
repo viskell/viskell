@@ -15,9 +15,12 @@ import nl.utwente.group10.ui.handlers.AnchorHandler;
  */
 public class InputAnchor extends ConnectionAnchor {
     /**
-     * @param block The Block this anchor is connected to.
-     * @param pane The parent pane this Anchor resides on.
-     * @throws IOException when the FXML definitions cannot be loaded.
+     * @param block
+     *            The Block this anchor is connected to.
+     * @param pane
+     *            The parent pane this Anchor resides on.
+     * @throws IOException
+     *             when the FXML definitions cannot be loaded.
      */
     public InputAnchor(Block block, CustomUIPane pane) throws IOException {
         super(block, pane);
@@ -25,7 +28,8 @@ public class InputAnchor extends ConnectionAnchor {
     }
 
     /**
-     * @return The expression carried by the connection connected to this anchor.
+     * @return The expression carried by the connection connected to this
+     *         anchor.
      */
     public final Expr asExpr() {
         if (isConnected()) {

@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
+
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.expr.Expr;
@@ -29,15 +30,20 @@ public class DisplayBlock extends Block {
     private InputAnchor inputAnchor;
 
     /** The space containing the input anchor. */
-    @FXML private Pane anchorSpace;
+    @FXML
+    private Pane anchorSpace;
 
     /** The space containing the output anchor. */
-    @FXML private Pane outputSpace;
+    @FXML
+    private Pane outputSpace;
 
     /**
      * Creates a new instance of DisplayBlock.
-     * @param pane The pane on which this DisplayBlock resides.
-     * @throws IOException when the FXML definition for this block cannot be loaded.
+     * 
+     * @param pane
+     *            The pane on which this DisplayBlock resides.
+     * @throws IOException
+     *             when the FXML definition for this block cannot be loaded.
      */
     public DisplayBlock(CustomUIPane pane) throws IOException {
         super(pane);
@@ -53,24 +59,20 @@ public class DisplayBlock extends Block {
 
     /**
      * Sets the output flowing into the DisplayBlock and refresh the display.
-     * @param value The value to show.
+     * 
+     * @param value
+     *            The value to show.
      */
     public void setOutput(final String value) {
         output.set(value);
     }
 
-    /**
-     * Returns the output value this Block has.
-     * @return outputValue
-     */
+    /** Returns the output value this Block has. */
     public String getOutput() {
         return output.get();
     }
 
-    /**
-     * Property getter for the output property.
-     * @return outputProperty
-     */
+    /** Property getter for the output property. */
     public StringProperty outputProperty() {
         return output;
     }
@@ -84,9 +86,7 @@ public class DisplayBlock extends Block {
         return inputAnchor.asExpr();
     }
 
-    /**
-     * Invalidates the outputted value and triggers re-evaluation of the value.
-     */
+    /** Invalidates the outputted value and triggers re-evaluation of the value. */
     public final void invalidate() {
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
