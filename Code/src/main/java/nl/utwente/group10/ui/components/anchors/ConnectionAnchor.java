@@ -33,7 +33,7 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         this.block = block;
         this.pane = pane;
 
-        loadFXML("ConnectionAnchor");
+        this.loadFXML("ConnectionAnchor");
         setConnection(null);
     }
 

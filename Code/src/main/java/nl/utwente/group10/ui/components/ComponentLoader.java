@@ -3,15 +3,22 @@ package nl.utwente.group10.ui.components;
 import javafx.fxml.FXMLLoader;
 
 import java.io.IOException;
+import java.net.URL;
 
 /**
- * This interface is responsible for providing a Class specific FXMLLoader
- * to each UI Component.
+ * Provides a default method for loading FXML interface description files.
+ *
+ * The ComponentLoader is implemented as an interface so it can be added to
+ * other classes without forcing those classes to inherit from it.
+ *
+ * loadFXML will throw a RuntimeException when loading the FXML file fails,
+ * which should never happen as it will only load from resources.
  */
 public interface ComponentLoader {
     default void loadFXML(String name) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(String.format("/ui/%s.fxml", name)));
+            URL url = getClass().getResource(String.format("/ui/%s.fxml", name));
+            FXMLLoader fxmlLoader = new FXMLLoader(url);
             fxmlLoader.setRoot(this);
             fxmlLoader.setController(this);
 
