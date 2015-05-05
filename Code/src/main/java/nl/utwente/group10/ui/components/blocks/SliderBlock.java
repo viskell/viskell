@@ -14,7 +14,7 @@ public class SliderBlock extends ValueBlock {
      * @param pane The parent pane this Block resides on.
      * @throws IOException when the FXML definition cannot be loaded.
      */
-    public SliderBlock(CustomUIPane pane) throws IOException {
+    public SliderBlock(CustomUIPane pane) {
         super(pane, "SliderBlock");
 
         slider.setValue(0.0);

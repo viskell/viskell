@@ -1,7 +1,5 @@
 package nl.utwente.group10.ui.components.blocks;
 
-import java.io.IOException;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -34,19 +32,18 @@ public class ValueBlock extends Block implements OutputBlock {
 
     /**
      * @param pane The parent pane this Block resides on.
-     * @throws IOException when the FXML definition cannot be loaded.
      */
-    public ValueBlock(CustomUIPane pane) throws IOException {
+    public ValueBlock(CustomUIPane pane) {
         this(pane, "ValueBlock");
     }
 
-    protected ValueBlock(CustomUIPane pane, String fxml) throws IOException {
+    protected ValueBlock(CustomUIPane pane, String fxml) {
         super(pane);
 
         value = new SimpleStringProperty("5.0");
         output = new OutputAnchor(this, pane);
 
-        this.getFXMLLoader(fxml).load();
+        this.loadFXML(fxml);
 
         outputSpace.getChildren().add(this.getOutputAnchor());
     }

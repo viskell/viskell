@@ -1,14 +1,10 @@
 package nl.utwente.group10.ui.components.blocks;
 
-import java.io.IOException;
-
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
-import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.
@@ -31,16 +27,11 @@ public abstract class Block extends StackPane implements ComponentLoader {
     private CustomUIPane parentPane;
 
     /**
-     * @param blockName
-     *            Name of this block. The name is used to load the FXML
-     *            definition for this block.
      * @param pane
      *            The pane this block belongs to.
      */
     public Block(CustomUIPane pane) {
         parentPane = pane;
-
-        
 
         parentPane.selectedBlockProperty()
                 .addListener(
@@ -53,13 +44,6 @@ public abstract class Block extends StackPane implements ComponentLoader {
                                 this.getStyleClass().removeAll("selected");
                             }
                         });
-
-        this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::select);
-    }
-
-    /** Sets this block as the selected block. */
-    private void select(MouseEvent mouseEvent) {
-        parentPane.setSelectedBlock(this);
     }
 
     /** Returns the parent pane of this Component. */

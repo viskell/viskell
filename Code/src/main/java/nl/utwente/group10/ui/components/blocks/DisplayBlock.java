@@ -1,6 +1,5 @@
 package nl.utwente.group10.ui.components.blocks;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,18 +10,11 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
-import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Expr;
-import nl.utwente.group10.haskell.expr.Ident;
-import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.haskell.type.VarT;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
-import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 
 /**
  * DisplayBlock is an extension of Block that only provides a display of the
@@ -47,14 +39,13 @@ public class DisplayBlock extends Block implements InputBlock {
     /**
      * Creates a new instance of DisplayBlock.
      * @param pane The pane on which this DisplayBlock resides.
-     * @throws IOException when the FXML definition for this block cannot be loaded.
      */
-    public DisplayBlock(CustomUIPane pane) throws IOException {
+    public DisplayBlock(CustomUIPane pane) {
         super(pane);
 
         output = new SimpleStringProperty("New Output");
-        
-        this.getFXMLLoader("DisplayBlock").load();
+
+        this.loadFXML("DisplayBlock");
 
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);

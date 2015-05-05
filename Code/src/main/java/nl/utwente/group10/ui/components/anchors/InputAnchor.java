@@ -1,6 +1,5 @@
 package nl.utwente.group10.ui.components.anchors;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import nl.utwente.group10.haskell.expr.Expr;
@@ -23,9 +22,8 @@ public class InputAnchor extends ConnectionAnchor {
     /**
      * @param block The Block this anchor is connected to.
      * @param pane The parent pane this Anchor resides on.
-     * @throws IOException when the FXML definitions cannot be loaded.
      */
-    public InputAnchor(Block block, CustomUIPane pane) throws IOException {
+    public InputAnchor(Block block, CustomUIPane pane) {
         super(block, pane);
         new AnchorHandler(pane.getConnectionCreationManager(), this);
     }
