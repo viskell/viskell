@@ -27,6 +27,8 @@ public class Main extends Application {
 
     /** Primary pane which contains blocks and connections. */
     private CustomUIPane tactilePane;
+    
+    private Stage stage;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -67,11 +69,13 @@ public class Main extends Application {
         // Init scene
         Scene scene = new Scene(debug);
 
-        stage.setOnCloseRequest(event -> System.exit(0));
-        stage.setScene(scene);
+        this.stage = stage;
+        this.stage.setOnCloseRequest(event -> System.exit(0));
+        this.stage.setScene(scene);
 
-        stage.setFullScreen(true);
-        stage.show();
+        this.stage.show();
+        
+        this.stage.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
 
         valueBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2);
         displayBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2 + 100);
@@ -79,6 +83,13 @@ public class Main extends Application {
         // Invalidate
         tactilePane.invalidate();
         tactilePane.requestFocus();
+    }
+    
+    private void handleKey(KeyEvent keyEvent) {
+        switch (keyEvent.getCode()) {
+            case F10: stage.setMaximized(!stage.isMaximized()); break;
+            case F11: stage.setFullScreen(!stage.isFullScreen()); break;
+        }
     }
 
     /**
