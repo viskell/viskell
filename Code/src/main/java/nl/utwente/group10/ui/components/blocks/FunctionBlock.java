@@ -191,16 +191,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return expr;
     }
 
-    /*
-     * Signature = non unified type, ie: a->b
-     * 
-     * (Current)Type = unified type, ie Int -> Float (This can still have
-     * signature a->b)
-     * 
-     * These are not the same, but are related. The Type has to conform to the
-     * signature.
-     */
-
     public Type getFunctionSignature() {
         return getFunctionSignature(getPane().getEnvInstance());
     }
