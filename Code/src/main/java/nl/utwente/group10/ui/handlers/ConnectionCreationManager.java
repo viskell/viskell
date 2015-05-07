@@ -46,9 +46,9 @@ public class ConnectionCreationManager {
     public Connection createConnectionWith(int id, ConnectionAnchor anchor) {
         Connection newConnection = null;
         if (anchor instanceof OutputAnchor) {
-            newConnection = new Connection((OutputAnchor) anchor);
+            newConnection = new Connection(pane, (OutputAnchor) anchor);
         } else if (anchor instanceof InputAnchor) {
-            newConnection = new Connection((InputAnchor) anchor);
+            newConnection = new Connection(pane, (InputAnchor) anchor);
         }
         pane.getChildren().add(0, newConnection);
         connections.put(id, newConnection);

@@ -14,7 +14,7 @@
             <BorderPane>
                 <top>
                     <FlowPane fx:id="inputTypes" prefWrapLength="100" vgap="50"
-                        hgap="10" />
+                        hgap="10" styleClass="typeDisplay"/>
                 </top>
                 <center>
                     <HBox styleClass="function, block">
@@ -29,7 +29,7 @@
                 </center>
                 <bottom>
                     <FlowPane fx:id="outputTypes" prefWrapLength="100" vgap="50"
-                        hgap="10" />
+                        hgap="10" styleClass="typeDisplay"/>
                 </bottom>
             </BorderPane>
         </center>

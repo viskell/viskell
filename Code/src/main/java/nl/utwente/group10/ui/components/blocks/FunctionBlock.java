@@ -210,24 +210,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     @Override
-    public Type getOutputSignature() {
-        return getOutputSignature(getPane().getEnvInstance());
-    }
-
-    @Override
-    public Type getOutputSignature(Env env) {
-        Type type = getFunctionSignature();
-        for (int i = 0; i < getInputs().size(); i++) {
-            if (type instanceof ConstT) {
-                type = ((ConstT) type).getArgs()[1];
-            } else {
-                throw new FunctionDefinitionException();
-            }
-        }
-        return type;
-    }
-
-    @Override
     public Type getInputSignature(InputAnchor input) {
         return getInputSignature(getInputIndex(input));
     }
@@ -252,9 +234,29 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public Type getInputType(int index) {
-        return getInputSignature(index);
-        // TODO make this type instead of signature;
-        //      This boils down to unifying a type without applying.
+        if (getInputs().get(index).isConnected()) {
+            return getInputs().get(index).getOtherAnchor().get().getType();
+        } else {
+            return getInputSignature(index);
+        }
+    }
+
+    @Override
+    public Type getOutputSignature() {
+        return getOutputSignature(getPane().getEnvInstance());
+    }
+
+    @Override
+    public Type getOutputSignature(Env env) {
+        Type type = getFunctionSignature();
+        for (int i = 0; i < getInputs().size(); i++) {
+            if (type instanceof ConstT) {
+                type = ((ConstT) type).getArgs()[1];
+            } else {
+                throw new FunctionDefinitionException();
+            }
+        }
+        return type;
     }
 
     @Override
@@ -308,19 +310,17 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      * @param fullType
      *            The full type of the fuction (no inputs applied).
      */
-    private void invalidateInput(Env env, GenSet genSet, Type outputType,
-            Type fullType) {
-        inputTypes.getChildren().clear();
+    private void invalidateInput(Env env, GenSet genSet, Type outputType, Type fullType) {
+        List<Label> labels = new ArrayList<Label>();
         for (int i = 0; i < getInputs().size(); i++) {
-            inputTypes.getChildren().add(
-                    new Label(getInputSignature(i).toHaskellType()));
+            labels.add(new Label(getInputType(i).toHaskellType()));
         }
+        inputTypes.getChildren().setAll(labels);
     }
 
     private void invalidateOutput() {
-        outputTypes.getChildren().clear();
-        outputTypes.getChildren().add(
-                new Label(getOutputType().toHaskellType()));
+        Label label = new Label(getOutputType().toHaskellType());
+        outputTypes.getChildren().setAll(label);
     }
 
     @Override
@@ -328,7 +328,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             for (InputAnchor in : getInputs()) {
                 if (!in.hasConnection()) {
                     argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().add("error");
-                } else if (in.hasConnection()){
+                } else if (in.hasConnection()) {
                     argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().remove("error");
                 }
             }

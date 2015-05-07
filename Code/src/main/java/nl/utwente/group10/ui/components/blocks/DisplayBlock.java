@@ -108,7 +108,7 @@ public class DisplayBlock extends Block implements InputBlock {
 
     @Override
     public Type getInputType(InputAnchor anchor) {
-        if(anchor.getOtherAnchor().isPresent()){
+        if(anchor.getOtherAnchor().isPresent()) {
             return anchor.getOtherAnchor().get().getType();
         } else {
             return getInputSignature();

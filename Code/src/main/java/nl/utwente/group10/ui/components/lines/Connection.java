@@ -9,6 +9,7 @@ import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.hindley.GenSet;
+import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
@@ -32,27 +33,36 @@ public class Connection extends ConnectionLine implements
     /** Ending point of this Line that can be Anchored onto other objects */
     private Optional<InputAnchor> endAnchor = Optional.empty();
 
-    public Connection() {
-        // Allow default constructor
+    private CustomUIPane pane;
+    
+    public Connection(CustomUIPane pane) {
+        this.pane = pane;
     }
 
-    public Connection(OutputAnchor from) {
+    public Connection(CustomUIPane pane, OutputAnchor from) {
+        this.pane = pane;
         tryAddAnchor(from);
         setEndPosition(from.getCenterInPane());
     }
 
-    public Connection(InputAnchor to) {
+    public Connection(CustomUIPane pane, InputAnchor to) {
+        this.pane = pane;
         tryAddAnchor(to);
         setStartPosition(to.getCenterInPane());
     }
 
-    public Connection(OutputAnchor from, InputAnchor to) {
+    public Connection(CustomUIPane pane, OutputAnchor from, InputAnchor to) {
+        this.pane = pane;
         this.setStartAnchor(from);
         this.setEndAnchor(to);
     }
 
-    public Connection(InputAnchor to, OutputAnchor from) {
-        this(from, to);
+    public Connection(CustomUIPane pane, InputAnchor to, OutputAnchor from) {
+        this(pane, from, to);
+    }
+    
+    public final CustomUIPane getPane() {
+        return pane;
     }
 
     /**
@@ -96,10 +106,10 @@ public class Connection extends ConnectionLine implements
         return added;
     }
     
-    private Optional<? extends ConnectionAnchor> getAnchorSlot(ConnectionAnchor anchor){
-        if(anchor instanceof OutputAnchor){
+    private Optional<? extends ConnectionAnchor> getAnchorSlot(ConnectionAnchor anchor) {
+        if (anchor instanceof OutputAnchor) {
             return startAnchor;
-        } else if(anchor instanceof InputAnchor){
+        } else if (anchor instanceof InputAnchor) {
             return endAnchor;
         } else {
             return Optional.empty();
@@ -114,38 +124,27 @@ public class Connection extends ConnectionLine implements
 
     public final boolean typesMatch(ConnectionAnchor potentialAnchor) {
         // TODO Let this return mismatch information?
+        Optional<? extends ConnectionAnchor> anchor = null;
         if (potentialAnchor instanceof InputAnchor) {
-            if (startAnchor.isPresent()) {
-                try {
-                    HindleyMilner.unify(startAnchor.get().getType(),
-                            potentialAnchor.getType());
-                    // Types successfully unified
-                    return true;
-                } catch (HaskellTypeError e) {
-                    // Unable to unify types;
-                    return false;
-                }
-            } else {
-                // First anchor to be added
-                return true;
-            }
-        } else if (potentialAnchor instanceof OutputAnchor) {
-            if (endAnchor.isPresent()) {
-                try {
-                    HindleyMilner.unify(endAnchor.get().getType(),
-                            potentialAnchor.getType());
-                    // Types successfully unified
-                    return true;
-                } catch (HaskellTypeError e) {
-                    // Unable to unify types;
-                    return false;
-                }
-            } else {
-                // First anchor to be added
-                return true;
-            }
+            anchor = startAnchor;
+        }else if(potentialAnchor instanceof OutputAnchor){
+            anchor = endAnchor;
         }
-        return false;
+        
+        if(anchor.isPresent()){
+            try {
+                HindleyMilner.unify(anchor.get().getType(),
+                        potentialAnchor.getType());
+                // Types successfully unified
+                return true;
+            } catch (HaskellTypeError e) {
+                // Unable to unify types;
+                return false;
+            }
+        } else {
+            // First anchor to be added
+            return true;
+        }
     }
 
     /**
@@ -265,7 +264,7 @@ public class Connection extends ConnectionLine implements
         if(startAnchor.isPresent() && endAnchor.isPresent()) {
             try {
                 //TODO Obviously this will cause errors, we need a way to access the Env
-                endAnchor.get().getBlock().asExpr().analyze(new Env(), new GenSet());
+                endAnchor.get().getBlock().asExpr().analyze(getPane().getEnvInstance());
                 this.getStyleClass().remove("error");
             } catch (HaskellTypeError e) {
                 this.getStyleClass().add("error");

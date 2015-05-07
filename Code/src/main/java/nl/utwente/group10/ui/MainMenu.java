@@ -85,6 +85,8 @@ public class MainMenu extends ContextMenu {
     }
 
     private void addBlock(Block block) {
+        block.invalidate();
+        
         parent.getChildren().add(block);
         Point2D panePos = parent.screenToLocal(this.getX(), this.getY());
         block.relocate(panePos.getX(), panePos.getY());

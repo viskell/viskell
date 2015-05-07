@@ -32,7 +32,7 @@ public class UnificationTest {
         Type t2 = e2
                 .analyze(new HaskellCatalog().asEnvironment(), new GenSet())
                 .prune();
-        assertEquals("a", t2.toHaskellType());
+        assertNotEquals("a", t2.toHaskellType());
     }
 
     @Test
@@ -55,5 +55,4 @@ public class UnificationTest {
                 .prune();
         assertEquals("Float", t2.toHaskellType());
     }
-
 }

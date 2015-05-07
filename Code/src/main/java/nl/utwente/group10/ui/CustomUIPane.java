@@ -57,7 +57,7 @@ public class CustomUIPane extends TactilePane {
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
     }
     
-    public void initialize(HaskellCatalog catalog){
+    public void initialize(HaskellCatalog catalog) {
         this.catalog = catalog;
     }
 

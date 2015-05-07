@@ -26,7 +26,7 @@ public class OutputAnchor extends ConnectionAnchor {
     }
 
     public Connection createConnectionTo(InputAnchor other) {
-        new Connection(this, other);
+        new Connection(getPane(), this, other);
         getPane().getChildren().add(getConnection().get());
         getPane().invalidate();
         return getConnection().get();
