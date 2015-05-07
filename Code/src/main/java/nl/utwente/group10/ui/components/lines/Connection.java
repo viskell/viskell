@@ -53,14 +53,14 @@ public class Connection extends ConnectionLine implements
 
     public Connection(CustomUIPane pane, OutputAnchor from, InputAnchor to) {
         this.pane = pane;
-        this.setStartAnchor(from);
-        this.setEndAnchor(to);
+        this.setAnchor(from);
+        this.setAnchor(to);
     }
 
     public Connection(CustomUIPane pane, InputAnchor to, OutputAnchor from) {
         this(pane, from, to);
     }
-    
+
     public final CustomUIPane getPane() {
         return pane;
     }
@@ -78,10 +78,25 @@ public class Connection extends ConnectionLine implements
     }
 
     /**
+     * Shortcut to call tryAddAnchor with default settings as specified in ConnectionCreationManager.
+     */
+    public boolean tryAddAnchor(ConnectionAnchor anchor) {
+        return tryAddAnchor(anchor,
+                ConnectionCreationManager.CONNECTIONS_OVERRIDE_EXISTING,
+                ConnectionCreationManager.CONNECTIONS_ALLOW_TYPE_MISMATCH);
+    }
+
+    /**
      * Tries to add an unspecified ConnectionAnchor to the connection.
      *
-     * @param anchor Anchor to add
-     * @param override If set will override (possible) existing Anchor.
+     * @param anchor
+     *            Anchor to add
+     * @param overrideExisting
+     *            If set, old anchors could be disconnected to make room for
+     *            this new one.
+     * @param allowTypeMismatch
+     *            If set, anchors can be added even though their types might
+     *            mismatch.
      * @return Whether or not the anchor was added.
      */
     public boolean tryAddAnchor(ConnectionAnchor anchor, boolean overrideExisting, boolean allowTypeMismatch) {
@@ -105,7 +120,13 @@ public class Connection extends ConnectionLine implements
 
         return added;
     }
-    
+
+    /**
+     * @param anchor
+     *            Anchor to get the slot of
+     * @return The slot (startAnchor or endAnchor variable) this anchor should
+     *         be put in if connected to this Connection
+     */
     private Optional<? extends ConnectionAnchor> getAnchorSlot(ConnectionAnchor anchor) {
         if (anchor instanceof OutputAnchor) {
             return startAnchor;
@@ -116,12 +137,10 @@ public class Connection extends ConnectionLine implements
         }
     }
 
-    public boolean tryAddAnchor(ConnectionAnchor anchor) {
-        return tryAddAnchor(anchor,
-                ConnectionCreationManager.CONNECTIONS_OVERRIDE_EXISTING,
-                ConnectionCreationManager.CONNECTIONS_ALLOW_TYPE_MISMATCH);
-    }
-
+    /**
+     * @param potentialAnchor The ConnectionAnchor to check if it matches.
+     * @return Wether or not the given anchor's type unifies with the current opposite anchor.
+     */
     public final boolean typesMatch(ConnectionAnchor potentialAnchor) {
         // TODO Let this return mismatch information?
         Optional<? extends ConnectionAnchor> anchor = null;
@@ -146,27 +165,11 @@ public class Connection extends ConnectionLine implements
             return true;
         }
     }
-
+    
     /**
-     * Set the startAnchor for this line. After setting the StartPosition will
-     * be updated.
-     *
-     * @param start The OutputAnchor to start at.
+     * Sets an OutputAnchor or InputAnchor for this line. After setting the line will update accordingly to the possible state change.
+     * @param newAnchor
      */
-    public void setStartAnchor(OutputAnchor start) {
-        setAnchor(start);
-    }
-
-    /**
-     * Set the endAnchor for this line. After setting the EndPosition will be
-     * updated.
-     *
-     * @param end the InputAnchor to end at.
-     */
-    public void setEndAnchor(InputAnchor end) {
-        setAnchor(end);
-    }
-
     private void setAnchor(ConnectionAnchor newAnchor) {
         newAnchor.setConnection(this);
         newAnchor.getBlock().layoutXProperty().addListener(this);
@@ -229,6 +232,9 @@ public class Connection extends ConnectionLine implements
         return startAnchor.isPresent() && endAnchor.isPresent();
     }
 
+    /**
+     * Properly disconnects the given anchor from this Connection, notifying the anchor of its disconnection.
+     */
     public final void disconnect(ConnectionAnchor anchor) {
         if (startAnchor.isPresent() && startAnchor.get().equals(anchor)) {
             startAnchor.get().disconnectFrom(this);
@@ -263,7 +269,6 @@ public class Connection extends ConnectionLine implements
     private void checkError() {
         if(startAnchor.isPresent() && endAnchor.isPresent()) {
             try {
-                //TODO Obviously this will cause errors, we need a way to access the Env
                 endAnchor.get().getBlock().asExpr().analyze(getPane().getEnvInstance());
                 this.getStyleClass().remove("error");
             } catch (HaskellTypeError e) {

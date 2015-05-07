@@ -87,6 +87,9 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         return connection;
     }
 
+    /**
+     * @return Wether or not this ConnectionAnchor allows new connections to be made to it.
+     */
     public abstract boolean canConnect();
 
     /**
@@ -95,6 +98,11 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
      */
     public abstract void disconnectFrom(Connection connection);
 
+    /**
+     * This method provides a shortcut to get the anchor on the other side of the Connection from this anchor.
+     * @return Optional.empty if this anchor does not have a Connection, or that Connection is not connected on both sides.
+     *         Else it returns an Optional containing the other anchor.
+     */
     public Optional<? extends ConnectionAnchor> getOtherAnchor() {
         if (hasConnection()) {
             Optional<OutputAnchor> out = getConnection().get()

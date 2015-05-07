@@ -5,6 +5,9 @@ import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
 
+/**
+ * Provides some extra utility the front end needs, but does not really belong in the Haskell backend.
+ */
 public class BackendUtils {
     /**
      * @param steps

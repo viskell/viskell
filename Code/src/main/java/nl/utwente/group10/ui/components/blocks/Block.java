@@ -74,6 +74,8 @@ public abstract class Block extends StackPane implements ComponentLoader {
      * Tells the block that its current state (considering connections) possibly has
      * changed. Default implementation does not react to a potential state
      * change.
+     * 
+     * This method should only be called after the Block's constructor is done.
      */
     public void invalidate() {
     }

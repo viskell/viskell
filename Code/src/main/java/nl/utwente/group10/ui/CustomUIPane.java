@@ -57,6 +57,9 @@ public class CustomUIPane extends TactilePane {
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
     }
     
+    /**
+     * Since the CustomUIPane is constructed from fxml without arguments, this method allows arguments to be passed.
+     */
     public void initialize(HaskellCatalog catalog) {
         this.catalog = catalog;
     }
@@ -120,6 +123,9 @@ public class CustomUIPane extends TactilePane {
 
     }
 
+    /**
+     * @return The Env instance to be used within this CustomUIPane.
+     */
     public Env getEnvInstance() {
 
         if (envInstance == null) {

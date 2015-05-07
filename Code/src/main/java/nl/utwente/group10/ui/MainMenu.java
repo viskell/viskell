@@ -86,6 +86,7 @@ public class MainMenu extends ContextMenu {
 
     private void addBlock(Block block) {
         block.invalidate();
+        //Let the block adapt to its start state.
         
         parent.getChildren().add(block);
         Point2D panePos = parent.screenToLocal(this.getX(), this.getY());

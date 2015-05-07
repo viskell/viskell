@@ -51,9 +51,9 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @FXML private Pane argumentSpace;
 
-    @FXML private Pane inputTypes;
+    @FXML private Pane inputTypesSpace;
 
-    @FXML private Pane outputTypes;
+    @FXML private Pane outputTypesSpace;
 
     /**
      * Method that creates a newInstance of this class along with it's visual representation
@@ -191,6 +191,9 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return expr;
     }
 
+    /**
+     * @return The function signature as specified in the catalog.
+     */
     public Type getFunctionSignature() {
         return getFunctionSignature(getPane().getEnvInstance());
     }
@@ -279,50 +282,44 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public void invalidate() {
-        invalidate(getPane().getEnvInstance(), new GenSet());
+        invalidate(getPane().getEnvInstance());
     }
 
-    public void invalidate(Env env, GenSet genSet) {
+    public void invalidate(Env env) {
         // TODO not clear and re-add all labels every invalidate()
-        Type nakedType = getFunctionSignature();
-        Type currentType = getOutputSignature();
-        invalidateInput(env, genSet, currentType, nakedType);
+        invalidateInput();
         invalidateOutput();
     }
 
     /**
      * Updates the input types to the Block's new state.
-     * 
-     * @param env
-     * @param genSet
-     * @param outputType
-     *            The current output type of the function (with inputs applied)
-     * @param fullType
-     *            The full type of the fuction (no inputs applied).
      */
-    private void invalidateInput(Env env, GenSet genSet, Type outputType, Type fullType) {
+    private void invalidateInput() {
         List<Label> labels = new ArrayList<Label>();
         for (int i = 0; i < getInputs().size(); i++) {
             labels.add(new Label(getInputType(i).toHaskellType()));
         }
-        inputTypes.getChildren().setAll(labels);
+        inputTypesSpace.getChildren().setAll(labels);
     }
 
+    /**
+     * Updates the output types to the Block's new state.
+     */
     private void invalidateOutput() {
         Label label = new Label(getOutputType().toHaskellType());
-        outputTypes.getChildren().setAll(label);
+        outputTypesSpace.getChildren().setAll(label);
     }
 
     @Override
     public final void error() {
-            for (InputAnchor in : getInputs()) {
-                if (!in.hasConnection()) {
-                    argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().add("error");
-                } else if (in.hasConnection()) {
-                    argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().remove("error");
-                }
+        for (InputAnchor in : getInputs()) {
+            if (!in.hasConnection()) {
+                argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().add("error");
+            } else if (in.hasConnection()) {
+                argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().remove("error");
             }
-            this.getStyleClass().add("error");
+        }
+        this.getStyleClass().add("error");
     }
 
     @Override
