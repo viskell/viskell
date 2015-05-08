@@ -35,9 +35,14 @@ public interface InputBlock {
     public Type getInputType(int index);
 
     /**
-     * @return The inputs of the block.
+     * @return All inputs of the block.
      */
-    public List<InputAnchor> getInputs();
+    public List<InputAnchor> getAllInputs();
+    
+    /**
+     * @return Only the active (as specified with the bowtie) inputs.
+     */
+    public List<InputAnchor> getActiveInputs();
 
     /**
      * @return The index the specified anchor has (in getInputs())

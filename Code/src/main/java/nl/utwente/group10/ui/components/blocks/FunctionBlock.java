@@ -5,6 +5,10 @@ import java.util.List;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -12,12 +16,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
-import nl.utwente.group10.haskell.hindley.GenSet;
-import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.BackendUtils;
@@ -32,9 +33,15 @@ import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
  * Main building block for the visual interface, this class represents a Haskell
  * function together with it's arguments and visual representation.
  */
-public class FunctionBlock extends Block implements InputBlock, OutputBlock {
+public class FunctionBlock extends Block implements InputBlock, OutputBlock, ChangeListener<Number> {
     /** The inputs for this FunctionBlock. **/
     private List<InputAnchor> inputs;
+
+    /**
+     * The index of the bowtie, all inputs with index higher or equal to the
+     * bowtie are be inactive.
+     */
+    private IntegerProperty bowtieIndex;
 
     private OutputAnchor output;
 
@@ -76,6 +83,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
         this.name = new SimpleStringProperty(name);
         this.type = new SimpleStringProperty(type.toHaskellType());
+        this.bowtieIndex = new SimpleIntegerProperty();
+        bowtieIndex.addListener(this);
 
         this.loadFXML("FunctionBlock");
 
@@ -97,6 +106,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
             argumentSpace.getChildren().add(new Label(args.get(i)));
         }
+        setBowtieIndex(getAllInputs().size());
 
         // Create an anchor and label for the result
         Label lbl = new Label(t.toHaskellType());
@@ -133,6 +143,16 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     /**
+     * @param index
+     *            The new bowtie index for this FunctionBlock.
+     */
+    public final void setBowtieIndex(int index) {
+        if (index >= 0 && index <= getAllInputs().size()) {
+            this.bowtieIndex.set(index);
+        }
+    }
+
+    /**
      * Returns the index of the argument matched to the Anchor.
      *
      * @param anchor
@@ -145,8 +165,16 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     /** Returns the array of input anchors for this function block. */
-    public final List<InputAnchor> getInputs() {
+    public final List<InputAnchor> getAllInputs() {
         return inputs;
+    }
+    
+    /**
+     * @return Only the active (as specified with the bowtie) inputs.
+     */
+    @Override
+    public List<InputAnchor> getActiveInputs() {
+        return inputs.subList(0, getBowtieIndex());
     }
 
     /** Returns the name property of this FunctionBlock. */
@@ -159,6 +187,11 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return type.get();
     }
 
+    /** Returns the bowtie index of this FunctionBlock. */
+    public final Integer getBowtieIndex() {
+        return bowtieIndex.get();
+    }
+
     /** Returns the StringProperty for the name of the function. */
     public final StringProperty nameProperty() {
         return name;
@@ -169,14 +202,23 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return type;
     }
 
+    /** Returns the IntegerPorperty for the bowtie index of this FunctionBlock. */
+    public final IntegerProperty bowtieIndexProperty() {
+        return bowtieIndex;
+    }
+
     @Override
     public boolean inputsAreConnected() {
-        return inputs.stream().allMatch(ConnectionAnchor::isConnected);
+        boolean connected = true;
+        for (int i = 0; i < getBowtieIndex(); i++) {
+            connected = connected && getAllInputs().get(i).isConnected();
+        }
+        return connected;
     }
 
     @Override
     public boolean inputIsConnected(int index) {
-        return index>=0 && index < inputs.size() && inputs.get(index).isConnected();
+        return index>=0 && index < getBowtieIndex() && inputs.get(index).isConnected();
     }
 
     /**
@@ -185,8 +227,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public final Expr asExpr() {
         Expr expr = new Ident(getName());
-        for (InputAnchor in : getInputs()) {
-            expr = new Apply(expr, in.asExpr());
+        for ( int i = 0; i < getBowtieIndex(); i++){
+            expr = new Apply(expr, getAllInputs().get(i).asExpr());
         }
 
         return expr;
@@ -211,8 +253,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public Type getInputSignature(int index) {
         if (index >= 0 && index < inputs.size()) {
-            if (getFunctionSignature() instanceof ConstT) {
-                return BackendUtils.dive((ConstT) getFunctionSignature(), index + 1);
+            if (getFunctionSignature() instanceof FuncT) {
+                return BackendUtils.dive((FuncT) getFunctionSignature(), index + 1);
             } else {
                 throw new FunctionDefinitionException();
             }
@@ -228,8 +270,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public Type getInputType(int index) {
-        if (getInputs().get(index).isConnected()) {
-            return getInputs().get(index).getOtherAnchor().get().getType();
+        if (getAllInputs().get(index).isConnected()) {
+            return getAllInputs().get(index).getOtherAnchor().get().getType();
         } else {
             return getInputSignature(index);
         }
@@ -243,9 +285,9 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public Type getOutputSignature(Env env) {
         Type type = getFunctionSignature();
-        for (int i = 0; i < getInputs().size(); i++) {
-            if (type instanceof ConstT) {
-                type = ((ConstT) type).getArgs()[1];
+        for (int i = 0; i < getBowtieIndex(); i++) {
+            if (type instanceof FuncT) {
+                type = ((FuncT) type).getArgs()[1];
             } else {
                 throw new FunctionDefinitionException();
             }
@@ -261,20 +303,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public Type getOutputType(Env env) {
         try {
-            Type type;
-            // TODO dynamically update (unify) output type with available
-            // information.
-            if (inputsAreConnected()) {
-                type = asExpr().analyze(env).prune();
-            } else {
-                type = getFunctionSignature();
-            }
-
-            while (type instanceof ConstT
-                    && ((ConstT) type).getArgs().length == 2) {
-                type = ((ConstT) type).getArgs()[1];
-            }
-            return type;
+            return asExpr().analyze(env).prune();
         } catch (HaskellException e) {
             e.printStackTrace();
             return getOutputSignature();
@@ -297,7 +326,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     private void invalidateInput() {
         List<Label> labels = new ArrayList<Label>();
-        for (int i = 0; i < getInputs().size(); i++) {
+        for (int i = 0; i < getBowtieIndex(); i++) {
             labels.add(new Label(getInputType(i).toHaskellType()));
         }
         inputTypesSpace.getChildren().setAll(labels);
@@ -313,7 +342,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public final void error() {
-        for (InputAnchor in : getInputs()) {
+        for (InputAnchor in : getAllInputs()) {
             if (!in.hasConnection()) {
                 argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().add("error");
             } else if (in.hasConnection()) {
@@ -326,5 +355,21 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public OutputAnchor getOutputAnchor() {
         return output;
+    }
+
+    @Override
+    public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+        if (arg0.equals(bowtieIndex)) {
+            invalidateBowtieIndex();
+        }
+    }
+
+    private void invalidateBowtieIndex() {
+        for (InputAnchor input : getAllInputs()) {
+            input.setVisible(getInputIndex(input) < getBowtieIndex());
+            if(input.isConnected()){
+                input.getConnection().get().disconnect();
+            }
+        }
     }
 }
