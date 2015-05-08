@@ -283,7 +283,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     public void invalidate(Env env) {
-        // TODO not clear and re-add all labels every invalidate()
         invalidateInput();
         invalidateOutput();
     }
