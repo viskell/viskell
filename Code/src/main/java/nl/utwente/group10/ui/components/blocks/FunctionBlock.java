@@ -209,16 +209,12 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock, Cha
 
     @Override
     public boolean inputsAreConnected() {
-        boolean connected = true;
-        for (int i = 0; i < getBowtieIndex(); i++) {
-            connected = connected && getAllInputs().get(i).isConnected();
-        }
-        return connected;
+        return getActiveInputs().stream().allMatch(ConnectionAnchor::isConnected);
     }
 
     @Override
     public boolean inputIsConnected(int index) {
-        return index>=0 && index < getBowtieIndex() && inputs.get(index).isConnected();
+        return index >= 0 && index < getBowtieIndex() && inputs.get(index).isConnected();
     }
 
     /**
@@ -227,8 +223,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock, Cha
     @Override
     public final Expr asExpr() {
         Expr expr = new Ident(getName());
-        for ( int i = 0; i < getBowtieIndex(); i++){
-            expr = new Apply(expr, getAllInputs().get(i).asExpr());
+        for (InputAnchor in : getActiveInputs()) {
+            expr = new Apply(expr, in.asExpr());
         }
 
         return expr;
