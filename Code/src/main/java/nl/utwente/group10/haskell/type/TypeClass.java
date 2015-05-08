@@ -48,7 +48,7 @@ public class TypeClass extends HaskellObject {
      * @return Whether the given type is in this type class.
      */
     public final boolean hasType(Type type) {
-        return this.types.contains(type);
+        return this.types.stream().anyMatch(t -> t.compareTo(type) == 0);
     }
 
     public final String toString() {
