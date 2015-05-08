@@ -2,8 +2,6 @@ package nl.utwente.group10.ui.menu;
 
 import nl.utwente.group10.ui.components.blocks.Block;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
 import javafx.scene.image.Image;
