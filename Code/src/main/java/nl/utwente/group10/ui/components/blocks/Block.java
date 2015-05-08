@@ -36,6 +36,9 @@ public abstract class Block extends StackPane implements ComponentLoader {
     private CustomUIPane parentPane;
     /** The context menu associated with this block instance. */
     private CircleMenu circleMenu;
+    
+    /** The visual state this Block is in */
+    private int visualState;
 
     /**
      * @param pane
@@ -93,8 +96,29 @@ public abstract class Block extends StackPane implements ComponentLoader {
      * change.
      *
      * This method should only be called after the Block's constructor is done.
+     * 
+     * This method will invalidate even if the state did not change.
      */
     public void invalidate() {
+    }
+    
+    /**
+     * This method will only invalidate and update the Blocks visuals if the state actually changed.
+     * 
+     * @param state The newest visual state
+     */
+    public void invalidate(int state) {
+        if(!visualsAreUpToDate(state)){
+            invalidate();
+        }
+        this.visualState = state;
+    }
+
+    /**
+     * @return Whether or not the visual state of the block confirms to the given newest state.
+     */
+    public boolean visualsAreUpToDate(int state) {
+        return this.visualState == state;
     }
 
     /** DEBUG METHOD trigger the error state for this block */

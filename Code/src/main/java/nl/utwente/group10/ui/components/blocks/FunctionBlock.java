@@ -25,6 +25,7 @@ import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.exceptions.FunctionDefinitionException;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 
@@ -171,12 +172,12 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public boolean inputsAreConnected() {
-        return inputs.stream().allMatch(ConnectionAnchor::isConnected);
+        return inputs.stream().allMatch(ConnectionAnchor::isPrimaryConnected);
     }
 
     @Override
     public boolean inputIsConnected(int index) {
-        return index>=0 && index < inputs.size() && inputs.get(index).isConnected();
+        return index>=0 && index < inputs.size() && inputs.get(index).isPrimaryConnected();
     }
 
     /**
@@ -228,8 +229,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public Type getInputType(int index) {
-        if (getInputs().get(index).isConnected()) {
-            return getInputs().get(index).getOtherAnchor().get().getType();
+        if (getInputs().get(index).isPrimaryConnected()) {
+            return getInputs().get(index).getPrimaryOppositeAnchor().get().getType();
         } else {
             return getInputSignature(index);
         }
@@ -283,13 +284,22 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public void invalidate() {
-        invalidate(getPane().getEnvInstance());
-    }
-
-    public void invalidate(Env env) {
         // TODO not clear and re-add all labels every invalidate()
         invalidateInput();
         invalidateOutput();
+    }
+    
+    @Override
+    public void invalidate(int state) {
+        if (!visualsAreUpToDate(state)) {
+            for (Connection c : output.getConnections()) {
+                if(c.isConnected()){
+                    c.getInputAnchor().get().getBlock().invalidate(state);
+                }
+            }
+        }
+
+        super.invalidate(state);
     }
 
     /**

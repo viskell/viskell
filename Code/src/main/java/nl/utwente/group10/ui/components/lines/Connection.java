@@ -171,7 +171,7 @@ public class Connection extends ConnectionLine implements
      * @param newAnchor
      */
     private void setAnchor(ConnectionAnchor newAnchor) {
-        newAnchor.setConnection(this);
+        newAnchor.addConnection(this);
         newAnchor.getBlock().layoutXProperty().addListener(this);
         newAnchor.getBlock().layoutYProperty().addListener(this);
 
@@ -182,6 +182,7 @@ public class Connection extends ConnectionLine implements
                 start.layoutYProperty().removeListener(this);
             }
             startAnchor = Optional.of((OutputAnchor) newAnchor);
+            ConnectionCreationManager.nextConnectionState();
         } else if (newAnchor instanceof InputAnchor) {
             if (endAnchor.isPresent()) {
                 Block end = endAnchor.get().getBlock();
@@ -189,10 +190,12 @@ public class Connection extends ConnectionLine implements
                 end.layoutYProperty().removeListener(this);
             }
             endAnchor = Optional.of((InputAnchor) newAnchor);
+            ConnectionCreationManager.nextConnectionState();
         }
 
         checkError();
         updateStartEndPositions();
+        invalidate(ConnectionCreationManager.getConnectionState());
     }
 
     /**
@@ -252,13 +255,18 @@ public class Connection extends ConnectionLine implements
      */
     public final void disconnect(ConnectionAnchor anchor) {
         if (startAnchor.isPresent() && startAnchor.get().equals(anchor)) {
-            startAnchor.get().removeConnection(this);
+            startAnchor.get().disconnectConnection(this);
             startAnchor = Optional.empty();
+            ConnectionCreationManager.nextConnectionState();
         }
         if (endAnchor.isPresent() && endAnchor.get().equals(anchor)) {
-            endAnchor.get().removeConnection(this);
+            endAnchor.get().disconnectConnection(this);
             endAnchor = Optional.empty();
+            ConnectionCreationManager.nextConnectionState();
         }
+        
+        anchor.getBlock().invalidate(ConnectionCreationManager.getConnectionState());
+        invalidate(ConnectionCreationManager.getConnectionState());
     }
 
     public final void disconnect(Optional<? extends ConnectionAnchor> anchor) {
@@ -277,6 +285,11 @@ public class Connection extends ConnectionLine implements
     private void updateStartEndPositions() {
         startAnchor.ifPresent(a -> setStartPosition(a.getCenterInPane()));
         endAnchor.ifPresent(a -> setEndPosition(a.getCenterInPane()));
+    }
+    
+    public void invalidate(int state){
+        startAnchor.ifPresent(a -> a.getBlock().invalidate(state));
+        endAnchor.ifPresent(a -> a.getBlock().invalidate(state));
     }
 
     @Override

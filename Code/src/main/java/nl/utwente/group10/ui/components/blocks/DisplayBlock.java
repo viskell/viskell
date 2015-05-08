@@ -101,8 +101,8 @@ public class DisplayBlock extends Block implements InputBlock {
 
     @Override
     public Type getInputType(InputAnchor anchor) {
-        if(anchor.getOtherAnchor().isPresent()) {
-            return anchor.getOtherAnchor().get().getType();
+        if(anchor.getPrimaryOppositeAnchor().isPresent()) {
+            return anchor.getPrimaryOppositeAnchor().get().getType();
         } else {
             return getInputSignature();
         }
@@ -148,7 +148,7 @@ public class DisplayBlock extends Block implements InputBlock {
 
     @Override
     public boolean inputIsConnected(int index) {
-        return inputAnchor.isConnected();
+        return inputAnchor.isPrimaryConnected();
     }
 
     public void error() {

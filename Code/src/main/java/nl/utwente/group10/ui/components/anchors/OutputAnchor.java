@@ -34,27 +34,16 @@ public class OutputAnchor extends ConnectionAnchor {
      * @return {@link Optional#empty()}
      */
     public Connection createConnectionTo(InputAnchor other) {
-        new Connection(getPane(), this, other);
-        getPane().getChildren().add(getConnection().get());
+        Connection connection = new Connection(getPane(), this, other);
+        getPane().getChildren().add(connection);
         getPane().invalidate();
-        return getConnection().get();
+        return connection;
     }
 
     @Override
-    public void removeConnection(Connection connection) {
-        // Currently does not keep track of its connections.
-    }
-
-    @Override
-    public boolean canConnect() {
+    public boolean canAddConnection() {
         // OutputAnchors can have multiple connections;
         return true;
-    }
-
-    @Override
-    public Optional<Connection> getConnection() {
-        // Does not keep track of its connections.
-        return Optional.empty();
     }
 
     @Override
