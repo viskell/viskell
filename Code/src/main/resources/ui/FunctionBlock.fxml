@@ -11,15 +11,27 @@
             <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10"/>
         </top>
         <center>
-            <HBox styleClass="function, block">
-                <HBox>
-                    <padding><Insets top="5" right="10" bottom="5" left="10"/></padding>
-                    <Label text="${controller.name}" styleClass="title" />
-                </HBox>
-                <HBox fx:id="argumentSpace" spacing="5">
-                    <padding><Insets top="5" right="5" bottom="5" left="5"/></padding>
-                </HBox>
-            </HBox>
+            <BorderPane>
+                <top>
+                    <FlowPane fx:id="inputTypesSpace" prefWrapLength="100" vgap="50"
+                        hgap="10" styleClass="typeDisplay"/>
+                </top>
+                <center>
+                    <HBox styleClass="function, block">
+	                    <HBox>
+	                        <padding><Insets top="5" right="10" bottom="5" left="10"/></padding>
+	                        <Label text="${controller.name}" styleClass="title" />
+	                    </HBox>
+	                    <HBox fx:id="argumentSpace" spacing="5">
+	                        <padding><Insets top="5" right="5" bottom="5" left="5"/></padding>
+	                    </HBox>
+                    </HBox>
+                </center>
+                <bottom>
+                    <FlowPane fx:id="outputTypesSpace" prefWrapLength="100" vgap="50"
+                        hgap="10" styleClass="typeDisplay"/>
+                </bottom>
+            </BorderPane>
         </center>
         <bottom>
             <VBox fx:id="outputSpace" alignment = "center"/>

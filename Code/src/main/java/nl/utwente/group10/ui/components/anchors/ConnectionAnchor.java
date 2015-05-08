@@ -5,6 +5,7 @@ import java.util.Optional;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Circle;
 
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
@@ -42,13 +43,9 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     }
 
     /**
-     * Set the connection this anchor is connected to.
-     *
-     * @param connection
+     * @return Input or output type of the block associated with this anchor.
      */
-    public void setConnection(Connection connection) {
-        this.connection = Optional.ofNullable(connection);
-    }
+    public abstract Type getType();
 
     /**
      * Disconnects the anchor from the connection
@@ -58,26 +55,45 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
      */
     public abstract void removeConnection(Connection connection);
 
+    /**
+     * Set the connection this anchor is connected to.
+     *
+     * @param connection
+     */
+    public void setConnection(Connection connection) {
+        this.connection = Optional.ofNullable(connection);
+    }
+
     /** Returns true if the anchor is connected to a connection. */
-    public boolean isConnected() {
+    public boolean hasConnection() {
         return connection.isPresent();
+    }
+
+    /**
+     * @return True if this ConnectionAnchor is connected to a Connection and
+     *         that connection is fully connected.
+     */
+    public boolean isConnected() {
+        return hasConnection() && getConnection().get().isConnected();
     }
 
     /** Returns true if this anchor can connect to a connection. */
     public abstract boolean canConnect();
 
-    /** Returns the anchor on the other end of the connection if there is one. */
-    public Optional<ConnectionAnchor> getOtherAnchor() {
-        if (isConnected()) {
+    /**
+     * This method provides a shortcut to get the anchor on the other side of the Connection from this anchor.
+     * @return Optional.empty if this anchor does not have a Connection, or that Connection is not connected on both sides.
+     *         Else it returns an Optional containing the other anchor.
+     */
+    public Optional<? extends ConnectionAnchor> getOtherAnchor() {
+        if (hasConnection()) {
             Optional<OutputAnchor> out = getConnection().get()
                     .getOutputAnchor();
             Optional<InputAnchor> in = getConnection().get().getInputAnchor();
-            if (in.isPresent() && out.get().equals(this)) {
-                // Re-wrap Optional to change from InputAnchor to
-                // ConnectionAnchor
-                return Optional.of(in.get());
-            } else if (out.isPresent() && in.get().equals(this)) {
-                return Optional.of(out.get());
+            if (out.isPresent() && out.get().equals(this)) {
+                return in;
+            } else if (in.isPresent() && in.get().equals(this)) {
+                return out;
             }
         }
         return Optional.empty();

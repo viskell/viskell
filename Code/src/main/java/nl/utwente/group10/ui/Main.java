@@ -38,6 +38,7 @@ public class Main extends Application {
         tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
 
         HaskellCatalog catalog = new HaskellCatalog();
+        tactilePane.initialize(catalog);
 
         ValueBlock valueBlock = new ValueBlock(tactilePane);
         DisplayBlock displayBlock = new DisplayBlock(tactilePane);

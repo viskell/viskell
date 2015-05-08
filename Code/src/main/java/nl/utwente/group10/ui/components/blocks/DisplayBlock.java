@@ -1,5 +1,7 @@
 package nl.utwente.group10.ui.components.blocks;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -9,8 +11,9 @@ import javafx.scene.layout.Pane;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
 /**
@@ -20,8 +23,8 @@ import nl.utwente.group10.ui.components.anchors.InputAnchor;
  * value at all, the value can be altered at any time by providing a different
  * input source using a {@link Connection}.
  */
-public class DisplayBlock extends Block {
-    /** The Block for which this DisplayBlock displays the output. **/
+public class DisplayBlock extends Block implements InputBlock {
+    /** The output String to display **/
     private StringProperty output;
 
     /** The Anchor that is used as input. */
@@ -50,7 +53,6 @@ public class DisplayBlock extends Block {
 
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
-        outputSpace.getChildren().add(this.getOutputAnchor());
     }
 
     /**
@@ -63,17 +65,18 @@ public class DisplayBlock extends Block {
         output.set(value);
     }
 
-    /** Returns the InputAnchor belonging to this block. */
-    public ConnectionAnchor getInputAnchor() {
-        return inputAnchor;
-    }
-
-    /** Returns the output value this Block has. */
+    /**
+     * Returns the output value this Block has.
+     * @return outputValue
+     */
     public String getOutput() {
         return output.get();
     }
 
-    /** Property getter for the output property. */
+    /**
+     * Property getter for the output property.
+     * @return outputProperty
+     */
     public StringProperty outputProperty() {
         return output;
     }
@@ -97,6 +100,57 @@ public class DisplayBlock extends Block {
     }
 
     @Override
+    public Type getInputType(InputAnchor anchor) {
+        if(anchor.getOtherAnchor().isPresent()) {
+            return anchor.getOtherAnchor().get().getType();
+        } else {
+            return getInputSignature();
+        }
+    }
+
+    private Type getInputSignature() {
+        // Return the type 'a', that matches anything.
+        // In the future this should probably be changed to '(Show a)'
+        return HindleyMilner.makeVariable();
+    }
+
+    @Override
+    public Type getInputSignature(InputAnchor input) {
+        return getInputSignature();
+    }
+
+    @Override
+    public Type getInputSignature(int index) {
+        return getInputSignature();
+    }
+
+    @Override
+    public Type getInputType(int index) {
+        return getInputSignature();
+    }
+
+    @Override
+    public List<InputAnchor> getInputs() {
+        List<InputAnchor> list = new ArrayList<>();
+        list.add(inputAnchor);
+        return list;
+    }
+
+    @Override
+    public int getInputIndex(InputAnchor anchor) {
+        return 0;
+    }
+
+    @Override
+    public boolean inputsAreConnected() {
+        return inputIsConnected(0);
+    }
+
+    @Override
+    public boolean inputIsConnected(int index) {
+        return inputAnchor.isConnected();
+    }
+
     public void error() {
         this.getStyleClass().add("error");
     }

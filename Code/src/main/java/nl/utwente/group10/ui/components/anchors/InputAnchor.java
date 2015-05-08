@@ -4,9 +4,15 @@ import java.util.Optional;
 
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
+import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.ui.BackendUtils;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.DisplayBlock;
+import nl.utwente.group10.ui.components.blocks.FunctionBlock;
+import nl.utwente.group10.ui.components.blocks.InputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
+import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 import nl.utwente.group10.ui.handlers.AnchorHandler;
 
 /**
@@ -28,8 +34,7 @@ public class InputAnchor extends ConnectionAnchor {
      */
     public final Expr asExpr() {
         if (isConnected()) {
-            return getConnection().get().getOutputAnchor().get().getBlock()
-                    .asExpr();
+            return getOtherAnchor().get().getBlock().asExpr();
         } else {
             return new Ident("undefined");
         }
@@ -45,8 +50,8 @@ public class InputAnchor extends ConnectionAnchor {
      * @return The connection or Optional.empty()
      */
     public Optional<Connection> createConnectionFrom(OutputAnchor other) {
-        if (!isConnected()) {
-            new Connection(this, other);
+        if (!hasConnection()) {
+            new Connection(getPane(), this, other);
             getPane().getChildren().add(getConnection().get());
             getPane().invalidate();
             return getConnection();
@@ -64,6 +69,20 @@ public class InputAnchor extends ConnectionAnchor {
     @Override
     public boolean canConnect() {
         // InputAnchors only support 1 connection;
-        return !isConnected();
+        return !hasConnection();
+    }
+
+    @Override
+    public String toString() {
+        return "InputAnchor for " + getBlock();
+    }
+
+    @Override
+    public Type getType() {
+        if (getBlock() instanceof InputBlock) {
+            return ((InputBlock) getBlock()).getInputType(this);
+        } else {
+            throw new TypeUnavailableException();
+        }
     }
 }
