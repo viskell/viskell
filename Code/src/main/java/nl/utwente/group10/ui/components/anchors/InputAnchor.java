@@ -54,7 +54,6 @@ public class InputAnchor extends ConnectionAnchor {
         if (!hasConnection()) {
             Connection connection = new Connection(getPane(), this, other);
             getPane().getChildren().add(connection);
-            getPane().invalidate();
             return Optional.of(connection);
         } else {
             return Optional.empty();

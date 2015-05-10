@@ -283,29 +283,16 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     @Override
-    public void invalidate() {
+    public void invalidateConnectionVisuals() {
         // TODO not clear and re-add all labels every invalidate()
-        invalidateInput();
-        invalidateOutput();
-    }
-    
-    @Override
-    public void invalidate(int state) {
-        if (!visualsAreUpToDate(state)) {
-            for (Connection c : output.getConnections()) {
-                if(c.isConnected()){
-                    c.getInputAnchor().get().getBlock().invalidate(state);
-                }
-            }
-        }
-
-        super.invalidate(state);
+        invalidateInputVisuals();
+        invalidateOutputVisuals();
     }
 
     /**
      * Updates the input types to the Block's new state.
      */
-    private void invalidateInput() {
+    private void invalidateInputVisuals() {
         List<Label> labels = new ArrayList<Label>();
         for (int i = 0; i < getInputs().size(); i++) {
             labels.add(new Label(getInputType(i).toHaskellType()));
@@ -316,7 +303,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /**
      * Updates the output types to the Block's new state.
      */
-    private void invalidateOutput() {
+    private void invalidateOutputVisuals() {
         Label label = new Label(getOutputType().toHaskellType());
         outputTypesSpace.getChildren().setAll(label);
     }

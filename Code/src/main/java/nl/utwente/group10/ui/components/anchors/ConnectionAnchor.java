@@ -49,19 +49,23 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     public abstract Type getType();
 
     /**
-     * Disconnects the anchor from the connection
+     * Removes the connection from its pane, first disconnecting it from its anchors.
      *
      * @param connection
-     *            Connection to disconnect from.
+     *            Connection to remove from its pane.
      */
     public void removeConnection(Connection connection) {
         if (connections.contains(connection)) {
             connections.remove(connection);
-            getPane().getChildren().remove(connection);
-            connection.disconnect();
+            connection.remove();
         }
     }
-    
+    /**
+     * Disconnects the anchor from the connection, keeping the connection on its pane.
+     *
+     * @param connection
+     *            Connection to disconnect from.
+     */
     public void disconnectConnection(Connection connection) {
         if (connections.contains(connection)) {
             connections.remove(connection);
@@ -69,15 +73,15 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         }
     }
     
-    public void clearConnections(){
-        for (int i = 0; i < getConnections().size(); i++) {
-            removeConnection(getConnections().get(0));
+    public void removeConnections(){
+        while(connections.size() > 0){
+            removeConnection(connections.get(0));
         }
     }
     
     public void disconnectConnections(){
-        for (int i = 0; i < getConnections().size(); i++) {
-            disconnectConnection(getConnections().get(0));
+        while(connections.size() > 0){
+            disconnectConnection(connections.get(0));
         }
     }
 

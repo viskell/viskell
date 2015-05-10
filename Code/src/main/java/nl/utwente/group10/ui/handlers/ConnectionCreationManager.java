@@ -62,7 +62,7 @@ public class ConnectionCreationManager {
         Connection connection = connections.get(id);
         if (connection != null) {
             if (CONNECTIONS_OVERRIDE_EXISTING && !anchor.canAddConnection()) {
-                anchor.clearConnections();
+                anchor.removeConnections();
             }
             
             if (anchor.canAddConnection() && connection.tryAddAnchor(anchor)) {
@@ -86,18 +86,18 @@ public class ConnectionCreationManager {
     }
 
     public void editConnection(int id, ConnectionAnchor anchor) {
-        System.out.println("Edit Connection!");
         Optional<? extends ConnectionAnchor> anchorToKeep = anchor.getPrimaryOppositeAnchor();
         if (anchor.isPrimaryConnected()) {
             Connection connection = anchor.getPrimaryConnection().get();
             connection.disconnect(anchor);
+            System.out.println("editConnection() "+connection);
             connections.put(id, connection);
         }
     }
 
     public void updateLine(int id, double x, double y) {
         Point2D localPos = pane.sceneToLocal(x, y);
-
+        System.out.println("updateLine(): "+connections.get(id));
         if (connections.get(id) != null) {
             connections.get(id).setFreeEnds(localPos.getX(), localPos.getY());
         }
