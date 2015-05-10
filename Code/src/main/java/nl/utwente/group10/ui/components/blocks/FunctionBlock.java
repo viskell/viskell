@@ -276,13 +276,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             return getOutputSignature();
         }
     }
-
-    @Override
     public void invalidate() {
-        invalidate(getPane().getEnvInstance());
-    }
-
-    public void invalidate(Env env) {
         invalidateInput();
         invalidateOutput();
     }

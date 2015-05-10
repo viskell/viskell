@@ -22,7 +22,7 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
  * <p>
  * It is possible for a connection to exist without both anchors being present,
  * whenever the position of either the start or end anchor changes the
- * {@link #updateStartEndPositions()} should be called to refresh the visual
+ * {@link #invalidate()} should be called to refresh the visual
  * representation of the connection.
  * </p>
  */
@@ -116,7 +116,7 @@ public class Connection extends ConnectionLine implements
                 System.out.println("Type mismatch!");
             }
         }
-        updateStartEndPositions();
+        invalidate();
 
         return added;
     }
@@ -172,27 +172,40 @@ public class Connection extends ConnectionLine implements
      */
     private void setAnchor(ConnectionAnchor newAnchor) {
         newAnchor.setConnection(this);
-        newAnchor.getBlock().layoutXProperty().addListener(this);
-        newAnchor.getBlock().layoutYProperty().addListener(this);
+        addListeners(newAnchor);
 
         if (newAnchor instanceof OutputAnchor) {
-            if (startAnchor.isPresent()) {
-                Block start = startAnchor.get().getBlock();
-                start.layoutXProperty().removeListener(this);
-                start.layoutYProperty().removeListener(this);
-            }
+            startAnchor.ifPresent(a -> removeListeners(a));
             startAnchor = Optional.of((OutputAnchor) newAnchor);
         } else if (newAnchor instanceof InputAnchor) {
-            if (endAnchor.isPresent()) {
-                Block end = endAnchor.get().getBlock();
-                end.layoutXProperty().removeListener(this);
-                end.layoutYProperty().removeListener(this);
-            }
+            endAnchor.ifPresent(a -> removeListeners(a));
             endAnchor = Optional.of((InputAnchor) newAnchor);
         }
 
         checkError();
-        updateStartEndPositions();
+        invalidate();
+    }
+
+    /**
+     * Adds the listeners this Connections needs to keep its visual
+     * representation up-to-date to the given anchor.
+     */
+    private void addListeners(ConnectionAnchor anchor) {
+        anchor.layoutXProperty().addListener(this);
+        anchor.layoutYProperty().addListener(this);
+        anchor.getBlock().layoutXProperty().addListener(this);
+        anchor.getBlock().layoutYProperty().addListener(this);
+    }
+    
+    /**
+     * Removes the listeners this Connections needed to keep its visual
+     * representation up-to-date from the given anchor.
+     */
+    private void removeListeners(ConnectionAnchor anchor) {
+        anchor.layoutXProperty().removeListener(this);
+        anchor.layoutYProperty().removeListener(this);
+        anchor.getBlock().layoutXProperty().removeListener(this);
+        anchor.getBlock().layoutYProperty().removeListener(this);
     }
 
     /**
@@ -240,7 +253,8 @@ public class Connection extends ConnectionLine implements
     @Override
     public final void changed(ObservableValue<? extends Number> observable,
             Number oldValue, Number newValue) {
-        updateStartEndPositions();
+        //StartAnchor or EndAnchor position changed;
+        invalidate();
     }
 
     public final boolean isConnected() {
@@ -274,7 +288,7 @@ public class Connection extends ConnectionLine implements
      * Runs both the update Start end End position functions. Use when
      * refreshing UI representation of the Line.
      */
-    private void updateStartEndPositions() {
+    public void invalidate() {
         startAnchor.ifPresent(a -> setStartPosition(a.getCenterInPane()));
         endAnchor.ifPresent(a -> setEndPosition(a.getCenterInPane()));
     }
