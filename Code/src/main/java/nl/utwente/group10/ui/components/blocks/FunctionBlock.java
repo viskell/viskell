@@ -33,7 +33,7 @@ import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
  * Main building block for the visual interface, this class represents a Haskell
  * function together with it's arguments and visual representation.
  */
-public class FunctionBlock extends Block implements InputBlock, OutputBlock, ChangeListener<Number> {
+public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** The inputs for this FunctionBlock. **/
     private List<InputAnchor> inputs;
 
@@ -84,7 +84,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock, Cha
         this.name = new SimpleStringProperty(name);
         this.type = new SimpleStringProperty(type.toHaskellType());
         this.bowtieIndex = new SimpleIntegerProperty();
-        bowtieIndex.addListener(this);
+        bowtieIndex.addListener(e -> invalidateBowtieIndex());
 
         this.loadFXML("FunctionBlock");
 
@@ -149,6 +149,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock, Cha
     public final void setBowtieIndex(int index) {
         if (index >= 0 && index <= getAllInputs().size()) {
             this.bowtieIndex.set(index);
+        }else{
+            throw new IndexOutOfBoundsException();
         }
     }
 
@@ -214,7 +216,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock, Cha
 
     @Override
     public boolean inputIsConnected(int index) {
-        return index >= 0 && index < getBowtieIndex() && inputs.get(index).isConnected();
+        return inputs.get(index).isConnected();
     }
 
     /**
@@ -353,17 +355,15 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock, Cha
         return output;
     }
 
-    @Override
-    public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-        if (arg0.equals(bowtieIndex)) {
-            invalidateBowtieIndex();
-        }
-    }
-
+    /**
+     * React to a potential state change with regards to the bowtie index.
+     * This then activates / disables the inputs with regards to the bowtie index.
+     */
     private void invalidateBowtieIndex() {
         for (InputAnchor input : getAllInputs()) {
             input.setVisible(getInputIndex(input) < getBowtieIndex());
-            if(input.isConnected()){
+            if (getInputIndex(input) >= getBowtieIndex() && input.isConnected()) {
+                //TODO: Change this to Connection.remove() (needs PR 82)
                 input.getConnection().get().disconnect();
             }
         }
