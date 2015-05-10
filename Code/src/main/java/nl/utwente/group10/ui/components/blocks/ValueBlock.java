@@ -106,7 +106,7 @@ public class ValueBlock extends Block implements OutputBlock {
         if (error) {
             this.getStyleClass().add("error");
         } else {
-            this.getStyleClass().remove("error");
+            this.getStyleClass().removeAll("error");
         }
     }
 

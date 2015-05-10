@@ -149,7 +149,7 @@ public class DisplayBlock extends Block implements InputBlock {
         if (error) {
             this.getStyleClass().add("error");
         } else {
-            this.getStyleClass().remove("error");
+            this.getStyleClass().removeAll("error");
         }
     }
 }
