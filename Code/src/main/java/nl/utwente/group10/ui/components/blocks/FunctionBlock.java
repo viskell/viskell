@@ -283,7 +283,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     @Override
-    public void invalidateConnectionVisuals() {
+    public void invalidateConnectionState() {
         // TODO not clear and re-add all labels every invalidate()
         invalidateInputVisuals();
         invalidateOutputVisuals();

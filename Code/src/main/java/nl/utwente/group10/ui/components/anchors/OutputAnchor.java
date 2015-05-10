@@ -25,20 +25,6 @@ public class OutputAnchor extends ConnectionAnchor {
         new AnchorHandler(pane.getConnectionCreationManager(), this);
     }
 
-    /**
-     * Creates a {@link Connection} to another anchor from this one and returns
-     * the connection.
-     *
-     * @param other
-     *            The other anchor to establish a connection to.
-     * @return {@link Optional#empty()}
-     */
-    public Connection createConnectionTo(InputAnchor other) {
-        Connection connection = new Connection(getPane(), this, other);
-        getPane().getChildren().add(connection);
-        return connection;
-    }
-
     @Override
     public boolean canAddConnection() {
         // OutputAnchors can have multiple connections;

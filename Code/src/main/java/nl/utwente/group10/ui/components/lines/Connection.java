@@ -22,7 +22,7 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
  * <p>
  * It is possible for a connection to exist without both anchors being present,
  * whenever the position of either the start or end anchor changes the
- * {@link #invalidateConnectionVisuals()} should be called to refresh the visual
+ * {@link #invalidateConnectionState()} should be called to refresh the visual
  * representation of the connection.
  * </p>
  */
@@ -116,7 +116,7 @@ public class Connection extends ConnectionLine implements
                 System.out.println("Type mismatch!");
             }
         }
-        invalidateConnectionVisuals();
+        invalidateConnectionState();
 
         return added;
     }
@@ -194,7 +194,7 @@ public class Connection extends ConnectionLine implements
         }
 
         checkError();
-        invalidateConnectionVisualsCascading();
+        invalidateConnectionStateCascading();
     }
 
     /**
@@ -242,9 +242,12 @@ public class Connection extends ConnectionLine implements
     @Override
     public final void changed(ObservableValue<? extends Number> observable,
             Number oldValue, Number newValue) {
-        invalidateConnectionVisuals();
+        invalidateConnectionState();
     }
 
+    /**
+     * @return Whether or not both sides of this Connection are connected to an Anchor.
+     */
     public final boolean isConnected() {
         return startAnchor.isPresent() && endAnchor.isPresent();
     }
@@ -273,9 +276,9 @@ public class Connection extends ConnectionLine implements
         }
 
         //Let the now (potentially) disconnected block update its visuals.
-        anchor.getBlock().invalidateConnectionVisuals();
+        anchor.getBlock().invalidateConnectionState();
         //Let the remaining connected anchors update their visuals.
-        invalidateConnectionVisualsCascading();
+        invalidateConnectionStateCascading();
     }
     
     /**
@@ -290,7 +293,7 @@ public class Connection extends ConnectionLine implements
      * Runs both the update Start end End position functions. Use when
      * refreshing UI representation of the Line.
      */
-    private void invalidateConnectionVisuals() {
+    private void invalidateConnectionState() {
         startAnchor.ifPresent(a -> setStartPosition(a.getCenterInPane()));
         endAnchor.ifPresent(a -> setEndPosition(a.getCenterInPane()));
     }
@@ -303,17 +306,17 @@ public class Connection extends ConnectionLine implements
      * @param state
      *            The newest visual state
      */
-    public void invalidateConnectionVisualsCascading(int state) {
-        invalidateConnectionVisuals();
-        startAnchor.ifPresent(a -> a.getBlock().invalidateConnectionVisualsCascading(state));
-        endAnchor.ifPresent(a -> a.getBlock().invalidateConnectionVisualsCascading(state));
+    public void invalidateConnectionStateCascading(int state) {
+        invalidateConnectionState();
+        startAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
+        endAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
     }
 
     /**
      * Shortcut to call invalidateConnectionVisualsCascading(int state) with the newest state.
      */
-    public void invalidateConnectionVisualsCascading() {
-        invalidateConnectionVisualsCascading(ConnectionCreationManager.getConnectionState());
+    public void invalidateConnectionStateCascading() {
+        invalidateConnectionStateCascading(ConnectionCreationManager.getConnectionState());
     }
 
     @Override

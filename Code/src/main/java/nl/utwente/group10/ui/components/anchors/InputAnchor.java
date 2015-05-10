@@ -41,25 +41,6 @@ public class InputAnchor extends ConnectionAnchor {
         }
     }
 
-    /**
-     * Creates a {@link Connection} from another anchor to this one and returns
-     * the connection. If the current anchor is already part of a connection it
-     * returns {@link Optional#empty()}.
-     *
-     * @param other
-     *            The other anchor to establish a connection to.
-     * @return The connection or Optional.empty()
-     */
-    public Optional<Connection> createConnectionFrom(OutputAnchor other) {
-        if (!hasConnection()) {
-            Connection connection = new Connection(getPane(), this, other);
-            getPane().getChildren().add(connection);
-            return Optional.of(connection);
-        } else {
-            return Optional.empty();
-        }
-    }
-
     @Override
     public boolean canAddConnection() {
         // InputAnchors only support 1 connection;

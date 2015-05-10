@@ -68,7 +68,7 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 		if (anchor.getPrimaryConnection().isPresent() && !anchor.canAddConnection()) {
 			manager.editConnection(inputId, anchor);
 		} else {
-			manager.createConnectionWith(inputId, anchor);
+			manager.buildConnectionWith(inputId, anchor);
 		}
 	}
 	

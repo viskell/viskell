@@ -98,26 +98,26 @@ public abstract class Block extends StackPane implements ComponentLoader {
      *
      * This method should only be called after the Block's constructor is done.
      * 
-     * This method will refresh the visuals even if the state did not change.
+     * This method will invalidate the Block even if the state did not change.
      */
-    public void invalidateConnectionVisuals() {
+    public void invalidateConnectionState() {
     }
 
     /**
-     * Does the same as invalidateConnectionVisuals(), but cascading down to
+     * Does the same as invalidateConnectionState(), but cascading down to
      * other blocks which are possibly also (indirectly) affected by the state
      * change.
      * 
      * @param state
      *            The newest visual state
      */
-    public void invalidateConnectionVisualsCascading(int state) {
-        if (!connectionVisualsAreUpToDate(state)) {
-            invalidateConnectionVisuals();
+    public void invalidateConnectionStateCascading(int state) {
+        if (!connectionStateIsUpToDate(state)) {
+            invalidateConnectionState();
             if (this instanceof OutputBlock) {
                 for (Connection c : ((OutputBlock) this).getOutputAnchor().getConnections()) {
                     if (c.isConnected()) {
-                        c.getInputAnchor().get().getBlock().invalidateConnectionVisualsCascading(state);
+                        c.getInputAnchor().get().getBlock().invalidateConnectionStateCascading(state);
                     }
                 }
             }
@@ -126,16 +126,16 @@ public abstract class Block extends StackPane implements ComponentLoader {
     }
 
     /**
-     * Shortcut to call invalidateConnectionVisualsCascading(int state) with the newest state.
+     * Shortcut to call invalidateConnectionStateCascading(int state) with the newest state.
      */
-    public void invalidateConnectionVisualsCascading() {
-        invalidateConnectionVisualsCascading(ConnectionCreationManager.getConnectionState());
+    public void invalidateConnectionStateCascading() {
+        invalidateConnectionStateCascading(ConnectionCreationManager.getConnectionState());
     }
 
     /**
-     * @return Whether or not the visual state of the block confirms to the given newest state.
+     * @return Whether or not the state of the block confirms to the given newest state.
      */
-    public boolean connectionVisualsAreUpToDate(int state) {
+    public boolean connectionStateIsUpToDate(int state) {
         return this.visualState == state;
     }
 

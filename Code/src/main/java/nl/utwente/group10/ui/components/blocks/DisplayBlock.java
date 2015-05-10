@@ -87,7 +87,7 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     /** Invalidates the outputted value and triggers re-evaluation of the value. */
-    public final void invalidateConnectionVisuals() {
+    public final void invalidateConnectionState() {
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
 

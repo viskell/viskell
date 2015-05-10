@@ -142,7 +142,7 @@ public class CustomUIPane extends TactilePane {
         System.out.println("Using inefficient invalidation!");
         for (Node node : getChildren()) {
             if (node instanceof Block) {
-                ((Block) node).invalidateConnectionVisuals();
+                ((Block) node).invalidateConnectionState();
             }
         }
     }
