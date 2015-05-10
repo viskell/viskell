@@ -13,15 +13,14 @@ import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.exceptions.InvalidInputIdException;
 
 /**
- * A Manager class manly used to keep track of multiple, possibly concurrent,
+ * A Manager class mainly used to keep track of multiple, possibly concurrent,
  * actions performed on Connections.
- * 
  * These actions are associated with an input id.
+ * 
+ * This class also provides the methods to perform actions based on user input.
  * 
  * This class also stores a ConnectionState.
  * This is an always increasing int used to check if components's (connection) states are fresh. 
- * 
- * @author Derk
  *
  */
 public class ConnectionCreationManager {
@@ -62,7 +61,7 @@ public class ConnectionCreationManager {
     /**
      * Creates a new Connection, with the given anchor being part of it (can be
      * either start or end anchor). This Connection is still being made (a
-     * second anchor should be selected).
+     * second anchor still needs to be selected).
      * 
      * @param id
      *            The id associated with the action on which to follow up.
@@ -90,7 +89,6 @@ public class ConnectionCreationManager {
      * 
      * @param id
      *            The id associated with the action on which to follow up.
-     *            This action should have previously undergone buildConnectionWith().
      * @param anchor
      *            The anchor to add to the connection being finished.
      * @return The finished connection.
@@ -102,10 +100,11 @@ public class ConnectionCreationManager {
                 anchor.removeConnections();
             }
             
-            if (anchor.canAddConnection() && connection.tryAddAnchor(anchor)) {
+            if (anchor.canAddConnection() && connection.tryAddAnchor(anchor) && connection.isConnected()) {
                 // Succesfully made connection.
             } else {
                 removeConnection(id);
+                return null;
             }
 
             connections.remove(id);
@@ -145,7 +144,6 @@ public class ConnectionCreationManager {
      *            be disconnected from its connection.
      */
     public void editConnection(int id, ConnectionAnchor anchor) {
-        Optional<? extends ConnectionAnchor> anchorToKeep = anchor.getPrimaryOppositeAnchor();
         if (anchor.isPrimaryConnected()) {
             Connection connection = anchor.getPrimaryConnection().get();
             connection.disconnect(anchor);

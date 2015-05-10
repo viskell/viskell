@@ -79,7 +79,7 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
      * Removes all the connections this anchor has.
      */
     public void removeConnections() {
-        while (connections.size() > 0) {
+        while (!connections.isEmpty()) {
             removeConnection(connections.get(0));
         }
     }
@@ -88,7 +88,7 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
      * Disconnects all the connections this anchor has from this anchor.
      */
     public void disconnectConnections() {
-        while (connections.size() > 0) {
+        while (!connections.isEmpty()) {
             disconnectConnection(connections.get(0));
         }
     }
@@ -105,7 +105,7 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
 
     /** Returns true this anchor has 1 or more connections. */
     public boolean hasConnection() {
-        return connections.size() > 0;
+        return !connections.isEmpty();
     }
 
     /**
@@ -114,12 +114,13 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     public boolean isPrimaryConnected() {
         return isConnected(0);
     }
-    
+
     /**
-     * @param index Index of the connection to check
+     * @param index
+     *            Index of the connection to check
      * @return Wether or not the connection specified by the index is connected.
      */
-    public boolean isConnected(int index){
+    public boolean isConnected(int index) {
         return index >= 0 && index < getConnections().size() && getConnections().get(index).isConnected();
     }
 
@@ -127,34 +128,37 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     public abstract boolean canAddConnection();
 
     /**
-     * This method provides a shortcut to get the anchors on the other side of the Connection from this anchor.
-     * @return A list of each potential opposite anchor for each Connection this anchor has.
+     * This method provides a shortcut to get the anchors on the other side of
+     * the Connection from this anchor.
+     * 
+     * @return A list of each potential opposite anchor for each Connection this
+     *         anchor has.
      */
     public List<Optional<? extends ConnectionAnchor>> getOppositeAnchors() {
         List<Optional<? extends ConnectionAnchor>> list = new ArrayList<Optional<? extends ConnectionAnchor>>();
-        for(Connection c : getConnections()){
-            if(c.isConnected()){
-                if(c.getInputAnchor().isPresent() && c.getInputAnchor().get().equals(this)){
+        for (Connection c : getConnections()) {
+            if (c.isConnected()) {
+                if (c.getInputAnchor().isPresent() && c.getInputAnchor().get().equals(this)) {
                     list.add(c.getOutputAnchor());
-                }else if(c.getOutputAnchor().isPresent() && c.getOutputAnchor().get().equals(this)){
+                } else if (c.getOutputAnchor().isPresent() && c.getOutputAnchor().get().equals(this)) {
                     list.add(c.getInputAnchor());
-                }else{
+                } else {
                     list.add(Optional.empty());
                 }
-            }else{
+            } else {
                 list.add(Optional.empty());
             }
         }
         return list;
     }
-    
+
     /**
      * @return Just the primary's opposite anchor.
      */
-    public Optional<? extends ConnectionAnchor> getPrimaryOppositeAnchor(){
-        if(getOppositeAnchors().size()>0){
+    public Optional<? extends ConnectionAnchor> getPrimaryOppositeAnchor() {
+        if (!getOppositeAnchors().isEmpty()) {
             return getOppositeAnchors().get(0);
-        }else{
+        } else {
             return Optional.empty();
         }
     }
@@ -164,18 +168,18 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         return block;
     }
 
-    /** Returns the connections this anchor is connected to.*/
+    /** Returns the connections this anchor is connected to. */
     public List<Connection> getConnections() {
         return connections;
     }
-    
+
     /**
      * @return The primary connection.
      */
-    public Optional<Connection> getPrimaryConnection(){
-        if(getConnections().size()>0){
+    public Optional<Connection> getPrimaryConnection() {
+        if (getConnections().size() > 0) {
             return Optional.of(getConnections().get(0));
-        }else{
+        } else {
             return Optional.empty();
         }
     }

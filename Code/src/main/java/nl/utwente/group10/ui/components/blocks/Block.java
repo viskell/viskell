@@ -104,9 +104,11 @@ public abstract class Block extends StackPane implements ComponentLoader {
     }
 
     /**
-     * Does the same as invalidateConnectionState(), but cascading down to
-     * other blocks which are possibly also (indirectly) affected by the state
-     * change.
+     * Does the same as invalidateConnectionState(), but cascading down to other
+     * blocks which are possibly also (indirectly) affected by the state change.
+     * 
+     * Cascading only happens if this Block is not up-to-date, implying that if
+     * this Block is up-to-date, then so are all following Blocks.
      * 
      * @param state
      *            The newest visual state
@@ -117,7 +119,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
             if (this instanceof OutputBlock) {
                 for (Connection c : ((OutputBlock) this).getOutputAnchor().getConnections()) {
                     if (c.isConnected()) {
-                        c.getInputAnchor().get().getBlock().invalidateConnectionStateCascading(state);
+                        c.getInputBlock().get().invalidateConnectionStateCascading(state);
                     }
                 }
             }
