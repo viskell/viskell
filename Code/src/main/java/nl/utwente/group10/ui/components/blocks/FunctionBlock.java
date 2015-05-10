@@ -65,10 +65,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @FXML
     private Pane argumentSpace;
 
-    @FXML private Pane inputTypesSpace;
-
-    @FXML private Pane outputTypesSpace;
-
     /**
      * Method that creates a newInstance of this class along with it's visual
      * representation
@@ -277,14 +273,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             return getOutputSignature();
         }
     }
-
-    @Override
     public void invalidate() {
-        invalidate(getPane().getEnvInstance());
-    }
-
-    public void invalidate(Env env) {
-        // TODO not clear and re-add all labels every invalidate()
         invalidateInput();
         invalidateOutput();
     }
@@ -293,19 +282,17 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      * Updates the input types to the Block's new state.
      */
     private void invalidateInput() {
-        List<Label> labels = new ArrayList<Label>();
-        for (int i = 0; i < getBowtieIndex(); i++) {
-            labels.add(new Label(getInputType(i).toHaskellType()));
+        for (int i = 0; i < getAllInputs().size(); i++) {
+            ((Label) argumentSpace.getChildren().get(i)).setText(getInputType(i).toHaskellType());
         }
-        inputTypesSpace.getChildren().setAll(labels);
     }
 
     /**
      * Updates the output types to the Block's new state.
      */
     private void invalidateOutput() {
-        Label label = new Label(getOutputType().toHaskellType());
-        outputTypesSpace.getChildren().setAll(label);
+        Label outputLabel = ((Label) argumentSpace.getChildren().get(argumentSpace.getChildren().size() - 1));
+        outputLabel.setText(getOutputType().toHaskellType());
     }
 
     @Override
