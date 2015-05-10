@@ -104,16 +104,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     /**
-     * Nest another {@link Node} object within this FunctionBlock
-     *
-     * @param node
-     *            The node to nest.
-     */
-    public final void nest(Node node) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
      * @param name
      *            The name of this FunctionBlock
      */
@@ -127,18 +117,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     public final void setType(String type) {
         this.type.set(type);
-    }
-
-    /**
-     * Returns the index of the argument matched to the Anchor.
-     *
-     * @param anchor
-     *            The anchor to look up.
-     * @return The index of the given Anchor in the input anchor array.
-     */
-    @Override
-    public final int getInputIndex(InputAnchor anchor) {
-        return inputs.indexOf(anchor);
     }
 
     /** Returns the array of input anchors for this function block. */
@@ -164,16 +142,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** Returns the StringProperty for the type of the function. */
     public final StringProperty typeProperty() {
         return type;
-    }
-
-    @Override
-    public boolean inputsAreConnected() {
-        return inputs.stream().allMatch(ConnectionAnchor::isConnected);
-    }
-
-    @Override
-    public boolean inputIsConnected(int index) {
-        return index>=0 && index < inputs.size() && inputs.get(index).isConnected();
     }
 
     /**
@@ -258,14 +226,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public Type getOutputType(Env env) {
         try {
-            Type type;
-            // TODO dynamically update (unify) output type with available
-            // information.
-            if (inputsAreConnected()) {
-                type = asExpr().analyze(env).prune();
-            } else {
-                type = getFunctionSignature();
-            }
+            Type type = asExpr().analyze(env).prune();
 
             while (type instanceof ConstT
                     && ((ConstT) type).getArgs().length == 2) {

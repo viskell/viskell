@@ -42,16 +42,7 @@ public interface InputBlock {
     /**
      * @return The index the specified anchor has (in getInputs())
      */
-    int getInputIndex(InputAnchor anchor);
-
-    /**
-     * @return True if inputIsConnected() for all inputs.
-     */
-    boolean inputsAreConnected();
-
-    /**
-     * @return True if the specified input is fully connected, ie has a
-     *         connection to another output anchor.
-     */
-    boolean inputIsConnected(int index);
+    default int getInputIndex(InputAnchor anchor) {
+        return getInputs().indexOf(anchor);
+    }
 }

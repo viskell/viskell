@@ -1,9 +1,9 @@
 package nl.utwente.group10.ui.components.blocks;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.google.common.collect.ImmutableList;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -131,24 +131,7 @@ public class DisplayBlock extends Block implements InputBlock {
 
     @Override
     public List<InputAnchor> getInputs() {
-        List<InputAnchor> list = new ArrayList<>();
-        list.add(inputAnchor);
-        return list;
-    }
-
-    @Override
-    public int getInputIndex(InputAnchor anchor) {
-        return 0;
-    }
-
-    @Override
-    public boolean inputsAreConnected() {
-        return inputIsConnected(0);
-    }
-
-    @Override
-    public boolean inputIsConnected(int index) {
-        return inputAnchor.isConnected();
+        return ImmutableList.of(inputAnchor);
     }
 
     public void error() {
