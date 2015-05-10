@@ -287,7 +287,7 @@ public class Connection extends ConnectionLine implements
         }
 
         //Let the now (potentially) disconnected block update its visuals.
-        anchor.getBlock().invalidateConnectionState();
+        anchor.getBlock().invalidateConnectionStateCascading();
         //Let the remaining connected anchors update their visuals.
         invalidateConnectionStateCascading();
     }
