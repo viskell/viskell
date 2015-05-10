@@ -1,10 +1,11 @@
 package nl.utwente.group10.ui.components.anchors;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Circle;
-
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
@@ -12,11 +13,10 @@ import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.lines.Connection;
 
 /**
- * Represent an Anchor point on either a Block or a Line Integers are currently
- * the only supported data type.
- * <p>
- * Other data types will be supported in the future.
- * </p>
+ * Represents an anchor of a Block that can connect to (1 or more) Connections.
+ * 
+ * The primary Connection (if present) is the first element in getConnections().
+ * This means that the oldest Connection is the primary connection.
  */
 public abstract class ConnectionAnchor extends Circle implements ComponentLoader {
     /** The pane on which this Anchor resides. */
@@ -25,8 +25,8 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     /** The block this Anchor is connected to. */
     private Block block;
 
-    /** The possible connection linked to this anchor */
-    private Optional<Connection> connection;
+    /** The connections this anchor has, can be empty for no connections. */
+    private List<Connection> connections;
 
     /**
      * @param block
@@ -39,7 +39,7 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         this.pane = pane;
 
         this.loadFXML("ConnectionAnchor");
-        setConnection(null);
+        connections = new ArrayList<Connection>();
     }
 
     /**
@@ -48,55 +48,119 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     public abstract Type getType();
 
     /**
-     * Disconnects the anchor from the connection
+     * Removes the connection from its pane, first disconnecting it from its
+     * anchors.
+     *
+     * @param connection
+     *            Connection to remove from its pane.
+     */
+    public void removeConnection(Connection connection) {
+        if (connections.contains(connection)) {
+            connections.remove(connection);
+            connection.remove();
+        }
+    }
+
+    /**
+     * Disconnects the connection from this anchor, keeping the connection on
+     * its pane.
      *
      * @param connection
      *            Connection to disconnect from.
      */
-    public abstract void removeConnection(Connection connection);
+    public void disconnectConnection(Connection connection) {
+        if (connections.contains(connection)) {
+            connections.remove(connection);
+            connection.disconnect(this);
+        }
+    }
 
     /**
-     * Set the connection this anchor is connected to.
-     *
+     * Removes all the connections this anchor has.
+     */
+    public void removeConnections() {
+        while (!connections.isEmpty()) {
+            removeConnection(connections.get(0));
+        }
+    }
+
+    /**
+     * Disconnects all the connections this anchor has from this anchor.
+     */
+    public void disconnectConnections() {
+        while (!connections.isEmpty()) {
+            disconnectConnection(connections.get(0));
+        }
+    }
+
+    /**
+     * Adds the given connection to the connections this anchor has.
+     * 
      * @param connection
+     *            Connection to add
      */
-    public void setConnection(Connection connection) {
-        this.connection = Optional.ofNullable(connection);
+    public void addConnection(Connection connection) {
+        connections.add(connection);
     }
 
-    /** Returns true if the anchor is connected to a connection. */
+    /** Returns true this anchor has 1 or more connections. */
     public boolean hasConnection() {
-        return connection.isPresent();
+        return !connections.isEmpty();
     }
 
     /**
-     * @return True if this ConnectionAnchor is connected to a Connection and
-     *         that connection is fully connected.
+     * @return True if the primary connection is connected.
      */
-    public boolean isConnected() {
-        return hasConnection() && getConnection().get().isConnected();
+    public boolean isPrimaryConnected() {
+        return isConnected(0);
     }
 
-    /** Returns true if this anchor can connect to a connection. */
-    public abstract boolean canConnect();
+    /**
+     * @param index
+     *            Index of the connection to check
+     * @return Wether or not the connection specified by the index is connected.
+     */
+    public boolean isConnected(int index) {
+        return index >= 0 && index < getConnections().size() && getConnections().get(index).isConnected();
+    }
+
+    /** Wether or not this anchor allows adding an extra connection. */
+    public abstract boolean canAddConnection();
 
     /**
-     * This method provides a shortcut to get the anchor on the other side of the Connection from this anchor.
-     * @return Optional.empty if this anchor does not have a Connection, or that Connection is not connected on both sides.
-     *         Else it returns an Optional containing the other anchor.
+     * This method provides a shortcut to get the anchors on the other side of
+     * the Connection from this anchor.
+     * 
+     * @return A list of each potential opposite anchor for each Connection this
+     *         anchor has.
      */
-    public Optional<? extends ConnectionAnchor> getOtherAnchor() {
-        if (hasConnection()) {
-            Optional<OutputAnchor> out = getConnection().get()
-                    .getOutputAnchor();
-            Optional<InputAnchor> in = getConnection().get().getInputAnchor();
-            if (out.isPresent() && out.get().equals(this)) {
-                return in;
-            } else if (in.isPresent() && in.get().equals(this)) {
-                return out;
+    public List<Optional<? extends ConnectionAnchor>> getOppositeAnchors() {
+        List<Optional<? extends ConnectionAnchor>> list = new ArrayList<Optional<? extends ConnectionAnchor>>();
+        for (Connection c : getConnections()) {
+            if (c.isConnected()) {
+                if (c.getInputAnchor().isPresent() && c.getInputAnchor().get().equals(this)) {
+                    list.add(c.getOutputAnchor());
+                } else if (c.getOutputAnchor().isPresent() && c.getOutputAnchor().get().equals(this)) {
+                    list.add(c.getInputAnchor());
+                } else {
+                    list.add(Optional.empty());
+                }
+            } else {
+                list.add(Optional.empty());
             }
         }
-        return Optional.empty();
+        return list;
+    }
+
+    /**
+     * @return Just the primary's opposite anchor.
+     */
+    public Optional<? extends ConnectionAnchor> getPrimaryOppositeAnchor() {
+        if (!getOppositeAnchors().isEmpty()) {
+            return getOppositeAnchors().get(0);
+        } else {
+            return Optional.empty();
+        }
     }
 
     /** Returns the block this anchor belongs to. */
@@ -104,9 +168,20 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         return block;
     }
 
-    /** Returns the connection this anchor is connected to. (if any) */
-    public Optional<Connection> getConnection() {
-        return connection;
+    /** Returns the connections this anchor is connected to. */
+    public List<Connection> getConnections() {
+        return connections;
+    }
+
+    /**
+     * @return The primary connection.
+     */
+    public Optional<Connection> getPrimaryConnection() {
+        if (getConnections().size() > 0) {
+            return Optional.of(getConnections().get(0));
+        } else {
+            return Optional.empty();
+        }
     }
 
     /** Returns the position of the center of this anchor relative to its pane. */

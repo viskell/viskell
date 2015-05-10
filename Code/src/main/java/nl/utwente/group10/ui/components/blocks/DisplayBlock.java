@@ -87,7 +87,7 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     /** Invalidates the outputted value and triggers re-evaluation of the value. */
-    public final void invalidate() {
+    public final void invalidateConnectionState() {
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
 
@@ -101,8 +101,8 @@ public class DisplayBlock extends Block implements InputBlock {
 
     @Override
     public Type getInputType(InputAnchor anchor) {
-        if(anchor.getOtherAnchor().isPresent()) {
-            return anchor.getOtherAnchor().get().getType();
+        if(anchor.getPrimaryOppositeAnchor().isPresent()) {
+            return anchor.getPrimaryOppositeAnchor().get().getType();
         } else {
             return getInputSignature();
         }

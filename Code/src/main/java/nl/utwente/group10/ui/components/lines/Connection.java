@@ -22,7 +22,7 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
  * <p>
  * It is possible for a connection to exist without both anchors being present,
  * whenever the position of either the start or end anchor changes the
- * {@link #invalidate()} should be called to refresh the visual
+ * {@link #invalidateConnectionState()} should be called to refresh the visual
  * representation of the connection.
  * </p>
  */
@@ -105,7 +105,7 @@ public class Connection extends ConnectionLine implements
         Optional<? extends ConnectionAnchor> slot = getAnchorSlot(anchor);
 
         if (!slot.isPresent() || overrideExisting) {
-            disconnect(slot);
+            slot.ifPresent(a -> disconnect(a));
             boolean typesMatch = typesMatch(anchor);
             if (typesMatch || allowTypeMismatch) {
                 setAnchor(anchor);
@@ -116,7 +116,7 @@ public class Connection extends ConnectionLine implements
                 System.out.println("Type mismatch!");
             }
         }
-        invalidate();
+        invalidateConnectionState();
 
         return added;
     }
@@ -170,7 +170,7 @@ public class Connection extends ConnectionLine implements
      * @param newAnchor
      */
     private void setAnchor(ConnectionAnchor newAnchor) {
-        newAnchor.setConnection(this);
+        newAnchor.addConnection(this);
         addListeners(newAnchor);
 
         if (newAnchor instanceof OutputAnchor) {
@@ -181,8 +181,9 @@ public class Connection extends ConnectionLine implements
             endAnchor = Optional.of((InputAnchor) newAnchor);
         }
 
+        ConnectionCreationManager.nextConnectionState();
         checkError();
-        invalidate();
+        invalidateConnectionStateCascading();
     }
 
     /**
@@ -195,7 +196,7 @@ public class Connection extends ConnectionLine implements
         anchor.getBlock().layoutXProperty().addListener(this);
         anchor.getBlock().layoutYProperty().addListener(this);
     }
-    
+
     /**
      * Removes the listeners this Connections needed to keep its visual
      * representation up-to-date from the given anchor.
@@ -252,12 +253,22 @@ public class Connection extends ConnectionLine implements
     @Override
     public final void changed(ObservableValue<? extends Number> observable,
             Number oldValue, Number newValue) {
-        //StartAnchor or EndAnchor position changed;
-        invalidate();
+        invalidateConnectionState();
     }
 
+    /**
+     * @return Whether or not both sides of this Connection are connected to an Anchor.
+     */
     public final boolean isConnected() {
         return startAnchor.isPresent() && endAnchor.isPresent();
+    }
+
+    /**
+     * Removes this Connection, disconnecting its anchors and removing this Connection from the pane it is on.
+     */
+    public final void remove() {
+        disconnect();
+        getPane().getChildren().remove(this);
     }
 
     /**
@@ -265,31 +276,58 @@ public class Connection extends ConnectionLine implements
      */
     public final void disconnect(ConnectionAnchor anchor) {
         if (startAnchor.isPresent() && startAnchor.get().equals(anchor)) {
-            startAnchor.get().removeConnection(this);
             startAnchor = Optional.empty();
+            anchor.disconnectConnection(this);
+            ConnectionCreationManager.nextConnectionState();
         }
         if (endAnchor.isPresent() && endAnchor.get().equals(anchor)) {
-            endAnchor.get().removeConnection(this);
             endAnchor = Optional.empty();
+            anchor.disconnectConnection(this);
+            ConnectionCreationManager.nextConnectionState();
         }
+
+        //Let the now (potentially) disconnected block update its visuals.
+        anchor.getBlock().invalidateConnectionState();
+        //Let the remaining connected anchors update their visuals.
+        invalidateConnectionStateCascading();
     }
 
-    public final void disconnect(Optional<? extends ConnectionAnchor> anchor) {
-        anchor.ifPresent(this::disconnect);
-    }
-
+    /**
+     * Disconnects both anchors.
+     */
     public final void disconnect() {
-        disconnect(startAnchor);
-        disconnect(endAnchor);
+        startAnchor.ifPresent(a -> disconnect(a));
+        endAnchor.ifPresent(a -> disconnect(a));
     }
 
     /**
      * Runs both the update Start end End position functions. Use when
      * refreshing UI representation of the Line.
      */
-    public void invalidate() {
+    private void invalidateConnectionState() {
         startAnchor.ifPresent(a -> setStartPosition(a.getCenterInPane()));
         endAnchor.ifPresent(a -> setEndPosition(a.getCenterInPane()));
+    }
+
+    /**
+     * Does the same as invalidateConnectionVisuals(), but cascading down to
+     * other blocks which are possibly also (indirectly) affected by the state
+     * change.
+     *
+     * @param state
+     *            The newest visual state
+     */
+    public void invalidateConnectionStateCascading(int state) {
+        invalidateConnectionState();
+        startAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
+        endAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
+    }
+
+    /**
+     * Shortcut to call invalidateConnectionVisualsCascading(int state) with the newest state.
+     */
+    public void invalidateConnectionStateCascading() {
+        invalidateConnectionStateCascading(ConnectionCreationManager.getConnectionState());
     }
 
     @Override

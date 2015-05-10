@@ -28,6 +28,7 @@ import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.exceptions.FunctionDefinitionException;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 
@@ -64,6 +65,10 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** The space containing all the argument fields of the function. */
     @FXML
     private Pane argumentSpace;
+
+    @FXML private Pane inputTypesSpace;
+
+    @FXML private Pane outputTypesSpace;
 
     /**
      * Method that creates a newInstance of this class along with it's visual
@@ -140,6 +145,18 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         } else {
             throw new IndexOutOfBoundsException();
         }
+    }
+
+    /**
+     * Returns the index of the argument matched to the Anchor.
+     *
+     * @param anchor
+     *            The anchor to look up.
+     * @return The index of the given Anchor in the input anchor array.
+     */
+    @Override
+    public final int getInputIndex(InputAnchor anchor) {
+        return inputs.indexOf(anchor);
     }
 
     /** Returns the array of input anchors for this function block. */
@@ -234,8 +251,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public Type getInputType(int index) {
-        if (getAllInputs().get(index).isConnected()) {
-            return getAllInputs().get(index).getOtherAnchor().get().getType();
+        if (getAllInputs().get(index).isPrimaryConnected()) {
+            return getAllInputs().get(index).getPrimaryOppositeAnchor().get().getType();
         } else {
             return getInputSignature(index);
         }
@@ -273,15 +290,18 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             return getOutputSignature();
         }
     }
-    public void invalidate() {
-        invalidateInput();
-        invalidateOutput();
+
+    @Override
+    public void invalidateConnectionState() {
+        // TODO not clear and re-add all labels every invalidate()
+        invalidateInputVisuals();
+        invalidateOutputVisuals();
     }
 
     /**
      * Updates the input types to the Block's new state.
      */
-    private void invalidateInput() {
+    private void invalidateInputVisuals() {
         for (int i = 0; i < getAllInputs().size(); i++) {
             ((Label) argumentSpace.getChildren().get(i)).setText(getInputType(i).toHaskellType());
         }
@@ -290,7 +310,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /**
      * Updates the output types to the Block's new state.
      */
-    private void invalidateOutput() {
+    private void invalidateOutputVisuals() {
         Label outputLabel = ((Label) argumentSpace.getChildren().get(argumentSpace.getChildren().size() - 1));
         outputLabel.setText(getOutputType().toHaskellType());
     }
@@ -319,9 +339,9 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     private void invalidateBowtieIndex() {
         for (InputAnchor input : getAllInputs()) {
             input.setVisible(getInputIndex(input) < getBowtieIndex());
-            if (getInputIndex(input) >= getBowtieIndex() && input.isConnected()) {
+            if (getInputIndex(input) >= getBowtieIndex() && input.hasConnection()) {
                 //TODO: Change this to Connection.remove() (needs PR 82)
-                input.getConnection().get().disconnect();
+                input.getPrimaryConnection().get().disconnect();
             }
         }
     }

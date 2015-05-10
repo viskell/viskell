@@ -4,12 +4,13 @@ import javafx.application.Platform;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.lines.Connection;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import nl.utwente.group10.ui.menu.CircleMenu;
 
 /**
@@ -36,6 +37,9 @@ public abstract class Block extends StackPane implements ComponentLoader {
     private CustomUIPane parentPane;
     /** The context menu associated with this block instance. */
     private CircleMenu circleMenu;
+    
+    /** The visual state this Block is in */
+    private int visualState;
 
     /**
      * @param pane
@@ -93,8 +97,48 @@ public abstract class Block extends StackPane implements ComponentLoader {
      * change.
      *
      * This method should only be called after the Block's constructor is done.
+     * 
+     * This method will invalidate the Block even if the state did not change.
      */
-    public void invalidate() {
+    public void invalidateConnectionState() {
+    }
+
+    /**
+     * Does the same as invalidateConnectionState(), but cascading down to other
+     * blocks which are possibly also (indirectly) affected by the state change.
+     * 
+     * Cascading only happens if this Block is not up-to-date, implying that if
+     * this Block is up-to-date, then so are all following Blocks.
+     * 
+     * @param state
+     *            The newest visual state
+     */
+    public void invalidateConnectionStateCascading(int state) {
+        if (!connectionStateIsUpToDate(state)) {
+            invalidateConnectionState();
+            if (this instanceof OutputBlock) {
+                for (Connection c : ((OutputBlock) this).getOutputAnchor().getConnections()) {
+                    if (c.isConnected()) {
+                        c.getInputBlock().get().invalidateConnectionStateCascading(state);
+                    }
+                }
+            }
+            this.visualState = state;
+        }
+    }
+
+    /**
+     * Shortcut to call invalidateConnectionStateCascading(int state) with the newest state.
+     */
+    public void invalidateConnectionStateCascading() {
+        invalidateConnectionStateCascading(ConnectionCreationManager.getConnectionState());
+    }
+
+    /**
+     * @return Whether or not the state of the block confirms to the given newest state.
+     */
+    public boolean connectionStateIsUpToDate(int state) {
+        return this.visualState == state;
     }
 
     /** DEBUG METHOD trigger the error state for this block */

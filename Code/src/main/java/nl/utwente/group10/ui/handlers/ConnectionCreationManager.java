@@ -10,7 +10,19 @@ import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.lines.Connection;
+import nl.utwente.group10.ui.exceptions.InvalidInputIdException;
 
+/**
+ * A Manager class mainly used to keep track of multiple, possibly concurrent,
+ * actions performed on Connections.
+ * These actions are associated with an input id.
+ * 
+ * This class also provides the methods to perform actions based on user input.
+ * 
+ * This class also stores a ConnectionState.
+ * This is an always increasing int used to check if components's (connection) states are fresh. 
+ *
+ */
 public class ConnectionCreationManager {
 
     CustomUIPane pane;
@@ -38,12 +50,26 @@ public class ConnectionCreationManager {
      */
     public static final boolean CONNECTIONS_ALLOW_TYPE_MISMATCH = true;
 
+    /** The int representing the current connection state */
+    private static int connectionState = 0; 
+    
     public ConnectionCreationManager(CustomUIPane pane) {
         this.pane = pane;
         connections = new HashMap<Integer, Connection>();
     }
 
-    public Connection createConnectionWith(int id, ConnectionAnchor anchor) {
+    /**
+     * Creates a new Connection, with the given anchor being part of it (can be
+     * either start or end anchor). This Connection is still being made (a
+     * second anchor still needs to be selected).
+     * 
+     * @param id
+     *            The id associated with the action on which to follow up.
+     * @param anchor
+     *            The anchor to build a Connection with
+     * @return The newly build Connection object.
+     */
+    public Connection buildConnectionWith(int id, ConnectionAnchor anchor) {
         Connection newConnection = null;
         if (anchor instanceof OutputAnchor) {
             newConnection = new Connection(pane, (OutputAnchor) anchor);
@@ -55,53 +81,100 @@ public class ConnectionCreationManager {
         return newConnection;
     }
 
+    /**
+     * Finishes building the Connection associated with the given ID, by giving
+     * it its second anchor.
+     * 
+     * Throws an InvalidInputException if an invalid input id is given.
+     * 
+     * @param id
+     *            The id associated with the action on which to follow up.
+     * @param anchor
+     *            The anchor to add to the connection being finished.
+     * @return The finished connection.
+     */
     public Connection finishConnection(int id, ConnectionAnchor anchor) {
         Connection connection = connections.get(id);
         if (connection != null) {
-            if (CONNECTIONS_OVERRIDE_EXISTING) {
-                Optional<Connection> existingConnection = anchor
-                        .getConnection();
-                if (existingConnection.isPresent()) {
-                    existingConnection.get().disconnect();
-                    pane.getChildren().remove(existingConnection.get());
-                }
+            if (CONNECTIONS_OVERRIDE_EXISTING && !anchor.canAddConnection()) {
+                anchor.removeConnections();
             }
-            if (anchor.canConnect() && connection.tryAddAnchor(anchor)) {
+            
+            if (anchor.canAddConnection() && connection.tryAddAnchor(anchor) && connection.isConnected()) {
                 // Succesfully made connection.
-                pane.invalidate();
             } else {
                 removeConnection(id);
+                return null;
             }
+
+            connections.remove(id);
+            return connection;
+        }else{
+            throw new InvalidInputIdException();
         }
-        connections.remove(id);
-        return connection;
     }
 
+    /**
+     * Completely Removes the Connection associated with the given id, that is
+     * to remove the Connection from the Connections being build and from its
+     * pane.
+     * 
+     * @param id
+     *            The id associated with the action on which to follow up.
+     */
     public void removeConnection(int id) {
         Connection connection = connections.get(id);
-        connections.put(id, null);
         if (connection != null) {
-            connection.disconnect();
-            pane.getChildren().remove(connection);
+            connections.put(id, null);
+            connection.remove();
             connections.remove(id);
         }
     }
 
+    /**
+     * Indicates that the primary connection belonging to the given anchor is
+     * being edited. This means that the primary connection of the given anchor
+     * will be disconnected, and stored as if the finishConnection() method was
+     * not called for this connection.
+     * 
+     * @param id
+     *            The id associated with the action on which to follow up.
+     * @param anchor
+     *            The anchor to start the edit operation from, this anchor will
+     *            be disconnected from its connection.
+     */
     public void editConnection(int id, ConnectionAnchor anchor) {
-        Optional<? extends ConnectionAnchor> anchorToKeep = anchor.getOtherAnchor();
-        if (anchor.hasConnection() && anchorToKeep.isPresent()) {
-            Connection connection = anchor.getConnection().get();
+        if (anchor.isPrimaryConnected()) {
+            Connection connection = anchor.getPrimaryConnection().get();
             connection.disconnect(anchor);
             connections.put(id, connection);
-            pane.invalidate();
         }
     }
 
+    /**
+     * Updates the Connection's line associated with the given action id to its new position.
+     * @param id    The id associated with the action on which to follow up.
+     * @param x     New X coordinate
+     * @param y     New Y coordinate
+     */
     public void updateLine(int id, double x, double y) {
         Point2D localPos = pane.sceneToLocal(x, y);
-
         if (connections.get(id) != null) {
             connections.get(id).setFreeEnds(localPos.getX(), localPos.getY());
         }
+    }
+    
+    /**
+     * @return The current connection state.
+     */
+    public static int getConnectionState(){
+        return connectionState;
+    }
+    
+    /**
+     * Go to the next connection state.
+     */
+    public static void nextConnectionState(){
+        connectionState++;
     }
 }

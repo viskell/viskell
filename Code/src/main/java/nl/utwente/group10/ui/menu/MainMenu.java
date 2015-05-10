@@ -65,7 +65,7 @@ public class MainMenu extends ContextMenu {
     }
 
     private void addBlock(Block block) {
-        block.invalidate();
+        block.invalidateConnectionState();
         //Let the block adapt to its start state.
 
         parent.getChildren().add(block);
