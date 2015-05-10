@@ -2,6 +2,7 @@ package nl.utwente.group10.ui.components.anchors;
 
 import java.util.Optional;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.Type;
@@ -30,8 +31,8 @@ public class InputAnchor extends ConnectionAnchor {
      *         anchor.
      */
     public final Expr asExpr() {
-        if (isConnected()) {
-            return getOtherAnchor().get().getBlock().asExpr();
+        if (isPrimaryConnected()) {
+            return getPrimaryOppositeAnchor().get().getBlock().asExpr();
         } else {
             return new Ident("undefined");
         }
@@ -48,23 +49,16 @@ public class InputAnchor extends ConnectionAnchor {
      */
     public Optional<Connection> createConnectionFrom(OutputAnchor other) {
         if (!hasConnection()) {
-            new Connection(getPane(), this, other);
-            getPane().getChildren().add(getConnection().get());
-            getPane().invalidate();
-            return getConnection();
+            Connection connection = new Connection(getPane(), this, other);
+            getPane().getChildren().add(connection);
+            return Optional.of(connection);
         } else {
             return Optional.empty();
         }
     }
 
     @Override
-    public void removeConnection(Connection connection) {
-        assert connection.equals(getConnection().get());
-        setConnection(null);
-    }
-
-    @Override
-    public boolean canConnect() {
+    public boolean canAddConnection() {
         // InputAnchors only support 1 connection;
         return !hasConnection();
     }

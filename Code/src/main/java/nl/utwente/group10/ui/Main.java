@@ -72,7 +72,7 @@ public class Main extends Application {
         displayBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2 + 100);
 
         // Invalidate
-        tactilePane.invalidate();
+        tactilePane.invalidateAll();
         tactilePane.requestFocus();
     }
 

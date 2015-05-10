@@ -136,10 +136,11 @@ public class CustomUIPane extends TactilePane {
     /**
      * Re-evaluate all display blocks.
      */
-    public final void invalidate() {
+    public final void invalidateAll() {
+        System.out.println("Using inefficient invalidation!");
         for (Node node : getChildren()) {
             if (node instanceof Block) {
-                ((Block) node).invalidate();
+                ((Block) node).invalidateConnectionVisuals();
             }
         }
     }

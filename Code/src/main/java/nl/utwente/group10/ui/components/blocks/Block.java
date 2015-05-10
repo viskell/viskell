@@ -4,12 +4,13 @@ import javafx.application.Platform;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.lines.Connection;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import nl.utwente.group10.ui.menu.CircleMenu;
 
 /**
@@ -36,6 +37,9 @@ public abstract class Block extends StackPane implements ComponentLoader {
     private CustomUIPane parentPane;
     /** The context menu associated with this block instance. */
     private CircleMenu circleMenu;
+    
+    /** The visual state this Block is in */
+    private int visualState;
 
     /**
      * @param pane
@@ -93,8 +97,46 @@ public abstract class Block extends StackPane implements ComponentLoader {
      * change.
      *
      * This method should only be called after the Block's constructor is done.
+     * 
+     * This method will refresh the visuals even if the state did not change.
      */
-    public void invalidate() {
+    public void invalidateConnectionVisuals() {
+    }
+
+    /**
+     * Does the same as invalidateConnectionVisuals(), but cascading down to
+     * other blocks which are possibly also (indirectly) affected by the state
+     * change.
+     * 
+     * @param state
+     *            The newest visual state
+     */
+    public void invalidateConnectionVisualsCascading(int state) {
+        if (!connectionVisualsAreUpToDate(state)) {
+            invalidateConnectionVisuals();
+            if (this instanceof OutputBlock) {
+                for (Connection c : ((OutputBlock) this).getOutputAnchor().getConnections()) {
+                    if (c.isConnected()) {
+                        c.getInputAnchor().get().getBlock().invalidateConnectionVisualsCascading(state);
+                    }
+                }
+            }
+            this.visualState = state;
+        }
+    }
+
+    /**
+     * Shortcut to call invalidateConnectionVisualsCascading(int state) with the newest state.
+     */
+    public void invalidateConnectionVisualsCascading() {
+        invalidateConnectionVisualsCascading(ConnectionCreationManager.getConnectionState());
+    }
+
+    /**
+     * @return Whether or not the visual state of the block confirms to the given newest state.
+     */
+    public boolean connectionVisualsAreUpToDate(int state) {
+        return this.visualState == state;
     }
 
     /** DEBUG METHOD trigger the error state for this block */

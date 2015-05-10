@@ -38,6 +38,9 @@ public class ConnectionCreationManager {
      */
     public static final boolean CONNECTIONS_ALLOW_TYPE_MISMATCH = true;
 
+    /** The int representing the current connection state */
+    private static int connectionState = 0; 
+    
     public ConnectionCreationManager(CustomUIPane pane) {
         this.pane = pane;
         connections = new HashMap<Integer, Connection>();
@@ -58,17 +61,12 @@ public class ConnectionCreationManager {
     public Connection finishConnection(int id, ConnectionAnchor anchor) {
         Connection connection = connections.get(id);
         if (connection != null) {
-            if (CONNECTIONS_OVERRIDE_EXISTING) {
-                Optional<Connection> existingConnection = anchor
-                        .getConnection();
-                if (existingConnection.isPresent()) {
-                    existingConnection.get().disconnect();
-                    pane.getChildren().remove(existingConnection.get());
-                }
+            if (CONNECTIONS_OVERRIDE_EXISTING && !anchor.canAddConnection()) {
+                anchor.removeConnections();
             }
-            if (anchor.canConnect() && connection.tryAddAnchor(anchor)) {
+            
+            if (anchor.canAddConnection() && connection.tryAddAnchor(anchor)) {
                 // Succesfully made connection.
-                pane.invalidate();
             } else {
                 removeConnection(id);
             }
@@ -88,20 +86,34 @@ public class ConnectionCreationManager {
     }
 
     public void editConnection(int id, ConnectionAnchor anchor) {
-        Optional<? extends ConnectionAnchor> anchorToKeep = anchor.getOtherAnchor();
-        if (anchor.hasConnection() && anchorToKeep.isPresent()) {
-            Connection connection = anchor.getConnection().get();
+        Optional<? extends ConnectionAnchor> anchorToKeep = anchor.getPrimaryOppositeAnchor();
+        if (anchor.isPrimaryConnected()) {
+            Connection connection = anchor.getPrimaryConnection().get();
             connection.disconnect(anchor);
+            System.out.println("editConnection() "+connection);
             connections.put(id, connection);
-            pane.invalidate();
         }
     }
 
     public void updateLine(int id, double x, double y) {
         Point2D localPos = pane.sceneToLocal(x, y);
-
+        System.out.println("updateLine(): "+connections.get(id));
         if (connections.get(id) != null) {
             connections.get(id).setFreeEnds(localPos.getX(), localPos.getY());
         }
+    }
+    
+    /**
+     * @return The current connection state.
+     */
+    public static int getConnectionState(){
+        return connectionState;
+    }
+    
+    /**
+     * Go to the next connection state.
+     */
+    public static void nextConnectionState(){
+        connectionState++;
     }
 }
