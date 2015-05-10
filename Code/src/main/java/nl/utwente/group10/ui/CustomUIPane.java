@@ -37,11 +37,13 @@ public class CustomUIPane extends TactilePane {
     /**
      * Constructs a new instance.
      */
-    public CustomUIPane() {
+    public CustomUIPane(HaskellCatalog catalog) {
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
+        this.catalog = catalog;
+        this.envInstance = catalog.asEnvironment();
 
         try {
             this.ghci = Optional.of(new GhciSession());
@@ -54,13 +56,6 @@ public class CustomUIPane extends TactilePane {
         this.addEventHandler(ScrollEvent.SCROLL, this::handleScroll);
 
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
-    }
-
-    /**
-     * Since the CustomUIPane is constructed from fxml without arguments, this method allows arguments to be passed.
-     */
-    public void initialize(HaskellCatalog catalog) {
-        this.catalog = catalog;
     }
 
     private void handleKey(KeyEvent keyEvent) {
@@ -126,10 +121,6 @@ public class CustomUIPane extends TactilePane {
      * @return The Env instance to be used within this CustomUIPane.
      */
     public Env getEnvInstance() {
-
-        if (envInstance == null) {
-            envInstance = catalog.asEnvironment();
-        }
         return envInstance;
     }
 

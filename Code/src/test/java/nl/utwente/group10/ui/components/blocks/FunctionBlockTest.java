@@ -22,7 +22,7 @@ public class FunctionBlockTest extends ComponentTest {
     public void setUp() throws Exception {
         FuncT func = new FuncT(new ConstT("Int"), new FuncT(new ConstT("Int"), new ConstT("Int")));
 
-        functionBlock = new FunctionBlock("", func, new CustomUIPane());
+        functionBlock = new FunctionBlock("", func, getPane());
     }
 
     /**

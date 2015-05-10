@@ -26,12 +26,19 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         Font.loadFont(this.getClass().getResourceAsStream("/ui/fonts/titillium.otf"), 20);
 
-        CustomUIPane tactilePane = FXMLLoader.load(this.getClass().getResource("/ui/Main.fxml"), null, new TactileBuilderFactory());
+        HaskellCatalog catalog = new HaskellCatalog();
+
+        // Init TactilePane
+        CustomUIPane tactilePane = new CustomUIPane(catalog);
+        tactilePane.setBordersCollide(true);
+        tactilePane.setMinWidth(50000);
+        tactilePane.setMinHeight(50000);
+        tactilePane.setMaxWidth(50000);
+        tactilePane.setMaxHeight(50000);
+
+        tactilePane.getStylesheets().add("/ui/style.css");
 
         tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
-
-        HaskellCatalog catalog = new HaskellCatalog();
-        tactilePane.initialize(catalog);
 
         ValueBlock valueBlock = new ValueBlock(tactilePane);
         DisplayBlock displayBlock = new DisplayBlock(tactilePane);
