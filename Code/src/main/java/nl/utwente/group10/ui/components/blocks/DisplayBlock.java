@@ -130,8 +130,18 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     @Override
-    public List<InputAnchor> getInputs() {
+    public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(inputAnchor);
+    }
+
+    @Override
+    public List<InputAnchor> getActiveInputs() {
+        return getAllInputs();
+    }
+
+    @Override
+    public int getInputIndex(InputAnchor anchor) {
+        return 0;
     }
 
     public void error() {

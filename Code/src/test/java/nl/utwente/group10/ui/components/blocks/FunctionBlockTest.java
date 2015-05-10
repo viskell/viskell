@@ -48,7 +48,7 @@ public class FunctionBlockTest extends ComponentTest {
      */
     @Test
     public void inputsTest() {
-        assertNotNull(functionBlock.getInputs());
-        assertEquals(functionBlock.getInputs().size(), 2);
+        assertNotNull(functionBlock.getAllInputs());
+        assertEquals(functionBlock.getAllInputs().size(), 2);
     }
 }
