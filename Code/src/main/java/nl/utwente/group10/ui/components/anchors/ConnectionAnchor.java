@@ -119,6 +119,7 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
      * @param index
      *            Index of the connection to check
      * @return Wether or not the connection specified by the index is connected.
+     *         Returns false if the index is out of bounds.
      */
     public boolean isConnected(int index) {
         return index >= 0 && index < getConnections().size() && getConnections().get(index).isConnected();
