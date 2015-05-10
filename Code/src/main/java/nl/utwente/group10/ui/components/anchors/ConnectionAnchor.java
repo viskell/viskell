@@ -13,11 +13,10 @@ import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.lines.Connection;
 
 /**
- * Represent an Anchor point on either a Block or a Line Integers are currently
- * the only supported data type.
- * <p>
- * Other data types will be supported in the future.
- * </p>
+ * Represents an anchor of a Block that can connect to (1 or more) Connections.
+ * 
+ * The primary Connection (if present) is the first element in getConnections().
+ * This means that the oldest Connection is the primary connection.
  */
 public abstract class ConnectionAnchor extends Circle implements ComponentLoader {
     /** The pane on which this Anchor resides. */
