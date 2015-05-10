@@ -143,17 +143,16 @@ public class Connection extends ConnectionLine implements
      */
     public final boolean typesMatch(ConnectionAnchor potentialAnchor) {
         // TODO Let this return mismatch information?
-        Optional<? extends ConnectionAnchor> anchor = null;
+        Optional<? extends ConnectionAnchor> anchor = Optional.empty();
         if (potentialAnchor instanceof InputAnchor) {
             anchor = startAnchor;
-        }else if(potentialAnchor instanceof OutputAnchor){
+        } else if(potentialAnchor instanceof OutputAnchor) {
             anchor = endAnchor;
         }
 
-        if(anchor.isPresent()){
+        if (anchor.isPresent()) {
             try {
-                HindleyMilner.unify(anchor.get().getType(),
-                        potentialAnchor.getType());
+                HindleyMilner.unify(anchor.get().getType(), potentialAnchor.getType());
                 // Types successfully unified
                 return true;
             } catch (HaskellTypeError e) {

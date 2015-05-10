@@ -59,14 +59,15 @@ public class MainMenu extends ContextMenu {
     }
 
     private void addFunctionBlock(FunctionEntry entry) {
-        FunctionBlock fb = new FunctionBlock(entry.getName(), entry.asHaskellObject(new Context()), parent); // TODO: Once the Env is available, the type should be pulled from the Env here (don't just calculate it over and over). Or just pass the signature String.
+        // TODO: Once the Env is available, the type should be pulled from the Env here (don't just calculate it over and over). Or just pass the signature String.
+        FunctionBlock fb = new FunctionBlock(entry.getName(), entry.asHaskellObject(new Context()), parent);
         addBlock(fb);
     }
 
     private void addBlock(Block block) {
         block.invalidate();
         //Let the block adapt to its start state.
-        
+
         parent.getChildren().add(block);
         Point2D panePos = parent.screenToLocal(this.getX(), this.getY());
         block.relocate(panePos.getX(), panePos.getY());

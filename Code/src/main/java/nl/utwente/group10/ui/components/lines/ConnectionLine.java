@@ -1,6 +1,5 @@
 package nl.utwente.group10.ui.components.lines;
 
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 
