@@ -102,8 +102,12 @@ public class ValueBlock extends Block implements OutputBlock {
     }
 
     @Override
-    public void error() {
-        this.getStyleClass().add("error");
+    public void setError(boolean error) {
+        if (error) {
+            this.getStyleClass().add("error");
+        } else {
+            this.getStyleClass().remove("error");
+        }
     }
 
     @Override

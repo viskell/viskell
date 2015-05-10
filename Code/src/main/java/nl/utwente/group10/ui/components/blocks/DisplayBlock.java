@@ -144,7 +144,12 @@ public class DisplayBlock extends Block implements InputBlock {
         return 0;
     }
 
-    public void error() {
-        this.getStyleClass().add("error");
+    @Override
+    public void setError(boolean error) {
+        if (error) {
+            this.getStyleClass().add("error");
+        } else {
+            this.getStyleClass().remove("error");
+        }
     }
 }

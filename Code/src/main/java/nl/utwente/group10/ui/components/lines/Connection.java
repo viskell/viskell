@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.hindley.HindleyMilner;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
@@ -34,6 +34,9 @@ public class Connection extends ConnectionLine implements
     private Optional<InputAnchor> endAnchor = Optional.empty();
 
     private CustomUIPane pane;
+
+    /** The visual state this Block is in */
+    private int visualState;
 
     public Connection(CustomUIPane pane) {
         this.pane = pane;
@@ -106,14 +109,13 @@ public class Connection extends ConnectionLine implements
 
         if (!slot.isPresent() || overrideExisting) {
             slot.ifPresent(a -> disconnect(a));
+            // TODO since invalidateConnectionState(), and thus checkError()
+            // gets called after this typeMatch(), a small duplication of
+            // type getting occurs.
             boolean typesMatch = typesMatch(anchor);
             if (typesMatch || allowTypeMismatch) {
                 setAnchor(anchor);
                 added = true;
-            }
-            if (!typesMatch) {
-                // TODO type mismatch
-                System.out.println("Type mismatch!");
             }
         }
         invalidateConnectionState();
@@ -137,31 +139,34 @@ public class Connection extends ConnectionLine implements
         }
     }
 
+
+    public final boolean typesMatch() {
+        // TODO Let this return mismatch information?
+        return !isConnected() || typesMatch(startAnchor.get().getType(), endAnchor.get().getSignature());
+    }
+    
     /**
      * @param potentialAnchor The ConnectionAnchor to check if it matches.
      * @return Wether or not the given anchor's type unifies with the current opposite anchor.
      */
     public final boolean typesMatch(ConnectionAnchor potentialAnchor) {
-        // TODO Let this return mismatch information?
-        Optional<? extends ConnectionAnchor> anchor = Optional.empty();
-        if (potentialAnchor instanceof InputAnchor) {
-            anchor = startAnchor;
-        } else if(potentialAnchor instanceof OutputAnchor) {
-            anchor = endAnchor;
-        }
-
-        if (anchor.isPresent()) {
-            try {
-                HindleyMilner.unify(anchor.get().getType(), potentialAnchor.getType());
-                // Types successfully unified
-                return true;
-            } catch (HaskellTypeError e) {
-                // Unable to unify types;
-                return false;
-            }
+        if (potentialAnchor instanceof InputAnchor && startAnchor.isPresent()) {
+            return typesMatch(startAnchor.get().getType(), ((InputAnchor) potentialAnchor).getSignature());
+        } else if (potentialAnchor instanceof OutputAnchor && endAnchor.isPresent()) {
+            return typesMatch(endAnchor.get().getSignature(), potentialAnchor.getType());
         } else {
-            // First anchor to be added
+            return false;
+        }
+    }
+
+    public final boolean typesMatch(Type t1, Type t2){
+        try {
+            HindleyMilner.unify(t1, t2);
+            // Types successfully unified
             return true;
+        } catch (HaskellTypeError e) {
+            // Unable to unify types;
+            return false;
         }
     }
 
@@ -182,7 +187,6 @@ public class Connection extends ConnectionLine implements
         }
 
         ConnectionCreationManager.nextConnectionState();
-        checkError();
         invalidateConnectionStateCascading();
     }
 
@@ -253,7 +257,7 @@ public class Connection extends ConnectionLine implements
     @Override
     public final void changed(ObservableValue<? extends Number> observable,
             Number oldValue, Number newValue) {
-        invalidateConnectionState();
+        invalidateAnchorPositions();
     }
 
     /**
@@ -304,9 +308,22 @@ public class Connection extends ConnectionLine implements
      * Runs both the update Start end End position functions. Use when
      * refreshing UI representation of the Line.
      */
-    private void invalidateConnectionState() {
+    public void invalidateAnchorPositions() {
         startAnchor.ifPresent(a -> setStartPosition(a.getCenterInPane()));
         endAnchor.ifPresent(a -> setEndPosition(a.getCenterInPane()));
+    }
+    
+    /**
+     * Tells the Connection that its current state (considering connections) possibly has
+     * changed.
+     *
+     * This method should only be called after the Connection's constructor is done.
+     * 
+     * This method will invalidate the Connection even if the state did not change.
+     */
+    private void invalidateConnectionState() {
+        invalidateAnchorPositions();
+        checkError();
     }
 
     /**
@@ -318,9 +335,12 @@ public class Connection extends ConnectionLine implements
      *            The newest visual state
      */
     public void invalidateConnectionStateCascading(int state) {
-        invalidateConnectionState();
-        startAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
-        endAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
+        if (!connectionStateIsUpToDate(state)) {
+            invalidateConnectionState();
+            startAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
+            endAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
+            this.visualState = state;
+        }
     }
 
     /**
@@ -328,6 +348,13 @@ public class Connection extends ConnectionLine implements
      */
     public void invalidateConnectionStateCascading() {
         invalidateConnectionStateCascading(ConnectionCreationManager.getConnectionState());
+    }
+    
+    /**
+     * @return Whether or not the state of the block confirms to the given newest state.
+     */
+    public boolean connectionStateIsUpToDate(int state) {
+        return this.visualState == state;
     }
 
     @Override
@@ -342,20 +369,14 @@ public class Connection extends ConnectionLine implements
      * displayed.
      */
     private void checkError() {
-        if (startAnchor.isPresent() && endAnchor.isPresent()) {
-            try {
-                endAnchor.get().getBlock().asExpr().analyze(getPane().getEnvInstance());
-                this.getStyleClass().remove("error");
-            } catch (HaskellTypeError e) {
-                this.getStyleClass().add("error");
-            } catch (HaskellException e) {
-                e.printStackTrace();
-            }
-        }
+        setError(!typesMatch());
     }
-
-    /** DEBUG METHOD trigger the error state for this Connection */
-    public void error() {
-        this.getStyleClass().add("error");
+    
+    public void setError(boolean error) {
+        if (error) {
+            this.getStyleClass().add("error");
+        } else {
+            this.getStyleClass().removeAll("error");
+        }
     }
 }

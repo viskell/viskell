@@ -16,10 +16,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.hindley.GenSet;
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
@@ -159,6 +161,11 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return inputs.indexOf(anchor);
     }
 
+    @Override
+    public OutputAnchor getOutputAnchor() {
+        return output;
+    }
+
     /** Returns the array of input anchors for this function block. */
     public final List<InputAnchor> getAllInputs() {
         return inputs;
@@ -257,7 +264,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             return getInputSignature(index);
         }
     }
-
+    
     @Override
     public Type getOutputSignature() {
         return getOutputSignature(getPane().getEnvInstance());
@@ -286,8 +293,23 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         try {
             return asExpr().analyze(env).prune();
         } catch (HaskellException e) {
-            e.printStackTrace();
             return getOutputSignature();
+        }
+    }
+
+    /**
+     * @param index
+     *            Index to specify which index to check.
+     * @return Whether or not the input type connected matches its signature.
+     */
+    public boolean inputTypeMatches(int index) {
+        try {
+            HindleyMilner.unify(getInputSignature(index), getInputType(index));
+            // Types successfully unified
+            return true;
+        } catch (HaskellTypeError e) {
+            // Unable to unify types;
+            return false;
         }
     }
 
@@ -303,7 +325,15 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     private void invalidateInputVisuals() {
         for (int i = 0; i < getAllInputs().size(); i++) {
-            ((Label) argumentSpace.getChildren().get(i)).setText(getInputType(i).toHaskellType());
+            String type;
+            if (inputTypeMatches(i)) {
+                setInputError(i, false);
+                type = getInputType(i).toHaskellType();
+            } else {
+                setInputError(i, true);
+                type = getInputSignature(i).toHaskellType();
+            }
+            ((Label) argumentSpace.getChildren().get(i)).setText(type);
         }
     }
 
@@ -315,23 +345,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         outputLabel.setText(getOutputType().toHaskellType());
     }
 
-    @Override
-    public final void error() {
-        for (InputAnchor in : getAllInputs()) {
-            if (!in.hasConnection()) {
-                argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().add("error");
-            } else if (in.hasConnection()) {
-                argumentSpace.getChildren().get(getInputIndex(in)).getStyleClass().remove("error");
-            }
-        }
-        this.getStyleClass().add("error");
-    }
-
-    @Override
-    public OutputAnchor getOutputAnchor() {
-        return output;
-    }
-
     /**
      * React to a potential state change with regards to the bowtie index.
      * This then activates / disables the inputs with regards to the bowtie index.
@@ -340,9 +353,33 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         for (InputAnchor input : getAllInputs()) {
             input.setVisible(getInputIndex(input) < getBowtieIndex());
             if (getInputIndex(input) >= getBowtieIndex() && input.hasConnection()) {
-                //TODO: Change this to Connection.remove() (needs PR 82)
-                input.getPrimaryConnection().get().disconnect();
+                input.getPrimaryConnection().get().remove();
             }
         }
+    }
+    
+    @Override
+    public final void setError(boolean error) {
+        for (InputAnchor in : getAllInputs()) {
+            setInputError(getInputIndex(in), error);
+        }
+        if(error) {
+            this.getStyleClass().add("error");
+        } else {
+            this.getStyleClass().removeAll("error");
+        }
+    }
+    
+    private final void setInputError(int index, boolean error) {
+        if (error) {
+            argumentSpace.getChildren().get(index).getStyleClass().add("error");
+        } else {
+            argumentSpace.getChildren().get(index).getStyleClass().removeAll("error");
+        }
+    }
+    
+    @Override
+    public String toString(){
+        return this.getName();
     }
 }

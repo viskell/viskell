@@ -146,6 +146,9 @@ public class VarT extends Type {
      * @return The set of type classes that are in both types.
      */
     public static Set<TypeClass> intersect(VarT a, VarT b) {
+        if (!a.hasConstraints()) return b.constraints;
+        if (!b.hasConstraints()) return a.constraints;
+        
         final Set<TypeClass> intersection = new HashSet<TypeClass>();
 
         for (TypeClass tc : a.constraints) {

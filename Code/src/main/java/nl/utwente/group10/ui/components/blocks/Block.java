@@ -142,5 +142,5 @@ public abstract class Block extends StackPane implements ComponentLoader {
     }
 
     /** DEBUG METHOD trigger the error state for this block */
-    public abstract void error();
+    public abstract void setError(boolean error);
 }
