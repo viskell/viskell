@@ -146,7 +146,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
      * @param error True to enable, False to disable.
      */
     public void setError(boolean error) {
-        if(error) {
+        if (error) {
             this.getStyleClass().removeAll("error");
             this.getStyleClass().add("error");
         } else {

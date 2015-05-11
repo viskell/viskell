@@ -2,7 +2,6 @@ package nl.utwente.group10.haskell.hindley;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
@@ -37,7 +36,6 @@ public final class HindleyMilner {
     }
 
     public static void unify(final Expr context, final Type t1, final Type t2) throws HaskellTypeError {
-        
         final Type a = t1.prune();
         final Type b = t2.prune();
 

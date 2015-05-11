@@ -367,16 +367,17 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
     
     private final void setInputError(int index, boolean error) {
+        ObservableList<String> styleClass = argumentSpace.getChildren().get(index).getStyleClass();
         if (error) {
-            argumentSpace.getChildren().get(index).getStyleClass().removeAll("error");
-            argumentSpace.getChildren().get(index).getStyleClass().add("error");
+            styleClass.removeAll("error");
+            styleClass.add("error");
         } else {
-            argumentSpace.getChildren().get(index).getStyleClass().removeAll("error");
+            styleClass.removeAll("error");
         }
     }
     
     @Override
-    public String toString(){
+    public String toString() {
         return this.getName();
     }
 }

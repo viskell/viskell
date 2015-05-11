@@ -159,7 +159,7 @@ public class Connection extends ConnectionLine implements
         }
     }
 
-    public final boolean typesMatch(Type t1, Type t2){
+    public final boolean typesMatch(Type t1, Type t2) {
         try {
             HindleyMilner.unify(t1, t2);
             // Types successfully unified
