@@ -12,6 +12,10 @@ CustomUIPane {
     -fx-border-width: 2;
 }
 
+.menu .block {
+
+}
+
 .error .block {
     -fx-border-color: red;
 }

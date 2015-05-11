@@ -11,7 +11,6 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
@@ -20,6 +19,7 @@ import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
+import nl.utwente.group10.ui.menu.FunctionMenu;
 
 /**
  * Extension of TactilePane that keeps state for the user interface.
@@ -96,8 +96,14 @@ public class CustomUIPane extends TactilePane {
     }
 
     private void handlePress(MouseEvent e) {
-        offset = new Point2D(this.getTranslateX(), this.getTranslateY());
-        dragStart = new Point2D(e.getScreenX(), e.getScreenY());
+        if (e.isPrimaryButtonDown()) {
+            offset = new Point2D(this.getTranslateX(), this.getTranslateY());
+            dragStart = new Point2D(e.getScreenX(), e.getScreenY());
+        } else if (e.isSecondaryButtonDown()) {
+            FunctionMenu menu = new FunctionMenu(catalog, this);
+            menu.relocate(e.getX(), e.getY());
+            this.getChildren().add(menu);
+        }
     }
 
     private void handleDrag(MouseEvent e) {

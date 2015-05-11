@@ -32,8 +32,8 @@ public class Main extends Application {
         // Init TactilePane
         CustomUIPane tactilePane = new CustomUIPane(catalog);
         tactilePane.setBordersCollide(true);
-        tactilePane.setMinWidth(50000);
-        tactilePane.setMinHeight(50000);
+        tactilePane.setMinWidth(3000);
+        tactilePane.setMinHeight(3000);
         tactilePane.setMaxWidth(50000);
         tactilePane.setMaxHeight(50000);
 
@@ -50,10 +50,6 @@ public class Main extends Application {
 
         // Init zoom overlay
         ZoomOverlay zoomOverlay = new ZoomOverlay(debug, tactilePane);
-
-        // Init menu
-        ContextMenu menu = new MainMenu(catalog, tactilePane);
-        tactilePane.setContextMenu(menu);
 
         // Check if GHCI is available
         try {
@@ -75,7 +71,6 @@ public class Main extends Application {
         stage.setOnCloseRequest(event -> System.exit(0));
         stage.setScene(scene);
 
-        stage.setMaximized(true);
         stage.show();
 
         valueBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2);
