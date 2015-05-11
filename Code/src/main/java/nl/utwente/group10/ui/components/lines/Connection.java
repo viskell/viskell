@@ -35,8 +35,8 @@ public class Connection extends ConnectionLine implements
 
     private CustomUIPane pane;
 
-    /** The visual state this Block is in */
-    private int visualState;
+    /** The connection state this Connection is in */
+    private int connectionState;
 
     public Connection(CustomUIPane pane) {
         this.pane = pane;
@@ -339,7 +339,7 @@ public class Connection extends ConnectionLine implements
             invalidateConnectionState();
             startAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
             endAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
-            this.visualState = state;
+            this.connectionState = state;
         }
     }
 
@@ -354,7 +354,7 @@ public class Connection extends ConnectionLine implements
      * @return Whether or not the state of the block confirms to the given newest state.
      */
     public boolean connectionStateIsUpToDate(int state) {
-        return this.visualState == state;
+        return this.connectionState == state;
     }
 
     @Override

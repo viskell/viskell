@@ -37,7 +37,6 @@ public final class HindleyMilner {
     }
 
     public static void unify(final Expr context, final Type t1, final Type t2) throws HaskellTypeError {
-        logger.setLevel(Level.OFF);
         
         final Type a = t1.prune();
         final Type b = t2.prune();

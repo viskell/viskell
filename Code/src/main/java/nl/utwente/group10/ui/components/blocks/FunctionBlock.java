@@ -363,15 +363,12 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         for (InputAnchor in : getAllInputs()) {
             setInputError(getInputIndex(in), error);
         }
-        if(error) {
-            this.getStyleClass().add("error");
-        } else {
-            this.getStyleClass().removeAll("error");
-        }
+        super.setError(error);
     }
     
     private final void setInputError(int index, boolean error) {
         if (error) {
+            argumentSpace.getChildren().get(index).getStyleClass().removeAll("error");
             argumentSpace.getChildren().get(index).getStyleClass().add("error");
         } else {
             argumentSpace.getChildren().get(index).getStyleClass().removeAll("error");
