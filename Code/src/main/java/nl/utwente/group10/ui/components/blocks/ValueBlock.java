@@ -102,11 +102,6 @@ public class ValueBlock extends Block implements OutputBlock {
     }
 
     @Override
-    public void error() {
-        this.getStyleClass().add("error");
-    }
-
-    @Override
     public OutputAnchor getOutputAnchor() {
         return output;
     }

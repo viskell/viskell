@@ -57,4 +57,12 @@ public class InputAnchor extends ConnectionAnchor {
             throw new TypeUnavailableException();
         }
     }
+    
+    public Type getSignature() {
+        if (getBlock() instanceof InputBlock) {
+            return ((InputBlock) getBlock()).getInputSignature(this);
+        } else {
+            throw new TypeUnavailableException();
+        }
+    }
 }

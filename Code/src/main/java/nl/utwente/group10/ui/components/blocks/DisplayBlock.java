@@ -143,8 +143,4 @@ public class DisplayBlock extends Block implements InputBlock {
     public int getInputIndex(InputAnchor anchor) {
         return 0;
     }
-
-    public void error() {
-        this.getStyleClass().add("error");
-    }
 }

@@ -38,8 +38,8 @@ public abstract class Block extends StackPane implements ComponentLoader {
     /** The context menu associated with this block instance. */
     private CircleMenu circleMenu;
     
-    /** The visual state this Block is in */
-    private int visualState;
+    /** The connection state this Block is in */
+    private int connectionState;
 
     /**
      * @param pane
@@ -123,7 +123,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
                     }
                 }
             }
-            this.visualState = state;
+            this.connectionState = state;
         }
     }
 
@@ -138,9 +138,19 @@ public abstract class Block extends StackPane implements ComponentLoader {
      * @return Whether or not the state of the block confirms to the given newest state.
      */
     public boolean connectionStateIsUpToDate(int state) {
-        return this.visualState == state;
+        return this.connectionState == state;
     }
 
-    /** DEBUG METHOD trigger the error state for this block */
-    public abstract void error();
+    /**
+     * Enables or disables the error state of this Block.
+     * @param error True to enable, False to disable.
+     */
+    public void setError(boolean error) {
+        if (error) {
+            this.getStyleClass().removeAll("error");
+            this.getStyleClass().add("error");
+        } else {
+            this.getStyleClass().removeAll("error");
+        }
+    }
 }

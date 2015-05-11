@@ -139,9 +139,9 @@ public class CustomUIPane extends TactilePane {
     public final void errorAll() {
         for (Node node : getChildren()) {
             if (node instanceof Block) {
-                ((Block) node).error();
+                ((Block) node).setError(true);
             } else if (node instanceof Connection) {
-                ((Connection) node).error();
+                ((Connection) node).setError(true);
             }
         }
     }
