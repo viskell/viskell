@@ -1,14 +1,12 @@
 package nl.utwente.group10.ui;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
-import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 import nl.utwente.group10.ghcj.GhciEvaluator;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
@@ -16,7 +14,6 @@ import nl.utwente.group10.ui.components.CustomAlert;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.SliderBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
-import nl.utwente.group10.ui.menu.MainMenu;
 
 /**
  * Main application class for the GUI.
@@ -34,8 +31,8 @@ public class Main extends Application {
         tactilePane.setBordersCollide(true);
         tactilePane.setMinWidth(3000);
         tactilePane.setMinHeight(3000);
-        tactilePane.setMaxWidth(50000);
-        tactilePane.setMaxHeight(50000);
+        tactilePane.setMaxWidth(3000);
+        tactilePane.setMaxHeight(3000);
 
         tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
 

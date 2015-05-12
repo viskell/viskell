@@ -16,6 +16,7 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+
 import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
@@ -41,7 +42,6 @@ import nl.utwente.group10.ui.components.blocks.ValueBlock;
  * utility methods or components that might need quick accessing.
  * </p>
  */
-@SuppressWarnings("restriction")
 public class FunctionMenu extends StackPane implements ComponentLoader {
 
     private Accordion categoryContainer = new Accordion();
@@ -96,7 +96,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             });
 
             TitledPane submenu = new TitledPane(category, listView);
-
+            submenu.setAnimated(false);
             categoryContainer.getPanes().addAll(submenu);
         }
 
