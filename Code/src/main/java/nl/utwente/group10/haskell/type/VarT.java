@@ -152,10 +152,13 @@ public class VarT extends Type {
         
         final Set<TypeClass> intersection = new HashSet<TypeClass>();
 
-        for (TypeClass tc : a.constraints) {
-            if (b.constraints.contains(tc)) {
-                intersection.add(tc);
-            }
+        if (!a.hasConstraints()) {
+            intersection.addAll(b.constraints);
+        } else if (!b.hasConstraints()) {
+            intersection.addAll(a.constraints);
+        } else {
+            intersection.addAll(a.constraints);
+            intersection.retainAll(b.constraints);
         }
 
         return intersection;
