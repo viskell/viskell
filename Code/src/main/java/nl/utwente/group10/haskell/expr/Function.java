@@ -32,7 +32,7 @@ public class Function extends Expr {
         }
 
         /**
-         * @return The 0-indexed position of this argument in the function definition.
+         * @return The 0-indexed position of this argument in the function definition or -1 if the argument is not used.
          */
         public int getPosition() {
             return this.function.arguments.indexOf(this);
@@ -40,7 +40,7 @@ public class Function extends Expr {
 
         @Override
         public Type analyze(Env env, GenSet genSet) throws HaskellException {
-            return HindleyMilner.makeVariable(); // TODO Make sure that this is correctly unified and/or make this editable.
+            return HindleyMilner.makeVariable();
         }
 
         @Override
@@ -50,11 +50,14 @@ public class Function extends Expr {
 
         @Override
         public String toString() {
-            return String.format("%s%d", Function.ARG_PREFIX, this.getPosition());
+            return String.format("%s%d_%s%d", Function.FUNC_PREFIX, this.function.hashCode(), Function.ARG_PREFIX, this.getPosition());
         }
     }
 
-    /** The prefix for function argument names. */
+    /** The prefix for the function part of function argument names. */
+    protected static final String FUNC_PREFIX = "arg";
+
+    /** The prefix for the argument part function argument names. */
     protected static final String ARG_PREFIX = "arg";
 
     /** The arguments for this function. */
@@ -140,7 +143,7 @@ public class Function extends Expr {
                 out.append(" ").append(argument.toHaskell());
             }
 
-            out.append(" = ");
+            out.append(" -> ");
             out.append(this.expr.get().toHaskell());
         }
 
@@ -152,7 +155,7 @@ public class Function extends Expr {
         StringBuilder out = new StringBuilder();
 
         if (this.expr.isPresent()) {
-            out.append("\\");
+            out.append("λ");
 
             for (FunctionArgument argument : this.arguments) {
                 out.append(" ").append(argument.toString());
