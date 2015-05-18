@@ -102,6 +102,9 @@ public class CustomUIPane extends TactilePane {
     }
 
     private void handleScroll(ScrollEvent scrollEvent) {
+        // Ignore (drop) scroll events synthesized from touches
+        if (scrollEvent.getTouchCount() > 0) return;
+
         double scale = this.getScaleX();
         double ratio = 1.0;
 
