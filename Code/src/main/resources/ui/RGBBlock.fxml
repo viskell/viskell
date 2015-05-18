@@ -1,0 +1,21 @@
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+<?import nl.utwente.group10.ui.components.blocks.RGBBlock?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<fx:root type="nl.utwente.group10.ui.components.blocks.RGBBlock" xmlns:fx="http://javafx.com/fxml/">
+    <BorderPane>
+        <top>
+            <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="center"/>
+        </top>
+        <center>
+            <HBox styleClass="display, block">
+                <Pane style="-fx-background-fill: red" prefHeight="75" prefWidth="100" fx:id="well" />
+            </HBox>
+        </center>
+        <bottom>
+            <VBox fx:id="outputSpace" alignment = "center"/>
+        </bottom>
+    </BorderPane>
+</fx:root>

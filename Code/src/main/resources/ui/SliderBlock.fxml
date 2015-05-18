@@ -1,0 +1,20 @@
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import nl.utwente.group10.ui.components.blocks.ValueBlock?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<fx:root type="nl.utwente.group10.ui.components.blocks.ValueBlock" xmlns:fx="http://javafx.com/fxml/">
+    <BorderPane>
+        <center>
+            <HBox styleClass="value, block">
+                <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
+                <Slider min="0.0" max="1.0" fx:id="slider"></Slider>
+            </HBox>
+        </center>
+        <bottom>
+            <VBox fx:id="outputSpace" alignment = "center"/>
+        </bottom>
+    </BorderPane>
+
+</fx:root>

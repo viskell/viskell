@@ -1,5 +1,6 @@
 package nl.utwente.group10.ui.components.blocks;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,11 +46,14 @@ public class DisplayBlock extends Block implements InputBlock {
      *            The pane on which this DisplayBlock resides.
      */
     public DisplayBlock(CustomUIPane pane) {
+        this(pane, "DisplayBlock");
+    }
+    protected DisplayBlock(CustomUIPane pane, String fxml) {
         super(pane);
 
         output = new SimpleStringProperty("New Output");
 
-        this.loadFXML("DisplayBlock");
+        this.loadFXML(fxml);
 
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
@@ -87,7 +91,7 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     /** Invalidates the outputted value and triggers re-evaluation of the value. */
-    public final void invalidateConnectionState() {
+    public void invalidateConnectionState() {
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
 
