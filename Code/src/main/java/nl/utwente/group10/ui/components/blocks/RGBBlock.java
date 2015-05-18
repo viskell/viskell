@@ -37,7 +37,9 @@ public class RGBBlock extends DisplayBlock {
         if (ghci.isPresent()) {
             try {
                 String result = ghci.get().pull(anchor.asExpr());
-                return (int) Math.round(Double.valueOf(result) * 255);
+                double dbl = Double.valueOf(result);
+                double clamped = Math.max(1.0, Math.min(0.0, dbl));
+                return (int) Math.round(clamped * 255);
             } catch (NumberFormatException | GhciException e) {
                 return 0;
             }
