@@ -3,6 +3,7 @@ package nl.utwente.group10.ui;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
@@ -59,8 +60,10 @@ public class CustomUIPane extends TactilePane {
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
 
         // Inspector
-        inspector = new InspectorWindow(this);
-        inspector.blockProperty().bind(this.selectedBlock);
+        Platform.runLater(() -> {
+            inspector = new InspectorWindow(this);
+            inspector.blockProperty().bind(this.selectedBlock);
+        });
     }
 
     private void handleKey(KeyEvent keyEvent) {
@@ -83,7 +86,7 @@ public class CustomUIPane extends TactilePane {
             case DIGIT1: this.setScale(1); break;
 
             case Z:
-                inspector.show();
+                if (inspector != null) inspector.show();
                 break;
 
             case DELETE:
@@ -144,7 +147,7 @@ public class CustomUIPane extends TactilePane {
             }
         }
 
-        inspector.update();
+        if (inspector != null) inspector.update();
     }
 
     public final void errorAll() {
