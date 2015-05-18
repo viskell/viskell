@@ -11,7 +11,7 @@ import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 public class RGBBlock extends DisplayBlock {
     private InputAnchor r;
@@ -32,18 +32,13 @@ public class RGBBlock extends DisplayBlock {
     }
 
     private int evaluate(InputAnchor anchor) {
-        Optional<GhciSession> ghci = getPane().getGhciSession();
+        try {
+            GhciSession ghci = getPane().getGhciSession().get();
+            String result = ghci.pull(anchor.asExpr());
 
-        if (ghci.isPresent()) {
-            try {
-                String result = ghci.get().pull(anchor.asExpr());
-                double dbl = Double.valueOf(result);
-                double clamped = Math.max(1.0, Math.min(0.0, dbl));
-                return (int) Math.round(clamped * 255);
-            } catch (NumberFormatException | GhciException e) {
-                return 0;
-            }
-        } else {
+            double v = Math.max(0.0, Math.min(1.0, Double.valueOf(result)));
+            return (int) Math.round(v * 255);
+        } catch (NumberFormatException | GhciException | NoSuchElementException e) {
             return 0;
         }
     }
