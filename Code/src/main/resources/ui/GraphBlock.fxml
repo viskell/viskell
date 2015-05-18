@@ -1,21 +1,21 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.VBox?>
 <?import nl.utwente.group10.ui.components.blocks.GraphBlock?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.Pane?>
 <fx:root type="nl.utwente.group10.ui.components.blocks.GraphBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane>
         <top>
             <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="center"/>
         </top>
         <center>
-            <VBox styleClass="graph, block" spacing="12">
-                <LineChart prefHeight="300" prefWidth="500" fx:id="chart" createSymbols="false" legendVisible="false">
-                    <xAxis><NumberAxis label="" lowerBound="-3" upperBound="3" tickUnit="1"/></xAxis>
-                    <yAxis><NumberAxis label="" lowerBound="-1" upperBound="1" tickUnit="0.1"/></yAxis>
+            <Pane styleClass="graph, block">
+                <LineChart prefWidth="500" prefHeight="300" fx:id="chart" createSymbols="false" legendVisible="false" animated="false">
+                    <xAxis><NumberAxis fx:id="x" label="" lowerBound="-5" upperBound="5" tickUnit="1" autoRanging="false" /></xAxis>
+                    <yAxis><NumberAxis fx:id="y" label="" lowerBound="-1" upperBound="1" tickUnit="0.1" /></yAxis>
                 </LineChart>
-            </VBox>
+            </Pane>
         </center>
     </BorderPane>
 </fx:root>
