@@ -39,12 +39,15 @@ public class ValueBlock extends Block implements OutputBlock {
      *            The parent pane this Block resides on.
      */
     public ValueBlock(CustomUIPane pane) {
+        this(pane, "ValueBlock");
+    }
+    protected ValueBlock(CustomUIPane pane, String fxml) {
         super(pane);
 
         value = new SimpleStringProperty("5.0");
         output = new OutputAnchor(this, pane);
 
-        this.loadFXML("ValueBlock");
+        this.loadFXML(fxml);
 
         outputSpace.getChildren().add(this.getOutputAnchor());
     }

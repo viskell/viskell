@@ -25,18 +25,18 @@ import nl.utwente.group10.ui.components.anchors.InputAnchor;
  */
 public class DisplayBlock extends Block implements InputBlock {
     /** The output String to display **/
-    private StringProperty output;
+    protected StringProperty output;
 
     /** The Anchor that is used as input. */
-    private InputAnchor inputAnchor;
+    protected InputAnchor inputAnchor;
 
     /** The space containing the input anchor. */
     @FXML
-    private Pane anchorSpace;
+    protected Pane anchorSpace;
 
     /** The space containing the output anchor. */
     @FXML
-    private Pane outputSpace;
+    protected Pane outputSpace;
 
     /**
      * Creates a new instance of DisplayBlock.
@@ -45,11 +45,14 @@ public class DisplayBlock extends Block implements InputBlock {
      *            The pane on which this DisplayBlock resides.
      */
     public DisplayBlock(CustomUIPane pane) {
+        this(pane, "DisplayBlock");
+    }
+    protected DisplayBlock(CustomUIPane pane, String fxml) {
         super(pane);
 
         output = new SimpleStringProperty("New Output");
 
-        this.loadFXML("DisplayBlock");
+        this.loadFXML(fxml);
 
         inputAnchor = new InputAnchor(this, pane);
         anchorSpace.getChildren().add(inputAnchor);
@@ -87,7 +90,7 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     /** Invalidates the outputted value and triggers re-evaluation of the value. */
-    public final void invalidateConnectionState() {
+    public void invalidateConnectionState() {
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
 
