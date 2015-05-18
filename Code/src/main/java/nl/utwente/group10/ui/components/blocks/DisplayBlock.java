@@ -1,6 +1,5 @@
 package nl.utwente.group10.ui.components.blocks;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
