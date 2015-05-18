@@ -26,18 +26,18 @@ import nl.utwente.group10.ui.components.anchors.InputAnchor;
  */
 public class DisplayBlock extends Block implements InputBlock {
     /** The output String to display **/
-    private StringProperty output;
+    protected StringProperty output;
 
     /** The Anchor that is used as input. */
-    private InputAnchor inputAnchor;
+    protected InputAnchor inputAnchor;
 
     /** The space containing the input anchor. */
     @FXML
-    private Pane anchorSpace;
+    protected Pane anchorSpace;
 
     /** The space containing the output anchor. */
     @FXML
-    private Pane outputSpace;
+    protected Pane outputSpace;
 
     /**
      * Creates a new instance of DisplayBlock.
