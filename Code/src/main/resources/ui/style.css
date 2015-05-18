@@ -100,3 +100,11 @@ CustomUIPane {
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
+
+.zoomButtons Button {
+    -fx-font-family: monospace;
+    -fx-font-size: 16px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+}

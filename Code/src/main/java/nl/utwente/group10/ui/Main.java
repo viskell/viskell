@@ -36,8 +36,6 @@ public class Main extends Application {
         tactilePane.setMaxWidth(50000);
         tactilePane.setMaxHeight(50000);
 
-        tactilePane.getStylesheets().add("/ui/style.css");
-
         tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
 
         ValueBlock valueBlock = new ValueBlock(tactilePane);
@@ -48,6 +46,9 @@ public class Main extends Application {
         DebugParent debug = new DebugParent(tactilePane);
         debug.registerTactilePane(tactilePane);
         debug.setOverlayVisible(false);
+
+        // Init zoom overlay
+        ZoomOverlay zoomOverlay = new ZoomOverlay(debug, tactilePane);
 
         // Init menu
         ContextMenu menu = new MainMenu(catalog, tactilePane);
@@ -67,7 +68,8 @@ public class Main extends Application {
         }
 
         // Init scene
-        Scene scene = new Scene(debug);
+        Scene scene = new Scene(zoomOverlay);
+        scene.getStylesheets().add("/ui/style.css");
 
         stage.setOnCloseRequest(event -> System.exit(0));
         stage.setScene(scene);
