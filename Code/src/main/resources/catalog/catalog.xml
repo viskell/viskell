@@ -118,5 +118,12 @@
                 Undefined function.
             </function>
         </category>
+        <category name="Boolean logic">
+            <function name="True" signature="Bool" />
+            <function name="False" signature="Bool" />
+            <function name="(&amp;&amp;)" signature="Bool -> Bool -> Bool" />
+            <function name="(||)" signature="Bool -> Bool -> Bool" />
+            <function name="not" signature="Bool -> Bool" />
+        </category>
     </functions>
 </catalog>

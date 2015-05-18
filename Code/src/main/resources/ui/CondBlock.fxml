@@ -1,0 +1,22 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<fx:root type="nl.utwente.group10.ui.components.blocks.CondBlock" xmlns:fx="http://javafx.com/fxml/1">
+    <BorderPane>
+        <top>
+            <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="CENTER" />
+        </top>
+        <center>
+            <HBox styleClass="cond, block" alignment="CENTER">
+                <padding><Insets top="5" right="10" bottom="5" left="10"/></padding>
+                <Label styleClass="title">if</Label>
+            </HBox>
+        </center>
+        <bottom>
+            <VBox fx:id="outputSpace" alignment="CENTER" />
+        </bottom>
+    </BorderPane>
+</fx:root>

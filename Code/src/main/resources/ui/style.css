@@ -61,6 +61,10 @@ CustomUIPane {
     -fx-background-color: #c0392b;
 }
 
+.cond.block {
+    -fx-background-color: #27ae60;
+}
+
 .value.block .title, .display.block .title {
 
 }
