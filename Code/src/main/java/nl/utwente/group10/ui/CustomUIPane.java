@@ -17,6 +17,7 @@ import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.FunctionBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
@@ -62,10 +63,10 @@ public class CustomUIPane extends TactilePane {
         int dist = 100;
 
         switch (keyEvent.getCode()) {
-            case UP:     this.setTranslateY(this.getTranslateY() + dist); break;
-            case DOWN:   this.setTranslateY(this.getTranslateY() - dist); break;
-            case LEFT:   this.setTranslateX(this.getTranslateX() + dist); break;
-            case RIGHT:  this.setTranslateX(this.getTranslateX() - dist); break;
+            case W: this.setTranslateY(this.getTranslateY() + dist); break;
+            case S: this.setTranslateY(this.getTranslateY() - dist); break;
+            case A: this.setTranslateX(this.getTranslateX() + dist); break;
+            case D: this.setTranslateX(this.getTranslateX() - dist); break;
 
             case H: // C&C-style
             case BACK_SPACE: // SC-style
@@ -76,6 +77,9 @@ public class CustomUIPane extends TactilePane {
             case EQUALS: this.setScale(this.getScaleX() * 1.25); break;
             case MINUS:  this.setScale(this.getScaleX() * 0.8); break;
             case DIGIT1: this.setScale(1); break;
+
+            case LEFT: bowtieSelected(-1); break;
+            case RIGHT: bowtieSelected(+1); break;
 
             case DELETE:
                 removeSelected();
@@ -182,6 +186,19 @@ public class CustomUIPane extends TactilePane {
     /** Remove the selected block, if any. */
     private void removeSelected() {
         this.getSelectedBlock().ifPresent(this::removeBlock);
+    }
+
+    private void bowtieSelected(int delta) {
+        this.getSelectedBlock().ifPresent(block -> {
+            if (block instanceof FunctionBlock) {
+                FunctionBlock fun = (FunctionBlock) block;
+
+                try {
+                    fun.setBowtieIndex(fun.getBowtieIndex() + delta);
+                } catch (IndexOutOfBoundsException ignored) {
+                }
+            }
+        });
     }
 
     public ConnectionCreationManager getConnectionCreationManager() {
