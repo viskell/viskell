@@ -105,19 +105,11 @@ public class CustomUIPane extends TactilePane {
         // Ignore (drop) scroll events synthesized from touches
         if (scrollEvent.getTouchCount() > 0) return;
 
-        double scale = this.getScaleX();
-        double ratio = 1.0;
-
-        if (scrollEvent.getDeltaY() > 0 && scale < 8) {
-            ratio = 1.25;
-        } else if (scrollEvent.getDeltaY() < 0 && scale > 0.5) {
-            ratio = 0.8;
+        if (scrollEvent.getDeltaY() > 0) {
+            zoomIn();
+        } else if (scrollEvent.getDeltaY() < 0) {
+            zoomOut();
         }
-
-        this.setScale(scale * ratio);
-        this.setTranslateX(this.getTranslateX() * ratio);
-        this.setTranslateY(this.getTranslateY() * ratio);
-
     }
 
     /**
@@ -193,5 +185,25 @@ public class CustomUIPane extends TactilePane {
 
     public Optional<GhciSession> getGhciSession() {
         return ghci;
+    }
+
+    public void zoomOut() {
+        zoom(0.8);
+    }
+
+    public void zoomIn() {
+        zoom(1.25);
+    }
+
+    private void zoom(double ratio) {
+        double scale = this.getScaleX();
+
+        // Limit zoom to reasonable range
+        if (scale <= 0.25 && ratio < 1) return;
+        if (scale >= 8 && ratio > 1) return;
+
+        this.setScale(scale * ratio);
+        this.setTranslateX(this.getTranslateX() * ratio);
+        this.setTranslateY(this.getTranslateY() * ratio);
     }
 }
