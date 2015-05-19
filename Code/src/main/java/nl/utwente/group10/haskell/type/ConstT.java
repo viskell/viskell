@@ -2,6 +2,11 @@ package nl.utwente.group10.haskell.type;
 
 import com.google.common.base.Joiner;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Constant, concrete type. However, it may consist of variable types.
  */
@@ -9,12 +14,12 @@ public class ConstT extends Type {
     /**
      * The constructor for this type.
      */
-    private final String constructor;
+    protected final String constructor;
 
     /**
      * The types of the arguments for this type.
      */
-    private final Type[] args;
+    protected final Type[] args;
 
     /**
      * @param constructor The constructor for this constant type.
@@ -59,6 +64,30 @@ public class ConstT extends Type {
         }
 
         return out.toString();
+    }
+
+    @Override
+    public ConstT getFresh() {
+        return new ConstT(this.constructor, this.getFreshArgs());
+    }
+
+    /**
+     * Returns an array of fresh arguments. Selectively calls {@code getFresh} on each argument. When the same Type
+     * instance appears multiple times in the arguments no new type is instantiated. Instead, the fresh type is reused.
+     * @return An array of fresh arguments.
+     */
+    protected Type[] getFreshArgs() {
+        List<Type> fresh = new LinkedList<>();
+
+        for (Type arg : this.args) {
+            if (fresh.contains(arg)) {
+                fresh.add(fresh.get(fresh.indexOf(arg)));
+            } else {
+                fresh.add(arg.getFresh());
+            }
+        }
+
+        return fresh.toArray(new Type[fresh.size()]);
     }
 
     @Override
