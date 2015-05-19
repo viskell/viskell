@@ -3,6 +3,7 @@ package nl.utwente.group10.ui;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
@@ -27,6 +28,7 @@ public class CustomUIPane extends TactilePane {
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
     private Optional<GhciSession> ghci;
+    private InspectorWindow inspector;
 
     private Point2D dragStart;
     private Point2D offset;
@@ -56,6 +58,12 @@ public class CustomUIPane extends TactilePane {
         this.addEventHandler(ScrollEvent.SCROLL, this::handleScroll);
 
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
+
+        // Inspector
+        Platform.runLater(() -> {
+            inspector = new InspectorWindow(this);
+            inspector.blockProperty().bind(this.selectedBlock);
+        });
     }
 
     private void handleKey(KeyEvent keyEvent) {
@@ -76,6 +84,10 @@ public class CustomUIPane extends TactilePane {
             case EQUALS: this.setScale(this.getScaleX() * 1.25); break;
             case MINUS:  this.setScale(this.getScaleX() * 0.8); break;
             case DIGIT1: this.setScale(1); break;
+
+            case Z:
+                if (inspector != null) inspector.show();
+                break;
 
             case DELETE:
                 removeSelected();
@@ -129,6 +141,8 @@ public class CustomUIPane extends TactilePane {
                 ((Block) node).invalidateConnectionState();
             }
         }
+
+        if (inspector != null) inspector.update();
     }
 
     public final void errorAll() {

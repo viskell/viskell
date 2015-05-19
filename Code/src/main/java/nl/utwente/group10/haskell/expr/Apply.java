@@ -1,11 +1,14 @@
 package nl.utwente.group10.haskell.expr;
 
+import com.google.common.collect.ImmutableList;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
+
+import java.util.List;
 
 /**
  * Lazy application of an argument to a function.
@@ -56,5 +59,10 @@ public class Apply extends Expr {
     @Override
     public final String toString() {
         return String.format("(%s %s)", this.func, this.arg);
+    }
+
+    @Override
+    public final List<Expr> getChildren() {
+        return ImmutableList.of(func, arg);
     }
 }

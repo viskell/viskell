@@ -1,7 +1,9 @@
 package nl.utwente.group10.haskell.expr;
 
+import java.util.List;
 import java.util.logging.Logger;
 
+import com.google.common.collect.ImmutableList;
 import nl.utwente.group10.haskell.HaskellObject;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
@@ -49,4 +51,11 @@ public abstract class Expr extends HaskellObject {
      */
     @Override
     public abstract String toString();
+
+    /**
+     * @return a list of subexpressions, if any, or else an empty list.
+     */
+    public List<Expr> getChildren() {
+        return ImmutableList.of();
+    }
 }

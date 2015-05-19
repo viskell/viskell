@@ -1,0 +1,26 @@
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TreeView?>
+<fx:root type="nl.utwente.group10.ui.InspectorWindow" xmlns:fx="http://javafx.com/fxml/">
+    <center>
+        <TabPane>
+            <Tab closable="false" text="Expression tree">
+                <TreeView fx:id="tree" />
+            </Tab>
+            <Tab closable="false" text="Haskell source">
+                <TextArea fx:id="hs" />
+            </Tab>
+        </TabPane>
+    </center>
+    <bottom>
+        <FlowPane alignment="CENTER_RIGHT" hgap="12">
+            <padding><Insets top="12" right="12" bottom="12" left="12" /></padding>
+            <Button onAction="#update">Refresh</Button>
+            <Button onAction="#hide">Close</Button>
+        </FlowPane>
+    </bottom>
+</fx:root>
