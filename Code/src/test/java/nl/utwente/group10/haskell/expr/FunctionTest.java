@@ -21,44 +21,36 @@ public class FunctionTest {
 
     @Test
     public void testArguments() {
-        Function f = new Function(new Ident("pi"));
-        assertEquals(0, f.getArguments().length);
+        Function.FunctionArgument arg0 = new Function.FunctionArgument();
+        Function.FunctionArgument arg1 = new Function.FunctionArgument();
 
-        Function.FunctionArgument arg0 = f.addArgument();
-        Function.FunctionArgument arg1 = f.addArgument();
-
-        assertEquals("arg0", arg0.toHaskell());
-        assertEquals(1, arg1.getPosition());
+        Function f = new Function(new Ident("pi"), arg0, arg1);
 
         assertEquals(2, f.getArguments().length);
         assertEquals(arg0, f.getArguments()[0]);
         assertEquals(arg1, f.getArguments()[1]);
-
-        f.removeArgument(arg0);
-
-        assertEquals(1, f.getArguments().length);
-        assertEquals(arg1, f.getArguments()[0]);
     }
 
     @Test
     public void testToHaskell() {
-        Function f = new Function(new Ident("pi"));
-        Function.FunctionArgument arg0 = f.addArgument();
-        Function.FunctionArgument arg1 = f.addArgument();
+        Function.FunctionArgument arg = new Function.FunctionArgument();
+        Expr applies = new Apply(new Ident("(+)"), arg);
+        Function f = new Function(applies, arg);
 
-        assertEquals(String.format("\\ %s %s = pi", arg0.toHaskell(), arg1.toHaskell()), f.toHaskell());
+        assertEquals(String.format("\\ %1$s -> ((+) %1$s)", arg.toHaskell()), f.toHaskell());
     }
 
     @Test
     public void testAnalyze() throws HaskellException {
-        Function add5 = new Function();
-        Expr add5Expr = new Apply(new Ident("(+)"), add5.addArgument());
-        add5.setExpr(add5Expr);
+        Function.FunctionArgument arg = new Function.FunctionArgument();
+        Expr applies = new Apply(new Ident("(+)"), arg);
+        Function f = new Function(applies, arg);
 
-        assertEquals("\\ arg0 = ((+) arg0)", add5.toHaskell());
+        assertEquals("(Int -> (Int -> Int))", f.analyze(this.env).prune().toHaskellType());
 
-        Expr addition = new Apply(add5, new Value(new ConstT("Int"), "5"));
+        Function.FunctionArgument arg1 = new Function.FunctionArgument();
+        Function add5 = new Function(new Apply(f, new Value(new ConstT("Int"), "5")), arg1);
 
-        assertEquals("Int", addition.analyze(this.env).prune().toHaskellType());
+        assertEquals("(Int -> Int)", add5.analyze(this.env).prune().toHaskellType());
     }
 }

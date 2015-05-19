@@ -7,9 +7,7 @@ import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Represents a user-defined Haskell function. Holds arguments which can be used for building the function.
@@ -17,75 +15,60 @@ import java.util.Optional;
 public class Function extends Expr {
 
     /**
-     * An argument for a function. Can be used as a variable in a function definition.
+     * An argument for a function. A FunctionArgument can be used as a variable in a function definition.
      */
-    public class FunctionArgument extends Expr {
+    public static class FunctionArgument extends Expr {
+        /** The type for this argument. */
+        private Type type;
 
-        /** The function this argument is for. */
-        private Function function;
+        /** The name of this argument. Will be randomly generated to a unique value. */
+        private String name;
 
         /**
-         * @param function The function this argument is for.
+         * Constructor for a FunctionArgument with an explicit type.
+         *
+         * @param type The required type for this argument.
          */
-        protected FunctionArgument(Function function) {
-            this.function = function;
+        public FunctionArgument(Type type) {
+            this.type = type;
+            this.name = String.format("var_%s", UUID.randomUUID().toString().substring(0, 8));
         }
 
         /**
-         * @return The 0-indexed position of this argument in the function definition or -1 if the argument is not used.
+         * Constructor for a FunctionArgument without an explicit type. Using this constructor is recommended.
          */
-        public int getPosition() {
-            return this.function.arguments.indexOf(this);
+        public FunctionArgument() {
+            this(HindleyMilner.makeVariable());
         }
 
         @Override
         public Type analyze(Env env, GenSet genSet) throws HaskellException {
-            return HindleyMilner.makeVariable();
+            return this.type;
         }
 
         @Override
         public String toHaskell() {
-            return String.format("%s%d", Function.ARG_PREFIX, this.getPosition());
+            return this.name;
         }
 
         @Override
         public String toString() {
-            return String.format("%s%d_%s%d", Function.FUNC_PREFIX, this.function.hashCode(), Function.ARG_PREFIX, this.getPosition());
+            return this.name;
         }
     }
-
-    /** The prefix for the function part of function argument names. */
-    protected static final String FUNC_PREFIX = "arg";
-
-    /** The prefix for the argument part function argument names. */
-    protected static final String ARG_PREFIX = "arg";
 
     /** The arguments for this function. */
     private List<FunctionArgument> arguments;
 
     /** The expression that forms the base of this function. */
-    private Optional<Expr> expr;
+    private Expr expr;
 
     /**
      * @param expr The expression that forms the base of this function.
      */
-    public Function(Expr expr) {
-        this.arguments = new ArrayList<>();
-        this.expr = Optional.ofNullable(expr);
-    }
-
-    /**
-     */
-    public Function() {
-        this(null);
-    }
-
-    /**
-     * Sets the expression for this function.
-     * @param expr The expression to set.
-     */
-    public void setExpr(Expr expr) {
-        this.expr = Optional.ofNullable(expr);
+    public Function(Expr expr, FunctionArgument ... arguments) {
+        this.arguments = Arrays.asList(arguments);
+        this.expr = expr;
     }
 
     /**
@@ -96,37 +79,12 @@ public class Function extends Expr {
         return this.arguments.toArray(args);
     }
 
-    /**
-     * Adds a new argument to this function.
-     * @return The new argument.
-     */
-    public FunctionArgument addArgument() {
-        FunctionArgument arg = new FunctionArgument(this);
-        this.arguments.add(arg);
-        return arg;
-    }
-
-    /**
-     * Removes the given argument from this function. The argument is not removed from any expressions within this
-     * function.
-     * @param arg The argument to remove.
-     */
-    public void removeArgument(FunctionArgument arg) {
-        this.arguments.remove(arg);
-    }
-
     @Override
     public Type analyze(Env env, GenSet genSet) throws HaskellException {
-        Type type;
+        Type type = this.expr.analyze(env).prune().getFresh();
 
-        if (this.expr.isPresent()) {
-            type = this.expr.get().analyze(env, genSet);
-        } else {
-            type = HindleyMilner.makeVariable();
-
-            for (int i = this.arguments.size(); i > 0; i--) {
-                type = new FuncT(this.arguments.get(i-1).analyze(env, genSet), type);
-            }
+        for (int i = this.arguments.size(); i > 0; i--) {
+            type = new FuncT(this.arguments.get(i - 1).analyze(env).getFresh(), type);
         }
 
         return type;
@@ -136,7 +94,7 @@ public class Function extends Expr {
     public String toHaskell() {
         StringBuilder out = new StringBuilder();
 
-        if (this.expr.isPresent()) {
+        if (!this.arguments.isEmpty()) {
             out.append("\\");
 
             for (FunctionArgument argument : this.arguments) {
@@ -144,7 +102,9 @@ public class Function extends Expr {
             }
 
             out.append(" -> ");
-            out.append(this.expr.get().toHaskell());
+            out.append(this.expr.toHaskell());
+        } else {
+            out.append(this.expr.toHaskell());
         }
 
         return out.toString();
@@ -154,16 +114,17 @@ public class Function extends Expr {
     public String toString() {
         StringBuilder out = new StringBuilder();
 
-        if (this.expr.isPresent()) {
+        if (!this.arguments.isEmpty()) {
             out.append("λ");
 
             for (FunctionArgument argument : this.arguments) {
-                out.append(" ").append(argument.toString());
+                out.append(" ").append(argument.toHaskell());
             }
 
-            out.append(" = ");
-            out.append(this.expr.get().toString());
+            out.append(" -> ");
         }
+
+        out.append(this.expr.toHaskell());
 
         return out.toString();
     }
