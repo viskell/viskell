@@ -61,6 +61,10 @@ CustomUIPane {
     -fx-background-color: #c0392b;
 }
 
+.graph.block {
+    -fx-background-color: #ecf0f1;
+}
+
 .value.block .title, .display.block .title {
 
 }
@@ -99,6 +103,10 @@ CustomUIPane {
     -fx-padding: 6;
     -fx-text-fill: white;
     -fx-font-weight: bold;
+}
+
+LineChart {
+    -fx-font-size: 14px;
 }
 
 .zoomButtons Button {

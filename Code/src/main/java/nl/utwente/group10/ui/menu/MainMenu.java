@@ -15,6 +15,7 @@ import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.RGBBlock;
 import nl.utwente.group10.ui.components.blocks.SliderBlock;
+import nl.utwente.group10.ui.components.blocks.GraphBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.FunctionBlock;
@@ -51,6 +52,8 @@ public class MainMenu extends ContextMenu {
         sliderBlockItem.setOnAction(event -> addBlock(new SliderBlock(parent)));
         MenuItem rgbBlockItem = new MenuItem("RGB Block");
         rgbBlockItem.setOnAction(event -> addBlock(new RGBBlock(parent)));
+        MenuItem graphBlockItem = new MenuItem("Graph Block");
+        graphBlockItem.setOnAction(event -> addBlock(new GraphBlock(parent)));
 
         //TODO remove this item when debugging of visualFeedback is done
         MenuItem errorItem = new MenuItem("Error all Blocks");
@@ -61,7 +64,7 @@ public class MainMenu extends ContextMenu {
 
         SeparatorMenuItem sep = new SeparatorMenuItem();
 
-        this.getItems().addAll(valueBlockItem, displayBlockItem, sliderBlockItem, rgbBlockItem, sep, errorItem, quitItem);
+        this.getItems().addAll(valueBlockItem, displayBlockItem, sliderBlockItem, rgbBlockItem, graphBlockItem, sep, errorItem, quitItem);
     }
 
     private void addFunctionBlock(FunctionEntry entry) {
