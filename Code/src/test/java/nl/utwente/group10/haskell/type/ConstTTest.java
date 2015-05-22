@@ -1,11 +1,11 @@
 package nl.utwente.group10.haskell.type;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashSet;
+
+import static org.junit.Assert.*;
 
 public class ConstTTest {
     @Test
@@ -38,5 +38,20 @@ public class ConstTTest {
         assertEquals(0, weird.compareTo(weird));
         assertEquals(0, weird.compareTo(new ConstT("Weird", new ConstT("Integer"))));
         assertNotEquals(0, weird.compareTo(new ConstT("Weird")));
+    }
+
+    @Test
+    public final void testFreshArgs() {
+        final VarT staleVar = new VarT("a");
+        final ConstT staleInt = new ConstT("Int");
+        final ConstT stale = new ConstT("Type", staleInt, staleVar, staleVar);
+
+        Type[] freshArgs = stale.getFreshArgs();
+
+        assertEquals("[Int, a, a]", Arrays.toString(freshArgs));
+        assertFalse(staleInt == freshArgs[0]);
+        assertFalse(staleVar == freshArgs[1]);
+        assertFalse(staleVar == freshArgs[2]);
+        assertTrue(freshArgs[1] == freshArgs[2]);
     }
 }
