@@ -78,12 +78,15 @@ public class ConstT extends Type {
      */
     protected Type[] getFreshArgs() {
         List<Type> fresh = new LinkedList<>();
+        Map<Type, Type> staleToFresh = new HashMap<>();
 
         for (Type arg : this.args) {
-            if (fresh.contains(arg)) {
-                fresh.add(fresh.get(fresh.indexOf(arg)));
+            if (staleToFresh.containsKey(arg)) {
+                fresh.add(staleToFresh.get(arg));
             } else {
-                fresh.add(arg.getFresh());
+                Type freshArg = arg.getFresh();
+                staleToFresh.put(arg, freshArg);
+                fresh.add(freshArg);
             }
         }
 
