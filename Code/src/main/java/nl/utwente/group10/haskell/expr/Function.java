@@ -34,13 +34,6 @@ public class Function extends Expr {
             this.name = String.format("var_%s", UUID.randomUUID().toString().substring(0, 8));
         }
 
-        /**
-         * Constructor for a FunctionArgument without an explicit type. Using this constructor is recommended.
-         */
-        public FunctionArgument() {
-            this(HindleyMilner.makeVariable());
-        }
-
         @Override
         public Type analyze(Env env, GenSet genSet) throws HaskellException {
             return this.type;
