@@ -135,6 +135,17 @@ public class VarT extends Type {
     }
 
     @Override
+    public VarT getFresh() {
+        Type instance = null;
+
+        if (this.instance.isPresent()) {
+            instance = this.instance.get().getFresh();
+        }
+
+        return new VarT(this.name, this.constraints, instance);
+    }
+
+    @Override
     public final String toString() {
         return this.instance.isPresent() ? String.format("%s:%s", this.name, this.instance.get()) : this.name;
     }

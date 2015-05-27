@@ -16,4 +16,10 @@ public class ListT extends ConstT {
     public final String toHaskellType() {
         return "[" + this.getArgs()[0].toHaskellType() + "]";
     }
+
+    @Override
+    public ListT getFresh() {
+        Type[] freshArgs = getFreshArgs();
+        return new ListT(freshArgs[0]);
+    }
 }

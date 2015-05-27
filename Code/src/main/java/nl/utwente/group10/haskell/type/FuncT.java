@@ -30,4 +30,10 @@ public class FuncT extends ConstT {
         out.append(")");
         return out.toString();
     }
+
+    @Override
+    public FuncT getFresh() {
+        Type[] args = getFreshArgs();
+        return new FuncT(args[0], args[1]);
+    }
 }

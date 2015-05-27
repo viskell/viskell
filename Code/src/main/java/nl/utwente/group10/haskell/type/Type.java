@@ -32,6 +32,11 @@ public abstract class Type extends HaskellObject implements Comparable<Type> {
      */
     public abstract String toHaskellType();
 
+    /**
+     * @return An exactly alike deep copy of this type.
+     */
+    public abstract Type getFresh();
+
     @Override
     public abstract String toString();
 }

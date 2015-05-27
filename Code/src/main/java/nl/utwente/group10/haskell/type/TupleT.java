@@ -29,4 +29,9 @@ public class TupleT extends ConstT {
         out.append(")");
         return out.toString();
     }
+
+    @Override
+    public TupleT getFresh() {
+        return new TupleT(this.getFreshArgs());
+    }
 }
