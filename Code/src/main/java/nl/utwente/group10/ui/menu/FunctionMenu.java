@@ -5,8 +5,10 @@ import java.util.Collections;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -56,6 +58,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     public FunctionMenu(HaskellCatalog catalog, CustomUIPane pane) {
         this.parent = pane;
         this.loadFXML("FunctionMenu");
+        this.addEventHandler(ScrollEvent.SCROLL, Event::consume);
 
         /* Create content for searchSpace. */
         // TODO create search tools and add them to searchSpace.
@@ -74,8 +77,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                 items.add(entry);
             }
 
-            ListView<FunctionEntry> listView = new ListView<FunctionEntry>(
-                    items);
+            ListView<FunctionEntry> listView = new ListView<FunctionEntry>(items);
             listView.getSelectionModel().selectedItemProperty().addListener((c, oV, nV) -> {
                         addFunctionBlock(nV);
                     });
