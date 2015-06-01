@@ -12,8 +12,8 @@ CustomUIPane {
     -fx-border-width: 2;
 }
 
-.menu .block {
-
+.menu.block {
+    -fx-font-size: 12px;
 }
 
 .error .block {
