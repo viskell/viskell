@@ -16,6 +16,15 @@ CustomUIPane {
     -fx-font-size: 12px;
 }
 
+.menu.block #categorySpace TitledPane {
+    -fx-padding: 3px;
+}
+
+.menu.block #utilSpace {
+    -fx-padding: 3px;
+    -fx-spacing: 6px;
+}
+
 .error .block {
     -fx-border-color: red;
 }
