@@ -1,0 +1,21 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import nl.utwente.group10.ui.menu.FunctionMenu?>
+<fx:root type="nl.utwente.group10.ui.menu.FunctionMenu" xmlns:fx="http://javafx.com/fxml/1">
+    <BorderPane styleClass="menu, block">
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+        <top>
+            <FlowPane fx:id="searchSpace" prefWrapLength="10" vgap="50" hgap="10"/>
+        </top>
+        <center>
+            <VBox fx:id="categorySpace" prefWidth="15" />
+        </center>
+        <bottom>
+            <VBox fx:id="utilSpace" />
+        </bottom>
+    </BorderPane>
+</fx:root>

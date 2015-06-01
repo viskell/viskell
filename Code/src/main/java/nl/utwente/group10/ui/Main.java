@@ -1,14 +1,12 @@
 package nl.utwente.group10.ui;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
-import nl.utwente.ewi.caes.tactilefx.fxml.TactileBuilderFactory;
 import nl.utwente.group10.ghcj.GhciEvaluator;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
@@ -16,7 +14,6 @@ import nl.utwente.group10.ui.components.CustomAlert;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.SliderBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
-import nl.utwente.group10.ui.menu.MainMenu;
 
 /**
  * Main application class for the GUI.
@@ -32,10 +29,10 @@ public class Main extends Application {
         // Init TactilePane
         CustomUIPane tactilePane = new CustomUIPane(catalog);
         tactilePane.setBordersCollide(true);
-        tactilePane.setMinWidth(50000);
-        tactilePane.setMinHeight(50000);
-        tactilePane.setMaxWidth(50000);
-        tactilePane.setMaxHeight(50000);
+        tactilePane.setMinWidth(3000);
+        tactilePane.setMinHeight(3000);
+        tactilePane.setMaxWidth(3000);
+        tactilePane.setMaxHeight(3000);
 
         tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
 
@@ -50,10 +47,6 @@ public class Main extends Application {
 
         // Init zoom overlay
         ZoomOverlay zoomOverlay = new ZoomOverlay(debug, tactilePane);
-
-        // Init menu
-        ContextMenu menu = new MainMenu(catalog, tactilePane);
-        tactilePane.setContextMenu(menu);
 
         // Check if GHCI is available
         try {
@@ -75,7 +68,6 @@ public class Main extends Application {
         stage.setOnCloseRequest(event -> System.exit(0));
         stage.setScene(scene);
 
-        stage.setMaximized(true);
         stage.show();
 
         valueBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2);
