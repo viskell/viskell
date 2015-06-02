@@ -11,6 +11,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -119,6 +120,12 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         argumentSpace.getChildren().add(lbl);
         output = new OutputAnchor(this, pane);
         outputSpace.getChildren().add(output);
+        
+        //TODO temporary
+        ArgumentSpace argumentSpace = new ArgumentSpace(this);
+        getPane().getChildren().add(argumentSpace);
+        Point2D pos = this.localToParent(0,0);
+        argumentSpace.relocate(pos.getX() - 200, pos.getY());
     }
 
     /**
