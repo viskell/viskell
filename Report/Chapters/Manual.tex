@@ -6,4 +6,24 @@
 This part of the document provides some information to developers on how to use and extend the functionality of the program.
 
 \subsection{Haskell back-end}
+
+\subsubsection{Types}
+
+All types are an instance of a subclass of the \code{Type} class. Haskell types \emph{should} where possible be implemented as a class instance instead of a class itself.
+This will mostly be \code{ConstT} as this class can be used for almost anything with a type constructor.
+
+Non-variable types can be easily compared. Two instances of the same type are equal (that is, two instances with the same base class and constructor arguments).
+Variable types are only equal if it is the same instance. This is used to avoid confusion between variable types with the same name.
+
+\subsubsection{Expressions}
+
+All kinds of expressions inherit from the \code{Expr} class.
+
+\subsubsection{Catalog}
+
+Extending the catalog should be straightforward.
+An XSD (XML Schema Definition) is provided for the catalog XML file describing the layout of the file. Catalog files can be validated against this XSD.
+
+Make sure that the software is capable of handling a type, typeclass or function before (permanently) adding it to the catalog.
+
 \subsection{User interface}
