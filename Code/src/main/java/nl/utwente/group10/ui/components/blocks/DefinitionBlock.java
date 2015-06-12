@@ -23,17 +23,7 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
     }
 
     @Override
-    public Type getOutputType() {
-        return type;
-    }
-
-    @Override
     public Type getOutputType(Env env) {
-        return type;
-    }
-
-    @Override
-    public Type getOutputSignature() {
         return type;
     }
 
@@ -102,17 +92,7 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
         }
 
         @Override
-        public Type getOutputType() {
-            return type;
-        }
-
-        @Override
         public Type getOutputType(Env env) {
-            return type;
-        }
-
-        @Override
-        public Type getOutputSignature() {
             return type;
         }
 
