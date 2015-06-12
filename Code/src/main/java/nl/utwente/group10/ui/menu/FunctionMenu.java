@@ -112,6 +112,8 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         rgbBlockButton.setOnAction(event -> addBlock(new RGBBlock(parent)));
         Button graphBlockButton = new Button("Graph Block");
         graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
+        Button defBlockButton = new Button("Definition Block");
+        defBlockButton.setOnAction(event -> addBlock(new DefinitionBlock(parent)));
 
         // TODO remove once debugging is done
         Button debugButton = new Button("Error All");
@@ -125,6 +127,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             sliderBlockButton,
             rgbBlockButton,
             graphBlockButton,
+            defBlockButton,
             debugButton,
             closeButton
         );

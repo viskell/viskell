@@ -11,6 +11,7 @@ import nl.utwente.group10.ghcj.GhciEvaluator;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.CustomAlert;
+import nl.utwente.group10.ui.components.blocks.DefinitionBlock;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.SliderBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;
@@ -38,7 +39,8 @@ public class Main extends Application {
 
         ValueBlock valueBlock = new ValueBlock(tactilePane);
         DisplayBlock displayBlock = new DisplayBlock(tactilePane);
-        tactilePane.getChildren().addAll(valueBlock, displayBlock);
+        DefinitionBlock definitionBlock = new DefinitionBlock(tactilePane);
+        tactilePane.getChildren().addAll(valueBlock, displayBlock, definitionBlock);
 
         // Init Debug
         DebugParent debug = new DebugParent(tactilePane);

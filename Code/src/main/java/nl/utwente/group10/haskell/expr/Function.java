@@ -88,6 +88,7 @@ public class Function extends Expr {
     @Override
     public String toHaskell() {
         StringBuilder out = new StringBuilder();
+        out.append("(");
 
         if (!this.arguments.isEmpty()) {
             out.append("\\");
@@ -97,10 +98,10 @@ public class Function extends Expr {
             }
 
             out.append(" -> ");
-            out.append(this.expr.toHaskell());
-        } else {
-            out.append(this.expr.toHaskell());
         }
+
+        out.append(this.expr.toHaskell());
+        out.append(")");
 
         return out.toString();
     }
