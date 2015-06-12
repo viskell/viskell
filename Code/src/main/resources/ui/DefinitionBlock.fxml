@@ -1,9 +1,10 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.TextField?>
 <fx:root type="nl.utwente.group10.ui.components.blocks.DefinitionBlock" xmlns:fx="http://javafx.com/fxml/">
     <VBox styleClass="def">
-        <Label text="foo :: Int -> Int" styleClass="signature" />
+        <TextField text="foo :: Int -> Int" styleClass="signature" />
         <FlowPane fx:id="argSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="center"/>
         <FlowPane fx:id="resSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="center"/>
         <FlowPane fx:id="funSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="center"/>
