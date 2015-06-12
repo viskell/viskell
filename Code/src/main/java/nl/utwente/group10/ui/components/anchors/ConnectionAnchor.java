@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
@@ -18,7 +19,7 @@ import nl.utwente.group10.ui.components.lines.Connection;
  * The primary Connection (if present) is the first element in getConnections().
  * This means that the oldest Connection is the primary connection.
  */
-public abstract class ConnectionAnchor extends Circle implements ComponentLoader {
+public abstract class ConnectionAnchor extends Rectangle implements ComponentLoader {
     /** The pane on which this Anchor resides. */
     private CustomUIPane pane;
 
@@ -182,6 +183,14 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         } else {
             return Optional.empty();
         }
+    }
+
+    public double getCenterX() {
+        return this.getX() + this.getWidth() / 2;
+    }
+
+    public double getCenterY() {
+        return this.getY() + this.getHeight() / 2;
     }
 
     /** Returns the position of the center of this anchor relative to its pane. */
