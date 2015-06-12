@@ -77,6 +77,7 @@ public class Main extends Application {
 
         valueBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2);
         displayBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2 + 100);
+        definitionBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2 + 200);
 
         // Invalidate
         tactilePane.invalidateAll();
