@@ -16,9 +16,8 @@
                     <padding><Insets top="5" right="10" bottom="5" left="10"/></padding>
                     <Label text="${controller.name}" styleClass="title" />
                 </HBox>
-                <HBox fx:id="argumentSpace" spacing="5">
-                    <padding><Insets top="5" right="5" bottom="5" left="5"/></padding>
-                </HBox>
+                <FlowPane fx:id="nestSpace">
+                </FlowPane>
             </HBox>
         </center>
         <bottom>

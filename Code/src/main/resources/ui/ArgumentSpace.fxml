@@ -1,0 +1,11 @@
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.Group?>
+<?import nl.utwente.group10.ui.components.blocks.ArgumentSpace?>
+
+
+<fx:root type="nl.utwente.group10.ui.components.blocks.ArgumentSpace" xmlns:fx="http://javafx.com/fxml/1">
+    <Circle fx:id="knot" radius="10"/>
+    <Label fx:id="rightArgument"/>
+</fx:root>

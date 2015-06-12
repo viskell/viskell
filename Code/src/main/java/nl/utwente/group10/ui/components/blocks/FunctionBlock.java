@@ -14,6 +14,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
@@ -66,8 +67,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     private Pane outputSpace;
 
     /** The space containing all the argument fields of the function. */
-    @FXML
-    private Pane argumentSpace;
+    private ArgumentSpace argumentSpace;
 
     @FXML private Pane inputTypesSpace;
 
@@ -105,27 +105,19 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
         this.inputs = new ArrayList<InputAnchor>();
 
-        // Create anchors and labels for each argument
+        // Create anchors for each argument
         for (int i = 0; i < args.size(); i++) {
             inputs.add(new InputAnchor(this, pane));
             anchorSpace.getChildren().add(inputs.get(i));
-
-            argumentSpace.getChildren().add(new Label(args.get(i)));
         }
         setBowtieIndex(getAllInputs().size());
 
-        // Create an anchor and label for the result
-        Label lbl = new Label(t.toHaskellType());
-        lbl.getStyleClass().add("result");
-        argumentSpace.getChildren().add(lbl);
+        // Create an anchor for the result
         output = new OutputAnchor(this, pane);
         outputSpace.getChildren().add(output);
         
-        //TODO temporary
-        ArgumentSpace argumentSpace = new ArgumentSpace(this);
-        getPane().getChildren().add(argumentSpace);
-        Point2D pos = this.localToParent(0,0);
-        argumentSpace.relocate(pos.getX() - 200, pos.getY());
+        argumentSpace = new ArgumentSpace(this);
+        ((FlowPane) this.lookup("#nestSpace")).getChildren().add(argumentSpace);
     }
 
     /**
@@ -331,6 +323,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      * Updates the input types to the Block's new state.
      */
     private void invalidateInputVisuals() {
+        /*
         for (int i = 0; i < getAllInputs().size(); i++) {
             String type;
             if (inputTypeMatches(i)) {
@@ -342,14 +335,19 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             }
             ((Label) argumentSpace.getChildren().get(i)).setText(type);
         }
+        */
+        argumentSpace.invalidateInputContent();
     }
 
     /**
      * Updates the output types to the Block's new state.
      */
     private void invalidateOutputVisuals() {
+        /*
         Label outputLabel = ((Label) argumentSpace.getChildren().get(argumentSpace.getChildren().size() - 1));
         outputLabel.setText(getOutputType().toHaskellType());
+        */
+        argumentSpace.invalidateOutputContent();
     }
 
     /**
@@ -374,13 +372,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
     
     private final void setInputError(int index, boolean error) {
-        ObservableList<String> styleClass = argumentSpace.getChildren().get(index).getStyleClass();
-        if (error) {
-            styleClass.removeAll("error");
-            styleClass.add("error");
-        } else {
-            styleClass.removeAll("error");
-        }
+        argumentSpace.setInputError(index, error);
     }
     
     @Override

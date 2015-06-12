@@ -2,6 +2,7 @@ package nl.utwente.group10.haskell.hindley;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
@@ -39,6 +40,8 @@ public final class HindleyMilner {
         final Type a = t1.prune();
         final Type b = t2.prune();
 
+        HindleyMilner.logger.setLevel(Level.OFF);
+        
         HindleyMilner.logger.info(String.format("Unifying types %s and %s for context %s", t1, t2, context));
 
         if (a instanceof VarT && !a.equals(b)) {
