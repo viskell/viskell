@@ -134,12 +134,10 @@ LineChart {
     -fx-background-color: rgba(0, 0, 0, 0.2);
 }
 
-.def .signature {
+.signature {
     -fx-text-fill: white;
     -fx-background-insets: 0, 0;
     -fx-background-radius: 0, 0;
     -fx-background-color: rgba(0, 0, 0, 0);
 }
 
-.def .signature:focused {
-}
