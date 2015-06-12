@@ -103,9 +103,14 @@
             </function>
         </category>
         <category name="Maps, folds and lists">
+            <function name="(:)" signature="a -> [a] -> [a]" />
             <function name="head" signature="[a] -> a">
                 Extract the first element of a list, which must be non-empty.
             </function>
+            <function name="map" signature="(a -> b) -> [a] -> [b]" />
+            <function name="tail" signature="[a] -> [a]" />
+            <function name="sum" signature="Num a => [a] -> a" />
+            <function name="enumFromTo" signature="Num a => a -> a -> [a]" />
         </category>
         <category name="Assorted">
             <function name="id" signature="a -> a" >
@@ -117,6 +122,9 @@
             <function name="undefined" signature="a">
                 Undefined function.
             </function>
+            <function name="(.)" signature="(b -> c) -> (a -> b) -> a -> c" />
+            <function name="($)" signature="(a -> b) -> a -> b" />
+            <function name="undefined" signature="a" />
         </category>
     </functions>
 </catalog>
