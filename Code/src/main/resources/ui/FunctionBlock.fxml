@@ -17,7 +17,7 @@
                     <padding><Insets top="5" right="10" bottom="5" left="10"/></padding>
                     <Label text="${controller.name}" styleClass="title" />
                 </HBox>
-                <Pane fx:id="nestSpace" prefWidth="0">
+                <Pane fx:id="nestSpace">
                 </Pane>
             </HBox>
         </center>

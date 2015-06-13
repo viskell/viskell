@@ -141,7 +141,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      *            The new bowtie index for this FunctionBlock.
      */
     public final void setBowtieIndex(int index) {
-        if (index >= 0 && index <= getAllInputs().size()) {
+        if (index >= -1 && index <= getAllInputs().size()) {
             this.bowtieIndex.set(index);
         } else {
             throw new IndexOutOfBoundsException();

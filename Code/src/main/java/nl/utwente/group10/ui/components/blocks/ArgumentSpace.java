@@ -19,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
+//TODO make FlowPane
 public class ArgumentSpace extends Pane implements ComponentLoader{    
     public static final int INPUT_ID_NONE = -2;
     public static final int INPUT_ID_MOUSE = -1;
@@ -87,11 +88,11 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
     private void knotMoved(int inputID, double sceneX) {
         if(this.inputID == inputID) {
             double translateX = sceneToLocal(sceneX,0).getX();
-            bowtieIndex.set(determineBowtieIndex(translateX));
-            
+            double bowtiePercentage = determineBowtieIndex(translateX);
+            bowtieIndex.set((int) bowtiePercentage);
 
             double knotWidth = knot.getBoundsInLocal().getWidth();
-            double leftBound = leftArguments.get(0).prefWidth(-1) + knotWidth/2;
+            double leftBound = 0;
             double rightBound = getLeftWidth() + knotWidth/2;
             
             double knotPosition = Math.max(leftBound,Math.min(translateX, rightBound));
@@ -99,15 +100,21 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
         }
     }
     
-    private int determineBowtieIndex(double xOffset) {
-        int bowtieIndex = 1;
-        double leftWidth = 0;
-        for (int i = 0; i < leftArguments.size(); i++) {  
-            leftWidth += leftArguments.get(i).prefWidth(-1);
-            if(leftWidth < xOffset) {
-                bowtieIndex = i+1;
+    private double determineBowtieIndex(double xOffset) {
+        //TODO use this to percentage fade arguments
+        double bowtieIndex = 0;
+        
+        for (int i = 0; i < leftArguments.size() && xOffset > 0; i++) {
+            double width = leftArguments.get(i).prefWidth(-1);
+            if (xOffset > width) {
+                xOffset -= width;
+                bowtieIndex++;
+            } else {
+                bowtieIndex += Math.min(xOffset / width, 1);
+                xOffset = 0;
             }
         }
+        
         return bowtieIndex;
     }
     
@@ -132,24 +139,30 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
     }
     
     public void invalidateArgumentSpacing() {
-        double leftWidth = 0;
+        double width = 0;
         double knotWidth = knot.getBoundsInLocal().getWidth();
         double midY = this.getPrefHeight()/2;
+        
         for (int i = 0; i < leftArguments.size(); i++) {
             Node node = leftArguments.get(i);
             if (i < bowtieIndex.get()) {
                 double nodeWidth = node.prefWidth(-1);
-                node.setTranslateX(leftWidth);   
+                node.setTranslateX(width);   
                 node.setTranslateY(midY - node.prefHeight(-1)/2);
-                leftWidth += nodeWidth;
+                width += nodeWidth;
             }
         }
-        knot.setTranslateX(leftWidth + knotWidth/2);
+        knot.setTranslateX(width + knotWidth/2);
         knot.setTranslateY(midY);
         
-        leftWidth += knotWidth;
-        rightArgument.setTranslateX(leftWidth);
+        width += knotWidth;
+        rightArgument.setTranslateX(width);
         rightArgument.setTranslateY(midY - rightArgument.prefHeight(-1)/2);
+        width += rightArgument.prefWidth(-1);
+        
+        this.setPrefWidth(width);
+        this.setMinWidth(width);
+        System.out.println("Width set!: "+width);
     }
     
     public void invalidateArgumentContent() {
@@ -177,6 +190,5 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
         } else {
             styleClass.removeAll("error");
         }
-        System.out.println(leftArguments.get(index));
     }
 }
