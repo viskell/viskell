@@ -2,6 +2,7 @@ package nl.utwente.group10.ui.components.blocks;
 
 import com.google.common.collect.ImmutableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.expr.*;
@@ -13,8 +14,11 @@ import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import org.codehaus.plexus.util.cli.Arg;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DefinitionBlock extends Block implements InputBlock, OutputBlock, ComponentLoader {
     @Override
@@ -42,26 +46,24 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
         return type;
     }
 
-    private Type type;
-
     @Override
     public Type getInputSignature(InputAnchor input) {
-        return HindleyMilner.makeVariable();
+        return resType;
     }
 
     @Override
     public Type getInputSignature(int index) {
-        return HindleyMilner.makeVariable();
+        return resType;
     }
 
     @Override
     public Type getInputType(InputAnchor input) {
-        return HindleyMilner.makeVariable();
+        return resType;
     }
 
     @Override
     public Type getInputType(int index) {
-        return HindleyMilner.makeVariable();
+        return resType;
     }
 
     @Override
@@ -128,21 +130,38 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
     @FXML private Pane resSpace;
     @FXML private Pane funSpace;
 
-    private ArgumentBlock argBlock;
-    private OutputAnchor arg;
+    @FXML private Label signature;
+
+    private List<ArgumentBlock> args;
 
     private InputAnchor res;
     private OutputAnchor fun;
 
-    public DefinitionBlock(CustomUIPane pane) {
+    private Type type;
+    private Type resType;
+
+
+    public DefinitionBlock(CustomUIPane pane, String name, Type type) {
         super(pane);
         this.loadFXML("DefinitionBlock");
 
-        type = new FuncT(new ConstT("Float"), new ConstT("Float"));
+        this.args = new ArrayList<>();
 
-        argBlock = new ArgumentBlock(this, new ConstT("Float"));
-        arg = argBlock.getOutputAnchor();
-        argSpace.getChildren().add(arg);
+        signature.setText(name + " :: " + type.toHaskellType());
+
+        Type t = type;
+        while (t instanceof FuncT) {
+            FuncT ft = (FuncT) t;
+            Type argType = ft.getArgs()[0];
+            args.add(new ArgumentBlock(this, argType));
+
+            t = ft.getArgs()[1];
+        }
+
+        this.type = type;
+        this.resType = t;
+
+        argSpace.getChildren().addAll(getArgumentAnchors());
 
         res = new InputAnchor(this, pane);
         resSpace.getChildren().add(res);
@@ -151,8 +170,16 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
         funSpace.getChildren().add(fun);
     }
 
+    private List<OutputAnchor> getArgumentAnchors() {
+        return this.args.stream().map(ArgumentBlock::getOutputAnchor).collect(Collectors.toList());
+    }
+
+    private List<Function.FunctionArgument> getArguments() {
+        return this.args.stream().map(ArgumentBlock::getArgument).collect(Collectors.toList());
+    }
+
     @Override
     public Expr asExpr() {
-        return new Function(res.asExpr(), argBlock.getArgument());
+        return new Function(res.asExpr(), getArguments());
     }
 }

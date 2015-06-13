@@ -39,8 +39,7 @@ public class Main extends Application {
 
         ValueBlock valueBlock = new ValueBlock(tactilePane);
         DisplayBlock displayBlock = new DisplayBlock(tactilePane);
-        DefinitionBlock definitionBlock = new DefinitionBlock(tactilePane);
-        tactilePane.getChildren().addAll(valueBlock, displayBlock, definitionBlock);
+        tactilePane.getChildren().addAll(valueBlock, displayBlock);
 
         // Init Debug
         DebugParent debug = new DebugParent(tactilePane);
@@ -74,7 +73,6 @@ public class Main extends Application {
 
         valueBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2);
         displayBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2 + 100);
-        definitionBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2 + 200);
 
         // Invalidate
         tactilePane.invalidateAll();
