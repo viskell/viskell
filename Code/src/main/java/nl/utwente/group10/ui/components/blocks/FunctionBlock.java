@@ -117,7 +117,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         outputSpace.getChildren().add(output);
         
         argumentSpace = new ArgumentSpace(this);
-        ((FlowPane) this.lookup("#nestSpace")).getChildren().add(argumentSpace);
+        ((Pane) this.lookup("#nestSpace")).getChildren().add(argumentSpace);
     }
 
     /**
@@ -323,19 +323,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      * Updates the input types to the Block's new state.
      */
     private void invalidateInputVisuals() {
-        /*
-        for (int i = 0; i < getAllInputs().size(); i++) {
-            String type;
-            if (inputTypeMatches(i)) {
-                setInputError(i, false);
-                type = getInputType(i).toHaskellType();
-            } else {
-                setInputError(i, true);
-                type = getInputSignature(i).toHaskellType();
-            }
-            ((Label) argumentSpace.getChildren().get(i)).setText(type);
-        }
-        */
         argumentSpace.invalidateInputContent();
     }
 
@@ -343,10 +330,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      * Updates the output types to the Block's new state.
      */
     private void invalidateOutputVisuals() {
-        /*
-        Label outputLabel = ((Label) argumentSpace.getChildren().get(argumentSpace.getChildren().size() - 1));
-        outputLabel.setText(getOutputType().toHaskellType());
-        */
         argumentSpace.invalidateOutputContent();
     }
 

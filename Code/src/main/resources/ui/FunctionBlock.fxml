@@ -2,6 +2,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import nl.utwente.group10.ui.components.blocks.FunctionBlock?>
@@ -16,8 +17,8 @@
                     <padding><Insets top="5" right="10" bottom="5" left="10"/></padding>
                     <Label text="${controller.name}" styleClass="title" />
                 </HBox>
-                <FlowPane fx:id="nestSpace">
-                </FlowPane>
+                <Pane fx:id="nestSpace" prefWidth="0">
+                </Pane>
             </HBox>
         </center>
         <bottom>

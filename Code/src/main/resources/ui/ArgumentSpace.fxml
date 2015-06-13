@@ -5,7 +5,7 @@
 <?import nl.utwente.group10.ui.components.blocks.ArgumentSpace?>
 
 
-<fx:root type="nl.utwente.group10.ui.components.blocks.ArgumentSpace" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root type="nl.utwente.group10.ui.components.blocks.ArgumentSpace" xmlns:fx="http://javafx.com/fxml/1" styleClass="argumentSpace">
     <Circle fx:id="knot" radius="10"/>
-    <Label fx:id="rightArgument"/>
+    <Label fx:id="rightArgument" styleClass="rightArgument"/>
 </fx:root>

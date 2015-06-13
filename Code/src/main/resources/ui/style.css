@@ -43,12 +43,14 @@ CustomUIPane {
     -fx-padding: 0;
 }
 
-.function.block .nestSpace {
-    -fx-padding: 15;
+.argumentSpace {
+    -fx-border-color: red;
+    -fx-border-width: 1;
 }
 
-.function.block #argumentSpace Label {
+.argumentSpace Label.leftArgument {
     -fx-padding: 0 5 0 5;
+    -fx-margin: 5;
     -fx-font-size: 14px;
     -fx-font-weight: none;
     -fx-background-color:white;
@@ -56,14 +58,20 @@ CustomUIPane {
     -fx-border-width: 1;
 }
 
-.function.block #argumentSpace Label.error {
-    -fx-background-color:pink;
-    -fx-border-color: red;
-}
 
-.function.block #argumentSpace Label.result {
+.argumentSpace Label.rightArgument {
+    -fx-padding: 0 5 0 5;
+    -fx-font-size: 14px;
+    -fx-font-weight: none;
     -fx-background-color: black;
     -fx-text-fill: white;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+}
+
+.argumentSpace Label.leftArgument.error {
+    -fx-background-color:pink;
+    -fx-border-color: red;
 }
 
 .value.block {
