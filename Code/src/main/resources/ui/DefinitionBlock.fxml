@@ -7,7 +7,7 @@
 <?import javafx.geometry.Insets?>
 <fx:root type="nl.utwente.group10.ui.components.blocks.DefinitionBlock" xmlns:fx="http://javafx.com/fxml/">
     <VBox>
-        <TextField text="foo :: Int -> Int" styleClass="signature" />
+        <Label fx:id="signature" styleClass="signature" />
         <BorderPane styleClass="def">
             <top>
                 <VBox>

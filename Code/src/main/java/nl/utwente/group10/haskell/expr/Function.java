@@ -64,6 +64,11 @@ public class Function extends Expr {
         this.expr = expr;
     }
 
+    public Function(Expr expr, List<FunctionArgument> arguments) {
+        this.expr = expr;
+        this.arguments = arguments;
+    }
+
     /**
      * @return An ordered array of the arguments for this function.
      */
