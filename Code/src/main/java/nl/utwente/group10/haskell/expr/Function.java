@@ -111,13 +111,13 @@ public class Function extends Expr {
             out.append("λ");
 
             for (FunctionArgument argument : this.arguments) {
-                out.append(" ").append(argument.toHaskell());
+                out.append(" ").append(argument.toString());
             }
 
             out.append(" -> ");
         }
 
-        out.append(this.expr.toHaskell());
+        out.append(this.expr.toString());
 
         return out.toString();
     }

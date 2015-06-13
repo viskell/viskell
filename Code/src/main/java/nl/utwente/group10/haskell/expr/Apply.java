@@ -53,12 +53,12 @@ public class Apply extends Expr {
 
     @Override
     public final String toHaskell() {
-        return String.format("(%s %s)", this.func, this.arg);
+        return String.format("(%s %s)", this.func.toHaskell(), this.arg.toHaskell());
     }
 
     @Override
     public final String toString() {
-        return String.format("(%s %s)", this.func, this.arg);
+        return String.format("(%s %s)", this.func.toString(), this.arg.toString());
     }
 
     @Override
