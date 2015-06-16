@@ -7,12 +7,14 @@ import nl.utwente.group10.ui.components.ComponentLoader;
 import javafx.beans.property.IntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -20,7 +22,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 //TODO make FlowPane
-public class ArgumentSpace extends Pane implements ComponentLoader{    
+public class ArgumentSpace extends FlowPane implements ComponentLoader{    
     public static final int INPUT_ID_NONE = -2;
     public static final int INPUT_ID_MOUSE = -1;
     
@@ -46,7 +48,6 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
             Label lbl = new Label(block.getInputSignature(i).toHaskellType());
             lbl.getStyleClass().add("leftArgument");
             leftArguments.add(lbl);
-            lbl.widthProperty().addListener(x -> invalidateArgumentSpacing());
             this.getChildren().add(lbl);
         }
 
@@ -54,11 +55,20 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
         knot.setOnMouseDragged(event -> {knotMoved(event); event.consume();});
         knot.setOnMouseReleased(event -> {knotReleased(INPUT_ID_MOUSE); event.consume();});
 
+        knot.toFront();
+        rightArgument.toFront();
+        rightArgument.translateXProperty().bind(knot.translateXProperty());
+
         invalidateBowtieIndex();
         invalidateArgumentContent();
         
-        
         this.setPrefHeight(50);
+        this.setAlignment(Pos.CENTER_LEFT);
+    }
+    
+
+    public double getKnotPos() {
+        return knot.getBoundsInParent().getMaxX() - knot.getBoundsInLocal().getWidth() / 2;
     }
     
     private void knotPressed(int inputID) {
@@ -72,7 +82,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
     private void knotReleased(int inputID) {
         if(this.inputID == inputID) {
             this.inputID = INPUT_ID_NONE;
-            invalidateBowtieIndex();
+            snapBowtie();
         } else {
             //Ignore, different touch point;
         }
@@ -88,83 +98,81 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
     private void knotMoved(int inputID, double sceneX) {
         if(this.inputID == inputID) {
             double translateX = sceneToLocal(sceneX,0).getX();
-            double bowtiePercentage = determineBowtieIndex(translateX);
-            bowtieIndex.set((int) bowtiePercentage);
 
-            double knotWidth = knot.getBoundsInLocal().getWidth();
-            double leftBound = 0;
-            double rightBound = getLeftWidth() + knotWidth/2;
-            
+            double leftBound = leftArguments.get(0).getLayoutX() + knot.getBoundsInLocal().getWidth() / 2;
+            double rightBound = leftArguments.get(leftArguments.size()-1).getBoundsInParent().getMaxX() + knot.getBoundsInLocal().getWidth();
             double knotPosition = Math.max(leftBound,Math.min(translateX, rightBound));
-            knot.setTranslateX(knotPosition);
+            
+            /* 
+             * TODO (Visual) BUG:
+             * When the Labels in the leftArgument change text, their size can change
+             * When the size changes, the entire FlowPane to the right of the change gets repositioned.
+             * Since the Knot is to the right of all the labels, the knot's layoutX can change.
+             * Currently when this happens the translateX is not immediately updated.
+             * This has as an effect that the knot is displaced until it gets repositioned again.
+             * (Repositioning happens when dragged or released)
+             */
+            knot.setTranslateX(knotPosition- knot.getLayoutX());
+            invalidateKnotPosition();
+            
+            bowtieIndex.set((int) Math.round(determineBowtieIndex()));
         }
     }
-    
-    private double determineBowtieIndex(double xOffset) {
-        //TODO use this to percentage fade arguments
+    private double determineBowtieIndex() {
         double bowtieIndex = 0;
-        
-        for (int i = 0; i < leftArguments.size() && xOffset > 0; i++) {
-            double width = leftArguments.get(i).prefWidth(-1);
-            if (xOffset > width) {
-                xOffset -= width;
+                
+        for (int i = 0; i < leftArguments.size(); i++) {
+            Node argument = leftArguments.get(i);
+            double min = argument.getBoundsInParent().getMinX();
+            double max = argument.getBoundsInParent().getMaxX();
+            
+            if (getKnotPos() > max) {
                 bowtieIndex++;
             } else {
-                bowtieIndex += Math.min(xOffset / width, 1);
-                xOffset = 0;
+                bowtieIndex += Math.max(Math.min((getKnotPos() - min) / (max - min), 1), 0);
+                break;
             }
         }
-        
         return bowtieIndex;
     }
     
-    public double getLeftWidth() {
-        double leftWidth = 0;
-        for (int i = 0; i < leftArguments.size(); i++) {  
-            leftWidth += leftArguments.get(i).prefWidth(-1);
+    public void invalidateKnotPosition() {
+        for (Node node : leftArguments) {
+            if (node.getBoundsInParent().getMaxX() - node.getBoundsInLocal().getWidth() / 2 >= getKnotPos()) {
+                node.setTranslateX(knot.getBoundsInLocal().getWidth() + this.getHgap());
+            } else {
+                node.setTranslateX(0);
+            }
         }
-        return leftWidth;
+    }
+    
+    public void snapBowtie() {
+        int bti = (int) bowtieIndex.get();
+        double snapToX;
+        if (bti > 0) {
+            Node leftNeighbour = leftArguments.get((int) bti - 1);
+            snapToX = leftNeighbour.getBoundsInParent().getMaxX() + knot.getBoundsInLocal().getWidth() / 2 + this.getHgap();
+        } else {
+            Node leftNeighbour = leftArguments.get(0);
+            snapToX = leftNeighbour.getLayoutX() + knot.getBoundsInLocal().getWidth() / 2;
+        }
+        knot.setTranslateX(snapToX - knot.getLayoutX());
+        
+        invalidateKnotPosition();
     }
     
     public void invalidateBowtieIndex() {
         for (int i = 0; i < leftArguments.size(); i++) {
             Node node = leftArguments.get(i);
+            ObservableList<String> styleClass = node.getStyleClass();
             if (i < bowtieIndex.get()) {
-                node.setVisible(true);
+                styleClass.removeAll("transparent");
             } else {
-                node.setVisible(false);
+                styleClass.removeAll("transparent");
+                styleClass.add("transparent");
             }
         }
-        invalidateArgumentSpacing();
     }
-    
-    public void invalidateArgumentSpacing() {
-        double width = 0;
-        double knotWidth = knot.getBoundsInLocal().getWidth();
-        double midY = this.getPrefHeight()/2;
-        
-        for (int i = 0; i < leftArguments.size(); i++) {
-            Node node = leftArguments.get(i);
-            if (i < bowtieIndex.get()) {
-                double nodeWidth = node.prefWidth(-1);
-                node.setTranslateX(width);   
-                node.setTranslateY(midY - node.prefHeight(-1)/2);
-                width += nodeWidth;
-            }
-        }
-        knot.setTranslateX(width + knotWidth/2);
-        knot.setTranslateY(midY);
-        
-        width += knotWidth;
-        rightArgument.setTranslateX(width);
-        rightArgument.setTranslateY(midY - rightArgument.prefHeight(-1)/2);
-        width += rightArgument.prefWidth(-1);
-        
-        this.setPrefWidth(width);
-        this.setMinWidth(width);
-        System.out.println("Width set!: "+width);
-    }
-    
     public void invalidateArgumentContent() {
         invalidateOutputContent();
         invalidateInputContent();

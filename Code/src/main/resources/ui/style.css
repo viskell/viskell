@@ -44,17 +44,24 @@ CustomUIPane {
 }
 
 .argumentSpace {
-    -fx-border-color: red;
-    -fx-border-width: 1;
 }
 
 .argumentSpace Label.leftArgument {
     -fx-padding: 0 5 0 5;
-    -fx-margin: 5;
     -fx-font-size: 14px;
     -fx-font-weight: none;
     -fx-background-color:white;
     -fx-border-color: black;
+    -fx-border-width: 1;
+}
+
+.argumentSpace Label.leftArgument.transparent {
+    -fx-padding: 0 5 0 5;
+    -fx-font-size: 14px;
+    -fx-font-weight: none;
+    -fx-text-fill: rgba(0,0,0,0.5);
+    -fx-background-color: rgba(255,255,255,0.5);
+    -fx-border-color: rgba(0,0,0,0.5);
     -fx-border-width: 1;
 }
 

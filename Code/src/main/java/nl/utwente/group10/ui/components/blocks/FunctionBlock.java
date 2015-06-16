@@ -35,6 +35,7 @@ import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.exceptions.FunctionDefinitionException;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 /**
  * Main building block for the visual interface, this class represents a Haskell
@@ -90,7 +91,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         this.name = new SimpleStringProperty(name);
         this.type = new SimpleStringProperty(type.toHaskellType());
         this.bowtieIndex = new SimpleIntegerProperty();
-        bowtieIndex.addListener(e -> invalidateBowtieIndex());
 
         this.loadFXML("FunctionBlock");
 
@@ -110,7 +110,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             inputs.add(new InputAnchor(this, pane));
             anchorSpace.getChildren().add(inputs.get(i));
         }
-        setBowtieIndex(getAllInputs().size());
 
         // Create an anchor for the result
         output = new OutputAnchor(this, pane);
@@ -118,6 +117,10 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         
         argumentSpace = new ArgumentSpace(this);
         ((Pane) this.lookup("#nestSpace")).getChildren().add(argumentSpace);
+        
+
+        bowtieIndex.addListener(e -> invalidateBowtieIndex());
+        setBowtieIndex(getAllInputs().size());
     }
 
     /**
@@ -314,7 +317,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public void invalidateConnectionState() {
-        // TODO not clear and re-add all labels every invalidate()
         invalidateInputVisuals();
         invalidateOutputVisuals();
     }
@@ -344,6 +346,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
                 input.getPrimaryConnection().get().remove();
             }
         }
+        ConnectionCreationManager.nextConnectionState();
+        invalidateConnectionStateCascading();
     }
     
     @Override
