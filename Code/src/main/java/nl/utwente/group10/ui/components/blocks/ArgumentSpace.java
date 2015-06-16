@@ -133,16 +133,42 @@ public class ArgumentSpace extends FlowPane implements ComponentLoader{
                 break;
             }
         }
+        System.out.println(bowtieIndex);
         return bowtieIndex;
     }
     
     public void invalidateKnotPosition() {
-        for (Node node : leftArguments) {
+        double knotWidht = knot.getBoundsInLocal().getWidth() + this.getHgap();
+        double bti = determineBowtieIndex();
+        for (int i = 0; i < leftArguments.size(); i++) {
+            Node node = leftArguments.get(i);
+            double percentage = 1;
+            double offset;
             if (node.getBoundsInParent().getMaxX() - node.getBoundsInLocal().getWidth() / 2 >= getKnotPos()) {
-                node.setTranslateX(knot.getBoundsInLocal().getWidth() + this.getHgap());
+                offset = knot.getBoundsInLocal().getWidth() + this.getHgap();
+                if ((int) bti == i) {
+                    percentage = (bti - i) / 0.5;
+                }
             } else {
-                node.setTranslateX(0);
+                offset = 0;
+                
+                if ((int) bti == i) {
+                    percentage = (bti - i - 0.5)/0.5;
+                }
             }
+            node.setTranslateX(offset);            
+
+            //percentage = Math.pow(percentage, 0.4); //Better looking curve
+            
+            if (percentage > 0.05) {
+                node.setVisible(true);
+            } else {
+                node.setVisible(false);
+            }
+            
+            node.setStyle("-fx-text-fill: rgba(0,0,0," + percentage + ");" 
+                        + "-fx-background-color: rgba(255,255,255," + percentage + ");"
+                        + "-fx-border-color: rgba(0,0,0," + percentage + ");");
         }
     }
     
@@ -162,16 +188,20 @@ public class ArgumentSpace extends FlowPane implements ComponentLoader{
     }
     
     public void invalidateBowtieIndex() {
+        /*
         for (int i = 0; i < leftArguments.size(); i++) {
             Node node = leftArguments.get(i);
             ObservableList<String> styleClass = node.getStyleClass();
             if (i < bowtieIndex.get()) {
                 styleClass.removeAll("transparent");
+                //node.setVisible(true);
             } else {
                 styleClass.removeAll("transparent");
                 styleClass.add("transparent");
+                //node.setVisible(false);
             }
         }
+        */
     }
     public void invalidateArgumentContent() {
         invalidateOutputContent();
