@@ -37,6 +37,13 @@ However, we have found it to be `good enough' for our purposes.
 
 \subsection{Expression and type representation}
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{Images/exprtohaskell}
+	\label{fig:classdiagram-expr}
+	\caption{Translation from visual representation to Haskell code}
+\end{figure}
+
 \subsubsection{Expressions}
 \index{function} \index{Haskell code}
 
@@ -45,6 +52,7 @@ We have chosen to use distinct classes (with a common superclass) for expression
 This object-based approach is favoured over any text based approach (including using Haskell code itself) because objects are very easy to work with.
 
 Every expression is represented as an instance of \code{Expr} (or any subclass of \code{Expr}). \index{Expr}
+An \code{Expr} is responsible for outputting syntactically correct Haskell code. \code{Expr} objects are the bridge between the tree-like graphical representation of the user interface and the textual Haskell code.
 The implemented types of expressions are standard functions, values and function applications.
 Each of these types of expressions share the fact that they all have a type which can be used by the type checker.
 
@@ -59,6 +67,13 @@ This class holds two expressions where the second expression is applied to the f
 \code{Apply} is limited to the application for a single argument.
 A function with more than one argument is seen as a function with one argument that produces another function.
 This way \code{Apply} allows for creating a tree like structure of a Haskell program.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.4]{Images/classdiagram-expr}
+\label{fig:classdiagram-expr}
+\caption{Class diagram of the Haskell expressions classes}
+\end{figure}
 
 \subsubsection{Types}
 \index{type}
@@ -78,9 +93,21 @@ A type is considered constant when it is clear which type constructor to use. A 
 Composite types, e.g. list and tuple, are represented by respectively \code{ListT} and \code{TupleT} which are subclasses of \code{ConstT}.
 These subclasses handle some validation and Haskell/string representation that is specific to these types.
 
+Distinct Haskell types are represented as class instances, not as the class itself. The different \code{Type} subclasses make it easier to work with the types, and some are necessary in case of compound types like \code{ListT} and \code{TupleT} which are special cases.
+
+Non-variable types can be easily compared. Two instances of the same type are equal (that is, two instances with the same base class and constructor arguments).
+Variable types are only equal if it is the same instance. This is used to avoid confusion between variable types with the same name.
+
 Type classes are represented as \code{TypeClass} instances and can be used as constraints on variable types.
 Each \code{TypeClass} instance keeps a set of constant types that belong to the type class.
 This information is used by the type checker to check whether a variable type is unifyable with a constant type or another variable type.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.4]{Images/classdiagram-type}
+\label{fig:classdiagram-type}
+\caption{Class diagram of the Haskell types classes}
+\end{figure}
 
 \subsection{Environment management}
 
@@ -88,4 +115,4 @@ In Haskell a lot of things depend on the environment, for example the functions 
 Our implementation solves this by introducing an environmet (\code{Env}).
 Objects of this class keep the types of the available functions and the type classes for every type.
 Furthermore, we provide a XML-based catalog where the initial functions and type classes can be configured.
-This catalog also contains information that can be used by the front end, such as documentation.
+This catalog contains information that can be used by the front end, such as documentation as well.
