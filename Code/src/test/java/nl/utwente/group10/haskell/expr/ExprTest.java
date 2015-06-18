@@ -60,7 +60,7 @@ public class ExprTest {
 
         // Test is object is equal after subsequent call and not equal to the result of analyze
         assertTrue(type == this.expr.getType(env));
-        assertFalse(type == this.expr.analyze(env));
+        assertFalse(this.expr instanceof Value || type == this.expr.analyze(env)); // Only valid for non-Value exprs.
     }
 
     @Test(expected = HaskellTypeError.class)
