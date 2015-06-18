@@ -42,7 +42,9 @@ public abstract class Expr extends HaskellObject {
      * @param type The type to cache.
      */
     protected final void setCachedType(final Type type) {
-        this.cachedType = Optional.ofNullable(type);
+        if (!this.cachedType.isPresent() || this.cachedType.get() != type) {
+            this.cachedType = Optional.ofNullable(type);
+        }
     }
 
     /**
