@@ -74,10 +74,10 @@ public class Function extends Expr {
 
     @Override
     public Type analyze(Env env, GenSet genSet) throws HaskellException {
-        Type type = this.expr.analyze(env).prune().getFresh();
+        Type type = this.expr.getType(env).prune().getFresh();
 
         for (int i = this.arguments.size(); i > 0; i--) {
-            type = new FuncT(this.arguments.get(i - 1).analyze(env).getFresh(), type);
+            type = new FuncT(this.arguments.get(i - 1).getType(env).getFresh(), type);
         }
 
         this.setCachedType(type);
