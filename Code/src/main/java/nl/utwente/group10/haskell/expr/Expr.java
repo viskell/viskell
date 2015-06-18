@@ -31,10 +31,18 @@ public abstract class Expr extends HaskellObject {
      */
     public Type getType(Env env) throws HaskellException {
         if (!this.cachedType.isPresent()) {
-            this.cachedType = Optional.of(this.analyze(env));
+            return this.analyze(env);
         }
 
         return this.cachedType.get();
+    }
+
+    /**
+     * Sets the cached type for this expression.
+     * @param type The type to cache.
+     */
+    protected final void setCachedType(final Type type) {
+        this.cachedType = Optional.ofNullable(type);
     }
 
     /**

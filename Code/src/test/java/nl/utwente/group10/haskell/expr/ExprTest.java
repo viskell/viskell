@@ -1,8 +1,5 @@
 package nl.utwente.group10.haskell.expr;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
@@ -11,6 +8,8 @@ import nl.utwente.group10.haskell.type.*;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class ExprTest {
     private final Type alpha = new VarT("a");
@@ -53,6 +52,15 @@ public class ExprTest {
     @Test
     public final void testAnalyze() throws HaskellException {
         assertEquals("[(Int -> Int)]", this.expr.analyze(this.env, this.genSet).prune().toHaskellType());
+    }
+
+    @Test
+    public final void testGetType() throws HaskellException {
+        Type type = this.expr.getType(this.env);
+
+        // Test is object is equal after subsequent call and not equal to the result of analyze
+        assertTrue(type == this.expr.getType(env));
+        assertFalse(type == this.expr.analyze(env));
     }
 
     @Test(expected = HaskellTypeError.class)
