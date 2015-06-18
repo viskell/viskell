@@ -58,6 +58,24 @@
         	<instance name="Float"/>
         	<instance name="Double"/>
         </class>
+        <class name="Show">
+        	<instance name="Ordering"/>
+        	<instance name="Integer"/>
+        	<instance name="Int"/>
+        	<instance name="Char"/>
+        	<instance name="Bool"/>
+        	<instance name="Float"/>
+        	<instance name="Double"/>
+        </class>
+        <class name="Read">
+        	<instance name="Ordering"/>
+        	<instance name="Integer"/>
+        	<instance name="Int"/>
+        	<instance name="Char"/>
+        	<instance name="Bool"/>
+        	<instance name="Float"/>
+        	<instance name="Double"/>
+        </class>
     </classes>
     
     
@@ -486,7 +504,165 @@
         		break, applied to a predicate p and a list xs, returns a tuple where first element is
         		longest prefix (possibly empty) of xs of element that do not satisfy p and second element is the remainder of the list.
         	</function>
+        	<function name="notElem" signature="Eq a => a -> [a] -> Bool">
+        		notElem is the negation of elem.
+        	</function>
+        	<function name="lookup" signature="Eq a => a -> [(a, b)] -> Maybe b">
+        		lookup key assocs looks up a key in an association list.
+        	</function>
+        	<function name="zip" signature="[a] -> [b] -> [(a, b)]">
+        		zip takes two lists and returns a list of corresponding pairs. If one input list is short,
+        		excess elements of the longer list are discarded.
+        	</function>
+        	<function name="zip3" signature="[a] -> [b] -> [b] -> [(a, b, c)]">
+        		zip3 takes three lists and returns a list of triples, analogous to zip.
+        	</function>
+        	<function name="zipWith" signature="(a -> b -> c) -> [a] -> [b] -> [c]">
+        		zipWith generalises zip by zipping with the function given as the first argument, instead of a tupling function.
+        		For example, zipWith (+) is applied to two lists to produce the list of corresponding sums.
+        	</function>
+        	<function name="zipWith3" signature="(a -> b -> c -> d) [a] -> [b] -> [c] -> [d]">
+        		The zipWith3 function takes a function which combines three elements, as well as three
+        		lists and returns a list of their point-wise combination, analogous to zipWith.
+        	</function>
+        	<function name="unzip" signature="[(a, b)] -> ([a], [b])">
+        		unzip transforms a list of pairs into a list of first components and a list of second
+        		components.
+        	</function>
+        	<function name="unzip3" signature="[(a, b, c)] -> ([a], [b], [c])">
+        		the unzip3 function takes a list of triples and returns three lists, analogous to unzip.
+        	</function>
+        	<function name="lines" signature="String -> [String]">
+        		lines breaks a string up into a list of strings at newline characters.
+        		The resulting strings do not contain newlines.
+        	</function>
+        	<function name="words" signature="String -> [String]">
+        		words breaks a string up into a list of words, which were delimited by white space.
+        	</function>
+        	<function name="unlines" signature="[String] -> String">
+	        	unlines is an inverse operation to lines. It joins lines, after appending a
+	        	terminating newline to each.
+        	</function>
+        	<function name="unwords" signature="[String] -> String">
+        		unwords is an inverse operation to words. It joins words with separating spaces.
+        	</function>
         </category>
-        
+        <category name="Converting to and from String">
+        	<function name="showsPrec" signature="Show a => Int -> a -> ShowS">
+        		Convert a value to a readable String.
+        	</function>
+        	<function name="show" signature="Show a => a -> String">
+        		a specialised variant of showsPrec, using precedence context zero, and
+        		returning an ordinary String.
+        	</function>
+        	<function name="showList" signature="Show a => [a] -> ShowS">
+        		The method showList is provided to allow the programmer to give a
+        		specialised way of showing lists of values. For example, this is used by the
+        		predefined Show instance of the Char type, where values of type String
+        		should be shown in double quotes, rather than between square brackets.
+        	</function>
+        	<function name="shows" signature="Show a => a -> ShowS">
+        		equivalent to showsPrec with a precedence of 0.
+        	</function>
+        	<function name="showChar" signature="Char -> ShowS">
+        		utility function converting a Char to a show function that simply prepends the
+        		character unchanged.
+        	</function>
+        	<function name="showString" signature="String -> ShowS">
+        		utility function converting a String to a show function that simply prepends the
+        		string unchanged.
+        	</function>
+        	<function name="showParen" signature="Bool -> ShowS -> ShowS">
+        		utility function that surrounds the inner show function with parentheses when the
+        		Bool parameter is True.
+        	</function>
+        	<function name="readsPrec" signature="Read a => Int -> ReadS a">
+        		attempts to parse a value from the front of the string, returning a list of (parsed
+        		value, remaining string) pairs. If there is no succesful parse, the returned list is
+        		empty.
+        	</function>
+        	<function name="readList" signature="Read a => ReadS [a]">
+        		The method readList is provided to allow the programmer to give a
+        		specialised way of parsing lists of values. For example, this is used by the
+        		predefined Read instance of the Char type, where values of type String
+        		should be are expected to use double quotes, rather than square brackets.
+        	</function>
+        	<function name="reads" signature="Read a => ReadS a">
+        		equivalent to readsPrec with a precedence of 0.
+        	</function>
+        	<function name="readParen" signature="Bool -> ReadS -> ReadS a">
+        		readParen True p parses what p parses, but surrounded with parentheses.
+        		readParen False p parses what p parses, but optionally surrounded with parentheses.
+        	</function>
+        	<function name="read" signature="Read a => String -> a">
+        		the read function reads input from a string, which must be completely consumed by the input process.
+        	</function>
+        	<function name="lex" signature="ReadS String">
+        		the lex function reads a single lexeme from the input, discarding initial white space,
+        		and returning the characters that constitute the lexeme. If the input string contains
+        		only white space, lex returns a single successful 'lexeme' consisting of the empty
+        		string. (Thus lex "" = [("", "")].) If there is no legal lexeme at the beginning of
+        		the input string, lex fails (i.e. returns []).
+        	</function>
+        </category>
+        <category name="Basic Input and Output">
+        	<function name="putChar" signature="Char -> IO ()">
+        		Write a character to the standard output device.
+        	</function>
+        	<function name="putStr" signature="String -> IO ()">
+        		Write a string to the standard output device.
+        	</function>
+        	<function name="putStrLn" signature="String -> IO ()">
+        		The same as putStr, but adds a newline character.
+        	</function>
+        	<function name="print" signature="Show a => a -> IO ()">
+        		The print function outputs a value of any printable type to the standard output
+        		device. Printable types are those that are instances of class Show; print converts
+        		values to strings for output using the show operation and adds a newline.
+        	</function>
+        	<function name="getChar" signature="IO Char">
+        		Read a character from the standard input device.
+        	</function>
+        	<function name="getLine" signature="IO String">
+        		read a line from the standard input device.
+        	</function>
+        	<function name="getContents" signature="IO String">
+        		The getContents operation returns all user input as a single string, which is read
+        		lazily as it is needed.
+        	</function>
+        	<function name="interact" signature="(String -> String) -> IO ()">
+        		The interact function takes a function of type String -> String as its argument.
+        		The entire input from the standard input device is passed to this function as its argument,
+        		and the resulting string is output on the standard output device.
+        	</function>
+        	<function name="readFile" signature="FilePath -> IO String">
+        		The readFile function reads a file and returns the contents of the file as a string.
+        		The file is read lazily, on demand, as with getContents.
+        	</function>
+        	<function name="writeFile" signature="FilePath -> String -> IO ()">
+        		The computation writeFile file str function writes a string str, to the file
+        		file.
+        	</function>
+        	<function name="appendFile" signature="FilePath -> String -> IO ()">
+        		The computation appendFile fils str function appends the string str, to the file
+        		file.
+        	</function>
+        	<function name="readIO" signature="Read a => String -> IO a">
+        		The readIO function is similar to read except that it signals parse failure to the IO
+        		monad instead of terminating the program.
+        	</function>
+        	<function name="readLn" signature="Read a => IO a">
+        		The readLn function combines getLine and readIO
+        	</function>
+        	<function name="ioError" signature="IOError -> IO a">
+        		The Haskell 2010 type for exceptions in the IO monad. Any I/O operation may raise
+        		an IOError instead of returning a result. For a more general type of exception,
+        		including also those that arise in pure code, see Control.Exception.Exception.
+        	</function>
+        	<function name="userError" signature="String -> IOError">
+        		Construct an IOError value with a string describing the error. The fail method of
+        		the IO instance of the Monad class raises a userError.
+        	</function>
+        </category>
     </functions>
 </catalog>
