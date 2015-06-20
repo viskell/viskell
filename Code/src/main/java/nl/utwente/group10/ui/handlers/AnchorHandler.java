@@ -37,13 +37,13 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 		if (event instanceof MouseEvent
 				&& !((MouseEvent) event).isSynthesized()) {
 			MouseEvent mEvent = ((MouseEvent) event);
-			pickResult = mEvent.getPickResult().getIntersectedNode();
+			pickResult = mEvent.getPickResult().getIntersectedNode().getParent();
 			inputId = ConnectionCreationManager.MOUSE_ID;
 			x = mEvent.getSceneX();
 			y = mEvent.getSceneY();
 		} else if (event instanceof TouchEvent) {
 			TouchPoint tp = ((TouchEvent) event).getTouchPoint();
-			pickResult = tp.getPickResult().getIntersectedNode();
+			pickResult = tp.getPickResult().getIntersectedNode().getParent();
 			inputId = tp.getId();
 			x = tp.getSceneX();
 			y = tp.getSceneY();

@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
@@ -18,7 +22,7 @@ import nl.utwente.group10.ui.components.lines.Connection;
  * The primary Connection (if present) is the first element in getConnections().
  * This means that the oldest Connection is the primary connection.
  */
-public abstract class ConnectionAnchor extends Circle implements ComponentLoader {
+public abstract class ConnectionAnchor extends StackPane implements ComponentLoader {
     /** The pane on which this Anchor resides. */
     private CustomUIPane pane;
 
@@ -27,6 +31,11 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
 
     /** The connections this anchor has, can be empty for no connections. */
     private List<Connection> connections;
+    
+    @FXML
+    private Shape visibleAnchor;
+    @FXML
+    private Shape invisibleAnchor;
 
     /**
      * @param block
@@ -40,6 +49,12 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
 
         this.loadFXML("ConnectionAnchor");
         connections = new ArrayList<Connection>();
+        
+        this.setStyle("-fx-border-color: orange;-fx-border-width: 1;");
+    }
+    
+    public Shape getInvisibleAnchor() {
+        return invisibleAnchor;
     }
 
     /**
@@ -186,7 +201,7 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
 
     /** Returns the position of the center of this anchor relative to its pane. */
     public Point2D getCenterInPane() {
-        Point2D scenePos = localToScene(getCenterX(), getCenterY());
+        Point2D scenePos = localToScene(0, 0);
         return getPane().sceneToLocal(scenePos);
     }
 

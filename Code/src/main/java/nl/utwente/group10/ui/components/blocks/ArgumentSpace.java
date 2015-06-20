@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.utwente.group10.ui.components.ComponentLoader;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyDoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -17,37 +23,53 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
-//TODO make FlowPane
-public class ArgumentSpace extends FlowPane implements ComponentLoader{    
+public class ArgumentSpace extends Pane implements ComponentLoader{    
     public static final int INPUT_ID_NONE = -2;
     public static final int INPUT_ID_MOUSE = -1;
     
+    public static final int H_GAP = 10;
+    
+    /**
+     * The index of the bowtie, all inputs with index higher or equal to the
+     * bowtie are be inactive.
+     */
+    private IntegerProperty bowtieIndex;
+    
     private int inputID;
     private FunctionBlock block;
-    private IntegerProperty bowtieIndex;
     @FXML
     private Label rightArgument;
     @FXML
     private Circle knot;
-    private List<Node> leftArguments;
+    private List<Region> leftArguments;
     
     public ArgumentSpace(FunctionBlock block) {
         this.loadFXML("ArgumentSpace");
         
         this.block = block;
         this.inputID = INPUT_ID_NONE;
-        this.bowtieIndex = block.bowtieIndexProperty();
-        leftArguments = new ArrayList<Node>();
-        bowtieIndex.addListener(event -> invalidateBowtieIndex());
+        leftArguments = new ArrayList<Region>();
+        bowtieIndex = new SimpleIntegerProperty(0);
+        bowtieIndex.addListener(event -> invalidateBowtieIndex());        
         
         for (int i = 0; i < block.getAllInputs().size(); i++) {
             Label lbl = new Label(block.getInputSignature(i).toHaskellType());
             lbl.getStyleClass().add("leftArgument");
             leftArguments.add(lbl);
+            centerLayoutVertical(lbl);
+            
+            if (i > 0) {
+                Region prev = leftArguments.get(i-1);
+                lbl.layoutXProperty().bind(prev.layoutXProperty().add(prev.translateXProperty()).add(prev.widthProperty()).add(H_GAP));
+            } else {
+                //lbl.layoutXProperty().bind(knot.radiusProperty().multiply(2).add(H_GAP));
+            }
+            
             this.getChildren().add(lbl);
         }
 
@@ -55,23 +77,41 @@ public class ArgumentSpace extends FlowPane implements ComponentLoader{
         knot.setOnMouseDragged(event -> {knotMoved(event); event.consume();});
         knot.setOnMouseReleased(event -> {knotReleased(INPUT_ID_MOUSE); event.consume();});
 
-        knot.toFront();
         rightArgument.toFront();
-        rightArgument.translateXProperty().bind(knot.translateXProperty());
+        rightArgument.layoutXProperty().bind(knot.layoutXProperty().add(knot.radiusProperty()).add(H_GAP));
+        centerLayoutVertical(rightArgument);
+        
+        knot.toFront();
+        knot.layoutYProperty().bind(this.heightProperty().divide(2));
 
         invalidateBowtieIndex();
-        invalidateArgumentContent();
+        //invalidateArgumentContent();
         
         this.setPrefHeight(50);
-        this.setAlignment(Pos.CENTER_LEFT);
+        this.setMaxHeight(USE_PREF_SIZE);
+        this.prefWidthProperty().bind(getTotalWidthProperty());
+        this.minWidthProperty().bind(getTotalWidthProperty());
+        //this.prefWidthProperty().addListener(p -> System.out.println(this.getPrefWidth()));
+        //TODO: PrefWidth is properly updating, yet the total space allocated to the ArgumentSpace is not.
+        
+        snapBowtie();
+    }
+    
+    public ObservableValue<? extends Number> getTotalWidthProperty() {       
+        return rightArgument.layoutXProperty().add(rightArgument.translateXProperty()).add(rightArgument.widthProperty()).add(H_GAP);
+    }
+    
+    public void centerLayoutVertical(Region region) {
+        region.layoutYProperty().bind(this.heightProperty().divide(2).subtract(region.heightProperty().divide(2)));
     }
     
 
     public double getKnotPos() {
-        return knot.getBoundsInParent().getMaxX() - knot.getBoundsInLocal().getWidth() / 2;
+        return knot.getLayoutX() - knot.getRadius();
     }
     
     private void knotPressed(int inputID) {
+        knot.layoutXProperty().unbind();
         if(this.inputID == INPUT_ID_NONE) {
             this.inputID = inputID;
         } else {
@@ -98,24 +138,15 @@ public class ArgumentSpace extends FlowPane implements ComponentLoader{
     private void knotMoved(int inputID, double sceneX) {
         if(this.inputID == inputID) {
             double translateX = sceneToLocal(sceneX,0).getX();
-
-            double leftBound = leftArguments.get(0).getLayoutX() + knot.getBoundsInLocal().getWidth() / 2;
-            double rightBound = leftArguments.get(leftArguments.size()-1).getBoundsInParent().getMaxX() + knot.getBoundsInLocal().getWidth();
-            double knotPosition = Math.max(leftBound,Math.min(translateX, rightBound));
+            double leftBound = 0 + knot.getRadius();
+            Region leftMostArg = leftArguments.get(leftArguments.size() - 1);
+            double rightBound = leftMostArg.getLayoutX() + leftMostArg.getWidth() + H_GAP + knot.getRadius();
+            double knotPosition = Math.min(Math.max(translateX, leftBound), rightBound);
             
-            /* 
-             * TODO (Visual) BUG:
-             * When the Labels in the leftArgument change text, their size can change
-             * When the size changes, the entire FlowPane to the right of the change gets repositioned.
-             * Since the Knot is to the right of all the labels, the knot's layoutX can change.
-             * Currently when this happens the translateX is not immediately updated.
-             * This has as an effect that the knot is displaced until it gets repositioned again.
-             * (Repositioning happens when dragged or released)
-             */
-            knot.setTranslateX(knotPosition- knot.getLayoutX());
+            knot.setLayoutX(knotPosition);
+            
+            setBowtieIndex((int) Math.round(determineBowtieIndex()));
             invalidateKnotPosition();
-            
-            bowtieIndex.set((int) Math.round(determineBowtieIndex()));
         }
     }
     private double determineBowtieIndex() {
@@ -123,8 +154,8 @@ public class ArgumentSpace extends FlowPane implements ComponentLoader{
                 
         for (int i = 0; i < leftArguments.size(); i++) {
             Node argument = leftArguments.get(i);
-            double min = argument.getBoundsInParent().getMinX();
-            double max = argument.getBoundsInParent().getMaxX();
+            double min = argument.getLayoutX();
+            double max = min + argument.getBoundsInLocal().getWidth();
             
             if (getKnotPos() > max) {
                 bowtieIndex++;
@@ -133,39 +164,22 @@ public class ArgumentSpace extends FlowPane implements ComponentLoader{
                 break;
             }
         }
-        System.out.println(bowtieIndex);
         return bowtieIndex;
     }
     
     public void invalidateKnotPosition() {
-        double knotWidht = knot.getBoundsInLocal().getWidth() + this.getHgap();
         double bti = determineBowtieIndex();
         for (int i = 0; i < leftArguments.size(); i++) {
-            Node node = leftArguments.get(i);
-            double percentage = 1;
-            double offset;
-            if (node.getBoundsInParent().getMaxX() - node.getBoundsInLocal().getWidth() / 2 >= getKnotPos()) {
-                offset = knot.getBoundsInLocal().getWidth() + this.getHgap();
-                if ((int) bti == i) {
-                    percentage = (bti - i) / 0.5;
-                }
-            } else {
-                offset = 0;
-                
-                if ((int) bti == i) {
-                    percentage = (bti - i - 0.5)/0.5;
-                }
-            }
-            node.setTranslateX(offset);            
-
-            //percentage = Math.pow(percentage, 0.4); //Better looking curve
+            Node node = leftArguments.get(i);            
+            double percentage = Math.min(Math.max(bti - i,  0), 1);            
+            percentage = Math.pow(percentage, 0.4); //Better looking curve
             
-            if (percentage > 0.05) {
-                node.setVisible(true);
-            } else {
-                node.setVisible(false);
+            if (node.translateXProperty().isBound()) {
+                node.translateXProperty().unbind();
             }
+            node.setTranslateX((H_GAP +knot.getRadius() * 2) * (1 - percentage));
             
+            node.setVisible(percentage > 0);            
             node.setStyle("-fx-text-fill: rgba(0,0,0," + percentage + ");" 
                         + "-fx-background-color: rgba(255,255,255," + percentage + ");"
                         + "-fx-border-color: rgba(0,0,0," + percentage + ");");
@@ -173,36 +187,30 @@ public class ArgumentSpace extends FlowPane implements ComponentLoader{
     }
     
     public void snapBowtie() {
-        int bti = (int) bowtieIndex.get();
-        double snapToX;
-        if (bti > 0) {
-            Node leftNeighbour = leftArguments.get((int) bti - 1);
-            snapToX = leftNeighbour.getBoundsInParent().getMaxX() + knot.getBoundsInLocal().getWidth() / 2 + this.getHgap();
-        } else {
-            Node leftNeighbour = leftArguments.get(0);
-            snapToX = leftNeighbour.getLayoutX() + knot.getBoundsInLocal().getWidth() / 2;
+        int bti = getBowtieIndex();
+        for (int i = 0; i < leftArguments.size(); i++) {
+            Region arg = leftArguments.get(i);
+            if(bti == i) {
+                arg.translateXProperty().bind(knot.radiusProperty().multiply(2).add(H_GAP));
+            } else {
+                arg.translateXProperty().unbind();
+                arg.setTranslateX(0);
+                if (bti-1 == i) {
+                    knot.layoutXProperty().bind(arg.layoutXProperty().add(arg.widthProperty()).add(knot.radiusProperty()).add(H_GAP));
+                }
+            }
         }
-        knot.setTranslateX(snapToX - knot.getLayoutX());
         
+        //bti-1 == -1, would never occur in the for loop's index
+        if (bti == 0) {
+            knot.setLayoutX(knot.getRadius());
+        }
         invalidateKnotPosition();
     }
     
     public void invalidateBowtieIndex() {
-        /*
-        for (int i = 0; i < leftArguments.size(); i++) {
-            Node node = leftArguments.get(i);
-            ObservableList<String> styleClass = node.getStyleClass();
-            if (i < bowtieIndex.get()) {
-                styleClass.removeAll("transparent");
-                //node.setVisible(true);
-            } else {
-                styleClass.removeAll("transparent");
-                styleClass.add("transparent");
-                //node.setVisible(false);
-            }
-        }
-        */
     }
+    
     public void invalidateArgumentContent() {
         invalidateOutputContent();
         invalidateInputContent();
@@ -211,6 +219,7 @@ public class ArgumentSpace extends FlowPane implements ComponentLoader{
     public void invalidateOutputContent() {
         String text = block.getOutputType().toHaskellType();
         rightArgument.setText(text);
+        
     }
     
     public void invalidateInputContent() {
@@ -228,5 +237,25 @@ public class ArgumentSpace extends FlowPane implements ComponentLoader{
         } else {
             styleClass.removeAll("error");
         }
+    }
+    
+    public Region getInputArgument(int index) {
+        return leftArguments.get(index);
+    }
+    
+    public Region getOutputArgument() {
+        return rightArgument;
+    }
+
+    public void setBowtieIndex(int index) {
+        bowtieIndex.set(index);        
+    }
+    
+    public int getBowtieIndex() {
+        return bowtieIndex.get();        
+    }
+    
+    public IntegerProperty bowtieIndexProperty() {
+        return bowtieIndex;
     }
 }

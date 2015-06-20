@@ -4,10 +4,11 @@
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Pane?>
 <fx:root type="nl.utwente.group10.ui.components.blocks.GraphBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane>
         <top>
-            <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="center"/>
+            <Pane fx:id="inputSpace" maxHeight="0"/>
         </top>
         <center>
             <Pane styleClass="graph, block">

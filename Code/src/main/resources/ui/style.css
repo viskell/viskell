@@ -44,6 +44,8 @@ CustomUIPane {
 }
 
 .argumentSpace {
+    -fx-border-color: red;
+    -fx-border-width: 1;
 }
 
 .argumentSpace Label.leftArgument {

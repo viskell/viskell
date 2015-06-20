@@ -6,7 +6,7 @@
 <fx:root type="nl.utwente.group10.ui.components.blocks.DisplayBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane>
         <top>
-            <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="center"/>
+            <FlowPane fx:id="inputSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="center" maxHeight="0"/>
         </top>
         <center>
         <VBox styleClass="display, block" spacing="12">

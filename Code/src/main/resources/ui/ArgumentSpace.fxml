@@ -3,9 +3,10 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.Group?>
 <?import nl.utwente.group10.ui.components.blocks.ArgumentSpace?>
+<?import javafx.scene.layout.FlowPane?>
 
 
-<fx:root type="nl.utwente.group10.ui.components.blocks.ArgumentSpace" xmlns:fx="http://javafx.com/fxml/1" styleClass="argumentSpace" orientation="horizontal" hgap="10">
+<fx:root type="nl.utwente.group10.ui.components.blocks.ArgumentSpace" xmlns:fx="http://javafx.com/fxml/1" styleClass="argumentSpace">
     <Circle fx:id="knot" radius="10"/>
     <Label fx:id="rightArgument" styleClass="rightArgument"/>
 </fx:root>

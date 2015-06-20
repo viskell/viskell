@@ -27,7 +27,7 @@ public class GraphBlock extends Block implements InputBlock {
     private InputAnchor input;
 
     @FXML
-    private Pane anchorSpace;
+    private Pane inputSpace;
 
     @FXML
     private LineChart<Double, Double> chart;
@@ -44,7 +44,7 @@ public class GraphBlock extends Block implements InputBlock {
         loadFXML("GraphBlock");
 
         input = new InputAnchor(this, pane);
-        anchorSpace.getChildren().setAll(input);
+        inputSpace.getChildren().setAll(input);
     }
 
     @Override

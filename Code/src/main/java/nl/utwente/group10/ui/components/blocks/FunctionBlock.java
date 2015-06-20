@@ -16,6 +16,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
@@ -45,11 +46,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** The inputs for this FunctionBlock. **/
     private List<InputAnchor> inputs;
 
-    /**
-     * The index of the bowtie, all inputs with index higher or equal to the
-     * bowtie are be inactive.
-     */
-    private IntegerProperty bowtieIndex;
 
     private OutputAnchor output;
 
@@ -61,7 +57,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     /** The space containing the input anchor(s). */
     @FXML
-    private Pane anchorSpace;
+    private Pane inputSpace;
 
     /** The space containing the output anchor. */
     @FXML
@@ -90,9 +86,9 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
         this.name = new SimpleStringProperty(name);
         this.type = new SimpleStringProperty(type.toHaskellType());
-        this.bowtieIndex = new SimpleIntegerProperty();
 
         this.loadFXML("FunctionBlock");
+        //((Label) this.lookup("functionTitle")).setText(name);
 
         // Collect argument types
         ArrayList<String> args = new ArrayList<>();
@@ -102,25 +98,37 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             args.add(ft.getArgs()[0].toHaskellType());
             t = ft.getArgs()[1];
         }
-
+        
         this.inputs = new ArrayList<InputAnchor>();
 
         // Create anchors for each argument
         for (int i = 0; i < args.size(); i++) {
             inputs.add(new InputAnchor(this, pane));
-            anchorSpace.getChildren().add(inputs.get(i));
+            inputSpace.getChildren().add(inputs.get(i));
         }
-
+        
+        inputSpace.setStyle("-fx-border-color: green;-fx-border-width: 1;");
+        inputSpace.setMaxHeight(0);
+        inputSpace.toFront();
+        
         // Create an anchor for the result
         output = new OutputAnchor(this, pane);
+        output.layoutXProperty().bind(outputSpace.widthProperty().divide(2));
         outputSpace.getChildren().add(output);
         
         argumentSpace = new ArgumentSpace(this);
+        argumentSpace.setBowtieIndex(getAllInputs().size());
+        argumentSpace.snapBowtie();
         ((Pane) this.lookup("#nestSpace")).getChildren().add(argumentSpace);
-        
 
-        bowtieIndex.addListener(e -> invalidateBowtieIndex());
-        setBowtieIndex(getAllInputs().size());
+        argumentSpace.bowtieIndexProperty().addListener(e -> invalidateBowtieIndex());
+        
+        for (int i = 0; i < inputs.size(); i++) {
+            ObservableValue<? extends Number> property;
+            Region arg = argumentSpace.getInputArgument(i);
+            property = argumentSpace.getParent().layoutXProperty().add(arg.layoutXProperty()).add(arg.translateXProperty()).add(arg.widthProperty().divide(2));
+            inputs.get(i).layoutXProperty().bind(property);
+        }
     }
 
     /**
@@ -145,7 +153,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     public final void setBowtieIndex(int index) {
         if (index >= -1 && index <= getAllInputs().size()) {
-            this.bowtieIndex.set(index);
+            argumentSpace.setBowtieIndex(index);
         } else {
             throw new IndexOutOfBoundsException();
         }
@@ -193,7 +201,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     /** Returns the bowtie index of this FunctionBlock. */
     public final Integer getBowtieIndex() {
-        return bowtieIndex.get();
+        return argumentSpace.bowtieIndexProperty().get();
     }
 
     /** Returns the StringProperty for the name of the function. */
@@ -204,11 +212,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** Returns the StringProperty for the type of the function. */
     public final StringProperty typeProperty() {
         return type;
-    }
-
-    /** Returns the IntegerPorperty for the bowtie index of this FunctionBlock. */
-    public final IntegerProperty bowtieIndexProperty() {
-        return bowtieIndex;
     }
 
     /**

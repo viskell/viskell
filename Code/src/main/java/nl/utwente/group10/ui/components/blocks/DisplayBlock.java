@@ -32,7 +32,7 @@ public class DisplayBlock extends Block implements InputBlock {
 
     /** The space containing the input anchor. */
     @FXML
-    protected Pane anchorSpace;
+    protected Pane inputSpace;
 
     /** The space containing the output anchor. */
     @FXML
@@ -55,7 +55,7 @@ public class DisplayBlock extends Block implements InputBlock {
         this.loadFXML(fxml);
 
         inputAnchor = new InputAnchor(this, pane);
-        anchorSpace.getChildren().add(inputAnchor);
+        inputSpace.getChildren().add(inputAnchor);
     }
 
     /**

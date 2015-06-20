@@ -22,6 +22,7 @@ public class OutputAnchor extends ConnectionAnchor {
      */
     public OutputAnchor(Block block, CustomUIPane pane) {
         super(block, pane);
+        getInvisibleAnchor().setTranslateY(getInvisibleAnchor().getTranslateY() * -1);
         new AnchorHandler(pane.getConnectionCreationManager(), this);
     }
 

@@ -28,7 +28,7 @@ public class RGBBlock extends DisplayBlock {
         g = new InputAnchor(this, pane);
         b = new InputAnchor(this, pane);
 
-        anchorSpace.getChildren().setAll(ImmutableList.of(r, g, b));
+        inputSpace.getChildren().setAll(ImmutableList.of(r, g, b));
     }
 
     private int evaluate(InputAnchor anchor) {

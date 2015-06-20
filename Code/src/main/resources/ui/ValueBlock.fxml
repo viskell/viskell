@@ -1,5 +1,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import nl.utwente.group10.ui.components.blocks.ValueBlock?>
 <fx:root type="nl.utwente.group10.ui.components.blocks.ValueBlock" xmlns:fx="http://javafx.com/fxml/">
@@ -15,7 +16,7 @@
             </BorderPane>
         </center>
         <bottom>
-        <VBox fx:id="outputSpace" alignment = "center"/>
+            <Pane fx:id="outputSpace" maxHeight="0"/>
         </bottom>
     </BorderPane>
 
