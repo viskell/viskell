@@ -142,7 +142,6 @@ public class CustomUIPane extends TactilePane {
      * This is inefficient.
      */
     public final void invalidateAll() {
-        System.out.println("InvalidateAll()!");
         for (Node node : getChildren()) {
             if (node instanceof Block) {
                 ((Block) node).invalidateConnectionState();

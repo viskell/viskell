@@ -48,8 +48,6 @@ public class RGBBlock extends DisplayBlock {
 
         Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(0.5, Color.GREEN), new Stop(1, Color.BLUE)};
         LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
-
-        System.out.println(lg1);
         well.setBackground(new Background(new BackgroundFill(lg1, null, null)));
     }
 
