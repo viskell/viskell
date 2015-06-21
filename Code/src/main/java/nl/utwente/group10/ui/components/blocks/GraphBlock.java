@@ -23,6 +23,7 @@ import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 public class GraphBlock extends Block implements InputBlock {
@@ -99,7 +100,6 @@ public class GraphBlock extends Block implements InputBlock {
         double step = 0.01;
         double min = x.getLowerBound();
         double max = x.getUpperBound();
-
         // Haskell equivalent:
         // putStrLn $ unwords $ map show $ map (id) [1.0,1.1..5.0]
         Expr expr = new Apply(
@@ -116,12 +116,12 @@ public class GraphBlock extends Block implements InputBlock {
                             new Ident("map"),
                             asExpr()
                         ),
-                        new Ident(String.format("[%f,%f..%f]", min, min+step, max))
+                        new Ident(String.format(Locale.US,"[%f,%f..%f]", min, min+step, max))
                     )
                 )
             )
         );
-
+        
         try {
             String results = getPane().getGhciSession().get().pull(expr);
 
