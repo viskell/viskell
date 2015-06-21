@@ -4,10 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.expr.Expr;
@@ -37,6 +41,9 @@ public class DisplayBlock extends Block implements InputBlock {
     /** The space containing the output anchor. */
     @FXML
     protected Pane outputSpace;
+    
+    @FXML
+    protected Pane block;
 
     /**
      * Creates a new instance of DisplayBlock.
@@ -55,7 +62,13 @@ public class DisplayBlock extends Block implements InputBlock {
         this.loadFXML(fxml);
 
         inputAnchor = new InputAnchor(this, pane);
-        inputSpace.getChildren().add(inputAnchor);
+        inputAnchor.layoutXProperty().bind(inputSpace.widthProperty().divide(2));
+        inputSpace.getChildren().add(inputAnchor);        
+        
+        //Weird hack to draw inputSpace above block content
+        BorderPane borderPane = (BorderPane) inputSpace.getParent();
+        borderPane.getChildren().remove(inputSpace);
+        borderPane.setTop(inputSpace);
     }
 
     /**

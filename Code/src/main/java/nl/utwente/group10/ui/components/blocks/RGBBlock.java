@@ -1,9 +1,13 @@
 package nl.utwente.group10.ui.components.blocks;
 
 import com.google.common.collect.ImmutableList;
+
 import javafx.fxml.FXML;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import nl.utwente.group10.ghcj.GhciException;
@@ -27,8 +31,17 @@ public class RGBBlock extends DisplayBlock {
         r = this.getAllInputs().get(0);
         g = new InputAnchor(this, pane);
         b = new InputAnchor(this, pane);
-
+        
+        r.layoutXProperty().bind(inputSpace.widthProperty().divide(3 / 0.5));
+        g.layoutXProperty().bind(inputSpace.widthProperty().divide(3 / 1.5));
+        b.layoutXProperty().bind(inputSpace.widthProperty().divide(3 / 2.5));
+        
         inputSpace.getChildren().setAll(ImmutableList.of(r, g, b));
+        
+        //Weird hack to draw inputSpace above block content
+        BorderPane borderPane = (BorderPane) inputSpace.getParent();
+        borderPane.getChildren().remove(inputSpace);
+        borderPane.setTop(inputSpace);
     }
 
     private int evaluate(InputAnchor anchor) {

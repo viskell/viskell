@@ -2,12 +2,14 @@ package nl.utwente.group10.ui.components.blocks;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
@@ -44,7 +46,13 @@ public class GraphBlock extends Block implements InputBlock {
         loadFXML("GraphBlock");
 
         input = new InputAnchor(this, pane);
+        input.layoutXProperty().bind(inputSpace.widthProperty().divide(2));
         inputSpace.getChildren().setAll(input);
+        
+        //Weird hack to draw inputSpace above block content
+        BorderPane borderPane = (BorderPane) inputSpace.getParent();
+        borderPane.getChildren().remove(inputSpace);
+        borderPane.setTop(inputSpace);
     }
 
     @Override

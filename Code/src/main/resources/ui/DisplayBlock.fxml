@@ -1,21 +1,29 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import nl.utwente.group10.ui.components.blocks.DisplayBlock?>
-<fx:root type="nl.utwente.group10.ui.components.blocks.DisplayBlock" xmlns:fx="http://javafx.com/fxml/">
-    <BorderPane>
-        <top>
-            <FlowPane fx:id="inputSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="center" maxHeight="0"/>
-        </top>
-        <center>
-        <VBox styleClass="display, block" spacing="12">
-            <Label id="label_header" text="OUTPUT" styleClass="header" alignment="center_left" />
-            <Label text="${controller.output}" styleClass="title" alignment="center" />
-        </VBox>
-        </center>
-        <bottom>
-            <VBox fx:id="outputSpace" alignment = "center"/>
-        </bottom>
-    </BorderPane>
+<fx:root type="nl.utwente.group10.ui.components.blocks.DisplayBlock"
+	xmlns:fx="http://javafx.com/fxml/">
+	<BorderPane>
+		<top>
+			<Pane fx:id="inputSpace" maxHeight="0" />
+		</top>
+		<center>
+			<BorderPane fx:id="block" styleClass="display, block"
+				minHeight="75" maxHeight="75" minWidth="150" maxWidth="150">
+				<top>
+					<Label id="label_header" text="OUTPUT" styleClass="header" />
+				</top>
+				<center>
+					<Label text="${controller.output}" styleClass="title" />
+				</center>
+			</BorderPane>
+		</center>
+		<bottom>
+            <Pane fx:id="outputSpace" maxHeight="0" />
+		</bottom>
+	</BorderPane>
 </fx:root>

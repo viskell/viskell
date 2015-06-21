@@ -33,6 +33,9 @@ public class ValueBlock extends Block implements OutputBlock {
     /** The space containing the output anchor. */
     @FXML
     private Pane outputSpace;
+    
+    @FXML
+    private Pane block;
 
     /**
      * @param pane
@@ -43,13 +46,14 @@ public class ValueBlock extends Block implements OutputBlock {
     }
     protected ValueBlock(CustomUIPane pane, String fxml) {
         super(pane);
-
         value = new SimpleStringProperty("5.0");
+        
+        this.loadFXML(fxml);
         output = new OutputAnchor(this, pane);
 
-        this.loadFXML(fxml);
-
         outputSpace.getChildren().add(this.getOutputAnchor());
+        outputSpace.toFront();
+        output.layoutXProperty().bind(outputSpace.widthProperty().divide(2));
     }
 
     /**

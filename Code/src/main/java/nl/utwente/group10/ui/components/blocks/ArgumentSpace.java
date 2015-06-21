@@ -91,7 +91,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
         this.setMaxHeight(USE_PREF_SIZE);
         this.prefWidthProperty().bind(getTotalWidthProperty());
         this.minWidthProperty().bind(getTotalWidthProperty());
-        //this.prefWidthProperty().addListener(p -> System.out.println(this.getPrefWidth()));
+        //this.prefWidthProperty().addListener(p -> block.doLayout()); //Used Parent.setNeedsLayout(), didnt work
         //TODO: PrefWidth is properly updating, yet the total space allocated to the ArgumentSpace is not.
         
         snapBowtie();
