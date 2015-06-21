@@ -3,94 +3,45 @@ CustomUIPane {
     -fx-background-position: 2500 2500;
 }
 
-.invisTouchZone { 
-    -fx-fill: rgba(0,255,0,0);
-}
-
-.anchorPoint {
-    -fx-fill: rgb(255,255,255);
-    -fx-stroke-width: 2;
-    -fx-stroke: rgb(150,150,150);
-}
-
 .block {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-font-family: Titillium;
-    -fx-background-color: aliceblue;
+    -fx-text-fill: black;
     -fx-border-color: black;
     -fx-border-width: 2;
-}
-
-.menu.block {
-    -fx-font-size: 12px;
-}
-
-.menu.block #categorySpace TitledPane {
-    -fx-padding: 3px;
-}
-
-.menu.block #utilSpace {
-    -fx-padding: 3px;
-    -fx-spacing: 6px;
 }
 
 .error .block {
     -fx-border-color: red;
 }
-.selected .block {
+.selected .function.block {
     -fx-background-color: skyblue;
 }
 
-.function.block .title {
-    -fx-text-fill: #333333;
-    -fx-font-size: 14px;
+.block .header{
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
+    -fx-font-family: fantasy;
+    -fx-text-fill: black;
 }
 
-.function.block .description {
-    -fx-font-size: 12px;
-    -fx-padding: 0;
+.block .title {
+    -fx-font-family: sans-serif;
+    -fx-text-fill: black;
+    -fx-font-size: 20px;
+    -fx-font-weight: bolder;
 }
 
-.argumentSpace {
-    -fx-border-color: red;
-    -fx-border-width: 1;
+.block .content {
+    -fx-font-family: sans-serif;
+    -fx-font-size: 25px;
+    -fx-font-weight: normal;
+    -fx-text-fill: black;
 }
 
-.argumentSpace Label.leftArgument {
-    -fx-padding: 0 5 0 5;
-    -fx-font-size: 14px;
-    -fx-font-weight: none;
-    -fx-background-color:white;
-    -fx-border-color: black;
-    -fx-border-width: 1;
-}
-
-.argumentSpace Label.leftArgument.transparent {
-    -fx-padding: 0 5 0 5;
-    -fx-font-size: 14px;
-    -fx-font-weight: none;
-    -fx-text-fill: rgba(0,0,0,0.5);
-    -fx-background-color: rgba(255,255,255,0.5);
-    -fx-border-color: rgba(0,0,0,0.5);
-    -fx-border-width: 1;
-}
-
-
-.argumentSpace Label.rightArgument {
-    -fx-padding: 0 5 0 5;
-    -fx-font-size: 14px;
-    -fx-font-weight: none;
-    -fx-background-color: black;
-    -fx-text-fill: white;
-    -fx-border-color: black;
-    -fx-border-width: 1;
-}
-
-.argumentSpace Label.leftArgument.error {
-    -fx-background-color:pink;
-    -fx-border-color: red;
+.function.block {
+    -fx-background-color: aliceblue;
 }
 
 .value.block {
@@ -105,12 +56,59 @@ CustomUIPane {
     -fx-background-color: #ecf0f1;
 }
 
-.value.block .title, .display.block .title {
-
+.menu.block {
+    -fx-font-size: 12px;
+    -fx-background-color: #ecf0f1;
 }
 
-.block .title {
-    -fx-text-fill: #ecf0f1;
+.menu.block .title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+.menu.block .content {
+    -fx-font-size: 15px;
+    -fx-font-weight: normal;
+}
+
+.menu.block #categorySpace TitledPane {
+    -fx-padding: 3px;
+}
+
+.menu.block #utilSpace {
+    -fx-padding: 3px;
+    -fx-spacing: 6px;
+}
+
+
+
+.argumentSpace {
+}
+
+.argumentSpace Label.leftArgument {
+    -fx-padding: 0 5 0 5;
+    -fx-font-family: sans-serif;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-background-color:white;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+}
+
+.argumentSpace Label.rightArgument {
+    -fx-padding: 0 5 0 5;
+    -fx-font-family: sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-background-color: black;
+    -fx-text-fill: white;
+    -fx-border-color: darkblue;
+    -fx-border-width: 2;
+}
+
+.argumentSpace Label.leftArgument.error {
+    -fx-background-color:pink;
+    -fx-border-color: red;
 }
 
 .connection {
@@ -123,6 +121,15 @@ CustomUIPane {
     -fx-stroke: orange;
 }
 
+.invisTouchZone { 
+    -fx-fill: rgba(0,255,0,0);
+}
+
+.anchorPoint {
+    -fx-fill: rgb(255,255,255);
+    -fx-stroke-width: 2;
+    -fx-stroke: rgb(150,150,150);
+}
 
 .alert {
     -fx-background-color: white;

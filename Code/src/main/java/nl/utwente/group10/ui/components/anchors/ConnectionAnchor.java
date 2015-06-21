@@ -49,8 +49,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
 
         this.loadFXML("ConnectionAnchor");
         connections = new ArrayList<Connection>();
-        
-        this.setStyle("-fx-border-color: orange;-fx-border-width: 3;");
     }
     
     public Shape getInvisibleAnchor() {

@@ -18,7 +18,7 @@
 					<Label id="label_header" text="OUTPUT" styleClass="header" />
 				</top>
 				<center>
-					<Label text="${controller.output}" styleClass="title" />
+					<Label text="${controller.output}" styleClass="content" />
 				</center>
 			</BorderPane>
 		</center>

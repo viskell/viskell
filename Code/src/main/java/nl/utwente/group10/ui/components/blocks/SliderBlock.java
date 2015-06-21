@@ -3,6 +3,7 @@ package nl.utwente.group10.ui.components.blocks;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 import java.io.IOException;
 
@@ -22,7 +23,8 @@ public class SliderBlock extends ValueBlock {
 
         slider.valueProperty().addListener(ev -> {
             setValue(String.valueOf(slider.getValue()));
-            pane.invalidateAll();
+            ConnectionCreationManager.nextConnectionState();
+            this.invalidateConnectionStateCascading();
         });
     }
 }

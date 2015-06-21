@@ -8,10 +8,10 @@
 <fx:root type="nl.utwente.group10.ui.components.blocks.RGBBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane>
         <top>
-            <Pane fx:id="inputSpace" maxHeight="0" style="-fx-border-color: red; -fx-border-width: 1;"/>
+            <Pane fx:id="inputSpace" maxHeight="0"/>
         </top>
         <center>
-                <Pane styleClass="display, block" style="-fx-background-fill: red" minHeight="75" maxHeight="75" minWidth="150" maxWidth="150" fx:id="well" />
+                <Pane styleClass="rgb, block" minHeight="75" maxHeight="75" minWidth="150" maxWidth="150" fx:id="well" />
         </center>
         <bottom>
             <Pane fx:id="outputSpace" maxHeight="0"/>

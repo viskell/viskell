@@ -12,7 +12,7 @@
 					<Label id="label_header" text="VALUE" styleClass="header" />
 				</top>
 				<center>
-					<Label text="${controller.value}" styleClass="title" />
+					<Label text="${controller.value}" styleClass="content" />
 				</center>
 			</BorderPane>
 		</center>

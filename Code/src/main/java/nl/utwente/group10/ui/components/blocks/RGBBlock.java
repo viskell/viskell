@@ -10,6 +10,9 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -42,6 +45,12 @@ public class RGBBlock extends DisplayBlock {
         BorderPane borderPane = (BorderPane) inputSpace.getParent();
         borderPane.getChildren().remove(inputSpace);
         borderPane.setTop(inputSpace);
+
+        Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(0.5, Color.GREEN), new Stop(1, Color.BLUE)};
+        LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
+
+        System.out.println(lg1);
+        well.setBackground(new Background(new BackgroundFill(lg1, null, null)));
     }
 
     private int evaluate(InputAnchor anchor) {

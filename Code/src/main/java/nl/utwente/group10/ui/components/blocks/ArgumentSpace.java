@@ -76,6 +76,10 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
         knot.setOnMousePressed(event -> {knotPressed(INPUT_ID_MOUSE); event.consume();});
         knot.setOnMouseDragged(event -> {knotMoved(event); event.consume();});
         knot.setOnMouseReleased(event -> {knotReleased(INPUT_ID_MOUSE); event.consume();});
+        
+        knot.setOnTouchPressed(event -> {knotPressed(event.getTouchPoint().getId()); event.consume();});
+        knot.setOnTouchMoved(event -> {knotMoved(event); event.consume();});
+        knot.setOnTouchReleased(event -> {knotReleased(event.getTouchPoint().getId()); event.consume();});
 
         rightArgument.toFront();
         rightArgument.layoutXProperty().bind(knot.layoutXProperty().add(knot.radiusProperty()).add(H_GAP));
@@ -129,9 +133,12 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
     }
     
     private void knotMoved(InputEvent event) {
-        if(event instanceof MouseEvent) {
+        if (event instanceof MouseEvent) {
             MouseEvent mEvent = (MouseEvent) event;
             knotMoved(INPUT_ID_MOUSE, mEvent.getSceneX());
+        } else if (event instanceof TouchEvent) {
+            TouchEvent tEvent = (TouchEvent) event;
+            knotMoved(tEvent.getTouchPoint().getId(), tEvent.getTouchPoint().getSceneX());
         }
     }
     
@@ -179,10 +186,8 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
             }
             node.setTranslateX((H_GAP +knot.getRadius() * 2) * (1 - percentage));
             
-            node.setVisible(percentage > 0);            
-            node.setStyle("-fx-text-fill: rgba(0,0,0," + percentage + ");" 
-                        + "-fx-background-color: rgba(255,255,255," + percentage + ");"
-                        + "-fx-border-color: rgba(0,0,0," + percentage + ");");
+            node.setOpacity(percentage);
+            node.setVisible(percentage > 0);
         }
     }
     

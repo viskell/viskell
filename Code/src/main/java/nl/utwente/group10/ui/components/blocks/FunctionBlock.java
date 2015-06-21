@@ -106,9 +106,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             inputs.add(new InputAnchor(this, pane));
             inputSpace.getChildren().add(inputs.get(i));
         }
-
-        this.setStyle("-fx-border-color: white;-fx-border-width: 1;");
-        inputSpace.setStyle("-fx-border-color: green;-fx-border-width: 1;");
+        
         inputSpace.setMaxHeight(0);
         inputSpace.toFront();
         
