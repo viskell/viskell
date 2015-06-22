@@ -26,14 +26,14 @@ CustomUIPane {
 }
 
 .block .title {
-    -fx-font-family: sans-serif;
+    -fx-font-family: Titillium;
     -fx-text-fill: black;
     -fx-font-size: 20px;
     -fx-font-weight: bolder;
 }
 
 .block .content {
-    -fx-font-family: sans-serif;
+    -fx-font-family: Titillium;
     -fx-font-size: 25px;
     -fx-font-weight: normal;
     -fx-text-fill: black;
@@ -44,10 +44,12 @@ CustomUIPane {
 }
 
 .value.block {
+	-fx-padding: 0 20 0 20;
     -fx-background-color: #F07818;
 }
 
 .display.block {
+	-fx-padding: 20 10 0 10;
     -fx-background-color: #F0A830;
 }
 
@@ -87,7 +89,7 @@ CustomUIPane {
 
 .argumentSpace Label.leftArgument {
     -fx-padding: 0 5 0 5;
-    -fx-font-family: sans-serif;
+    -fx-font-family: Titillium;
     -fx-text-fill: black;
     -fx-font-size: 14px;
     -fx-font-weight: normal;
@@ -97,7 +99,7 @@ CustomUIPane {
 
 .argumentSpace Label.rightArgument {
     -fx-padding: 0 5 0 5;
-    -fx-font-family: sans-serif;
+    -fx-font-family: Titillium;
     -fx-font-size: 14px;
     -fx-font-weight: normal;
     -fx-text-fill: white;
