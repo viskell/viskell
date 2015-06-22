@@ -61,8 +61,8 @@ CustomUIPane {
 }
 
 .display.block {
-	-fx-padding: 20 10 0 10;
     -fx-background-color: #8A9B0F;
+    -fx-text-alignment: center;
 }
 
 .graph.block {
@@ -197,6 +197,7 @@ CustomUIPane {
 
 LineChart {
     -fx-font-size: 14px;
+    -fx-background-color: #8A9B0F;
 }
 
 .zoomButtons Button {
