@@ -81,7 +81,7 @@
     
     <functions>
         <category name="Basic">
-        	<function name="(&&)" signature="Bool -> Bool -> Bool">
+        	<function name="(&amp;&amp;)" signature="Bool -> Bool -> Bool">
 				and
             </function>
         	<function name="(||)" signature="Bool -> Bool -> Bool">
@@ -113,10 +113,10 @@
         	<function name="(/=)" signature="Eq a => a -> a -> Bool"></function>
         </category>
         <category name="Ordered Equality">
-        	<function name="(<)" signature="Ord a => a -> a -> Bool"></function>
-        	<function name="(<=)" signature="Ord a => a -> a -> Bool"></function>
-        	<function name="(>)" signature="Ord a => a -> a -> Bool"></function>
-        	<function name="(>=)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="(&lt;)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="(&lt;=)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="(&gt;)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="(&gt;=)" signature="Ord a => a -> a -> Bool"></function>
         	<function name="max" signature="Ord a => a -> a -> a"></function>
         	<function name="min" signature="Ord a => a -> a -> a"></function>
         </category>
@@ -242,7 +242,7 @@
         		The function decodeFloat applied to a real floating-point number returns the significand expressed as an
         		Integer and an appropriately scaled exponent (an Int). If decodeFloat x yields (m, n), then x is equal in value to m*b^^n,
         		where b is the floating-point radix, and furthermore, either m and n are both zero or else b^(d-1)
-        		<= abs m < b^d, where d is the value of floatDigits x. In particular, decodeFloat 0 = (0,0). If the type contains a
+        		&lt;= abs m &lt; b^d, where d is the value of floatDigits x. In particular, decodeFloat 0 = (0,0). If the type contains a
         		negative zero, also decodeFloat (-0.0) = (0,0). The result of decodeFloat x is unpecified if either of isNaN or 
         		is Infinite x is True.
         	</function>
@@ -306,7 +306,7 @@
         		y is also a factor; for example gcd 4 2 = 2, gcd (-4) 6 = 2, gcd 0 4 = 4. gcd 0 0 
         		= 0. (That is, the common divisor that is "greatest" in the divisibility preordering.)
 
-				Note: Since for signed fixed-width integer types, abs minBound < 0, the result may be 
+				Note: Since for signed fixed-width integer types, abs minBound &lt; 0, the result may be
 				negative if one of the arguments is minBound (and necessarily is if the other is 0 or 
 				minBound) for such types.
         	</function>
@@ -450,7 +450,7 @@
         	<function name="all" signature="(a -> Bool) -> [a] -> Bool">
         		Determines whether all elements of the structure satisfy the pradicate.
         	</function>
-        	<function name="concat" siganture="[[a]] -> [a]">
+        	<function name="concat" signature="[[a]] -> [a]">
         		The concatenation of all the elements of a container of lists.
         	</function>
         	<function name="concatMap" signature="([a] -> [b]) -> [a] -> [b]">
