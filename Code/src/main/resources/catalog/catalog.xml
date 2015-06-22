@@ -357,7 +357,7 @@
         		optimized for structures that are similar to cons-lists, because there is no general way to
         		do better.
         	</function>
-        	<function name="elem" signature="Eq a => a - [a] -> Bool">
+        	<function name="elem" signature="Eq a => a -> [a] -> Bool">
         		Does the element occur in the structure?
         	</function>
         	<function name="maximum" signature="Ord a => [a] -> a">
@@ -468,7 +468,7 @@
         	<function name="scanl" signature="(b -> a -> b) -> b -> [a] -> [b]">
         		scanl is similar to foldl, but returns a list of successive reduced values from the left.
         	</function>
-        	<function name="scanl1" signature="(a -> a -> a) -> [a] -> -[a]">
+        	<function name="scanl1" signature="(a -> a -> a) -> [a] -> [a]">
         		scanl1 is a variant of scanl that has no starting value argument.
         	</function>
         	<function name="scanr" signature="(a -> b -> b) -> b -> [a] -> [b]">
