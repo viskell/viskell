@@ -111,8 +111,6 @@
         <category name="Equality">
         	<function name="(==)" signature="Eq a => a -> a -> Bool"></function>
         	<function name="(/=)" signature="Eq a => a -> a -> Bool"></function>
-        </category>
-        <category name="Ordered Equality">
         	<function name="(&lt;)" signature="Ord a => a -> a -> Bool"></function>
         	<function name="(&lt;=)" signature="Ord a => a -> a -> Bool"></function>
         	<function name="(&gt;)" signature="Ord a => a -> a -> Bool"></function>
@@ -238,45 +236,6 @@
         	<function name="floor" signature="(RealFrac a, Integral b) => a -> b">
         		floor x returns the greatest integer not greater than x.
         	</function>
-        	<function name="floatRadix" signature="RealFloat a => a -> Integer">
-        		a constant function, returning the radix of the representation (often 2).
-        	</function>
-        	<function name="floatDigits" signature=" RealFloat a => a -> Int">
-        		a constant function, returning the number of digits of floatRadix in the significand.
-        	</function>
-        	<function name="floatRange" signature="RealFloat a => a -> (Int, Int)">
-        		a constant function, returning the lowest and highest values the exponent may assume.
-        	</function>
-        	<function name="decodeFloat" signature="RealFloat a => a -> (Integer, Int)">
-        		The function decodeFloat applied to a real floating-point number returns the significand expressed as an
-        		Integer and an appropriately scaled exponent (an Int). If decodeFloat x yields (m, n), then x is equal in value to m*b^^n,
-        		where b is the floating-point radix, and furthermore, either m and n are both zero or else b^(d-1)
-        		&lt;= abs m &lt; b^d, where d is the value of floatDigits x. In particular, decodeFloat 0 = (0,0). If the type contains a
-        		negative zero, also decodeFloat (-0.0) = (0,0). The result of decodeFloat x is unpecified if either of isNaN or 
-        		is Infinite x is True.
-        	</function>
-        	<function name="encodeFloat" signature="RealFloat a => Integer -> Int -> a">
-        		encodeFloat performs the inverse of decodeFloat in the sense that for infinite x with
-        		the exception of -0.0, uncurry encodeFloat (decodeFloat x) = x.
-        		encodeFloat m n is one of the two closest representable floating-point numbers to
-        		m*b^^n (or +Infinity or -Infinity if overflow occurs); usually the closer, but if m contains too
-        		many bits, the result may be rounded in the wrong direction.
-        	</function>
-        	<function name="exponent" signature="RealFloat a => a -> Int">
-        		exponent corresponds to the second component of decodeFloat. exponent 0 = 
-        		0 and for finite nonzero x, exponent x = snd (decodeFloat x) + 
-        		floatDigits x. If x is a finite floating-point number, it is equal in value to 
-        		significand x * b ^^ exponent x, where b is the floating-point radix. The 
-        		behaviour is unspecified on infinite or NaN values.
-        	</function>
-        	<function name="significand" signature="RealFloat a => a -> a">
-        		The first component of decodeFloat, scaled to lie in the open interval (-1,1), either
-        		 0.0 or of absolute value >= 1/b, where b is the floating-point radix. The behaviour is 
-        		 unspecified on infinite or NaN values.
-        	</function>
-        	<function name="scaleFloat" signature="RealFloat a => Int -> a -> a">
-        		multiplies a floating-point number by an integer power of the radix.
-        	</function>
         	<function name="isNaN" signature="RealFloat a => a -> Bool">
         		True if the argument is an IEEE "not-a-number" (NaN) value.
         	</function>
@@ -300,13 +259,6 @@
         		1, with y in a type that is RealFloat, should return the same value as atan y. A 
         		default definition of atan2 is provided, but implementors can provide a more accurate 
         		implementation.
-        	</function>
-        	<function name="subtract" signature="Num a => a -> a -> a">
-        		the same as flip (-).
-        		
-        		Because - is treated specially in the Haskell grammar, (- e) is not a section, but an 
-        		application of prefix negation. However, (subtract exp) is equivalent to the disallowed 
-        		section.
         	</function>
         	<function name="even" signature="Integral a => a -> Bool"></function>
         	<function name="odd" signature="Integral a => a -> Bool"></function>
@@ -387,7 +339,7 @@
         		flip f takes its (first) two arguments in the reverse order of f.
         	</function>
         	<function name="($)" signature="(a -> b) -> a -> b">
-        		Application operator. This operator is redundant, since ordinary application (f x) means
+        		Application operator. This operator is used to apply user defined functions, since ordinary application (f x) means
         		the same as (f $ x). However, $ has low, right-associative binding precedence, so it 
         		sometimes allows parentheses to be omitted.
         	</function>
@@ -399,9 +351,6 @@
         		its typing forces its first argument (which is usually overloaded) to have the same type as the
         		second.
         	</function>
-        	<function name="error" signature="[Char] -> a">
-        		error stops execution and displays an error message.
-        	</function> 
         	<function name="undefined" signature="a">
         		A special case of error. It is expected that compilers will recognize this and insert error 
         		messages which are more appropriate to the context in which undefined appears.
