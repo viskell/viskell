@@ -506,62 +506,13 @@
         	</function>
         </category>
         <category name="Converting to and from String">
-        	<function name="showsPrec" signature="Show a => Int -> a -> ShowS">
-        		Convert a value to a readable String.
-        	</function>
         	<function name="show" signature="Show a => a -> String">
         		a specialised variant of showsPrec, using precedence context zero, and
         		returning an ordinary String.
         	</function>
-        	<function name="showList" signature="Show a => [a] -> ShowS">
-        		The method showList is provided to allow the programmer to give a
-        		specialised way of showing lists of values. For example, this is used by the
-        		predefined Show instance of the Char type, where values of type String
-        		should be shown in double quotes, rather than between square brackets.
-        	</function>
-        	<function name="shows" signature="Show a => a -> ShowS">
-        		equivalent to showsPrec with a precedence of 0.
-        	</function>
-        	<function name="showChar" signature="Char -> ShowS">
-        		utility function converting a Char to a show function that simply prepends the
-        		character unchanged.
-        	</function>
-        	<function name="showString" signature="String -> ShowS">
-        		utility function converting a String to a show function that simply prepends the
-        		string unchanged.
-        	</function>
-        	<function name="showParen" signature="Bool -> ShowS -> ShowS">
-        		utility function that surrounds the inner show function with parentheses when the
-        		Bool parameter is True.
-        	</function>
-        	<function name="readsPrec" signature="Read a => Int -> ReadS a">
-        		attempts to parse a value from the front of the string, returning a list of (parsed
-        		value, remaining string) pairs. If there is no succesful parse, the returned list is
-        		empty.
-        	</function>
-        	<function name="readList" signature="Read a => ReadS [a]">
-        		The method readList is provided to allow the programmer to give a
-        		specialised way of parsing lists of values. For example, this is used by the
-        		predefined Read instance of the Char type, where values of type String
-        		should be are expected to use double quotes, rather than square brackets.
-        	</function>
-        	<function name="reads" signature="Read a => ReadS a">
-        		equivalent to readsPrec with a precedence of 0.
-        	</function>
-        	<function name="readParen" signature="Bool -> ReadS -> ReadS a">
-        		readParen True p parses what p parses, but surrounded with parentheses.
-        		readParen False p parses what p parses, but optionally surrounded with parentheses.
-        	</function>
         	<function name="read" signature="Read a => String -> a">
         		the read function reads input from a string, which must be completely consumed by the input process.
         	</function>
-			<function name="lex" signature="ReadS String">
-				the lex function reads a single lexeme from the input, discarding initial white space,
-				and returning the characters that constitute the lexeme. If the input string contains
-				only white space, lex returns a single successful 'lexeme' consisting of the empty
-				string. (Thus lex "" = [("", "")].) If there is no legal lexeme at the beginning of
-				the input string, lex fails (i.e. returns []).
-			</function>
         </category>
     </functions>
 </catalog>
