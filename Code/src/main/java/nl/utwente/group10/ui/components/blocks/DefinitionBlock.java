@@ -6,15 +6,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.expr.*;
-import nl.utwente.group10.haskell.hindley.HindleyMilner;
-import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
-import org.codehaus.plexus.util.cli.Arg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +24,6 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
     }
 
     @Override
-    public Type getOutputType(Env env) {
-        return type;
-    }
-
-    @Override
     public Type getOutputSignature(Env env) {
         return type;
     }
@@ -39,31 +31,6 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
     @Override
     public Type getInputSignature(InputAnchor input) {
         return resType;
-    }
-
-    @Override
-    public Type getInputSignature(int index) {
-        return resType;
-    }
-
-    @Override
-    public Type getInputType(InputAnchor input) {
-        return resType;
-    }
-
-    @Override
-    public Type getInputType(int index) {
-        return resType;
-    }
-
-    @Override
-    public List<InputAnchor> getAllInputs() {
-        return ImmutableList.of();
-    }
-
-    @Override
-    public List<InputAnchor> getActiveInputs() {
-        return ImmutableList.of();
     }
 
     private class ArgumentBlock extends Block implements OutputBlock {
@@ -94,17 +61,10 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
         }
 
         @Override
-        public Type getOutputType(Env env) {
-            return type;
-        }
-
-        @Override
         public Type getOutputSignature(Env env) {
             return type;
         }
     }
-    /** The Anchor that is used as input. */
-    private List<InputAnchor> inputs;
 
     @FXML private Pane argSpace;
     @FXML private Pane resSpace;
