@@ -12,10 +12,10 @@
 			<Pane fx:id="inputSpace" maxHeight="0" />
 		</top>
 		<center>
-			<BorderPane fx:id="block" styleClass="display, block"
+			<BorderPane fx:id="block" styleClass="display, block" 
 				minHeight="75" maxHeight="75" minWidth="150" maxWidth="150">
 				<top>
-					<Label id="label_header" text="OUTPUT" styleClass="header" />
+					<Label id="label_header" text="OUTPUT" styleClass="header"/>
 				</top>
 				<center>
 					<Label text="${controller.output}" styleClass="content" />

@@ -14,9 +14,6 @@ CustomUIPane {
 .error .block {
     -fx-border-color: red;
 }
-.selected .function.block {
-    -fx-background-color: #3C6054;
-	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);}
 
 .block .header{
     -fx-font-size: 20px;
@@ -39,18 +36,33 @@ CustomUIPane {
     -fx-text-fill: black;
 }
 
+.selected .function.block {
+    -fx-background-color: #BA6602;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
 .function.block {
-    -fx-background-color: #78C0A8;
+    -fx-background-color: #E97F02;
+}
+
+.selected .value.block {
+	-fx-background-color: #971140;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);	
 }
 
 .value.block {
 	-fx-padding: 0 20 0 20;
-    -fx-background-color: #F07818;
+    -fx-background-color: #BD1550;
+}
+
+.selected .display.block {
+	-fx-background-color: #6E7C0C;
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 .display.block {
 	-fx-padding: 20 10 0 10;
-    -fx-background-color: #F0A830;
+    -fx-background-color: #8A9B0F;
 }
 
 .graph.block {
@@ -59,18 +71,40 @@ CustomUIPane {
 
 .menu.block {
     -fx-font-size: 12px;
-    -fx-background-color: #5E412F;
+    -fx-background-color: #490A3D;
 }
 
 .menu.block .title {
     -fx-font-size: 15px;
     -fx-font-weight: bold;
     -fx-font-color: #FCEBB6;
+    -fx-background-color: #A4849E;	
+}
+
+.menu.block .title:hover {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-font-color: #FCEBB6;
+    -fx-background-color: #926C8B;
+}
+
+
+
+.menu.block .title .arrow-button .arrow{
+    -fx-background-color: #EDE6EC;
 }
 
 .menu.block .content {
     -fx-font-size: 15px;
     -fx-font-weight: normal;
+}
+
+.menu.block Button {
+	-fx-background-color: #A4849E;
+}
+
+.menu.block Button:hover {
+	-fx-background-color: #926C8B;
 }
 
 .menu.block #categorySpace TitledPane {
@@ -79,10 +113,16 @@ CustomUIPane {
 
 .menu.block #utilSpace {
     -fx-padding: 3px;
-    -fx-spacing: 6px;    
+    -fx-spacing: 6px;  
 }
 
+.menu.block .list-cell:even {
+	-fx-background-color: #DBCED8;	
+}
 
+.menu.block .list-cell:odd {
+	-fx-background-color: #C8B6C5;	
+}
 
 .argumentSpace {
 }
