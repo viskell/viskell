@@ -32,8 +32,10 @@ public class Ident extends Expr {
         // THEN the type of this expr is x.
         Optional<Type> type = env.getFreshExprType(this.name);
         if (type.isPresent()) {
+            this.setCachedType(type.get());
             return type.get();
         } else {
+            this.setCachedType(null);
             Expr.logger.warning(String.format("Expression %s is not in the environment, but it is assumed to be.", this));
             throw new HaskellException("Expression not in environment", this);
         }

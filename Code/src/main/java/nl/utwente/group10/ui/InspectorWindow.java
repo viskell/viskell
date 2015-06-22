@@ -70,9 +70,8 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
     private void walk(TreeItem<String> treeItem, Expr expr) {
         String type;
 
-        // TODO: Would rather *not* call analyze here as analyze is destructive
         try {
-            type = expr.analyze(pane.getEnvInstance()).prune().toHaskellType();
+            type = expr.getType(pane.getEnvInstance()).prune().toHaskellType();
         } catch (HaskellException e) {
             type = "?";
         }
