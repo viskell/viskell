@@ -92,6 +92,7 @@ CustomUIPane {
 
 .menu.block .title .arrow-button .arrow{
     -fx-background-color: #EDE6EC;
+    -fx-focus-color: white;
 }
 
 .menu.block .content {
