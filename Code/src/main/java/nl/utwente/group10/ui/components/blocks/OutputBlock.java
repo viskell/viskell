@@ -9,7 +9,7 @@ public interface OutputBlock {
     /**
      * @return the output Anchor for this Block
      */
-    public OutputAnchor getOutputAnchor();
+    OutputAnchor getOutputAnchor();
 
     /*
      * Signature = non unified type, ie: a->b
@@ -24,14 +24,12 @@ public interface OutputBlock {
     /**
      * @return The current output type of the block.
      */
-    Type getOutputType();
-
-    Type getOutputType(Env env);
+    default Type getOutputType(Env env) {
+        return getOutputSignature(env);
+    }
 
     /**
      * @return The output type as specified by the function's signature.
      */
-    Type getOutputSignature();
-
     Type getOutputSignature(Env env);
 }

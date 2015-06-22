@@ -107,43 +107,19 @@ public class DisplayBlock extends Block implements InputBlock {
         if(anchor.getPrimaryOppositeAnchor().isPresent()) {
             return anchor.getPrimaryOppositeAnchor().get().getType();
         } else {
-            return getInputSignature();
+            return getInputSignature(anchor);
         }
     }
 
-    private Type getInputSignature() {
+    @Override
+    public Type getInputSignature(InputAnchor anchor) {
         // Return the type 'a', that matches anything.
         // In the future this should probably be changed to '(Show a)'
         return HindleyMilner.makeVariable();
     }
 
     @Override
-    public Type getInputSignature(InputAnchor input) {
-        return getInputSignature();
-    }
-
-    @Override
-    public Type getInputSignature(int index) {
-        return getInputSignature();
-    }
-
-    @Override
-    public Type getInputType(int index) {
-        return getInputSignature();
-    }
-
-    @Override
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(inputAnchor);
-    }
-
-    @Override
-    public List<InputAnchor> getActiveInputs() {
-        return getAllInputs();
-    }
-
-    @Override
-    public int getInputIndex(InputAnchor anchor) {
-        return 0;
     }
 }
