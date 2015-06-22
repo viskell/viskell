@@ -147,6 +147,15 @@
         	</function>
         </category>
         <category name="Numeric types">
+			<function name="(+)" signature="Num a => a -> a -> a">
+				Mathematical addition.
+			</function>
+			<function name="(*)" signature="Num a => a -> a -> a">
+				Mathematical multiplication.
+			</function>
+			<function name="(-)" signature="Num a => a -> a -> a">
+				Mathematical subtraction.
+			</function>
         	<function name="negate" signature="Num a => a -> a">
         		Unary negation.
         	</function>
@@ -596,72 +605,6 @@
         	</function>
         	<function name="read" signature="Read a => String -> a">
         		the read function reads input from a string, which must be completely consumed by the input process.
-        	</function>
-        	<function name="lex" signature="ReadS String">
-        		the lex function reads a single lexeme from the input, discarding initial white space,
-        		and returning the characters that constitute the lexeme. If the input string contains
-        		only white space, lex returns a single successful 'lexeme' consisting of the empty
-        		string. (Thus lex "" = [("", "")].) If there is no legal lexeme at the beginning of
-        		the input string, lex fails (i.e. returns []).
-        	</function>
-        </category>
-        <category name="Basic Input and Output">
-        	<function name="putChar" signature="Char -> IO ()">
-        		Write a character to the standard output device.
-        	</function>
-        	<function name="putStr" signature="String -> IO ()">
-        		Write a string to the standard output device.
-        	</function>
-        	<function name="putStrLn" signature="String -> IO ()">
-        		The same as putStr, but adds a newline character.
-        	</function>
-        	<function name="print" signature="Show a => a -> IO ()">
-        		The print function outputs a value of any printable type to the standard output
-        		device. Printable types are those that are instances of class Show; print converts
-        		values to strings for output using the show operation and adds a newline.
-        	</function>
-        	<function name="getChar" signature="IO Char">
-        		Read a character from the standard input device.
-        	</function>
-        	<function name="getLine" signature="IO String">
-        		read a line from the standard input device.
-        	</function>
-        	<function name="getContents" signature="IO String">
-        		The getContents operation returns all user input as a single string, which is read
-        		lazily as it is needed.
-        	</function>
-        	<function name="interact" signature="(String -> String) -> IO ()">
-        		The interact function takes a function of type String -> String as its argument.
-        		The entire input from the standard input device is passed to this function as its argument,
-        		and the resulting string is output on the standard output device.
-        	</function>
-        	<function name="readFile" signature="FilePath -> IO String">
-        		The readFile function reads a file and returns the contents of the file as a string.
-        		The file is read lazily, on demand, as with getContents.
-        	</function>
-        	<function name="writeFile" signature="FilePath -> String -> IO ()">
-        		The computation writeFile file str function writes a string str, to the file
-        		file.
-        	</function>
-        	<function name="appendFile" signature="FilePath -> String -> IO ()">
-        		The computation appendFile fils str function appends the string str, to the file
-        		file.
-        	</function>
-        	<function name="readIO" signature="Read a => String -> IO a">
-        		The readIO function is similar to read except that it signals parse failure to the IO
-        		monad instead of terminating the program.
-        	</function>
-        	<function name="readLn" signature="Read a => IO a">
-        		The readLn function combines getLine and readIO
-        	</function>
-        	<function name="ioError" signature="IOError -> IO a">
-        		The Haskell 2010 type for exceptions in the IO monad. Any I/O operation may raise
-        		an IOError instead of returning a result. For a more general type of exception,
-        		including also those that arise in pure code, see Control.Exception.Exception.
-        	</function>
-        	<function name="userError" signature="String -> IOError">
-        		Construct an IOError value with a string describing the error. The fail method of
-        		the IO instance of the Monad class raises a userError.
         	</function>
         </category>
     </functions>
