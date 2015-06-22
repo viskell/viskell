@@ -8,7 +8,6 @@ CustomUIPane {
     -fx-font-weight: bold;
     -fx-font-family: Titillium;
     -fx-text-fill: black;
-    -fx-border-color: black;
     -fx-border-width: 2;
 }
 
@@ -16,7 +15,8 @@ CustomUIPane {
     -fx-border-color: red;
 }
 .selected .function.block {
-    -fx-background-color: skyblue;
+    -fx-background-color: #3C6054;
+    -fx-border-color: black;
 }
 
 .block .header{
@@ -41,15 +41,15 @@ CustomUIPane {
 }
 
 .function.block {
-    -fx-background-color: aliceblue;
+    -fx-background-color: #78C0A8;
 }
 
 .value.block {
-    -fx-background-color: #8e44ad;
+    -fx-background-color: #F07818;
 }
 
 .display.block {
-    -fx-background-color: #c0392b;
+    -fx-background-color: #F0A830;
 }
 
 .graph.block {
@@ -58,25 +58,27 @@ CustomUIPane {
 
 .menu.block {
     -fx-font-size: 12px;
-    -fx-background-color: #ecf0f1;
+    -fx-background-color: #5E412F;
 }
 
 .menu.block .title {
     -fx-font-size: 15px;
     -fx-font-weight: bold;
+    -fx-font-color: #FCEBB6;
 }
+
 .menu.block .content {
     -fx-font-size: 15px;
     -fx-font-weight: normal;
 }
 
 .menu.block #categorySpace TitledPane {
-    -fx-padding: 3px;
+    -fx-padding: 3px;  
 }
 
 .menu.block #utilSpace {
     -fx-padding: 3px;
-    -fx-spacing: 6px;
+    -fx-spacing: 6px;    
 }
 
 
@@ -90,8 +92,7 @@ CustomUIPane {
     -fx-text-fill: black;
     -fx-font-size: 14px;
     -fx-font-weight: normal;
-    -fx-background-color:white;
-    -fx-border-color: black;
+    -fx-background-color: white;
     -fx-border-width: 1;
 }
 
@@ -100,25 +101,25 @@ CustomUIPane {
     -fx-font-family: sans-serif;
     -fx-font-size: 14px;
     -fx-font-weight: normal;
-    -fx-background-color: black;
     -fx-text-fill: white;
-    -fx-border-color: darkblue;
+    -fx-background-color: black;
     -fx-border-width: 2;
 }
 
 .argumentSpace Label.leftArgument.error {
-    -fx-background-color:pink;
+    -fx-background-color:red;
     -fx-border-color: red;
+    -fx-text-fill: white;
 }
 
 .connection {
     -fx-stroke-width: 3px;
-    -fx-stroke: white;
+    -fx-stroke: #FCEBB6;
     -fx-fill: null;
 }
 
 .connection.error {
-    -fx-stroke: orange;
+    -fx-stroke: red;
 }
 
 .invisTouchZone { 
@@ -126,9 +127,9 @@ CustomUIPane {
 }
 
 .anchorPoint {
-    -fx-fill: rgb(255,255,255);
+    -fx-fill: black;
     -fx-stroke-width: 2;
-    -fx-stroke: rgb(150,150,150);
+    -fx-stroke: black;
 }
 
 .alert {
