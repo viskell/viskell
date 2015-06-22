@@ -606,6 +606,13 @@
         	<function name="read" signature="Read a => String -> a">
         		the read function reads input from a string, which must be completely consumed by the input process.
         	</function>
+			<function name="lex" signature="ReadS String">
+				the lex function reads a single lexeme from the input, discarding initial white space,
+				and returning the characters that constitute the lexeme. If the input string contains
+				only white space, lex returns a single successful 'lexeme' consisting of the empty
+				string. (Thus lex "" = [("", "")].) If there is no legal lexeme at the beginning of
+				the input string, lex fails (i.e. returns []).
+			</function>
         </category>
     </functions>
 </catalog>
