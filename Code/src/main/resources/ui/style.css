@@ -16,8 +16,7 @@ CustomUIPane {
 }
 .selected .function.block {
     -fx-background-color: #3C6054;
-    -fx-border-color: black;
-}
+	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);}
 
 .block .header{
     -fx-font-size: 20px;
