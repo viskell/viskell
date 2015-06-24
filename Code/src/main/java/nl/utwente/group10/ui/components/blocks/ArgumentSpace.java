@@ -3,30 +3,20 @@ package nl.utwente.group10.ui.components.blocks;
 import java.util.ArrayList;
 import java.util.List;
 
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.ComponentLoader;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ReadOnlyDoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 
 /**
  * Custom Pane that displays function's input and output and a knot to be able
@@ -43,7 +33,12 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
     /**
      * Horizontal space to keep between elements in ArgumentSpace.
      */
-    public static final int H_GAP = 10;
+    public static final double H_GAP = 10;
+    
+    /**
+     * Vertical height of the ArgumentSpace.
+     */
+    public static final double HEIGHT = 50;
     
     /**
      * The block to which this ArgumentSpace belongs.
@@ -64,7 +59,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
     /**
      * List of input arguments.
      */
-    private List<Region> leftArguments;
+    private List<InputArgument> leftArguments;
     
     /**
      * The argument containing the function's output.
@@ -89,21 +84,20 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
      * Constructs an ArgumentSpace belonging to the function block as given.
      * @param block FunctionBlock to which this ArgumentSpace belongs.
      */
-    public ArgumentSpace(FunctionBlock block) {
+    public ArgumentSpace(FunctionBlock block, List<Type> inputSignatures) {
         this.loadFXML("ArgumentSpace");
         
         this.block = block;
         this.inputID = INPUT_ID_NONE;
-        leftArguments = new ArrayList<Region>();
+        leftArguments = new ArrayList<InputArgument>();
         knotIndex = new SimpleIntegerProperty(0);
         //TODO knotIndex.addListener(event -> invalidateBowtieIndex());    
         
         //Create and attach Labels for the (left) arguments.
-        for (int i = 0; i < block.getAllInputs().size(); i++) {
-            Label lbl = new Label(block.getInputSignature(i).toHaskellType());
-            lbl.getStyleClass().add("leftArgument");
+        for (int i = 0; i < inputSignatures.size(); i++) {
+            InputArgument lbl = new InputArgument(block, inputSignatures.get(i));
             leftArguments.add(lbl);
-            centerLayoutVertical(lbl);
+            //centerLayoutVertical(lbl);
             
             if (i > 0) {
                 Region prev = leftArguments.get(i-1);
@@ -135,7 +129,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
         knot.setOnTouchReleased(event -> {knotReleased(event.getTouchPoint().getId()); event.consume();});
         
         //Update the size of this Pane
-        this.setPrefHeight(50);
+        this.setPrefHeight(HEIGHT);
         this.setMaxHeight(USE_PREF_SIZE);
         this.prefWidthProperty().bind(getTotalWidthProperty());
         /*
@@ -330,7 +324,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
     public void invalidateInputContent() {
         for (int i = 0; i < leftArguments.size(); i++) {
             setInputError(i, !block.inputTypeMatches(i));
-            ((Label) leftArguments.get(i)).setText(block.getInputType(i).toHaskellType());
+            ((InputArgument) leftArguments.get(i)).setInputText(block.getInputType(i).toHaskellType());
         }
     }
     
@@ -350,10 +344,17 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
     }
     
     /**
+     * @return The InputArguments this ArgumentSpace has.
+     */
+    public List<InputArgument> getInputArguments() {
+        return leftArguments;
+    }
+    
+    /**
      * @param index
      * @return The input argument with the index as specified.
      */
-    public Region getInputArgument(int index) {
+    public InputArgument getInputArgument(int index) {
         return leftArguments.get(index);
     }
     

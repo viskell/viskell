@@ -46,7 +46,7 @@ public class GraphBlock extends Block implements InputBlock {
 
         loadFXML("GraphBlock");
 
-        input = new InputAnchor(this, pane);
+        input = new InputAnchor(this, new FuncT(new ConstT("Float"), new ConstT("Float")));
         input.layoutXProperty().bind(inputSpace.widthProperty().divide(2));
         inputSpace.getChildren().setAll(input);
         
@@ -62,25 +62,13 @@ public class GraphBlock extends Block implements InputBlock {
     }
 
     @Override
-    public Type getInputSignature(InputAnchor input) {
-        assert input.equals(this.input);
-        return getInputSignature(0);
-    }
-
-    @Override
     public Type getInputSignature(int index) {
         assert index == 0;
-        return new FuncT(new ConstT("Float"), new ConstT("Float"));
+        return input.getSignature();
     }
-
-    @Override
-    public Type getInputType(InputAnchor input) {
-        return getInputSignature(0);
-    }
-
     @Override
     public Type getInputType(int index) {
-        return getInputSignature(0);
+        return input.getType();
     }
 
     @Override

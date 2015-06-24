@@ -15,6 +15,7 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
@@ -32,8 +33,9 @@ public class RGBBlock extends DisplayBlock {
         super(pane, "RGBBlock");
 
         r = this.getAllInputs().get(0);
-        g = new InputAnchor(this, pane);
-        b = new InputAnchor(this, pane);
+        g = new InputAnchor(this, HindleyMilner.makeVariable());
+        b = new InputAnchor(this, HindleyMilner.makeVariable());
+        //TODO: RGB block does not fully implement the InputBlock interface (it just inherits them from DisplayBlock, but that block only has 1 input instead of 3).
         
         r.layoutXProperty().bind(inputSpace.widthProperty().divide(3 / 0.5));
         g.layoutXProperty().bind(inputSpace.widthProperty().divide(3 / 1.5));

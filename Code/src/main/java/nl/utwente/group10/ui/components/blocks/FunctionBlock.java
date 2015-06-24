@@ -2,6 +2,7 @@ package nl.utwente.group10.ui.components.blocks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -43,10 +44,6 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
  * function together with it's arguments and visual representation.
  */
 public class FunctionBlock extends Block implements InputBlock, OutputBlock {
-    /** The inputs for this FunctionBlock. **/
-    private List<InputAnchor> inputs;
-
-
     private OutputAnchor output;
 
     /** The function name. **/
@@ -99,35 +96,27 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             t = ft.getArgs()[1];
         }
         
-        this.inputs = new ArrayList<InputAnchor>();
-
-        // Create anchors for each argument
+        List<Type> inputSignatures = new ArrayList<>();
+        Type functionSignature = getFunctionSignature();
         for (int i = 0; i < args.size(); i++) {
-            inputs.add(new InputAnchor(this, pane));
-            inputSpace.getChildren().add(inputs.get(i));
+            if (functionSignature instanceof FuncT) {
+                Type inputSignature = BackendUtils.dive((FuncT) functionSignature, i + 1);
+                inputSignatures.add(inputSignature);
+            } else {
+                throw new FunctionDefinitionException();
+            }
         }
         
-        inputSpace.setMaxHeight(0);
-        inputSpace.toFront();
-        
-        // Create an anchor for the result
-        output = new OutputAnchor(this, pane);
-        output.layoutXProperty().bind(outputSpace.widthProperty().divide(2));
-        outputSpace.getChildren().add(output);
-        
-        argumentSpace = new ArgumentSpace(this);
+        argumentSpace = new ArgumentSpace(this, inputSignatures);
         argumentSpace.setKnotIndex(getAllInputs().size());
         argumentSpace.snapToKnotIndex();
         ((Pane) this.lookup("#nestSpace")).getChildren().add(argumentSpace);
-
         argumentSpace.knotIndexProperty().addListener(e -> invalidateBowtieIndex());
         
-        for (int i = 0; i < inputs.size(); i++) {
-            ObservableValue<? extends Number> property;
-            Region arg = argumentSpace.getInputArgument(i);
-            property = argumentSpace.getParent().layoutXProperty().add(arg.layoutXProperty()).add(arg.translateXProperty()).add(arg.widthProperty().divide(2));
-            inputs.get(i).layoutXProperty().bind(property);
-        }
+        // Create an anchor for the result
+        output = new OutputAnchor(this, getOutputSignature());
+        output.layoutXProperty().bind(outputSpace.widthProperty().divide(2));
+        outputSpace.getChildren().add(output);
     }
 
     /**
@@ -158,26 +147,15 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         }
     }
 
-    /**
-     * Returns the index of the argument matched to the Anchor.
-     *
-     * @param anchor
-     *            The anchor to look up.
-     * @return The index of the given Anchor in the input anchor array.
-     */
-    @Override
-    public final int getInputIndex(InputAnchor anchor) {
-        return inputs.indexOf(anchor);
-    }
-
     @Override
     public OutputAnchor getOutputAnchor() {
         return output;
     }
 
     /** Returns the array of input anchors for this function block. */
+    @Override
     public final List<InputAnchor> getAllInputs() {
-        return inputs;
+        return argumentSpace.getInputArguments().stream().map(a -> a.getInputAnchor()).collect(Collectors.toList());
     }
 
     /**
@@ -185,7 +163,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     @Override
     public List<InputAnchor> getActiveInputs() {
-        return inputs.subList(0, getBowtieIndex());
+        return getAllInputs().subList(0, getKnotIndex());
     }
 
     /** Returns the name property of this FunctionBlock. */
@@ -199,7 +177,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     /** Returns the bowtie index of this FunctionBlock. */
-    public final Integer getBowtieIndex() {
+    public final Integer getKnotIndex() {
         return argumentSpace.knotIndexProperty().get();
     }
 
@@ -230,54 +208,27 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      * @return The function signature as specified in the catalog.
      */
     public Type getFunctionSignature() {
-        return getFunctionSignature(getPane().getEnvInstance());
+        return getPane().getEnvInstance().getFreshExprType(this.getName()).get();
     }
 
-    public Type getFunctionSignature(Env env) {
-        return env.getFreshExprType(this.getName()).get();
-    }
-
-    @Override
-    public Type getInputSignature(InputAnchor input) {
-        return getInputSignature(getInputIndex(input));
+    public InputAnchor getInput(int index) {
+        return argumentSpace.getInputArgument(index).getInputAnchor();
     }
 
     @Override
     public Type getInputSignature(int index) {
-        if (index >= 0 && index < inputs.size()) {
-            if (getFunctionSignature() instanceof FuncT) {
-                return BackendUtils.dive((FuncT) getFunctionSignature(), index + 1);
-            } else {
-                throw new FunctionDefinitionException();
-            }
-        } else {
-            throw new TypeUnavailableException();
-        }
+        return getInput(index).getSignature();
     }
-
-    @Override
-    public Type getInputType(InputAnchor input) {
-        return getInputType(getInputIndex(input));
-    }
-
+    
     @Override
     public Type getInputType(int index) {
-        if (getAllInputs().get(index).isPrimaryConnected()) {
-            return getAllInputs().get(index).getPrimaryOppositeAnchor().get().getType();
-        } else {
-            return getInputSignature(index);
-        }
+        return getInput(index).getType();
     }
     
     @Override
     public Type getOutputSignature() {
-        return getOutputSignature(getPane().getEnvInstance());
-    }
-
-    @Override
-    public Type getOutputSignature(Env env) {
         Type type = getFunctionSignature();
-        for (int i = 0; i < getBowtieIndex(); i++) {
+        for (int i = 0; i < getKnotIndex(); i++) {
             if (type instanceof FuncT) {
                 type = ((FuncT) type).getArgs()[1];
             } else {
@@ -289,13 +240,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     @Override
     public Type getOutputType() {
-        return getOutputType(getPane().getEnvInstance());
-    }
-
-    @Override
-    public Type getOutputType(Env env) {
         try {
-            return asExpr().analyze(env).prune();
+            return asExpr().analyze(getPane().getEnvInstance()).prune();
         } catch (HaskellException e) {
             return getOutputSignature();
         }
@@ -346,8 +292,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     private void invalidateBowtieIndex() {
         for (InputAnchor input : getAllInputs()) {
-            input.setVisible(getInputIndex(input) < getBowtieIndex());
-            if (getInputIndex(input) >= getBowtieIndex() && input.hasConnection()) {
+            input.setVisible(getInputIndex(input) < getKnotIndex());
+            if (getInputIndex(input) >= getKnotIndex() && input.hasConnection()) {
                 input.getPrimaryConnection().get().remove();
             }
         }

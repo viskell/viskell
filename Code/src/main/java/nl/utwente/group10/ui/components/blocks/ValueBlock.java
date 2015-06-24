@@ -6,9 +6,9 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Value;
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -49,7 +49,11 @@ public class ValueBlock extends Block implements OutputBlock {
         value = new SimpleStringProperty("5.0");
         
         this.loadFXML(fxml);
-        output = new OutputAnchor(this, pane);
+        try {
+            output = new OutputAnchor(this, new Value(new ConstT("Float"), getValue()).analyze(getPane().getEnvInstance()));
+        } catch (HaskellException e) {
+            throw new TypeUnavailableException();
+        }
 
         outputSpace.getChildren().add(this.getOutputAnchor());
         outputSpace.toFront();
@@ -86,26 +90,11 @@ public class ValueBlock extends Block implements OutputBlock {
 
     @Override
     public Type getOutputType() {
-        return getOutputType(getPane().getEnvInstance());
+        return output.getSignature();
     }
-
-    @Override
-    public Type getOutputType(Env env) {
-        return getOutputSignature(env);
-    }
-
     @Override
     public Type getOutputSignature() {
-        return getOutputSignature(getPane().getEnvInstance());
-    }
-
-    @Override
-    public Type getOutputSignature(Env env) {
-        try {
-            return asExpr().analyze(env);
-        } catch (HaskellException e) {
-            throw new TypeUnavailableException();
-        }
+        return output.getSignature();
     }
 
     @Override

@@ -61,7 +61,7 @@ public class DisplayBlock extends Block implements InputBlock {
 
         this.loadFXML(fxml);
 
-        inputAnchor = new InputAnchor(this, pane);
+        inputAnchor = new InputAnchor(this, HindleyMilner.makeVariable());
         inputAnchor.layoutXProperty().bind(inputSpace.widthProperty().divide(2));
         inputSpace.getChildren().add(inputAnchor);        
         
@@ -116,33 +116,13 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     @Override
-    public Type getInputType(InputAnchor anchor) {
-        if(anchor.getPrimaryOppositeAnchor().isPresent()) {
-            return anchor.getPrimaryOppositeAnchor().get().getType();
-        } else {
-            return getInputSignature();
-        }
-    }
-
-    private Type getInputSignature() {
-        // Return the type 'a', that matches anything.
-        // In the future this should probably be changed to '(Show a)'
-        return HindleyMilner.makeVariable();
-    }
-
-    @Override
-    public Type getInputSignature(InputAnchor input) {
-        return getInputSignature();
-    }
-
-    @Override
     public Type getInputSignature(int index) {
-        return getInputSignature();
+        return inputAnchor.getSignature();
     }
 
     @Override
     public Type getInputType(int index) {
-        return getInputSignature();
+        return inputAnchor.getType();
     }
 
     @Override

@@ -21,9 +21,9 @@ public class InputAnchor extends ConnectionAnchor {
      * @param block The Block this anchor is connected to.
      * @param pane The parent pane this Anchor resides on.
      */
-    public InputAnchor(Block block, CustomUIPane pane) {
-        super(block, pane);
-        new AnchorHandler(pane.getConnectionCreationManager(), this);
+    public InputAnchor(Block block, Type signature) {
+        super(block, signature);
+        new AnchorHandler(super.getPane().getConnectionCreationManager(), this);
     }
 
     /**
@@ -51,18 +51,11 @@ public class InputAnchor extends ConnectionAnchor {
 
     @Override
     public Type getType() {
-        if (getBlock() instanceof InputBlock) {
-            return ((InputBlock) getBlock()).getInputType(this);
+        Optional<? extends ConnectionAnchor> opposite = getPrimaryOppositeAnchor();
+        if (opposite.isPresent()) {
+            return getPrimaryOppositeAnchor().get().getType();
         } else {
-            throw new TypeUnavailableException();
-        }
-    }
-    
-    public Type getSignature() {
-        if (getBlock() instanceof InputBlock) {
-            return ((InputBlock) getBlock()).getInputSignature(this);
-        } else {
-            throw new TypeUnavailableException();
+            return getSignature(); //TODO iets van none hier?
         }
     }
 }

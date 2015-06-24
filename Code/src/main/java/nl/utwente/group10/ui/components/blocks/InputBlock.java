@@ -21,7 +21,6 @@ public interface InputBlock {
      *            The argument of which the type is desired.
      * @return The type that the specified input argument accepts.
      */
-    Type getInputSignature(InputAnchor input);
 
     Type getInputSignature(int index);
 
@@ -30,7 +29,6 @@ public interface InputBlock {
      *            The argument of which the type is desired.
      * @return The current type given to the specified input argument.
      */
-    Type getInputType(InputAnchor input);
 
     Type getInputType(int index);
 

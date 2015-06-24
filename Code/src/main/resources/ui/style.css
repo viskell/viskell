@@ -9,6 +9,7 @@ CustomUIPane {
     -fx-font-family: Titillium;
     -fx-text-fill: black;
     -fx-border-width: 2;
+    -fx-border-color: black;
 }
 
 .error .block {
@@ -206,4 +207,10 @@ LineChart {
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-color: rgba(0, 0, 0, 0.3);
+}
+
+.invisTouchZone {
+}
+
+.leftArgument {
 }

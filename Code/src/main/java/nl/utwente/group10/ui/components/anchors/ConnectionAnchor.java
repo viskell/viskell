@@ -23,8 +23,6 @@ import nl.utwente.group10.ui.components.lines.Connection;
  * This means that the oldest Connection is the primary connection.
  */
 public abstract class ConnectionAnchor extends StackPane implements ComponentLoader {
-    /** The pane on which this Anchor resides. */
-    private CustomUIPane pane;
 
     /** The block this Anchor is connected to. */
     private Block block;
@@ -36,6 +34,8 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     private Shape visibleAnchor;
     @FXML
     private Shape invisibleAnchor;
+    
+    private Type signature;
 
     /**
      * @param block
@@ -43,10 +43,10 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * @param pane
      *            The pane this Anchor belongs to.
      */
-    public ConnectionAnchor(Block block, CustomUIPane pane) {
+    public ConnectionAnchor(Block block, Type signature) {
         this.block = block;
-        this.pane = pane;
-
+        this.signature = signature;
+        
         this.loadFXML("ConnectionAnchor");
         connections = new ArrayList<Connection>();
     }
@@ -59,6 +59,10 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * @return Input or output type of the block associated with this anchor.
      */
     public abstract Type getType();
+    
+    public Type getSignature() {
+        return signature;
+    }
 
     /**
      * Removes the connection from its pane, first disconnecting it from its
@@ -205,7 +209,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
 
     /** Returns the pane this anchor resides on. */
     public final CustomUIPane getPane() {
-        return pane;
+        return block.getPane();
     }
 
     @Override

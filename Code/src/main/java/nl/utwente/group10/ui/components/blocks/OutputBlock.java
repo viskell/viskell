@@ -26,12 +26,8 @@ public interface OutputBlock {
      */
     Type getOutputType();
 
-    Type getOutputType(Env env);
-
     /**
      * @return The output type as specified by the function's signature.
      */
     Type getOutputSignature();
-
-    Type getOutputSignature(Env env);
 }

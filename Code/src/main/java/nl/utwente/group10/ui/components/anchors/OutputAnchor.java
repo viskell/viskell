@@ -20,10 +20,10 @@ public class OutputAnchor extends ConnectionAnchor {
      * @param pane
      *            The parent pane on which this anchor resides.
      */
-    public OutputAnchor(Block block, CustomUIPane pane) {
-        super(block, pane);
+    public OutputAnchor(Block block, Type signature) {
+        super(block, signature);
         getInvisibleAnchor().setTranslateY(getInvisibleAnchor().getTranslateY() * -1);
-        new AnchorHandler(pane.getConnectionCreationManager(), this);
+        new AnchorHandler(super.getPane().getConnectionCreationManager(), this);
     }
 
     @Override

@@ -74,6 +74,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
      * selected it spawns a {@link CircleMenu} instead.
      */
     private void handleMouseEvent(MouseEvent t) {
+        /*
         if (parentPane.getSelectedBlock().isPresent()
                 && parentPane.getSelectedBlock().get().equals(this)
                 && t.getButton().equals(MouseButton.PRIMARY)) {
@@ -81,6 +82,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
         } else {
             parentPane.setSelectedBlock(this);
         }
+        */
     }
 
     /** Returns the parent pane of this component. */
