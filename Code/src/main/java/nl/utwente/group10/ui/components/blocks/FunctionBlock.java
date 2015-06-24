@@ -116,11 +116,11 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         outputSpace.getChildren().add(output);
         
         argumentSpace = new ArgumentSpace(this);
-        argumentSpace.setBowtieIndex(getAllInputs().size());
-        argumentSpace.snapBowtie();
+        argumentSpace.setKnotIndex(getAllInputs().size());
+        argumentSpace.snapToKnotIndex();
         ((Pane) this.lookup("#nestSpace")).getChildren().add(argumentSpace);
 
-        argumentSpace.bowtieIndexProperty().addListener(e -> invalidateBowtieIndex());
+        argumentSpace.knotIndexProperty().addListener(e -> invalidateBowtieIndex());
         
         for (int i = 0; i < inputs.size(); i++) {
             ObservableValue<? extends Number> property;
@@ -152,7 +152,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     public final void setBowtieIndex(int index) {
         if (index >= -1 && index <= getAllInputs().size()) {
-            argumentSpace.setBowtieIndex(index);
+            argumentSpace.setKnotIndex(index);
         } else {
             throw new IndexOutOfBoundsException();
         }
@@ -200,7 +200,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     /** Returns the bowtie index of this FunctionBlock. */
     public final Integer getBowtieIndex() {
-        return argumentSpace.bowtieIndexProperty().get();
+        return argumentSpace.knotIndexProperty().get();
     }
 
     /** Returns the StringProperty for the name of the function. */
