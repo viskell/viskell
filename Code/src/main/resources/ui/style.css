@@ -149,7 +149,7 @@ CustomUIPane {
     -fx-border-width: 2;
 }
 
-.argumentSpace Label.leftArgument.error {
+.argumentSpace .error Label.leftArgument {
     -fx-background-color:red;
     -fx-border-color: red;
     -fx-text-fill: white;

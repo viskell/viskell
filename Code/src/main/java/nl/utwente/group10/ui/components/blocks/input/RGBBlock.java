@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.input;
 
 import com.google.common.collect.ImmutableList;
 

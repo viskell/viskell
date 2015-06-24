@@ -6,8 +6,8 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import nl.utwente.group10.ui.components.blocks.FunctionBlock?>
-<fx:root type="nl.utwente.group10.ui.components.blocks.FunctionBlock"
+<?import nl.utwente.group10.ui.components.blocks.function.FunctionBlock?>
+<fx:root type="nl.utwente.group10.ui.components.blocks.function.FunctionBlock"
 	xmlns:fx="http://javafx.com/fxml/1">
 	<BorderPane>
 		<top>

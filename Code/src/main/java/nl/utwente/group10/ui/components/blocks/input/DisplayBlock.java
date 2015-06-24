@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.input;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +19,8 @@ import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
+import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.InputBlock;
 
 /**
  * DisplayBlock is an extension of {@link Block} that only provides a display of

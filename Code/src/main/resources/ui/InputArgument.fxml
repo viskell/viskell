@@ -1,5 +1,5 @@
 <?import nl.utwente.group10.ui.components.anchors.ConnectionAnchor?>
 <?import javafx.scene.control.Label?>
-<fx:root fx:id="controller" type="nl.utwente.group10.ui.components.blocks.InputArgument" xmlns:fx="http://javafx.com/fxml/" styleClass="leftArgument">
+<fx:root fx:id="controller" type="nl.utwente.group10.ui.components.blocks.function.InputArgument" xmlns:fx="http://javafx.com/fxml/" styleClass="leftArgument">
     <Label fx:id="inputLabel" text="${controller.inputText}" styleClass="leftArgument"/>
 </fx:root>

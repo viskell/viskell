@@ -2,6 +2,7 @@ package nl.utwente.group10.ui.components.blocks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import nl.utwente.group10.ui.components.blocks.output.ValueBlock;
 
 import org.junit.Test;
 

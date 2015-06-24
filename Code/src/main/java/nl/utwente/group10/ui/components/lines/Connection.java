@@ -175,9 +175,6 @@ public class Connection extends ConnectionLine implements
      * @param newAnchor
      */
     private void setAnchor(ConnectionAnchor newAnchor) {
-        newAnchor.addConnection(this);
-        addListeners(newAnchor);
-
         if (newAnchor instanceof OutputAnchor) {
             startAnchor.ifPresent(a -> removeListeners(a));
             startAnchor = Optional.of((OutputAnchor) newAnchor);
@@ -185,6 +182,9 @@ public class Connection extends ConnectionLine implements
             endAnchor.ifPresent(a -> removeListeners(a));
             endAnchor = Optional.of((InputAnchor) newAnchor);
         }
+        
+        newAnchor.addConnection(this);
+        addListeners(newAnchor);
 
         ConnectionCreationManager.nextConnectionState();
         invalidateConnectionStateCascading();
@@ -291,7 +291,7 @@ public class Connection extends ConnectionLine implements
         }
 
         //Let the now (potentially) disconnected block update its visuals.
-        anchor.getBlock().invalidateConnectionStateCascading();
+        anchor.invalidateConnectionStateCascading();
         //Let the remaining connected anchors update their visuals.
         invalidateConnectionStateCascading();
     }
@@ -337,8 +337,8 @@ public class Connection extends ConnectionLine implements
     public void invalidateConnectionStateCascading(int state) {
         if (!connectionStateIsUpToDate(state)) {
             invalidateConnectionState();
-            startAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
-            endAnchor.ifPresent(a -> a.getBlock().invalidateConnectionStateCascading(state));
+            startAnchor.ifPresent(a -> a.invalidateConnectionStateCascading(state));
+            endAnchor.ifPresent(a -> a.invalidateConnectionStateCascading(state));
             this.connectionState = state;
         }
     }

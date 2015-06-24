@@ -4,8 +4,8 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
-<?import nl.utwente.group10.ui.components.blocks.DisplayBlock?>
-<fx:root type="nl.utwente.group10.ui.components.blocks.DisplayBlock"
+<?import nl.utwente.group10.ui.components.blocks.input.DisplayBlock?>
+<fx:root type="nl.utwente.group10.ui.components.blocks.input.DisplayBlock"
 	xmlns:fx="http://javafx.com/fxml/">
 	<BorderPane>
 		<top>

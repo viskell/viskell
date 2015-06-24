@@ -4,17 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.OutputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 /**
  * Represents an anchor of a Block that can connect to (1 or more) Connections.
@@ -36,6 +42,11 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     private Shape invisibleAnchor;
     
     private Type signature;
+    
+    private BooleanProperty isError;
+    
+    /** The connection state this Block is in */
+    private int connectionState;
 
     /**
      * @param block
@@ -46,10 +57,24 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public ConnectionAnchor(Block block, Type signature) {
         this.block = block;
         this.signature = signature;
+        this.isError = new SimpleBooleanProperty(false);
         
         this.loadFXML("ConnectionAnchor");
         connections = new ArrayList<Connection>();
     }
+    
+    public boolean getIsError() {
+        return isError.get();
+    }
+    
+    public void setIsError(boolean state) {
+        isError.set(state);
+    }
+    
+    public BooleanProperty isErrorProperty() {
+        return isError;
+    }
+    
     
     public Shape getInvisibleAnchor() {
         return invisibleAnchor;
@@ -62,6 +87,18 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     
     public Type getSignature() {
         return signature;
+    }
+    
+    public boolean typesMatch() {
+        try {
+            //TODO Is getFresh() really needed?
+            HindleyMilner.unify(getSignature().getFresh(), getType().getFresh());
+            // Types successfully unified
+            return true;
+        } catch (HaskellTypeError e) {
+            // Unable to unify types;
+            return false;
+        }
     }
 
     /**
@@ -210,6 +247,41 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** Returns the pane this anchor resides on. */
     public final CustomUIPane getPane() {
         return block.getPane();
+    }
+    
+    //TODO documentation here and in Block (update)
+    public void invalidateConnectionStateCascading(int state) {
+        if (!connectionStateIsUpToDate(state)) {
+            invalidateConnectionState();
+            if (this instanceof InputAnchor) {
+                getBlock().invalidateConnectionStateCascading(state);
+            } else if (this instanceof OutputAnchor) {
+                for (Optional<? extends ConnectionAnchor> opAnchor : getOppositeAnchors()) {
+                    if (opAnchor.isPresent()) {
+                        opAnchor.get().invalidateConnectionStateCascading(state);
+                    }
+                }
+            }
+            this.connectionState = state;
+        }
+    }
+    
+    /**
+     * Shortcut to call invalidateConnectionStateCascading(int state) with the newest state.
+     */
+    public void invalidateConnectionStateCascading() {
+        invalidateConnectionStateCascading(ConnectionCreationManager.getConnectionState());
+    }
+
+    /**
+     * @return Whether or not the state of the block confirms to the given newest state.
+     */
+    public boolean connectionStateIsUpToDate(int state) {
+        return this.connectionState == state;
+    }
+    
+    public void invalidateConnectionState() {
+        setIsError(!typesMatch());
     }
 
     @Override

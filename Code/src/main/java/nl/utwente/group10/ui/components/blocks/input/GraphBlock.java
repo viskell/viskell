@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.input;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
@@ -20,6 +20,8 @@ import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
+import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.InputBlock;
 
 import java.util.Iterator;
 import java.util.List;

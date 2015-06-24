@@ -119,11 +119,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
         if (!connectionStateIsUpToDate(state)) {
             invalidateConnectionState();
             if (this instanceof OutputBlock) {
-                for (Connection c : ((OutputBlock) this).getOutputAnchor().getConnections()) {
-                    if (c.isConnected()) {
-                        c.getInputBlock().get().invalidateConnectionStateCascading(state);
-                    }
-                }
+                ((OutputBlock) this).getOutputAnchor().invalidateConnectionStateCascading(state);
             }
             this.connectionState = state;
         }
@@ -148,6 +144,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
      * @param error True to enable, False to disable.
      */
     public void setError(boolean error) {
+        //TODO is this method useful?
         if (error) {
             this.getStyleClass().removeAll("error");
             this.getStyleClass().add("error");

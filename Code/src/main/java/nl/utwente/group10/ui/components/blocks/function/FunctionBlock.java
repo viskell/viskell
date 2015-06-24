@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.function;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +34,9 @@ import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.InputBlock;
+import nl.utwente.group10.ui.components.blocks.OutputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.exceptions.FunctionDefinitionException;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
@@ -48,9 +51,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     /** The function name. **/
     private StringProperty name;
-
-    /** The type of this Function. **/
-    private StringProperty type;
 
     /** The space containing the input anchor(s). */
     @FXML
@@ -80,12 +80,9 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     public FunctionBlock(String name, Type type, CustomUIPane pane) {
         super(pane);
-
         this.name = new SimpleStringProperty(name);
-        this.type = new SimpleStringProperty(type.toHaskellType());
 
         this.loadFXML("FunctionBlock");
-        //((Label) this.lookup("functionTitle")).setText(name);
 
         // Collect argument types
         ArrayList<String> args = new ArrayList<>();
@@ -117,22 +114,28 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         output = new OutputAnchor(this, getOutputSignature());
         output.layoutXProperty().bind(outputSpace.widthProperty().divide(2));
         outputSpace.getChildren().add(output);
+        
+        invalidateConnectionState();
+    }
+    
+    /** Returns the name property of this FunctionBlock. */
+    public final String getName() {
+        return name.get();
     }
 
-    /**
-     * @param name
-     *            The name of this FunctionBlock
-     */
-    public final void setName(String name) {
+    /** Sets the name property of this FunctionBlock. */
+    public void setName(String name) {
         this.name.set(name);
     }
+    
+    /** Returns the StringProperty for the name of the function. */
+    public final StringProperty nameProperty() {
+        return name;
+    }
 
-    /**
-     * @param type
-     *            The new Haskell type for this FunctionBlock.
-     */
-    public final void setType(String type) {
-        this.type.set(type);
+    /** Returns the bowtie index of this FunctionBlock. */
+    public final Integer getKnotIndex() {
+        return argumentSpace.knotIndexProperty().get();
     }
 
     /**
@@ -145,11 +148,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         } else {
             throw new IndexOutOfBoundsException();
         }
-    }
-
-    @Override
-    public OutputAnchor getOutputAnchor() {
-        return output;
     }
 
     /** Returns the array of input anchors for this function block. */
@@ -166,42 +164,13 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return getAllInputs().subList(0, getKnotIndex());
     }
 
-    /** Returns the name property of this FunctionBlock. */
-    public final String getName() {
-        return name.get();
+    public InputAnchor getInput(int index) {
+        return argumentSpace.getInputArgument(index).getInputAnchor();
     }
 
-    /** Returns the Haskell type of this FunctionBlock. */
-    public final String getType() {
-        return type.get();
-    }
-
-    /** Returns the bowtie index of this FunctionBlock. */
-    public final Integer getKnotIndex() {
-        return argumentSpace.knotIndexProperty().get();
-    }
-
-    /** Returns the StringProperty for the name of the function. */
-    public final StringProperty nameProperty() {
-        return name;
-    }
-
-    /** Returns the StringProperty for the type of the function. */
-    public final StringProperty typeProperty() {
-        return type;
-    }
-
-    /**
-     * @return The current (output) expression belonging to this block.
-     */
     @Override
-    public final Expr asExpr() {
-        Expr expr = new Ident(getName());
-        for (InputAnchor in : getActiveInputs()) {
-            expr = new Apply(expr, in.asExpr());
-        }
-
-        return expr;
+    public OutputAnchor getOutputAnchor() {
+        return output;
     }
 
     /**
@@ -209,10 +178,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     public Type getFunctionSignature() {
         return getPane().getEnvInstance().getFreshExprType(this.getName()).get();
-    }
-
-    public InputAnchor getInput(int index) {
-        return argumentSpace.getInputArgument(index).getInputAnchor();
     }
 
     @Override
@@ -248,24 +213,18 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     /**
-     * @param index
-     *            Index to specify which index to check.
-     * @return Whether or not the input type connected matches its signature.
+     * @return The current (output) expression belonging to this block.
      */
-    public boolean inputTypeMatches(int index) {
-        try {
-            HindleyMilner.unify(getInputSignature(index), getInputType(index));
-            // Types successfully unified
-            return true;
-        } catch (HaskellTypeError e) {
-            // Unable to unify types;
-            return false;
+    @Override
+    public final Expr asExpr() {
+        Expr expr = new Ident(getName());
+        for (InputAnchor in : getActiveInputs()) {
+            expr = new Apply(expr, in.asExpr());
         }
+
+        return expr;
     }
     
-    
-    
-
     @Override
     public void invalidateConnectionState() {
         invalidateInputVisuals();
@@ -299,18 +258,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         }
         ConnectionCreationManager.nextConnectionState();
         invalidateConnectionStateCascading();
-    }
-    
-    @Override
-    public final void setError(boolean error) {
-        for (InputAnchor in : getAllInputs()) {
-            setInputError(getInputIndex(in), error);
-        }
-        super.setError(error);
-    }
-    
-    private final void setInputError(int index, boolean error) {
-        argumentSpace.setInputError(index, error);
     }
     
     @Override

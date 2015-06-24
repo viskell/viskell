@@ -1,11 +1,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
-<?import nl.utwente.group10.ui.components.blocks.GraphBlock?>
+<?import nl.utwente.group10.ui.components.blocks.input.GraphBlock?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Pane?>
-<fx:root type="nl.utwente.group10.ui.components.blocks.GraphBlock" xmlns:fx="http://javafx.com/fxml/">
+<fx:root type="nl.utwente.group10.ui.components.blocks.input.GraphBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane>
         <top>
             <Pane fx:id="inputSpace" maxHeight="0"/>

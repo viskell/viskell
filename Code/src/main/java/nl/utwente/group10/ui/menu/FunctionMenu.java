@@ -18,13 +18,18 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-
 import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.*;
+import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
+import nl.utwente.group10.ui.components.blocks.input.DisplayBlock;
+import nl.utwente.group10.ui.components.blocks.input.GraphBlock;
+import nl.utwente.group10.ui.components.blocks.input.RGBBlock;
+import nl.utwente.group10.ui.components.blocks.output.SliderBlock;
+import nl.utwente.group10.ui.components.blocks.output.ValueBlock;
 
 /**
  * FunctionMenu is a viskell specific menu implementation. A FunctionMenu is an

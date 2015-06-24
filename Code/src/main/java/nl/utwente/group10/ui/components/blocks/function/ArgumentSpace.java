@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.function;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +139,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
          * Finding some sort of layout redraw method and call this on this's parent
          */
         
-        //TODO invalidateArgumentContent();
+        //invalidateArgumentContent();
         snapToKnotIndex();
     }
     
@@ -314,32 +314,15 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
      */
     public void invalidateOutputContent() {
         String text = block.getOutputType().toHaskellType();
-        rightArgument.setText(text);
-        
+        rightArgument.setText(text);        
     }
     
     /**
      * Method to indicate that the content in the input argument Labels are possibly outdated.
      */
     public void invalidateInputContent() {
-        for (int i = 0; i < leftArguments.size(); i++) {
-            setInputError(i, !block.inputTypeMatches(i));
-            ((InputArgument) leftArguments.get(i)).setInputText(block.getInputType(i).toHaskellType());
-        }
-    }
-    
-    /**
-     * Sets an input argument to visually display an error
-     * @param index The argument's index
-     * @param error Whether or not the argument is in error state.
-     */
-    public void setInputError(int index, boolean error) {
-        ObservableList<String> styleClass = leftArguments.get(index).getStyleClass();
-        if (error) {
-            styleClass.removeAll("error");
-            styleClass.add("error");
-        } else {
-            styleClass.removeAll("error");
+        for (InputArgument argument : leftArguments) {
+            argument.setInputText(argument.getInputAnchor().getType().toHaskellType());
         }
     }
     
