@@ -29,20 +29,25 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 
 public class GraphBlock extends Block implements InputBlock {
+    /** The InputAnchor of this Block. **/
     private InputAnchor input;
 
-    @FXML
-    private Pane inputSpace;
+    /** The Pane that contains the inputs. **/
+    @FXML private Pane inputSpace;
 
-    @FXML
-    private LineChart<Double, Double> chart;
+    /** The LineChart that is displayed inside this Block. **/
+    @FXML private LineChart<Double, Double> chart;
 
-    @FXML
-    private NumberAxis x;
+    /** NumberAxis for x. **/
+    @FXML private NumberAxis x;
 
-    @FXML
-    private NumberAxis y;
+    /** NuberAxis for y. **/
+    @FXML private NumberAxis y;
 
+    /**
+     * Constructs a new GraphBlock.
+     * @param pane The CustomUIPane on which this Block resides.
+     */
     public GraphBlock(CustomUIPane pane) {
         super(pane);
 
@@ -52,7 +57,7 @@ public class GraphBlock extends Block implements InputBlock {
         input.layoutXProperty().bind(inputSpace.widthProperty().divide(2));
         inputSpace.getChildren().setAll(input);
         
-        //Weird hack to draw inputSpace above block content
+        //Make sure inputSpace is drawn on top.
         BorderPane borderPane = (BorderPane) inputSpace.getParent();
         borderPane.getChildren().remove(inputSpace);
         borderPane.setTop(inputSpace);

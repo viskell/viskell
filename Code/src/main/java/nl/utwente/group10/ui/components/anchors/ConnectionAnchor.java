@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
@@ -36,14 +37,17 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** The connections this anchor has, can be empty for no connections. */
     private List<Connection> connections;
     
-    @FXML
-    private Shape visibleAnchor;
-    @FXML
-    private Shape invisibleAnchor;
+    /** The visual representation of the ConnectionAnchor. **/
+    @FXML private Shape visibleAnchor;
+    
+    /** The invisible part of the ConnectionAnchor (the touchZone). **/
+    @FXML private Shape invisibleAnchor;
     
     private Type signature;
     
     private BooleanProperty isError;
+    
+    private BooleanProperty active;
     
     /** The connection state this Block is in */
     private int connectionState;
@@ -58,9 +62,23 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         this.block = block;
         this.signature = signature;
         this.isError = new SimpleBooleanProperty(false);
+        this.active = new SimpleBooleanProperty(true);
+        active.addListener(p -> invalidateActive());
         
         this.loadFXML("ConnectionAnchor");
         connections = new ArrayList<Connection>();
+    }
+    
+    public boolean getActive() {
+        return active.get();
+    }
+    
+    public void setActive(boolean active) {
+        this.active.set(active);
+    }
+    
+    public BooleanProperty activeProperty() {
+        return active;
     }
     
     public boolean getIsError() {
@@ -168,6 +186,13 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public boolean isPrimaryConnected() {
         return isConnected(0);
     }
+    
+    /**
+     * @return True if the primary connection is connected, and its types match.
+     */
+    public boolean isPrimaryConnectedCorrect() {
+        return isPrimaryConnected() && typesMatch();
+    }
 
     /**
      * @param index
@@ -247,6 +272,12 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** Returns the pane this anchor resides on. */
     public final CustomUIPane getPane() {
         return block.getPane();
+    }
+    
+    public void invalidateActive() {
+        if (!active.get()) {
+            removeConnections();
+        }
     }
     
     //TODO documentation here and in Block (update)

@@ -33,19 +33,12 @@ public interface InputBlock {
     Type getInputType(int index);
 
     /**
-     * @return All inputs of the block.
+     * @return All InputAnchors of the block.
      */
     List<InputAnchor> getAllInputs();
 
     /**
-     * @return Only the active (as specified with the bowtie) inputs.
+     * @return Only the active (as specified with by the knot index) inputs.
      */
     List<InputAnchor> getActiveInputs();
-
-    /**
-     * @return The index the specified anchor has (in getInputs())
-     */
-    default int getInputIndex(InputAnchor anchor) {
-        return getAllInputs().indexOf(anchor);
-    }
 }

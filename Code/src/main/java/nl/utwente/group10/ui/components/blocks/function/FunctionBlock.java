@@ -6,40 +6,23 @@ import java.util.stream.Collectors;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
-import nl.utwente.group10.haskell.hindley.GenSet;
-import nl.utwente.group10.haskell.hindley.HindleyMilner;
-import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.BackendUtils;
 import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.InputBlock;
 import nl.utwente.group10.ui.components.blocks.OutputBlock;
-import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.exceptions.FunctionDefinitionException;
-import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 /**
@@ -47,6 +30,7 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
  * function together with it's arguments and visual representation.
  */
 public class FunctionBlock extends Block implements InputBlock, OutputBlock {
+    /** The OutputAnchor of this FunctionBlock. **/
     private OutputAnchor output;
 
     /** The function name. **/
@@ -60,7 +44,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @FXML
     private Pane outputSpace;
 
-    /** The space containing all the argument fields of the function. */
+    /** The space containing all the arguments of the function. */
     private ArgumentSpace argumentSpace;
 
     @FXML private Pane inputTypesSpace;
@@ -106,15 +90,24 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         
         argumentSpace = new ArgumentSpace(this, inputSignatures);
         argumentSpace.setKnotIndex(getAllInputs().size());
-        argumentSpace.snapToKnotIndex();
+        
         ((Pane) this.lookup("#nestSpace")).getChildren().add(argumentSpace);
-        argumentSpace.knotIndexProperty().addListener(e -> invalidateBowtieIndex());
+        argumentSpace.knotIndexProperty().addListener(e -> invalidateKnotIndex());
         
         // Create an anchor for the result
         output = new OutputAnchor(this, getOutputSignature());
         output.layoutXProperty().bind(outputSpace.widthProperty().divide(2));
         outputSpace.getChildren().add(output);
         
+        // Make sure the prefWidth is correctly updated.
+        Pane functionInfo = (Pane) this.lookup("#functionInfo");
+        this.prefWidthProperty().bind(functionInfo.widthProperty().add(argumentSpace.prefWidthProperty()));
+        
+        
+        this.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        this.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        functionInfo.setMinWidth(Region.USE_PREF_SIZE);
+        functionInfo.setMaxWidth(Region.USE_PREF_SIZE);
         invalidateConnectionState();
     }
     
@@ -133,14 +126,13 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return name;
     }
 
-    /** Returns the bowtie index of this FunctionBlock. */
+    /** Returns the knot index of this FunctionBlock. */
     public final Integer getKnotIndex() {
         return argumentSpace.knotIndexProperty().get();
     }
 
     /**
-     * @param index
-     *            The new bowtie index for this FunctionBlock.
+     * @param index The new knot index for this FunctionBlock.
      */
     public final void setBowtieIndex(int index) {
         if (index >= -1 && index <= getAllInputs().size()) {
@@ -150,14 +142,13 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         }
     }
 
-    /** Returns the array of input anchors for this function block. */
     @Override
     public final List<InputAnchor> getAllInputs() {
         return argumentSpace.getInputArguments().stream().map(a -> a.getInputAnchor()).collect(Collectors.toList());
     }
 
     /**
-     * @return Only the active (as specified with the bowtie) inputs.
+     * @return Only the active (as specified by the knot index) inputs.
      */
     @Override
     public List<InputAnchor> getActiveInputs() {
@@ -225,6 +216,9 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return expr;
     }
     
+    /**
+     * Updates the FunctionBlock based on the Block's new state.
+     */
     @Override
     public void invalidateConnectionState() {
         invalidateInputVisuals();
@@ -246,16 +240,16 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     /**
-     * React to a potential state change with regards to the bowtie index.
-     * This then activates / disables the inputs with regards to the bowtie index.
+     * React to a potential state change with regards to the knot index.
+     * This then activates / disables the inputs with regards to the knot index.
      */
-    private void invalidateBowtieIndex() {
-        for (InputAnchor input : getAllInputs()) {
-            input.setVisible(getInputIndex(input) < getKnotIndex());
-            if (getInputIndex(input) >= getKnotIndex() && input.hasConnection()) {
-                input.getPrimaryConnection().get().remove();
-            }
+    private void invalidateKnotIndex() {
+        List<InputAnchor> inputs = getAllInputs();
+        for (int i = 0; i < inputs.size(); i++) {
+            inputs.get(i).setActive(i < getKnotIndex());
         }
+        
+        // Trigger invalidation for the now changed output type.
         ConnectionCreationManager.nextConnectionState();
         invalidateConnectionStateCascading();
     }

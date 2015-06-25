@@ -290,7 +290,7 @@ public class Connection extends ConnectionLine implements
             ConnectionCreationManager.nextConnectionState();
         }
 
-        //Let the now (potentially) disconnected block update its visuals.
+        //Let the now (potentially) disconnected anchor update its visuals.
         anchor.invalidateConnectionStateCascading();
         //Let the remaining connected anchors update their visuals.
         invalidateConnectionStateCascading();

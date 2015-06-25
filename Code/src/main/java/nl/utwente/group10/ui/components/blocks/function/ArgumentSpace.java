@@ -8,7 +8,6 @@ import nl.utwente.group10.ui.components.ComponentLoader;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.InputEvent;
@@ -91,20 +90,18 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
         this.inputID = INPUT_ID_NONE;
         leftArguments = new ArrayList<InputArgument>();
         knotIndex = new SimpleIntegerProperty(0);
-        //TODO knotIndex.addListener(event -> invalidateBowtieIndex());    
+        knotIndex.addListener(event -> snapToKnotIndex());    
         
         //Create and attach Labels for the (left) arguments.
         for (int i = 0; i < inputSignatures.size(); i++) {
-            InputArgument lbl = new InputArgument(block, inputSignatures.get(i));
-            leftArguments.add(lbl);
-            //centerLayoutVertical(lbl);
-            
+            InputArgument arg = new InputArgument(block, inputSignatures.get(i));
+            leftArguments.add(arg);            
             if (i > 0) {
                 Region prev = leftArguments.get(i-1);
                 // The i-th (left)argument is placed to the right of argument i-1, with a horizontal space of H_GAP between them.
-                lbl.layoutXProperty().bind(prev.layoutXProperty().add(prev.widthProperty()).add(H_GAP));
+                arg.layoutXProperty().bind(prev.layoutXProperty().add(prev.widthProperty()).add(H_GAP));
             }            
-            this.getChildren().add(lbl);
+            this.getChildren().add(arg);
         }
         
         //Put rightArgument's drawOrder on top 
@@ -131,13 +128,9 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
         //Update the size of this Pane
         this.setPrefHeight(HEIGHT);
         this.setMaxHeight(USE_PREF_SIZE);
+        this.setMinWidth(USE_PREF_SIZE);
+        this.setMaxWidth(USE_PREF_SIZE);
         this.prefWidthProperty().bind(getTotalWidthProperty());
-        /*
-         * TODO: PrefWidth is properly updating, yet the total visual space allocated to the ArgumentSpace is not.
-         * Things attempted:
-         * Setting min and max width besides pref width
-         * Finding some sort of layout redraw method and call this on this's parent
-         */
         
         //invalidateArgumentContent();
         snapToKnotIndex();
@@ -224,7 +217,11 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
             double leftBound = 0 + knot.getRadius();
             Region leftMostArg = leftArguments.get(leftArguments.size() - 1);            
             double rightBound = leftMostArg.getLayoutX() + leftMostArg.getWidth() + H_GAP + knot.getRadius();
+
             //Set the knot's new position.
+            if (knot.layoutXProperty().isBound()) {
+                knot.layoutXProperty().unbind();
+            }
             knot.setLayoutX(Math.min(Math.max(localX, leftBound), rightBound));
             
             // Properly react on the change in the knot's position.

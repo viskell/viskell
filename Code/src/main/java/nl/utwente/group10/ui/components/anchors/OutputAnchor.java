@@ -25,7 +25,7 @@ public class OutputAnchor extends ConnectionAnchor {
         getInvisibleAnchor().setTranslateY(getInvisibleAnchor().getTranslateY() * -1);
         new AnchorHandler(super.getPane().getConnectionCreationManager(), this);
     }
-
+    
     @Override
     public boolean canAddConnection() {
         // OutputAnchors can have multiple connections;

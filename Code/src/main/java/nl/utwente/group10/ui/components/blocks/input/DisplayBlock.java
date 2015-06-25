@@ -9,9 +9,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.expr.Expr;
@@ -30,7 +28,7 @@ import nl.utwente.group10.ui.components.blocks.InputBlock;
  * input source using a {@link Connection}.
  */
 public class DisplayBlock extends Block implements InputBlock {
-    /** The output String to display **/
+    /** The output String that is displayed on a Label. **/
     protected StringProperty output;
 
     /** The Anchor that is used as input. */
@@ -67,28 +65,24 @@ public class DisplayBlock extends Block implements InputBlock {
         inputAnchor.layoutXProperty().bind(inputSpace.widthProperty().divide(2));
         inputSpace.getChildren().add(inputAnchor);        
         
-        //Weird hack to draw inputSpace above block content
+        //Make sure inputSpace is drawn on top.
         BorderPane borderPane = (BorderPane) inputSpace.getParent();
         borderPane.getChildren().remove(inputSpace);
         borderPane.setTop(inputSpace);
     }
 
     /**
-     * Sets the output flowing into the DisplayBlock and refresh the display.
-     *
-     * @param value
-     *            The value to show.
-     */
-    public void setOutput(final String value) {
-        output.set(value);
-    }
-
-    /**
-     * Returns the output value this Block has.
-     * @return outputValue
+     * @return The output this Block is displaying.
      */
     public String getOutput() {
         return output.get();
+    }
+
+    /**
+     * Sets the output that is displayed.
+     */
+    public void setOutput(final String value) {
+        output.set(value);
     }
 
     /**
@@ -105,6 +99,7 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     /** Invalidates the outputted value and triggers re-evaluation of the value. */
+    @Override
     public void invalidateConnectionState() {
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
@@ -135,10 +130,5 @@ public class DisplayBlock extends Block implements InputBlock {
     @Override
     public List<InputAnchor> getActiveInputs() {
         return getAllInputs();
-    }
-
-    @Override
-    public int getInputIndex(InputAnchor anchor) {
-        return 0;
     }
 }
