@@ -14,7 +14,7 @@ public class HaskellCatalogTest {
 
         // getCategories
         assertFalse(c.getCategories().isEmpty());
-        assertTrue(c.getCategories().contains("Math"));
+        assertTrue(c.getCategories().contains("Basic"));
 
         // asEnvironment
         Env e = c.asEnvironment();
@@ -22,5 +22,6 @@ public class HaskellCatalogTest {
         assertFalse(e.getTypeClasses().isEmpty());
         assertTrue(e.getExprTypes().containsKey("id"));
         assertTrue(e.getTypeClasses().containsKey("Num"));
+        assertTrue(e.getFreshExprType("(+)").isPresent());
     }
 }
