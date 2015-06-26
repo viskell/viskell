@@ -2,6 +2,7 @@ package nl.utwente.group10.ui.components.anchors;
 
 import java.util.Optional;
 
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
@@ -24,6 +25,16 @@ public class OutputAnchor extends ConnectionAnchor {
         super(block, signature);
         getInvisibleAnchor().setTranslateY(getInvisibleAnchor().getTranslateY() * -1);
         new AnchorHandler(super.getPane().getConnectionCreationManager(), this);
+    }
+    
+    /**
+     * Constructs an OutputAnchor that accepts all outputs.
+     * 
+     * @param block
+     *            The block this Anchor is connected to.
+     */
+    public OutputAnchor(Block block) {
+        this(block, HindleyMilner.makeVariable());
     }
     
     @Override

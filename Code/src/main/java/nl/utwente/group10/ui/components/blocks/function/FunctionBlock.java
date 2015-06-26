@@ -92,7 +92,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         argumentSpace.knotIndexProperty().addListener(e -> invalidateKnotIndex());
         
         // Create an anchor for the result
-        output = new OutputAnchor(this, getOutputSignature());
+        output = new OutputAnchor(this);
         output.layoutXProperty().bind(outputSpace.widthProperty().divide(2));
         outputSpace.getChildren().add(output);
         
