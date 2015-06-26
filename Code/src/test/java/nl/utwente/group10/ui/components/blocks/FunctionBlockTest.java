@@ -20,9 +20,10 @@ public class FunctionBlockTest extends ComponentTest {
      */
     @Before
     public void setUp() throws Exception {
+        //TODO: not entirely correct.
         FuncT func = new FuncT(new ConstT("Int"), new FuncT(new ConstT("Int"), new ConstT("Int")));
 
-        functionBlock = new FunctionBlock("", func, getPane());
+        functionBlock = new FunctionBlock("(+)", func, getPane());
     }
 
     /**
