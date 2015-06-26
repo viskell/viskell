@@ -16,6 +16,7 @@ import javafx.scene.shape.Shape;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.ui.BackendUtils;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.ConnectionStateDependent;
@@ -137,21 +138,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public Type getSignature() {
         return signature;
     }
-    
-    /**
-     * @return Whether or not the currently attached connection's type matches the signature.
-     */
-    public boolean typesMatch() {
-        try {
-            //TODO Is getFresh() really needed?
-            HindleyMilner.unify(getSignature().getFresh(), getType().getFresh());
-            // Types successfully unified
-            return true;
-        } catch (HaskellTypeError e) {
-            // Unable to unify types;
-            return false;
-        }
-    }
 
     /**
      * Removes the connection from its pane, first disconnecting it from its
@@ -225,7 +211,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * @return True if the primary connection is connected, and its types match.
      */
     public boolean isPrimaryConnectedCorrect() {
-        return isPrimaryConnected() && typesMatch();
+        return isPrimaryConnected() && BackendUtils.typesMatch(getSignature().getFresh(), getType().getFresh());
     }
 
     /**
@@ -341,7 +327,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     
     @Override
     public void invalidateConnectionState() {
-        setIsError(!typesMatch());
+        setIsError(!BackendUtils.typesMatch(getSignature().getFresh(), getType().getFresh()));
     }
 
     @Override
