@@ -27,6 +27,9 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     public static final double BEZIER_CONTROL_OFFSET_MINIMUM = 10f;
     public static final double BEZIER_CONTROL_OFFSET_MAXIMUM = 200f;
 
+    /**
+     * Constructs a new ConnectionLine.
+     */
     public ConnectionLine() {
         this.loadFXML("ConnectionLine");
 
@@ -36,10 +39,10 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     }
 
     /**
-     * Sets the start coordinates for this Line object.
+     * Sets the start coordinates for this ConnectionLine object.
      *
-     * @param xCoord
-     * @param yCoord
+     * @param xCoord X coordinate local to parent.
+     * @param yCoord Y coordinate local to parent.
      */
     public void setStartPosition(double xCoord, double yCoord) {
         setStartX(xCoord);
@@ -47,15 +50,21 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
         updateBezierControlPoints();
     }
 
+    /**
+     * Sets the start coordinates for this ConnectionLine object.
+     * 
+     * @param point
+     *            X and Y coordinate local to parent.
+     */
     public void setStartPosition(Point2D point) {
         setStartPosition(point.getX(), point.getY());
     }
 
     /**
-     * Sets the end coordinate for this Line object.
+     * Sets the end coordinates for this ConnectionLine object.
      *
-     * @param xCoord
-     * @param yCoord
+     * @param xCoord X coordinate local to parent.
+     * @param yCoord Y coordinate local to parent.
      */
     public void setEndPosition(double xCoord, double yCoord) {
         setEndX(xCoord);
@@ -63,6 +72,12 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
         updateBezierControlPoints();
     }
 
+    /**
+     * Sets the end coordinates for this ConnectionLine object.
+     * 
+     * @param point
+     *            X and Y coordinate local to parent.
+     */
     public void setEndPosition(Point2D point) {
         setEndPosition(point.getX(), point.getY());
     }

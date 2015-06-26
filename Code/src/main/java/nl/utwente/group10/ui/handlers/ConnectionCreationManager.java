@@ -30,7 +30,13 @@ public class ConnectionCreationManager {
      * Touch points have an ID associated with each specific touch point, this
      * is the ID associated with the Mouse.
      */
-    public static final Integer MOUSE_ID = -1;
+    public static final Integer INPUT_ID_MOUSE = -1;
+    
+    /**
+     * Touch points have an ID associated with each specific touch point, this
+     * is the ID associated with no input.
+     */
+    public static final Integer INPUT_ID_NONE = -2;
     
     /**
      * Maps an (Touch or Mouse) ID to a line, used to keep track of what touch
