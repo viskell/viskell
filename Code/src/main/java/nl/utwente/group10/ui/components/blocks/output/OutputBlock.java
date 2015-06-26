@@ -1,9 +1,12 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.output;
 
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 
+/**
+ * Interface for Blocks that have an output.
+ */
 public interface OutputBlock {
 
     /**
@@ -11,23 +14,13 @@ public interface OutputBlock {
      */
     public OutputAnchor getOutputAnchor();
 
-    /*
-     * Signature = non unified type, ie: a->b
-     *
-     * (Current)Type = unified type, ie Int -> Float (This can still have
-     * signature a->b)
-     *
-     * These are not the same, but are related. The Type has to conform to the
-     * signature.
-     */
-
     /**
      * @return The current output type of the block.
      */
     Type getOutputType();
 
     /**
-     * @return The output type as specified by the function's signature.
+     * @return The signature of the output.
      */
     Type getOutputSignature();
 }

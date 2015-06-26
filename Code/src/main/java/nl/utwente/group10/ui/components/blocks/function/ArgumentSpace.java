@@ -26,27 +26,18 @@ import javafx.scene.shape.Circle;
  * improvements.
  * 
  * Supports multi-touch interaction.
- *
  */
 public class ArgumentSpace extends Pane implements ComponentLoader{    
-    /**
-     * Horizontal space to keep between elements in ArgumentSpace.
-     */
+    /** Horizontal space to keep between elements in ArgumentSpace. */
     public static final double H_GAP = 10;
     
-    /**
-     * Vertical height of the ArgumentSpace.
-     */
+    /** Vertical height of the ArgumentSpace. */
     public static final double HEIGHT = 50;
     
-    /**
-     * The block to which this ArgumentSpace belongs.
-     */
+    /** The block to which this ArgumentSpace belongs. */
     private FunctionBlock block;
     
-    /**
-     * The knot, used to control the knot index.
-     */
+    /** The knot, used to control the knot index. */
     @FXML private Circle knot;
     
     /**
@@ -55,28 +46,19 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
      */
     private IntegerProperty knotIndex;
     
-    /**
-     * List of input arguments.
-     */
+    /** List of input arguments. */
     private List<InputArgument> leftArguments;
     
-    /**
-     * The argument containing the function's output.
-     */
+    /** The argument containing the function's output. */
     @FXML private Label rightArgument;
     
-    /**
-     * InputID of the current action (INPUT_ID_NONE if idle)
-     */
+    /** InputID of the current action (INPUT_ID_NONE if idle) */
     private int inputID;
     
-    /**
-     * InputID that represents no current inputID.
-     */
+    /** InputID that represents no current inputID. */
     public static final int INPUT_ID_NONE = -2;
-    /**
-     * InputID that represents the mouse.
-     */
+    
+    /** InputID that represents the mouse. */
     public static final int INPUT_ID_MOUSE = -1;
     
     /**
@@ -231,8 +213,9 @@ public class ArgumentSpace extends Pane implements ComponentLoader{
     }
     
     /**
-     * @return Determines the index of the knot, based on the knot's current position.
-     * This index has a decimal part, this represents the percentage of the next argument that the knot has moved.
+     * @return Determines the index of the knot, based on the knot's current
+     *         position. This index has a decimal part, this represents the
+     *         percentage of the next argument that the knot has moved.
      */
     private double determineKnotIndex() {
         if (Double.isNaN(getKnotPos())) {

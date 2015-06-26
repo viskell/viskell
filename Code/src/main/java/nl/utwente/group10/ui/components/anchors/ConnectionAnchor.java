@@ -18,18 +18,23 @@ import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
+import nl.utwente.group10.ui.components.ConnectionStateDependent;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.OutputBlock;
+import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 /**
  * Represents an anchor of a Block that can connect to (1 or more) Connections.
  * 
+ * Has an invisible part that acts as an enlargement of the touch zone.
+ * 
  * The primary Connection (if present) is the first element in getConnections().
  * This means that the oldest Connection is the primary connection.
+ * 
+ * The ConnectionAnchor keeps track of its accepted type (signature), and will typecheck this for new connections.
  */
-public abstract class ConnectionAnchor extends StackPane implements ComponentLoader {
+public abstract class ConnectionAnchor extends StackPane implements ComponentLoader, ConnectionStateDependent {
 
     /** The block this Anchor is connected to. */
     private Block block;
@@ -37,16 +42,19 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** The connections this anchor has, can be empty for no connections. */
     private List<Connection> connections;
     
-    /** The visual representation of the ConnectionAnchor. **/
+    /** The visual representation of the ConnectionAnchor. */
     @FXML private Shape visibleAnchor;
     
-    /** The invisible part of the ConnectionAnchor (the touchZone). **/
+    /** The invisible part of the ConnectionAnchor (the touchZone). */
     @FXML private Shape invisibleAnchor;
     
+    /** The signature that is accepted by this anchor. */
     private Type signature;
     
+    /** Property storing the error state. */
     private BooleanProperty isError;
     
+    /** Property storing the active state. */
     private BooleanProperty active;
     
     /** The connection state this Block is in */
@@ -55,8 +63,8 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /**
      * @param block
      *            The block where this Anchor is connected to.
-     * @param pane
-     *            The pane this Anchor belongs to.
+     * @param Type
+     *            The signature that is accepted by this anchor.
      */
     public ConnectionAnchor(Block block, Type signature) {
         this.block = block;
@@ -69,31 +77,51 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         connections = new ArrayList<Connection>();
     }
     
+    /**
+     * @return Whether or not this ConnectionAnchor is in active mode.
+     */
     public boolean getActive() {
         return active.get();
     }
     
+    /**
+     * @param active The new active state for this ConnectionAnchor.
+     */
     public void setActive(boolean active) {
         this.active.set(active);
     }
     
+    /**
+     * @return The property describing the active state of this ConnectionAnchor.
+     */
     public BooleanProperty activeProperty() {
         return active;
     }
     
+    /**
+     * @return Whether or not this ConnectionAnchor is in an error state.
+     */
     public boolean getIsError() {
         return isError.get();
     }
     
+    /**
+     * @param state The new error state for this ConnectionAnchor.
+     */
     public void setIsError(boolean state) {
         isError.set(state);
     }
     
+    /**
+     * @return The property describing the error state of this ConnectionAnchor.
+     */
     public BooleanProperty isErrorProperty() {
         return isError;
     }
     
-    
+    /**
+     * @return The Shape that is the invisible part (touch zone) of this ConnectionAnchor.
+     */
     public Shape getInvisibleAnchor() {
         return invisibleAnchor;
     }
@@ -103,10 +131,16 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      */
     public abstract Type getType();
     
+    /**
+     * @return The signature as accepted by this ConnectionAnchor.
+     */
     public Type getSignature() {
         return signature;
     }
     
+    /**
+     * @return Whether or not the currently attached connection's type matches the signature.
+     */
     public boolean typesMatch() {
         try {
             //TODO Is getFresh() really needed?
@@ -175,7 +209,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         connections.add(connection);
     }
 
-    /** Returns true this anchor has 1 or more connections. */
+    /** Returns true if this anchor has 1 or more connections. */
     public boolean hasConnection() {
         return !connections.isEmpty();
     }
@@ -197,13 +231,13 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /**
      * @param index
      *            Index of the connection to check
-     * @return Wether or not the connection specified by the index is connected.
+     * @return Whether or not the connection specified by the index is connected.
      */
     public boolean isConnected(int index) {
         return index >= 0 && index < getConnections().size() && getConnections().get(index).isConnected();
     }
 
-    /** Wether or not this anchor allows adding an extra connection. */
+    /** Whether or not this anchor allows adding an extra connection. */
     public abstract boolean canAddConnection();
 
     /**
@@ -242,12 +276,12 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         }
     }
 
-    /** Returns the block this anchor belongs to. */
+    /** @return the block this anchor belongs to. */
     public final Block getBlock() {
         return block;
     }
 
-    /** Returns the connections this anchor is connected to. */
+    /** @return the connections this anchor is connected to. */
     public List<Connection> getConnections() {
         return connections;
     }
@@ -274,13 +308,21 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         return block.getPane();
     }
     
+    /**
+     * Reacts to a possible change in active state.
+     */
     public void invalidateActive() {
         if (!active.get()) {
             removeConnections();
         }
     }
     
-    //TODO documentation here and in Block (update)
+    @Override
+    public int getConnectionState() {
+        return connectionState;
+    }
+    
+    @Override
     public void invalidateConnectionStateCascading(int state) {
         if (!connectionStateIsUpToDate(state)) {
             invalidateConnectionState();
@@ -297,20 +339,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         }
     }
     
-    /**
-     * Shortcut to call invalidateConnectionStateCascading(int state) with the newest state.
-     */
-    public void invalidateConnectionStateCascading() {
-        invalidateConnectionStateCascading(ConnectionCreationManager.getConnectionState());
-    }
-
-    /**
-     * @return Whether or not the state of the block confirms to the given newest state.
-     */
-    public boolean connectionStateIsUpToDate(int state) {
-        return this.connectionState == state;
-    }
-    
+    @Override
     public void invalidateConnectionState() {
         setIsError(!typesMatch());
     }

@@ -1,5 +1,7 @@
 package nl.utwente.group10.ui;
 
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -30,5 +32,19 @@ public class BackendUtils {
             }
         }
         return function;
+    }
+    
+    /**
+     * @return Whether or not t1 and t2 unify with each other.
+     */
+    public static boolean typesMatch(Type t1, Type t2) {
+        try {
+            HindleyMilner.unify(t1, t2);
+            // Types successfully unified
+            return true;
+        } catch (HaskellTypeError e) {
+            // Unable to unify types;
+            return false;
+        }
     }
 }

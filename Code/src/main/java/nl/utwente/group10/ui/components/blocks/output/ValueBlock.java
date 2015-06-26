@@ -14,7 +14,6 @@ import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.OutputBlock;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 
 /**
@@ -33,11 +32,7 @@ public class ValueBlock extends Block implements OutputBlock {
     private OutputAnchor output;
 
     /** The space containing the output anchor. */
-    @FXML
-    private Pane outputSpace;
-    
-    @FXML
-    private Pane block;
+    @FXML private Pane outputSpace;
 
     /**
      * @param pane
@@ -46,6 +41,7 @@ public class ValueBlock extends Block implements OutputBlock {
     public ValueBlock(CustomUIPane pane) {
         this(pane, "ValueBlock");
     }
+    
     protected ValueBlock(CustomUIPane pane, String fxml) {
         super(pane);
         value = new SimpleStringProperty("5.0");
@@ -86,7 +82,6 @@ public class ValueBlock extends Block implements OutputBlock {
 
     @Override
     public Expr asExpr() {
-        // TODO: support more types than floats
         return new Value(new ConstT("Float"), getValue());
     }
 

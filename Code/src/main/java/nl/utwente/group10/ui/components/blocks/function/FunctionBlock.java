@@ -20,8 +20,8 @@ import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.InputBlock;
-import nl.utwente.group10.ui.components.blocks.OutputBlock;
+import nl.utwente.group10.ui.components.blocks.input.InputBlock;
+import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.exceptions.FunctionDefinitionException;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
@@ -30,25 +30,22 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
  * function together with it's arguments and visual representation.
  */
 public class FunctionBlock extends Block implements InputBlock, OutputBlock {
-    /** The OutputAnchor of this FunctionBlock. **/
+    /** The OutputAnchor of this FunctionBlock. */
     private OutputAnchor output;
 
-    /** The function name. **/
+    /** The function name. */
     private StringProperty name;
 
     /** The space containing the input anchor(s). */
-    @FXML
-    private Pane inputSpace;
+    @FXML private Pane inputSpace;
 
     /** The space containing the output anchor. */
-    @FXML
-    private Pane outputSpace;
+    @FXML private Pane outputSpace;
 
     /** The space containing all the arguments of the function. */
     private ArgumentSpace argumentSpace;
 
-    @FXML private Pane inputTypesSpace;
-
+    /** The space containing the output anchor of this FunctionBLock. */
     @FXML private Pane outputTypesSpace;
 
     /**
@@ -155,6 +152,10 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return getAllInputs().subList(0, getKnotIndex());
     }
 
+    /**
+     * @param index Index of the InputAnchor to return.
+     * @return InputAnchor with the given index.
+     */
     public InputAnchor getInput(int index) {
         return argumentSpace.getInputArgument(index).getInputAnchor();
     }
@@ -216,9 +217,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return expr;
     }
     
-    /**
-     * Updates the FunctionBlock based on the Block's new state.
-     */
     @Override
     public void invalidateConnectionState() {
         invalidateInputVisuals();

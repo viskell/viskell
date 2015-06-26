@@ -18,7 +18,6 @@ import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.InputBlock;
 
 /**
  * DisplayBlock is an extension of {@link Block} that only provides a display of
@@ -28,32 +27,27 @@ import nl.utwente.group10.ui.components.blocks.InputBlock;
  * input source using a {@link Connection}.
  */
 public class DisplayBlock extends Block implements InputBlock {
-    /** The output String that is displayed on a Label. **/
+    /** The output String that is displayed on a Label. */
     protected StringProperty output;
 
     /** The Anchor that is used as input. */
     protected InputAnchor inputAnchor;
 
     /** The space containing the input anchor. */
-    @FXML
-    protected Pane inputSpace;
+    @FXML protected Pane inputSpace;
 
     /** The space containing the output anchor. */
-    @FXML
-    protected Pane outputSpace;
+    @FXML protected Pane outputSpace;
     
-    @FXML
-    protected Pane block;
-
     /**
      * Creates a new instance of DisplayBlock.
-     *
      * @param pane
      *            The pane on which this DisplayBlock resides.
      */
     public DisplayBlock(CustomUIPane pane) {
         this(pane, "DisplayBlock");
     }
+    
     protected DisplayBlock(CustomUIPane pane, String fxml) {
         super(pane);
 
@@ -98,7 +92,6 @@ public class DisplayBlock extends Block implements InputBlock {
         return inputAnchor.asExpr();
     }
 
-    /** Invalidates the outputted value and triggers re-evaluation of the value. */
     @Override
     public void invalidateConnectionState() {
         try {

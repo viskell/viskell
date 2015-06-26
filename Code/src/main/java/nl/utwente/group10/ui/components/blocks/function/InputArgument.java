@@ -18,13 +18,13 @@ import javafx.scene.layout.Pane;
  */
 public class InputArgument extends Pane implements ComponentLoader{
     
-    /** The label on which to display type information. **/
+    /** The label on which to display type information. */
     @FXML Label inputLabel;
     
-    /** The property of the text to be displayed on the inputLabel. **/
+    /** The property of the text to be displayed on the inputLabel. */
     private StringProperty inputText;
     
-    /** The InputAnchor belonging to this InputArgument **/
+    /** The InputAnchor belonging to this InputArgument */
     private InputAnchor inputAnchor;
     
     /**
@@ -47,22 +47,22 @@ public class InputArgument extends Pane implements ComponentLoader{
         this.getChildren().add(inputAnchor);
     }
     
-    /** @return the InputText. **/
+    /** @return the InputText. */
     public String getInputText() {
         return inputText.get();
     }
     
-    /** Sets the InputText. **/
+    /** Sets the InputText. */
     public void setInputText(String text) {
         inputText.set(text);
     }
     
-    /** @return The inputTextProperty. **/
+    /** @return The inputTextProperty. */
     public StringProperty inputTextProperty() {
         return inputText;
     }
     
-    /** @return The InputAnchor belonging to this InputArgument. ***/
+    /** @return The InputAnchor belonging to this InputArgument. */
     public InputAnchor getInputAnchor() {
         return inputAnchor;
     }

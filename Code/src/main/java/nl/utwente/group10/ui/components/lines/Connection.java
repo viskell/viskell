@@ -8,12 +8,18 @@ import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.ui.BackendUtils;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.components.ConnectionStateDependent;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.ObservableList;
+
 
 /**
  * This is a Connection that represents a flow between an {@link InputAnchor}
@@ -27,45 +33,179 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
  * </p>
  */
 public class Connection extends ConnectionLine implements
-        ChangeListener<Number> {
-    /** Starting point of this Line that can be Anchored onto other objects */
+        ChangeListener<Number>, ConnectionStateDependent {
+    /** Starting point of this Line that can be Anchored onto other objects. */
     private Optional<OutputAnchor> startAnchor = Optional.empty();
-    /** Ending point of this Line that can be Anchored onto other objects */
+    /** Ending point of this Line that can be Anchored onto other objects. */
     private Optional<InputAnchor> endAnchor = Optional.empty();
 
+    /** The Pane this Connection is on. */
     private CustomUIPane pane;
 
-    /** The connection state this Connection is in */
+    /** The connection state this Connection is in. */
     private int connectionState;
+    
+    /** Property describing the error state. */
+    private BooleanProperty isError;
 
+    /** 
+     * Construct a new Connection.
+     * @param pane The Pane this Connection is on.
+     */
     public Connection(CustomUIPane pane) {
         this.pane = pane;
+        this.isError = new SimpleBooleanProperty(false);
+        this.isErrorProperty().addListener((ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) -> setError(newValue));
     }
 
+    /** 
+     * Construct a new Connection.
+     * @param pane The Pane this Connection is on.
+     * @param from The OutputAnchor of this Connection.
+     */
     public Connection(CustomUIPane pane, OutputAnchor from) {
-        this.pane = pane;
+        this(pane);
         tryAddAnchor(from);
         setEndPosition(from.getCenterInPane());
     }
 
+    /** 
+     * Construct a new Connection.
+     * @param pane The Pane this Connection is on.
+     * @param to The InputAnchor of this Connection.
+     */
     public Connection(CustomUIPane pane, InputAnchor to) {
-        this.pane = pane;
+        this(pane);
         tryAddAnchor(to);
         setStartPosition(to.getCenterInPane());
     }
 
+    /** 
+     * Construct a new Connection.
+     * @param pane The Pane this Connection is on.
+     * @param from The OutputAnchor of this Connection.
+     * @param to The InputAnchor of this Connection.
+     */
     public Connection(CustomUIPane pane, OutputAnchor from, InputAnchor to) {
-        this.pane = pane;
+        this(pane);
         this.setAnchor(from);
         this.setAnchor(to);
     }
 
+    /** Convenience method. */
     public Connection(CustomUIPane pane, InputAnchor to, OutputAnchor from) {
         this(pane, from, to);
     }
+    
+    /** @return The current error state. */
+    public boolean getIsError() {
+        return isError.get();
+    }
+    
+    /** Set a new error state. */
+    public void setIsError(boolean error) {
+        isError.set(error);
+    }
+    
+    /** @return The property describing the error state. */
+    public BooleanProperty isErrorProperty() {
+        return isError;
+    }
 
+    
+    /* GET METHODS */
+    
+    /**
+     * @return The CustomUIPane this Conneciton is on.
+     */
     public final CustomUIPane getPane() {
         return pane;
+    }
+
+    /** @return this connection's end anchor, if any. */
+    public final Optional<InputAnchor> getInputAnchor() {
+        return endAnchor;
+    }
+
+    /** @return the downstream block, if any. */
+    public final Optional<Block> getInputBlock() {
+        return endAnchor.map(ConnectionAnchor::getBlock);
+    }
+
+    /** @return this connection's start anchor, if any. */
+    public final Optional<OutputAnchor> getOutputAnchor() {
+        return startAnchor;
+    }
+
+    /** @return the upstream block, if any. */
+    public final Optional<Block> getOutputBlock() {
+        return startAnchor.map(ConnectionAnchor::getBlock);
+    }
+    
+    @Override
+    public int getConnectionState() {
+        return connectionState;
+    }
+
+    /**
+     * @param anchor
+     *            Anchor to get the slot of
+     * @return The slot (startAnchor or endAnchor variable) this anchor should
+     *         be put in if connected to this Connection
+     */
+    private Optional<? extends ConnectionAnchor> getAnchorSlot(ConnectionAnchor anchor) {
+        if (anchor instanceof OutputAnchor) {
+            return startAnchor;
+        } else if (anchor instanceof InputAnchor) {
+            return endAnchor;
+        } else {
+            return Optional.empty();
+        }
+    }
+    
+    
+    /* SET METHODS */
+
+    /**
+     * Sets an OutputAnchor or InputAnchor for this line. After setting the line will update accordingly to the possible state change.
+     * @param newAnchor
+     */
+    private void setAnchor(ConnectionAnchor newAnchor) {
+        if (newAnchor instanceof OutputAnchor) {
+            startAnchor.ifPresent(a -> removeListeners(a));
+            startAnchor = Optional.of((OutputAnchor) newAnchor);
+        } else if (newAnchor instanceof InputAnchor) {
+            endAnchor.ifPresent(a -> removeListeners(a));
+            endAnchor = Optional.of((InputAnchor) newAnchor);
+        }
+        
+        newAnchor.addConnection(this);
+        addListeners(newAnchor);
+
+        ConnectionCreationManager.nextConnectionState();
+        invalidateConnectionStateCascading();
+    }
+
+    /**
+     * Set the endAnchor for this line. After setting the EndPosition will be
+     * updated.
+     * 
+     * @param end
+     *            the InputAnchor to end at.
+     */
+    public void setEndAnchor(InputAnchor end) {
+        setAnchor(end);
+    }
+
+    /**
+     * Set the startAnchor for this line. After setting the StartPosition will
+     * be updated.
+     *
+     * @param start
+     *            The OutputAnchor to start at.
+     */
+    public void setStartAnchor(OutputAnchor start) {
+        setAnchor(start);
     }
 
     /**
@@ -78,6 +218,52 @@ public class Connection extends ConnectionLine implements
         if (!endAnchor.isPresent()) {
             setEndPosition(x, y);
         }
+    }
+    
+    /**
+     * Updates the visuals to the given error state.
+     * @param error
+     */
+    public void setError(boolean error) {
+        ObservableList<String> styleClass = this.getStyleClass();
+        if (error) {
+            styleClass.removeAll("error");
+            styleClass.add("error");
+        } else {
+            styleClass.removeAll("error");
+        }  
+    }
+    
+
+    /* OTHER METHODS */
+
+    /**
+     * @return Whether or not both sides of this Connection are connected to an Anchor.
+     */
+    public final boolean isConnected() {
+        return startAnchor.isPresent() && endAnchor.isPresent();
+    }
+
+    /**
+     * Adds the listeners this Connections needs to keep its visual
+     * representation up-to-date to the given anchor.
+     */
+    private void addListeners(ConnectionAnchor anchor) {
+        anchor.layoutXProperty().addListener(this);
+        anchor.layoutYProperty().addListener(this);
+        anchor.getBlock().layoutXProperty().addListener(this);
+        anchor.getBlock().layoutYProperty().addListener(this);
+    }
+
+    /**
+     * Removes the listeners this Connections needed to keep its visual
+     * representation up-to-date from the given anchor.
+     */
+    private void removeListeners(ConnectionAnchor anchor) {
+        anchor.layoutXProperty().removeListener(this);
+        anchor.layoutYProperty().removeListener(this);
+        anchor.getBlock().layoutXProperty().removeListener(this);
+        anchor.getBlock().layoutYProperty().removeListener(this);
     }
 
     /**
@@ -124,158 +310,6 @@ public class Connection extends ConnectionLine implements
     }
 
     /**
-     * @param anchor
-     *            Anchor to get the slot of
-     * @return The slot (startAnchor or endAnchor variable) this anchor should
-     *         be put in if connected to this Connection
-     */
-    private Optional<? extends ConnectionAnchor> getAnchorSlot(ConnectionAnchor anchor) {
-        if (anchor instanceof OutputAnchor) {
-            return startAnchor;
-        } else if (anchor instanceof InputAnchor) {
-            return endAnchor;
-        } else {
-            return Optional.empty();
-        }
-    }
-
-
-    public final boolean typesMatch() {
-        // TODO Let this return mismatch information?
-        return !isConnected() || typesMatch(startAnchor.get().getType(), endAnchor.get().getSignature());
-    }
-    
-    /**
-     * @param potentialAnchor The ConnectionAnchor to check if it matches.
-     * @return Wether or not the given anchor's type unifies with the current opposite anchor.
-     */
-    public final boolean typesMatch(ConnectionAnchor potentialAnchor) {
-        if (potentialAnchor instanceof InputAnchor && startAnchor.isPresent()) {
-            return typesMatch(startAnchor.get().getType(), ((InputAnchor) potentialAnchor).getSignature());
-        } else if (potentialAnchor instanceof OutputAnchor && endAnchor.isPresent()) {
-            return typesMatch(endAnchor.get().getSignature(), potentialAnchor.getType());
-        } else {
-            return false;
-        }
-    }
-
-    public final boolean typesMatch(Type t1, Type t2) {
-        try {
-            HindleyMilner.unify(t1, t2);
-            // Types successfully unified
-            return true;
-        } catch (HaskellTypeError e) {
-            // Unable to unify types;
-            return false;
-        }
-    }
-
-    /**
-     * Sets an OutputAnchor or InputAnchor for this line. After setting the line will update accordingly to the possible state change.
-     * @param newAnchor
-     */
-    private void setAnchor(ConnectionAnchor newAnchor) {
-        if (newAnchor instanceof OutputAnchor) {
-            startAnchor.ifPresent(a -> removeListeners(a));
-            startAnchor = Optional.of((OutputAnchor) newAnchor);
-        } else if (newAnchor instanceof InputAnchor) {
-            endAnchor.ifPresent(a -> removeListeners(a));
-            endAnchor = Optional.of((InputAnchor) newAnchor);
-        }
-        
-        newAnchor.addConnection(this);
-        addListeners(newAnchor);
-
-        ConnectionCreationManager.nextConnectionState();
-        invalidateConnectionStateCascading();
-    }
-
-    /**
-     * Adds the listeners this Connections needs to keep its visual
-     * representation up-to-date to the given anchor.
-     */
-    private void addListeners(ConnectionAnchor anchor) {
-        anchor.layoutXProperty().addListener(this);
-        anchor.layoutYProperty().addListener(this);
-        anchor.getBlock().layoutXProperty().addListener(this);
-        anchor.getBlock().layoutYProperty().addListener(this);
-    }
-
-    /**
-     * Removes the listeners this Connections needed to keep its visual
-     * representation up-to-date from the given anchor.
-     */
-    private void removeListeners(ConnectionAnchor anchor) {
-        anchor.layoutXProperty().removeListener(this);
-        anchor.layoutYProperty().removeListener(this);
-        anchor.getBlock().layoutXProperty().removeListener(this);
-        anchor.getBlock().layoutYProperty().removeListener(this);
-    }
-
-    /**
-     * Set the endAnchor for this line. After setting the EndPosition will be
-     * updated.
-     *
-     * @param end
-     *            the InputAnchor to end at.
-     */
-    public void setEndAnchor(InputAnchor end) {
-        setAnchor(end);
-    }
-
-    /**
-     * Set the startAnchor for this line. After setting the StartPosition will
-     * be updated.
-     *
-     * @param start
-     *            The OutputAnchor to start at.
-     */
-    public void setStartAnchor(OutputAnchor start) {
-        setAnchor(start);
-    }
-
-    /** Returns this connection's end anchor, if any. */
-    public final Optional<InputAnchor> getInputAnchor() {
-        return endAnchor;
-    }
-
-    /** Returns the downstream block, if any. */
-    public final Optional<Block> getInputBlock() {
-        return endAnchor.map(ConnectionAnchor::getBlock);
-    }
-
-    /** Returns this connection's start anchor, if any. */
-    public final Optional<OutputAnchor> getOutputAnchor() {
-        return startAnchor;
-    }
-
-    /** Returns the upstream block, if any. */
-    public final Optional<Block> getOutputBlock() {
-        return startAnchor.map(ConnectionAnchor::getBlock);
-    }
-
-    @Override
-    public final void changed(ObservableValue<? extends Number> observable,
-            Number oldValue, Number newValue) {
-        invalidateAnchorPositions();
-    }
-
-    /**
-     * @return Whether or not both sides of this Connection are connected to an Anchor.
-     */
-    public final boolean isConnected() {
-        return startAnchor.isPresent() && endAnchor.isPresent();
-    }
-
-    /**
-     * Removes this Connection, disconnecting its anchors and removing this Connection from the pane it is on.
-     */
-    public final void remove() {
-        disconnect();
-        getPane().getChildren().remove(this);
-    }
-
-    /**
      * Properly disconnects the given anchor from this Connection, notifying the anchor of its disconnection.
      */
     public final void disconnect(ConnectionAnchor anchor) {
@@ -305,35 +339,57 @@ public class Connection extends ConnectionLine implements
     }
 
     /**
+     * Removes this Connection, disconnecting its anchors and removing this Connection from the pane it is on.
+     */
+    public final void remove() {
+        disconnect();
+        getPane().getChildren().remove(this);
+    }
+
+    /**
+     * @return True if both anchors are present and their types match.
+     */
+    public final boolean typesMatch() {
+        return !isConnected() || BackendUtils.typesMatch(startAnchor.get().getType(), endAnchor.get().getSignature());
+    }
+    
+    /**
+     * @param potentialAnchor The ConnectionAnchor to check if it matches.
+     * @return Whether or not the given anchor's type unifies with the current opposite anchor.
+     */
+    public final boolean typesMatch(ConnectionAnchor potentialAnchor) {
+        if (potentialAnchor instanceof InputAnchor && startAnchor.isPresent()) {
+            return BackendUtils.typesMatch(startAnchor.get().getType(), ((InputAnchor) potentialAnchor).getSignature());
+        } else if (potentialAnchor instanceof OutputAnchor && endAnchor.isPresent()) {
+            return BackendUtils.typesMatch(endAnchor.get().getSignature(), potentialAnchor.getType());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public final void changed(ObservableValue<? extends Number> observable,
+            Number oldValue, Number newValue) {
+        invalidateAnchorPositions();
+    }
+
+    /**
      * Runs both the update Start end End position functions. Use when
      * refreshing UI representation of the Line.
      */
     public void invalidateAnchorPositions() {
+        //TODO: Use bindings for this.
         startAnchor.ifPresent(a -> setStartPosition(a.getCenterInPane()));
         endAnchor.ifPresent(a -> setEndPosition(a.getCenterInPane()));
     }
     
-    /**
-     * Tells the Connection that its current state (considering connections) possibly has
-     * changed.
-     *
-     * This method should only be called after the Connection's constructor is done.
-     * 
-     * This method will invalidate the Connection even if the state did not change.
-     */
-    private void invalidateConnectionState() {
+    @Override
+    public void invalidateConnectionState() {
         invalidateAnchorPositions();
-        checkError();
+        setIsError(!typesMatch());
     }
 
-    /**
-     * Does the same as invalidateConnectionVisuals(), but cascading down to
-     * other blocks which are possibly also (indirectly) affected by the state
-     * change.
-     *
-     * @param state
-     *            The newest visual state
-     */
+    @Override
     public void invalidateConnectionStateCascading(int state) {
         if (!connectionStateIsUpToDate(state)) {
             invalidateConnectionState();
@@ -343,40 +399,9 @@ public class Connection extends ConnectionLine implements
         }
     }
 
-    /**
-     * Shortcut to call invalidateConnectionVisualsCascading(int state) with the newest state.
-     */
-    public void invalidateConnectionStateCascading() {
-        invalidateConnectionStateCascading(ConnectionCreationManager.getConnectionState());
-    }
-    
-    /**
-     * @return Whether or not the state of the block confirms to the given newest state.
-     */
-    public boolean connectionStateIsUpToDate(int state) {
-        return this.connectionState == state;
-    }
-
     @Override
     public String toString() {
         return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  "
                 + endAnchor;
-    }
-
-    /**
-     * This method evaluates the validity of the created connection. If the
-     * connection results in an invalid operation a visual error will be
-     * displayed.
-     */
-    private void checkError() {
-        setError(!typesMatch());
-    }
-    
-    public void setError(boolean error) {
-        if (error) {
-            this.getStyleClass().add("error");
-        } else {
-            this.getStyleClass().removeAll("error");
-        }
     }
 }

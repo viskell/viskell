@@ -21,27 +21,30 @@ import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.InputBlock;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 
+/**
+ * Block that accepts a (Float -> Float) function to be displayed on a linechart
+ * inside the Block.
+ */
 public class GraphBlock extends Block implements InputBlock {
-    /** The InputAnchor of this Block. **/
+    /** The InputAnchor of this Block. */
     private InputAnchor input;
 
-    /** The Pane that contains the inputs. **/
+    /** The Pane that contains the inputs. */
     @FXML private Pane inputSpace;
 
-    /** The LineChart that is displayed inside this Block. **/
+    /** The LineChart that is displayed inside this Block. */
     @FXML private LineChart<Double, Double> chart;
 
-    /** NumberAxis for x. **/
+    /** NumberAxis for x. */
     @FXML private NumberAxis x;
 
-    /** NuberAxis for y. **/
+    /** NuberAxis for y. */
     @FXML private NumberAxis y;
 
     /**

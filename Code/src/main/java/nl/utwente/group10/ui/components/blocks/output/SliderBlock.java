@@ -7,6 +7,11 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 import java.io.IOException;
 
+/**
+ * An extension of ValueBlock.
+ * The value of this Block can be changed by dragging a slider.
+ * Ranges from 0 to 1 (both inclusive).
+ */
 public class SliderBlock extends ValueBlock {
     @FXML
     private Slider slider;

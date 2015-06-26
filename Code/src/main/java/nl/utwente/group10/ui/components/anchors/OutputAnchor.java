@@ -5,7 +5,7 @@ import java.util.Optional;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.OutputBlock;
+import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 import nl.utwente.group10.ui.handlers.AnchorHandler;
@@ -17,8 +17,8 @@ public class OutputAnchor extends ConnectionAnchor {
     /**
      * @param block
      *            The block this Anchor is connected to.
-     * @param pane
-     *            The parent pane on which this anchor resides.
+     * @param signature
+     *            The Type signature as is accepted by this InputAnchor.
      */
     public OutputAnchor(Block block, Type signature) {
         super(block, signature);

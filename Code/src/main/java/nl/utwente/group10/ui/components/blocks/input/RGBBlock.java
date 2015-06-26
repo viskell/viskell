@@ -22,6 +22,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Block with three inputs that represent RGB values.
+ * The RGBBlock colors according to these inputs.
+ */
 public class RGBBlock extends DisplayBlock {
     /** The InputAnchor to which the Red value should be connected. **/
     private InputAnchor r;
