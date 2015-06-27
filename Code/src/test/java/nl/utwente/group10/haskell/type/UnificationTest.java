@@ -73,4 +73,25 @@ public class UnificationTest {
         
         HindleyMilner.unify(t2, t4);
     }
+
+    @Test
+    public void testTypeclassCopy() throws HaskellException {
+        Env env = new HaskellCatalog().asEnvironment();
+        TypeClass num = env.getTypeClasses().get("Num");
+        TypeClass read = env.getTypeClasses().get("Show");
+        TypeClass show = env.getTypeClasses().get("Read");
+
+        Type ct = new ConstT("Float");
+        Type t0 = new VarT("a", num, read);
+        Type t1 = new VarT("b", num, show);
+
+        Expr e0 = new Value(t0, "?");
+        Expr e1 = new Value(t1, "?");
+        Expr e2 = new Apply(new Apply(new Ident("(+)"), e0), e1);
+
+        e2.analyze(env);
+
+        HindleyMilner.unify(t0, ct);
+        HindleyMilner.unify(t1, ct);
+    }
 }
