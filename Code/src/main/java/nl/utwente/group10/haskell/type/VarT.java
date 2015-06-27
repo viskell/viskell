@@ -140,6 +140,7 @@ public class VarT extends Type {
         return this.instance.isPresent() ? String.format("%s:%s", this.name, this.instance.get()) : this.name;
     }
 
+    /** Return the set of typeclasses that is the union of both arguments' constraints. */
     public static Set<TypeClass> union(VarT a, VarT b) {
         return Sets.union(a.constraints, b.constraints);
     }
