@@ -57,7 +57,7 @@ public class Connection extends ConnectionLine implements
     public Connection(CustomUIPane pane) {
         this.pane = pane;
         this.isError = new SimpleBooleanProperty(false);
-        this.isErrorProperty().addListener(this::setError);
+        this.isErrorProperty().addListener(this::checkError);
     }
 
     /** 
@@ -206,7 +206,7 @@ public class Connection extends ConnectionLine implements
      * Listener method that can be attached to a BooleanProperty in order to
      * update the error state based on that property.
      */
-    private void setError(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
+    private void checkError(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
         setError(newValue);
     }
     
