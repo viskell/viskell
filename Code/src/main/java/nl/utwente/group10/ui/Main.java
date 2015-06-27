@@ -40,9 +40,6 @@ public class Main extends Application {
         ValueBlock valueBlock = new ValueBlock(tactilePane);
         DisplayBlock displayBlock = new DisplayBlock(tactilePane);
         tactilePane.getChildren().addAll(valueBlock, displayBlock);
-        
-        
-        
 
         // Init Debug
         DebugParent debug = new DebugParent(tactilePane);

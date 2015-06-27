@@ -26,6 +26,10 @@ public final class HindleyMilner {
      */
     static int tvOffset = 0;
 
+    static {
+        HindleyMilner.logger.setLevel(Level.OFF);
+    }
+    
     /**
      * Private constructor - methods in this class are static.
      */
@@ -39,8 +43,6 @@ public final class HindleyMilner {
     public static void unify(final Expr context, final Type t1, final Type t2) throws HaskellTypeError {
         final Type a = t1.prune();
         final Type b = t2.prune();
-
-        HindleyMilner.logger.setLevel(Level.OFF);
         
         HindleyMilner.logger.info(String.format("Unifying types %s and %s for context %s", t1, t2, context));
 

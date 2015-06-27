@@ -1,11 +1,10 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
-import nl.utwente.group10.ui.CustomUIPane;
-import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
+import nl.utwente.group10.ui.components.blocks.ComponentTest;
 
 import org.junit.Before;
 import org.junit.Test;

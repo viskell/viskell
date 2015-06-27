@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
@@ -40,14 +41,17 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @FXML private Pane inputSpace;
 
     /** The space containing the output anchor. */
-    @FXML private Pane outputSpace;
+    @FXML private BorderPane outputSpace;
 
     /** The space containing all the arguments of the function. */
     private ArgumentSpace argumentSpace;
-
-    /** The space containing the output anchor of this FunctionBLock. */
-    @FXML private Pane outputTypesSpace;
-
+    
+    /** The space in which to nest the FunctionBlock's inner parts. */
+    @FXML private Pane nestSpace;
+    
+    /** The space in which the information of the function is displayed. */
+    @FXML private Pane functionInfo;
+    
     /**
      * Method that creates a newInstance of this class along with it's visual
      * representation
@@ -88,16 +92,14 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         argumentSpace = new ArgumentSpace(this, inputSignatures);
         argumentSpace.setKnotIndex(getAllInputs().size());
         
-        ((Pane) this.lookup("#nestSpace")).getChildren().add(argumentSpace);
+        nestSpace.getChildren().add(argumentSpace);
         argumentSpace.knotIndexProperty().addListener(e -> invalidateKnotIndex());
         
         // Create an anchor for the result
         output = new OutputAnchor(this);
-        output.layoutXProperty().bind(outputSpace.widthProperty().divide(2));
-        outputSpace.getChildren().add(output);
+        outputSpace.setCenter(output);
         
         // Make sure the prefWidth is correctly updated.
-        Pane functionInfo = (Pane) this.lookup("#functionInfo");
         this.prefWidthProperty().bind(functionInfo.widthProperty().add(argumentSpace.prefWidthProperty()));
         
         
@@ -131,12 +133,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /**
      * @param index The new knot index for this FunctionBlock.
      */
-    public final void setBowtieIndex(int index) {
-        if (index >= -1 && index <= getAllInputs().size()) {
-            argumentSpace.setKnotIndex(index);
-        } else {
-            throw new IndexOutOfBoundsException();
-        }
+    public final void setKnotIndex(int index) {
+        argumentSpace.setKnotIndex(index);
     }
 
     @Override
@@ -157,7 +155,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      * @return InputAnchor with the given index.
      */
     public InputAnchor getInput(int index) {
-        return argumentSpace.getInputArgument(index).getInputAnchor();
+        return getAllInputs().get(index);
     }
 
     @Override

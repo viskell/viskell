@@ -108,7 +108,7 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 		manager.updateLine(inputId, x, y);
 	}
 	
-	    /**
+	/**
      * Method to indicate that the input was released.
      * 
      * @param inputId

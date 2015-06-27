@@ -23,6 +23,9 @@ public class OutputAnchor extends ConnectionAnchor {
      */
     public OutputAnchor(Block block, Type signature) {
         super(block, signature);
+        // By default the invisible anchor covers an area above the visible
+        // anchor (for InputAnchors), this switches that around to cover more of
+        // the area under the visible anchor.
         getInvisibleAnchor().setTranslateY(getInvisibleAnchor().getTranslateY() * -1);
         new AnchorHandler(super.getPane().getConnectionCreationManager(), this);
     }

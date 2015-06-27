@@ -57,7 +57,7 @@ public class Connection extends ConnectionLine implements
     public Connection(CustomUIPane pane) {
         this.pane = pane;
         this.isError = new SimpleBooleanProperty(false);
-        this.isErrorProperty().addListener((ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) -> setError(newValue));
+        this.isErrorProperty().addListener(this::setError);
     }
 
     /** 
@@ -203,6 +203,14 @@ public class Connection extends ConnectionLine implements
     }
     
     /**
+     * Listener method that can be attached to a BooleanProperty in order to
+     * update the error state based on that property.
+     */
+    private void setError(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
+        setError(newValue);
+    }
+    
+    /**
      * Updates the visuals to the given error state.
      * @param error
      */
@@ -310,7 +318,7 @@ public class Connection extends ConnectionLine implements
     }
 
     /**
-     * @return True if both anchors are present and their types match.
+     * @return True if not fully connected or if their types match.
      */
     public final boolean typesMatch() {
         return !isConnected() || BackendUtils.typesMatch(startAnchor.get().getType(), endAnchor.get().getSignature());

@@ -55,7 +55,10 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** Property storing the error state. */
     private BooleanProperty isError;
     
-    /** Property storing the active state. */
+    /**
+     * Property storing the active state.
+     * When active, the ConnectionAnchor will react to user input.
+     */
     private BooleanProperty active;
     
     /** The connection state this Block is in */

@@ -16,7 +16,11 @@ CustomUIPane {
     -fx-border-color: red;
 }
 
-.block .header{
+.selected .block {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+.block .header {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-font-family: fantasy;
@@ -24,14 +28,12 @@ CustomUIPane {
 }
 
 .block .title {
-    -fx-font-family: Titillium;
     -fx-text-fill: black;
     -fx-font-size: 20px;
     -fx-font-weight: bolder;
 }
 
 .block .content {
-    -fx-font-family: Titillium;
     -fx-font-size: 25px;
     -fx-font-weight: normal;
     -fx-text-fill: black;
@@ -39,7 +41,6 @@ CustomUIPane {
 
 .selected .function.block {
     -fx-background-color: #BA6602;
-	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 .function.block {
@@ -47,18 +48,16 @@ CustomUIPane {
 }
 
 .selected .value.block {
-	-fx-background-color: #971140;
-	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);	
+    -fx-background-color: #971140;
 }
 
 .value.block {
-	-fx-padding: 0 20 0 20;
+    -fx-padding: 0 20 0 20;
     -fx-background-color: #BD1550;
 }
 
 .selected .display.block {
-	-fx-background-color: #6E7C0C;
-	-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+    -fx-background-color: #6E7C0C;
 }
 
 .display.block {
@@ -66,8 +65,9 @@ CustomUIPane {
     -fx-text-alignment: center;
 }
 
-.graph.block {
-    -fx-background-color: #ecf0f1;
+.graph.block LineChart {
+    -fx-font-size: 14px;
+    -fx-background-color: #8A9B0F;
 }
 
 .menu.block {
@@ -79,19 +79,16 @@ CustomUIPane {
     -fx-font-size: 15px;
     -fx-font-weight: bold;
     -fx-font-color: #FCEBB6;
-    -fx-background-color: #A4849E;	
+    -fx-background-color: #A4849E;
 }
 
 .menu.block .title:hover {
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-    -fx-font-color: #FCEBB6;
     -fx-background-color: #926C8B;
 }
 
 
 
-.menu.block .title .arrow-button .arrow{
+.menu.block .title .arrow-button .arrow {
     -fx-background-color: #EDE6EC;
     -fx-focus-color: white;
 }
@@ -102,54 +99,44 @@ CustomUIPane {
 }
 
 .menu.block Button {
-	-fx-background-color: #A4849E;
+    -fx-background-color: #A4849E;
 }
 
 .menu.block Button:hover {
-	-fx-background-color: #926C8B;
+    -fx-background-color: #926C8B;
 }
 
 .menu.block #categorySpace TitledPane {
-    -fx-padding: 3px;  
+    -fx-padding: 3px;
 }
 
 .menu.block #utilSpace {
     -fx-padding: 3px;
-    -fx-spacing: 6px;  
+    -fx-spacing: 6px;
 }
 
 .menu.block .list-cell:even {
-	-fx-background-color: #DBCED8;	
+    -fx-background-color: #DBCED8;
 }
 
 .menu.block .list-cell:odd {
-	-fx-background-color: #C8B6C5;	
+    -fx-background-color: #C8B6C5;
 }
 
-.argumentSpace {
-}
-
-.argumentSpace Label.leftArgument {
+.argumentSpace Label {
     -fx-padding: 0 5 0 5;
-    -fx-font-family: Titillium;
     -fx-text-fill: black;
     -fx-font-size: 14px;
     -fx-font-weight: normal;
     -fx-background-color: white;
-    -fx-border-width: 1;
 }
 
 .argumentSpace Label.rightArgument {
-    -fx-padding: 0 5 0 5;
-    -fx-font-family: Titillium;
-    -fx-font-size: 14px;
-    -fx-font-weight: normal;
     -fx-text-fill: white;
     -fx-background-color: black;
-    -fx-border-width: 2;
 }
 
-.argumentSpace .error Label.leftArgument {
+.argumentSpace .error Label{
     -fx-background-color:red;
     -fx-border-color: red;
     -fx-text-fill: white;
@@ -196,21 +183,10 @@ CustomUIPane {
     -fx-font-weight: bold;
 }
 
-LineChart {
-    -fx-font-size: 14px;
-    -fx-background-color: #8A9B0F;
-}
-
 .zoomButtons Button {
     -fx-font-family: monospace;
     -fx-font-size: 16px;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-color: rgba(0, 0, 0, 0.3);
-}
-
-.invisTouchZone {
-}
-
-.leftArgument {
 }

@@ -3,6 +3,7 @@ package nl.utwente.group10.ui.components.blocks.output;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
@@ -32,7 +33,7 @@ public class ValueBlock extends Block implements OutputBlock {
     private OutputAnchor output;
 
     /** The space containing the output anchor. */
-    @FXML private Pane outputSpace;
+    @FXML private BorderPane outputSpace;
 
     /**
      * @param pane
@@ -53,9 +54,8 @@ public class ValueBlock extends Block implements OutputBlock {
             throw new TypeUnavailableException();
         }
 
-        outputSpace.getChildren().add(this.getOutputAnchor());
+        outputSpace.setCenter(this.getOutputAnchor());
         outputSpace.toFront();
-        output.layoutXProperty().bind(outputSpace.widthProperty().divide(2));
     }
 
     /**

@@ -1,8 +1,8 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.output;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import nl.utwente.group10.ui.components.blocks.output.ValueBlock;
+import nl.utwente.group10.ui.components.blocks.ComponentTest;
 
 import org.junit.Test;
 

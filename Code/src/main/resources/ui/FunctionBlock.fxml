@@ -26,7 +26,7 @@
 			</HBox>
 		</center>
 		<bottom>
-			<Pane fx:id="outputSpace" maxHeight="0"/>
+			<BorderPane fx:id="outputSpace" maxHeight="0"/>
 		</bottom>
 	</BorderPane>
 </fx:root>
