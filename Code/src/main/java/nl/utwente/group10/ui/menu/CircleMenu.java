@@ -1,12 +1,12 @@
 package nl.utwente.group10.ui.menu;
 
-import nl.utwente.group10.ui.components.blocks.Block;
+import javafx.util.Duration;
 
+import nl.utwente.group10.ui.components.blocks.Block;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.StackPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import jfxtras.scene.layout.CircularPane;
 import jfxtras.scene.menu.CirclePopupMenu;
 
@@ -57,6 +57,7 @@ public class CircleMenu extends CirclePopupMenu {
 
         // Animation
         this.setAnimationInterpolation(CircularPane::animateOverTheArcWithFade);
+        this.setAnimationDuration(Duration.ONE);
     }
 
     /** Copy the {@link Block} in this context. */
