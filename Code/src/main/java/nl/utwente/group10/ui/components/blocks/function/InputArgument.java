@@ -38,7 +38,7 @@ public class InputArgument extends Pane implements ComponentLoader{
         
         inputAnchor = new InputAnchor(block, signature);
         inputAnchor.layoutXProperty().bind(inputLabel.widthProperty().divide(2));
-        inputAnchor.isErrorProperty().addListener(this::setError);
+        inputAnchor.isErrorProperty().addListener(this::checkError);
 
         // Vertically center the label
         inputLabel.layoutYProperty().bind(this.heightProperty().divide(2).subtract(inputLabel.heightProperty().divide(2)));
@@ -67,7 +67,7 @@ public class InputArgument extends Pane implements ComponentLoader{
         return inputAnchor;
     }
     
-    private void setError(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
+    private void checkError(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
         setError(newValue);
     }
     
