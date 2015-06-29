@@ -13,7 +13,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.BackendUtils;
@@ -50,7 +52,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     @FXML private Shape invisibleAnchor;
     
     /** The signature that is accepted by this anchor. */
-    private Type signature;
+    // private Type signature;
     
     /** Property storing the error state. */
     private BooleanProperty isError;
@@ -70,9 +72,8 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * @param Type
      *            The signature that is accepted by this anchor.
      */
-    public ConnectionAnchor(Block block, Type signature) {
+    public ConnectionAnchor(Block block) {
         this.block = block;
-        this.signature = signature;
         this.isError = new SimpleBooleanProperty(false);
         this.active = new SimpleBooleanProperty(true);
         active.addListener(p -> invalidateActive());
@@ -130,18 +131,22 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         return invisibleAnchor;
     }
 
+    public abstract Expr getExpr();
+    
     /**
      * @return Input or output type of the block associated with this anchor.
      */
-    public abstract Type getType();
+    public abstract String getStringType();
     
     /**
      * @return The signature as accepted by this ConnectionAnchor.
      */
+    /*
     public Type getSignature() {
         return signature;
     }
-
+    */
+    
     /**
      * Removes the connection from its pane, first disconnecting it from its
      * anchors.
@@ -214,7 +219,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * @return True if the primary connection is connected, and its types match.
      */
     public boolean isPrimaryConnectedCorrect() {
-        return isPrimaryConnected() && BackendUtils.typesMatch(getSignature().getFresh(), getType().getFresh());
+        return isPrimaryConnected(); // && BackendUtils.typesMatch(getSignature().getFresh(), getType().getFresh());
     }
 
     /**
@@ -330,7 +335,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     
     @Override
     public void invalidateConnectionState() {
-        setIsError(!BackendUtils.typesMatch(getSignature().getFresh(), getType().getFresh()));
+        // setIsError(!BackendUtils.typesMatch(getSignature().getFresh(), getType().getFresh()));
     }
 
     @Override

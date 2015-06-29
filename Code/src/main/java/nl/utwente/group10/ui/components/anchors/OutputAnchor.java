@@ -2,6 +2,8 @@ package nl.utwente.group10.ui.components.anchors;
 
 import java.util.Optional;
 
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -21,23 +23,13 @@ public class OutputAnchor extends ConnectionAnchor {
      * @param signature
      *            The Type signature as is accepted by this InputAnchor.
      */
-    public OutputAnchor(Block block, Type signature) {
-        super(block, signature);
+    public OutputAnchor(Block block) {
+        super(block);
         // By default the invisible anchor covers an area above the visible
         // anchor (for InputAnchors), this switches that around to cover more of
         // the area under the visible anchor.
         getInvisibleAnchor().setTranslateY(getInvisibleAnchor().getTranslateY() * -1);
         new AnchorHandler(super.getPane().getConnectionCreationManager(), this);
-    }
-    
-    /**
-     * Constructs an OutputAnchor that accepts all outputs.
-     * 
-     * @param block
-     *            The block this Anchor is connected to.
-     */
-    public OutputAnchor(Block block) {
-        this(block, HindleyMilner.makeVariable());
     }
     
     @Override
@@ -46,6 +38,26 @@ public class OutputAnchor extends ConnectionAnchor {
         return true;
     }
 
+    
+    @Override
+    public Expr getExpr() {
+        return getBlock().getExpr();
+    }
+    
+
+    //TODO move to abstract super class
+    @Override
+    public String getStringType() {
+        try {
+            return getExpr().getType(getPane().getEnvInstance()).prune().toHaskellType();
+        } catch (HaskellException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return "ERROR";
+        }
+    }
+    
+    /*
     @Override
     public Type getType() {
         if (getBlock() instanceof OutputBlock) {
@@ -54,4 +66,5 @@ public class OutputAnchor extends ConnectionAnchor {
             throw new TypeUnavailableException();
         }
     }
+    */
 }

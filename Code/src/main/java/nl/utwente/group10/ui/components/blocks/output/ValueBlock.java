@@ -48,11 +48,7 @@ public class ValueBlock extends Block implements OutputBlock {
         value = new SimpleStringProperty("5.0");
         
         this.loadFXML(fxml);
-        try {
-            output = new OutputAnchor(this, new Value(new ConstT("Float"), getValue()).analyze(getPane().getEnvInstance()));
-        } catch (HaskellException e) {
-            throw new TypeUnavailableException();
-        }
+        output = new OutputAnchor(this);
 
         outputSpace.setCenter(this.getOutputAnchor());
         outputSpace.toFront();
@@ -79,19 +75,28 @@ public class ValueBlock extends Block implements OutputBlock {
     public final StringProperty valueProperty() {
         return value;
     }
-
+    
     @Override
     public void updateExpr() {
-        // return new Value(new ConstT("Float"), getValue());
+        //TODO control if this gets called only once.
+        this.expr = new Value(new ConstT("Float"), getValue()); 
+        super.updateExpr();
     }
+    
 
     @Override
     public Type getOutputType() {
-        return output.getSignature();
+        return getOutputSignature();
     }
     @Override
     public Type getOutputSignature() {
-        return output.getSignature();
+        try {
+            return new Value(new ConstT("Float"), getValue()).analyze(getPane().getEnvInstance());
+        } catch (HaskellException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

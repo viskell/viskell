@@ -32,11 +32,11 @@ public class InputArgument extends Pane implements ComponentLoader{
      * @param block Block to which this InputArgument belongs.
      * @param signature Type signature as should be accepted by the InputAnchor.
      */
-    public InputArgument(Block block, Type signature) {
-        inputText = new SimpleStringProperty(signature.toHaskellType());
+    public InputArgument(Block block) {
+        inputText = new SimpleStringProperty("TODO");
         this.loadFXML("InputArgument");
         
-        inputAnchor = new InputAnchor(block, signature);
+        inputAnchor = new InputAnchor(block);
         inputAnchor.layoutXProperty().bind(inputLabel.widthProperty().divide(2));
         inputAnchor.isErrorProperty().addListener(this::checkError);
 

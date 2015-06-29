@@ -55,7 +55,7 @@ public class DisplayBlock extends Block implements InputBlock {
 
         this.loadFXML(fxml);
 
-        inputAnchor = new InputAnchor(this, HindleyMilner.makeVariable());
+        inputAnchor = new InputAnchor(this);
         inputAnchor.layoutXProperty().bind(inputSpace.widthProperty().divide(2));
         inputSpace.getChildren().add(inputAnchor);        
         
@@ -88,32 +88,22 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     @Override
-    public final void updateExpr() {
-        //return inputAnchor.asExpr();
-    }
-
-    @Override
     public void invalidateConnectionState() {
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
 
             if (ghci.isPresent()) {
-                setOutput(ghci.get().pull(inputAnchor.asExpr()));
+                setOutput(ghci.get().pull(inputAnchor.getExpr()));
             }
         } catch (GhciException e) {
             setOutput("???");
         }
     }
-    /*
-    @Override
-    public Type getInputSignature(int index) {
-        return inputAnchor.getSignature();
-    }
-     */
     
     @Override
     public Type getInputType(int index) {
-        return inputAnchor.getType();
+        throw new RuntimeException();
+        //return getInput(index).getType();
     }
 
     @Override
@@ -129,7 +119,7 @@ public class DisplayBlock extends Block implements InputBlock {
 
     @Override
     public Expr getExpr() {
-        // TODO Auto-generated method stub
-        return null;
+        System.out.println(this + ".getExpr(): " + inputAnchor.getExpr());
+        return inputAnchor.getExpr();
     }
 }

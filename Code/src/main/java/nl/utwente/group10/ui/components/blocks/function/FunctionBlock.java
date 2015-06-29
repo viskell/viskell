@@ -72,17 +72,26 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         this.name = new SimpleStringProperty(name);
 
         this.loadFXML("FunctionBlock");
+        signature = new Ident(getName());
 
         // Collect argument types
         ArrayList<String> args = new ArrayList<>();
-        Type t = type;
+        Type t = null;
+        try {
+            t = signature.getType(pane.getEnvInstance()).prune();
+        } catch (HaskellException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        int inputCount = 0;
         while (t instanceof FuncT) {
             FuncT ft = (FuncT) t;
             args.add(ft.getArgs()[0].toHaskellType());
             t = ft.getArgs()[1];
+            inputCount++;
         }
         
-        List<Type> inputSignatures = new ArrayList<>();
+        //List<Type> inputSignatures = new ArrayList<>();
         /*
         Type functionSignature = getFunctionSignature();
         for (int i = 0; i < args.size(); i++) {
@@ -95,7 +104,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         }
         */
         
-        argumentSpace = new ArgumentSpace(this, inputSignatures);
+        argumentSpace = new ArgumentSpace(this, inputCount);
         argumentSpace.setKnotIndex(getAllInputs().size());
         
         nestSpace.getChildren().add(argumentSpace);
@@ -114,19 +123,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         functionInfo.setMinWidth(Region.USE_PREF_SIZE);
         functionInfo.setMaxWidth(Region.USE_PREF_SIZE);
         invalidateConnectionState();
-        
-        
-        
-        
-
-        signature = new Ident(getName());
-        exprDirty.addListener(this::checkDirty);
-    }
-    
-    private void checkDirty(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (newValue == true) {
-            updateExpr();
-        }
     }
     
     /** Returns the name property of this FunctionBlock. */
@@ -201,7 +197,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     
     @Override
     public Type getInputType(int index) {
-        return getInput(index).getType();
+        throw new RuntimeException();
+        //return getInput(index).getType();
     }
     
     @Override
@@ -217,6 +214,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        System.out.println("OutputSignature is brak");
         return null;
     }
 
@@ -234,23 +232,35 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     @Override
     public final void updateExpr() {
+        super.updateExpr(); //TODO maybe after this method?
         expr = new Ident(getName());
+        //System.out.println(getKnotIndex());
         for (InputAnchor in : getActiveInputs()) {
-            expr = new Apply(expr, in.asExpr());
+            expr = new Apply(expr, in.getExpr());
         }
     }
     
     @Override
     public void invalidateConnectionState() {
+        super.invalidateConnectionState();
+        try {
+            if(expr != null) {
+                expr.analyze(getPane().getEnvInstance());
+                //TODO why is this necessary?
+            }
+        } catch (HaskellException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         invalidateInputVisuals();
         invalidateOutputVisuals();
-        setExprDirty(true);
     }
 
     /**
      * Updates the input types to the Block's new state.
      */
     private void invalidateInputVisuals() {
+        System.out.println(this + ".invalidateInputVisuals()");
         argumentSpace.invalidateInputContent();
     }
 

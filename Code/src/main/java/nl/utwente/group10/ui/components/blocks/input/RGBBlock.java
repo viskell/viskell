@@ -46,8 +46,8 @@ public class RGBBlock extends DisplayBlock {
         super(pane, "RGBBlock");
 
         r = super.getAllInputs().get(0);
-        g = new InputAnchor(this, HindleyMilner.makeVariable());
-        b = new InputAnchor(this, HindleyMilner.makeVariable());
+        g = new InputAnchor(this); //, HindleyMilner.makeVariable());
+        b = new InputAnchor(this); //, HindleyMilner.makeVariable());
         inputSpace.getChildren().setAll(ImmutableList.of(r, g, b));
         
         // Spread them out over the top of the Block.
@@ -69,7 +69,7 @@ public class RGBBlock extends DisplayBlock {
     private int evaluate(InputAnchor anchor) {
         try {
             GhciSession ghci = getPane().getGhciSession().get();
-            String result = ghci.pull(anchor.asExpr());
+            String result = ghci.pull(anchor.getExpr());
 
             double v = Math.max(0.0, Math.min(1.0, Double.valueOf(result)));
             return (int) Math.round(v * 255);
@@ -109,7 +109,8 @@ public class RGBBlock extends DisplayBlock {
 
     @Override
     public Type getInputType(int index) {
-        return getInput(index).getType();
+        throw new RuntimeException();
+        //return getInput(index).getType();
     }
 
     @Override

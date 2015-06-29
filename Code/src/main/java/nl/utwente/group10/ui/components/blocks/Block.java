@@ -3,6 +3,7 @@ package nl.utwente.group10.ui.components.blocks;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -55,7 +56,8 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
      */
     public Block(CustomUIPane pane) {
         parentPane = pane;
-        this.exprDirty = new SimpleBooleanProperty(true);
+        exprDirty = new SimpleBooleanProperty(true);
+        exprDirty.addListener(this::checkDirty);
 
         parentPane.selectedBlockProperty()
                 .addListener(
@@ -72,6 +74,12 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseEvent);
 
         Platform.runLater(this::createCircleMenu);
+    }
+    
+    private void checkDirty(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue == true) {
+            updateExpr();
+        }
     }
     
     public final Boolean getExprDirty() {
@@ -101,7 +109,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         if (parentPane.getSelectedBlock().isPresent()
                 && parentPane.getSelectedBlock().get().equals(this)
                 && t.getButton().equals(MouseButton.PRIMARY)) {
-            circleMenu.show(t);
+            //circleMenu.show(t);
         } else {
             parentPane.setSelectedBlock(this);
         }
@@ -114,7 +122,10 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
 
     /** Returns an expression that evaluates to what this block is. */
     public Expr getExpr() {
+        System.out.println(this + ".getExpr() (cached: " + expr + ")");
+        //System.out.println("Block: " + this + " getExpr() (cached: " + expr + ")");
         if (getExprDirty() == false) {
+            //System.out.println("Returning cached expression: " + expr);
             return expr;
         } else {
             //Should not be necessary.
@@ -123,10 +134,15 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         }
     }
     
-    public abstract void updateExpr();
+    public void updateExpr() {
+        System.out.println(this + ".updateExpr()");
+        setExprDirty(false);
+    }
 
     @Override
     public void invalidateConnectionState() {
+        System.out.println(this + ".invalidateConnectionState()");
+        setExprDirty(true);
     }
 
     @Override
@@ -137,6 +153,8 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                 ((OutputBlock) this).getOutputAnchor().invalidateConnectionStateCascading(state);
             }
             this.connectionState = state;
+        } else {
+            System.out.println(this + " connectionState is up to date");
         }
     }
     

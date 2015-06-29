@@ -56,7 +56,7 @@ public class GraphBlock extends Block implements InputBlock {
 
         loadFXML("GraphBlock");
 
-        input = new InputAnchor(this, new FuncT(new ConstT("Float"), new ConstT("Float")));
+        input = new InputAnchor(this); //, new FuncT(new ConstT("Float"), new ConstT("Float")));
         input.layoutXProperty().bind(inputSpace.widthProperty().divide(2));
         inputSpace.getChildren().setAll(input);
         
@@ -65,28 +65,22 @@ public class GraphBlock extends Block implements InputBlock {
         borderPane.getChildren().remove(inputSpace);
         borderPane.setTop(inputSpace);
     }
-
-    @Override
-    public void updateExpr() {
-        // return input.asExpr();
-    }
-
-    /*
-    @Override
-    public Type getInputSignature(int index) {
-        assert index == 0;
-        return input.getSignature();
-    }
-    */
     
     @Override
     public Type getInputType(int index) {
-        return input.getType();
+        throw new RuntimeException();
+        //return getInput(index).getType();
     }
 
     @Override
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(input);
+    }
+    
+    @Override
+    public void updateExpr() {
+        this.expr = input.getExpr();
+        super.updateExpr();
     }
 
     @Override
@@ -98,6 +92,7 @@ public class GraphBlock extends Block implements InputBlock {
         double max = x.getUpperBound();
         // Haskell equivalent:
         // putStrLn $ unwords $ map show $ map (id) [1.0,1.1..5.0]
+        System.out.println("GraphBlock getExpr(): "+getExpr());
         Expr expr = new Apply(
             new Ident("putStrLn"),
             new Apply(
@@ -117,8 +112,12 @@ public class GraphBlock extends Block implements InputBlock {
                 )
             )
         );
+        System.out.println("GraphBlock expr 0.5: " + null);
+        
+        System.out.println("GraphBlock expr 1: " + expr);
         
         try {
+            System.out.println("GraphBlock expr 2: "+expr);
             String results = getPane().getGhciSession().get().pull(expr);
 
             LineChart.Series<Double, Double> series = new LineChart.Series<>();

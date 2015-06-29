@@ -265,7 +265,8 @@ public class Connection extends ConnectionLine implements
             // TODO since invalidateConnectionState(), and thus checkError()
             // gets called after this typeMatch(), a small duplication of
             // type getting occurs.
-            boolean typesMatch = typesMatch(anchor);
+            // TODO should not check types here.
+            boolean typesMatch = true; //typesMatch(anchor);
             if (typesMatch || allowTypeMismatch) {
                 setAnchor(anchor);
                 added = true;
@@ -321,7 +322,7 @@ public class Connection extends ConnectionLine implements
      * @return True if not fully connected or if their types match.
      */
     public final boolean typesMatch() {
-        return !isConnected() || BackendUtils.typesMatch(startAnchor.get().getType(), endAnchor.get().getSignature());
+        return !isConnected(); // || BackendUtils.typesMatch(startAnchor.get().getType(), endAnchor.get().getSignature());
     }
     
     /**
@@ -329,6 +330,9 @@ public class Connection extends ConnectionLine implements
      * @return Whether or not the given anchor's type unifies with the current opposite anchor.
      */
     public final boolean typesMatch(ConnectionAnchor potentialAnchor) {
+        throw new RuntimeException();
+        //return getInput(index).getType();
+        /*
         if (potentialAnchor instanceof InputAnchor && startAnchor.isPresent()) {
             return BackendUtils.typesMatch(startAnchor.get().getType(), ((InputAnchor) potentialAnchor).getSignature());
         } else if (potentialAnchor instanceof OutputAnchor && endAnchor.isPresent()) {
@@ -336,6 +340,7 @@ public class Connection extends ConnectionLine implements
         } else {
             return false;
         }
+        */
     }
 
     /**

@@ -64,7 +64,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * Constructs an ArgumentSpace belonging to the function block as given.
      * @param block FunctionBlock to which this ArgumentSpace belongs.
      */
-    public ArgumentSpace(FunctionBlock block, List<Type> inputSignatures) {
+    public ArgumentSpace(FunctionBlock block, int inputCount) {
         this.loadFXML("ArgumentSpace");
         
         this.block = block;
@@ -74,8 +74,8 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         knotIndex.addListener(event -> snapToKnotIndex());    
         
         //Create and attach Labels for the (left) arguments.
-        for (int i = 0; i < inputSignatures.size(); i++) {
-            InputArgument arg = new InputArgument(block, inputSignatures.get(i));
+        for (int i = 0; i < inputCount; i++) {
+            InputArgument arg = new InputArgument(block); // TODO
             leftArguments.add(arg);            
             if (i > 0) {
                 Region prev = leftArguments.get(i-1);
@@ -292,7 +292,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * Method to indicate that the content in the output argument Label is possibly outdated.
      */
     public void invalidateOutputContent() {
-        String text = block.getOutputType().toHaskellType();
+        String text = block.getOutputAnchor().getStringType();
         rightArgument.setText(text);        
     }
     
@@ -300,8 +300,12 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * Method to indicate that the content in the input argument Labels are possibly outdated.
      */
     public void invalidateInputContent() {
+        /*
+        for (int i = 0; i < leftArguments.size(); i++) {
+            leftArguments.get(i).setInputText(argumentText.get(index));
+        }*/
         for (InputArgument argument : leftArguments) {
-            argument.setInputText(argument.getInputAnchor().getType().toHaskellType());
+            argument.setInputText(argument.getInputAnchor().getStringType());
         }
     }
     
