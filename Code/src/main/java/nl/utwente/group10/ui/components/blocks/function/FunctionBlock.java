@@ -25,6 +25,9 @@ import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.exceptions.FunctionDefinitionException;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 
 /**
  * Main building block for the visual interface, this class represents a Haskell
@@ -52,6 +55,12 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** The space in which the information of the function is displayed. */
     @FXML private Pane functionInfo;
     
+    private Expr signature;
+    
+    private Expr expr;
+    
+    private BooleanProperty exprDirty;
+    
     /**
      * Method that creates a newInstance of this class along with it's visual
      * representation
@@ -66,6 +75,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     public FunctionBlock(String name, Type type, CustomUIPane pane) {
         super(pane);
         this.name = new SimpleStringProperty(name);
+        this.exprDirty = new SimpleBooleanProperty(true);
 
         this.loadFXML("FunctionBlock");
 
@@ -108,6 +118,19 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         functionInfo.setMinWidth(Region.USE_PREF_SIZE);
         functionInfo.setMaxWidth(Region.USE_PREF_SIZE);
         invalidateConnectionState();
+        
+        
+        
+        
+
+        signature = new Ident(getName());
+        exprDirty.addListener(this::checkDirty);
+    }
+    
+    private void checkDirty(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue == true) {
+            updateExpr();
+        }
     }
     
     /** Returns the name property of this FunctionBlock. */
@@ -123,6 +146,18 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** Returns the StringProperty for the name of the function. */
     public final StringProperty nameProperty() {
         return name;
+    }
+    
+    public final Boolean getExprDirty() {
+        return exprDirty.get();
+    }
+
+    public void setExprDirty(Boolean state) {
+        this.exprDirty.set(state);
+    }
+    
+    public final BooleanProperty exprDirtyProperty() {
+        return exprDirty;
     }
 
     /** Returns the knot index of this FunctionBlock. */
@@ -196,7 +231,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public Type getOutputType() {
         try {
-            return asExpr().analyze(getPane().getEnvInstance()).prune();
+            return getExpr();
         } catch (HaskellException e) {
             return getOutputSignature();
         }
@@ -205,20 +240,29 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /**
      * @return The current (output) expression belonging to this block.
      */
-    @Override
-    public final Expr asExpr() {
-        Expr expr = new Ident(getName());
+    public final void updateExpr() {
+        expr = new Ident(getName());
+        // expr = signature; WRONG
         for (InputAnchor in : getActiveInputs()) {
             expr = new Apply(expr, in.asExpr());
         }
-
-        return expr;
+    }
+    
+    public Expr getExpr() {
+        if (getExprDirty() == false) {
+            return expr;
+        } else {
+            //Should not be necessary.
+            updateExpr();
+            return expr;
+        }
     }
     
     @Override
     public void invalidateConnectionState() {
         invalidateInputVisuals();
         invalidateOutputVisuals();
+        setExprDirty(true);
     }
 
     /**

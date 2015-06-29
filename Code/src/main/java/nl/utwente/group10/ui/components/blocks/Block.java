@@ -92,7 +92,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     }
 
     /** Returns an expression that evaluates to what this block is. */
-    public abstract Expr asExpr();
+    public abstract void updateExpr();
 
     @Override
     public void invalidateConnectionState() {

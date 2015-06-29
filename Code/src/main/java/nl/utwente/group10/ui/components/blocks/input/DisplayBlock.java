@@ -88,7 +88,7 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     @Override
-    public final Expr asExpr() {
+    public final Expr updateExpr() {
         return inputAnchor.asExpr();
     }
 

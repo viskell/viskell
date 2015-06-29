@@ -34,7 +34,7 @@ public class InputAnchor extends ConnectionAnchor {
      */
     public final Expr asExpr() {
         if (isPrimaryConnected()) {
-            return getPrimaryOppositeAnchor().get().getBlock().asExpr();
+            return getPrimaryOppositeAnchor().get().getBlock().updateExpr();
         } else {
             return new Ident("undefined");
         }

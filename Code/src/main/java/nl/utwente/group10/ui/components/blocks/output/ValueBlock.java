@@ -81,7 +81,7 @@ public class ValueBlock extends Block implements OutputBlock {
     }
 
     @Override
-    public Expr asExpr() {
+    public Expr updateExpr() {
         return new Value(new ConstT("Float"), getValue());
     }
 

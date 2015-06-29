@@ -67,7 +67,7 @@ public class GraphBlock extends Block implements InputBlock {
     }
 
     @Override
-    public Expr asExpr() {
+    public Expr updateExpr() {
         return input.asExpr();
     }
 
@@ -112,7 +112,7 @@ public class GraphBlock extends Block implements InputBlock {
                     new Apply(
                         new Apply(
                             new Ident("map"),
-                            asExpr()
+                            updateExpr()
                         ),
                         new Ident(String.format(Locale.US,"[%f,%f..%f]", min, min+step, max))
                     )
