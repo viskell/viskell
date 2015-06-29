@@ -8,6 +8,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
+import nl.utwente.group10.haskell.type.ConstT;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
@@ -51,5 +53,15 @@ public class RGBBlock extends DisplayBlock {
         int bv = evaluate(b);
 
         well.setBackground(new Background(new BackgroundFill(Color.rgb(rv, gv, bv), null, null)));
+    }
+
+    @Override
+    public Type getInputSignature(int index) {
+        return new ConstT("Float");
+    }
+
+    @Override
+    public Type getInputSignature(InputAnchor anchor) {
+        return getInputSignature(0);
     }
 }

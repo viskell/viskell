@@ -65,22 +65,7 @@ public class GraphBlock extends Block implements InputBlock {
     }
 
     @Override
-    public Type getInputType(InputAnchor input) {
-        return getInputSignature(0);
-    }
-
-    @Override
-    public Type getInputType(int index) {
-        return getInputSignature(0);
-    }
-
-    @Override
     public List<InputAnchor> getAllInputs() {
-        return ImmutableList.of(input);
-    }
-
-    @Override
-    public List<InputAnchor> getActiveInputs() {
         return ImmutableList.of(input);
     }
 

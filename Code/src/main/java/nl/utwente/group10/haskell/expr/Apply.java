@@ -48,6 +48,8 @@ public class Apply extends Expr {
         // THEN the type of our result is b
         HindleyMilner.unify(this, funcType, new FuncT(argType, resType));
 
+        this.setCachedType(resType);
+
         return resType;
     }
 

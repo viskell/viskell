@@ -1,5 +1,7 @@
 package nl.utwente.group10.haskell.type;
 
+import com.google.common.collect.Sets;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
@@ -73,19 +75,7 @@ public class VarT extends Type {
      * @return Whether the given type is within the constraints of this type.
      */
     public final boolean hasConstraint(Type type) {
-        boolean out = false;
-
-        if (!this.constraints.isEmpty()) {
-            for (TypeClass typeclass : this.constraints) {
-                if (typeclass.hasType(type)) {
-                    out = true;
-                }
-            }
-        } else {
-            out = true;
-        }
-
-        return out;
+        return constraints.stream().allMatch(tc -> tc.hasType(type));
     }
 
     /**
@@ -150,29 +140,9 @@ public class VarT extends Type {
         return this.instance.isPresent() ? String.format("%s:%s", this.name, this.instance.get()) : this.name;
     }
 
-    /**
-     * Calculates the intersection of two VarT constraints and returns the set of matching type classes.
-     * @param a The first type.
-     * @param b The second type.
-     * @return The set of type classes that are in both types.
-     */
-    public static Set<TypeClass> intersect(VarT a, VarT b) {
-        //TODO: TEMPORARY WORKAROUND
-        if (!a.hasConstraints()) return b.constraints;
-        if (!b.hasConstraints()) return a.constraints;
-        
-        final Set<TypeClass> intersection = new HashSet<TypeClass>();
-
-        if (!a.hasConstraints()) {
-            intersection.addAll(b.constraints);
-        } else if (!b.hasConstraints()) {
-            intersection.addAll(a.constraints);
-        } else {
-            intersection.addAll(a.constraints);
-            intersection.retainAll(b.constraints);
-        }
-
-        return intersection;
+    /** Return the set of typeclasses that is the union of both arguments' constraints. */
+    public static Set<TypeClass> union(VarT a, VarT b) {
+        return Sets.union(a.constraints, b.constraints);
     }
 
     /**

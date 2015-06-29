@@ -28,6 +28,7 @@ public class Value extends Expr {
     public Value(final Type type, final String value) {
         this.type = type;
         this.value = value;
+        setCachedType(this.type);
     }
 
     @Override

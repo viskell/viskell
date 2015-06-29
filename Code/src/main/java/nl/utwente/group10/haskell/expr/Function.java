@@ -80,6 +80,8 @@ public class Function extends Expr {
             type = new FuncT(this.arguments.get(i - 1).analyze(env).getFresh(), type);
         }
 
+        this.setCachedType(type);
+
         return type;
     }
 

@@ -42,30 +42,47 @@ public final class HindleyMilner {
         HindleyMilner.logger.info(String.format("Unifying types %s and %s for context %s", t1, t2, context));
 
         if (a instanceof VarT && !a.equals(b)) {
-            // Example: we have to unify (for example) α and Int.
-            // Do so by stating that α must be Int
-            // IFF Int is in the type classes of α AND α does not occur in Int.
-
+            // First, prevent ourselves from going into an infinite loop
             if (HindleyMilner.occursInType(a, b)) {
                 HindleyMilner.logger.info(String.format("Recursion in types %s and %s for context %s", a, b, context));
                 throw new HaskellTypeError(String.format("%s ∈ %s", a, b), context, a, b);
             }
 
             if (b instanceof VarT) {
-                final Set<TypeClass> intersection = VarT.intersect((VarT) a, (VarT) b);
+                // Example: we have to unify (for example) α and β
 
-                if (intersection.isEmpty() && ((VarT) a).hasConstraints()) {
-                    HindleyMilner.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
-                    throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context, a, b);
+                VarT va = ((VarT) a);
+                VarT vb = ((VarT) b);
+
+                if (va.hasConstraints() && vb.hasConstraints()) {
+                    // Both a and b have constraints (type classes). Whatever type both of those are going to be must
+                    // therefore lie inside the union of those type classes: if a must be in Num and Show, and b must be
+                    // in Num and Read, then whatever the resulting type will be must be in Num, Show and Read.
+
+                    VarT t = HindleyMilner.makeVariable(VarT.union(va, vb));
+
+                    va.setInstance(t);
+                    vb.setInstance(t);
+                } else if (vb.hasConstraints()) {
+                    // If a doesn't have constraints but b does, just use b's.
+                    va.setInstance(vb);
+                } else if (va.hasConstraints()) {
+                    // If b doesn't have constraints but a does, just use a's.
+                    vb.setInstance(va);
+                } else {
+                    // Neither a nor b has constraints, set a's instance to b.
+                    va.setInstance(vb);
                 }
-
-                ((VarT) a).setInstance(HindleyMilner.makeVariable(intersection));
-            } else if (!((VarT) a).hasConstraint(b)) {
-                HindleyMilner.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
-                throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context, a, b);
+            } else {
+                // Example: we have to unify (for example) α and Int.
+                // Do so by stating that α must be Int, provided Int fits in α's typeclasses
+                if (((VarT) a).hasConstraint(b)) {
+                    ((VarT) a).setInstance(b);
+                } else {
+                    HindleyMilner.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
+                    throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context, a, b);
+                }
             }
-
-            ((VarT) a).setInstance(b);
         } else if (a instanceof ConstT && b instanceof VarT) {
             // Example: we have to unify Int and α.
             // Same as above, but mirrored.

@@ -266,11 +266,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
     
     @Override
-    public Type getOutputSignature() {
-        return getOutputSignature(getPane().getEnvInstance());
-    }
-
-    @Override
     public Type getOutputSignature(Env env) {
         Type type = getFunctionSignature();
         for (int i = 0; i < getBowtieIndex(); i++) {
@@ -284,16 +279,11 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     @Override
-    public Type getOutputType() {
-        return getOutputType(getPane().getEnvInstance());
-    }
-
-    @Override
     public Type getOutputType(Env env) {
         try {
             return asExpr().analyze(env).prune();
         } catch (HaskellException e) {
-            return getOutputSignature();
+            return getOutputSignature(env);
         }
     }
 
@@ -342,7 +332,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     private void invalidateOutputVisuals() {
         Label outputLabel = ((Label) argumentSpace.getChildren().get(argumentSpace.getChildren().size() - 1));
-        outputLabel.setText(getOutputType().toHaskellType());
+        outputLabel.setText(getOutputType(getPane().getEnvInstance()).toHaskellType());
     }
 
     /**
@@ -366,7 +356,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         super.setError(error);
     }
     
-    private final void setInputError(int index, boolean error) {
+    private void setInputError(int index, boolean error) {
         ObservableList<String> styleClass = argumentSpace.getChildren().get(index).getStyleClass();
         if (error) {
             styleClass.removeAll("error");

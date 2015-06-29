@@ -81,21 +81,6 @@ public class ValueBlock extends Block implements OutputBlock {
     }
 
     @Override
-    public Type getOutputType() {
-        return getOutputType(getPane().getEnvInstance());
-    }
-
-    @Override
-    public Type getOutputType(Env env) {
-        return getOutputSignature(env);
-    }
-
-    @Override
-    public Type getOutputSignature() {
-        return getOutputSignature(getPane().getEnvInstance());
-    }
-
-    @Override
     public Type getOutputSignature(Env env) {
         try {
             return asExpr().analyze(env);
