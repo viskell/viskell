@@ -100,10 +100,12 @@ public class RGBBlock extends DisplayBlock {
         return getAllInputs().get(index);
     }
     
+    /*
     @Override
     public Type getInputSignature(int index) {
         return getInput(index).getSignature();
     }
+    */
 
     @Override
     public Type getInputType(int index) {

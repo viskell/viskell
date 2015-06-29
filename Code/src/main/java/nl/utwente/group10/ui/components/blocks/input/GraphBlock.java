@@ -67,15 +67,18 @@ public class GraphBlock extends Block implements InputBlock {
     }
 
     @Override
-    public Expr updateExpr() {
-        return input.asExpr();
+    public void updateExpr() {
+        // return input.asExpr();
     }
 
+    /*
     @Override
     public Type getInputSignature(int index) {
         assert index == 0;
         return input.getSignature();
     }
+    */
+    
     @Override
     public Type getInputType(int index) {
         return input.getType();
@@ -107,7 +110,7 @@ public class GraphBlock extends Block implements InputBlock {
                     new Apply(
                         new Apply(
                             new Ident("map"),
-                            updateExpr()
+                            getExpr()
                         ),
                         new Ident(String.format(Locale.US,"[%f,%f..%f]", min, min+step, max))
                     )

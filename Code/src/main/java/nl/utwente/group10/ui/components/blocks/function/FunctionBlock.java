@@ -11,6 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
@@ -55,12 +56,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** The space in which the information of the function is displayed. */
     @FXML private Pane functionInfo;
     
-    private Expr signature;
-    
-    private Expr expr;
-    
-    private BooleanProperty exprDirty;
-    
     /**
      * Method that creates a newInstance of this class along with it's visual
      * representation
@@ -75,7 +70,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     public FunctionBlock(String name, Type type, CustomUIPane pane) {
         super(pane);
         this.name = new SimpleStringProperty(name);
-        this.exprDirty = new SimpleBooleanProperty(true);
 
         this.loadFXML("FunctionBlock");
 
@@ -89,6 +83,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         }
         
         List<Type> inputSignatures = new ArrayList<>();
+        /*
         Type functionSignature = getFunctionSignature();
         for (int i = 0; i < args.size(); i++) {
             if (functionSignature instanceof FuncT) {
@@ -98,6 +93,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
                 throw new FunctionDefinitionException();
             }
         }
+        */
         
         argumentSpace = new ArgumentSpace(this, inputSignatures);
         argumentSpace.setKnotIndex(getAllInputs().size());
@@ -147,18 +143,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     public final StringProperty nameProperty() {
         return name;
     }
-    
-    public final Boolean getExprDirty() {
-        return exprDirty.get();
-    }
-
-    public void setExprDirty(Boolean state) {
-        this.exprDirty.set(state);
-    }
-    
-    public final BooleanProperty exprDirtyProperty() {
-        return exprDirty;
-    }
 
     /** Returns the knot index of this FunctionBlock. */
     public final Integer getKnotIndex() {
@@ -198,17 +182,22 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return output;
     }
 
+    
     /**
      * @return The function signature as specified in the catalog.
      */
+    /*
     public Type getFunctionSignature() {
-        return getPane().getEnvInstance().getFreshExprType(this.getName()).get();
+        return signature.getType(getPane());
     }
-
+    */
+    
+    /*
     @Override
     public Type getInputSignature(int index) {
         return getInput(index).getSignature();
     }
+    */
     
     @Override
     public Type getInputType(int index) {
@@ -217,21 +206,24 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     
     @Override
     public Type getOutputSignature() {
-        Type type = getFunctionSignature();
-        for (int i = 0; i < getKnotIndex(); i++) {
-            if (type instanceof FuncT) {
-                type = ((FuncT) type).getArgs()[1];
-            } else {
-                throw new FunctionDefinitionException();
-            }
+        try {
+            return expr.getType(getPane().getEnvInstance());
+        } catch (HaskellTypeError e) {
+            // Display type mismatch
+            // TODO
+            getInput(0).setIsError(true);
+            e.getHaskellObject();
+        } catch (HaskellException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        return type;
+        return null;
     }
 
     @Override
     public Type getOutputType() {
         try {
-            return getExpr();
+            return getExpr().getType(getPane().getEnvInstance());
         } catch (HaskellException e) {
             return getOutputSignature();
         }
@@ -240,21 +232,11 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /**
      * @return The current (output) expression belonging to this block.
      */
+    @Override
     public final void updateExpr() {
         expr = new Ident(getName());
-        // expr = signature; WRONG
         for (InputAnchor in : getActiveInputs()) {
             expr = new Apply(expr, in.asExpr());
-        }
-    }
-    
-    public Expr getExpr() {
-        if (getExprDirty() == false) {
-            return expr;
-        } else {
-            //Should not be necessary.
-            updateExpr();
-            return expr;
         }
     }
     

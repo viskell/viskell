@@ -104,12 +104,13 @@ public class DisplayBlock extends Block implements InputBlock {
             setOutput("???");
         }
     }
-
+    /*
     @Override
     public Type getInputSignature(int index) {
         return inputAnchor.getSignature();
     }
-
+     */
+    
     @Override
     public Type getInputType(int index) {
         return inputAnchor.getType();
@@ -118,5 +119,17 @@ public class DisplayBlock extends Block implements InputBlock {
     @Override
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(inputAnchor);
+    }
+
+    @Override
+    public List<InputAnchor> getActiveInputs() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Expr getExpr() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

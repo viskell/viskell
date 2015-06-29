@@ -1,6 +1,8 @@
 package nl.utwente.group10.ui.components.blocks;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -40,6 +42,12 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     
     /** The connection state this Block is in */
     private int connectionState;
+    
+    protected Expr signature;
+    
+    protected Expr expr;
+    
+    protected BooleanProperty exprDirty;
 
     /**
      * @param pane
@@ -47,6 +55,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
      */
     public Block(CustomUIPane pane) {
         parentPane = pane;
+        this.exprDirty = new SimpleBooleanProperty(true);
 
         parentPane.selectedBlockProperty()
                 .addListener(
@@ -63,6 +72,18 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseEvent);
 
         Platform.runLater(this::createCircleMenu);
+    }
+    
+    public final Boolean getExprDirty() {
+        return exprDirty.get();
+    }
+
+    public void setExprDirty(Boolean state) {
+        this.exprDirty.set(state);
+    }
+    
+    public final BooleanProperty exprDirtyProperty() {
+        return exprDirty;
     }
 
     /**
@@ -92,6 +113,16 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     }
 
     /** Returns an expression that evaluates to what this block is. */
+    public Expr getExpr() {
+        if (getExprDirty() == false) {
+            return expr;
+        } else {
+            //Should not be necessary.
+            updateExpr();
+            return expr;
+        }
+    }
+    
     public abstract void updateExpr();
 
     @Override

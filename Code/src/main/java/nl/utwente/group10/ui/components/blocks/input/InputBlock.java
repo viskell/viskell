@@ -2,6 +2,8 @@ package nl.utwente.group10.ui.components.blocks.input;
 
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
+
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
@@ -14,7 +16,7 @@ public interface InputBlock {
      *            The index of the argument of which the signature is desired.
      * @return The signature of the argument as specified by the given index.
      */
-    Type getInputSignature(int index);
+    //Type getInputSignature(int index);
 
     /**
      * @param index
@@ -26,10 +28,14 @@ public interface InputBlock {
     /**
      * @return All InputAnchors of the block.
      */
-    List<InputAnchor> getAllInputs();
+    default List<InputAnchor> getAllInputs() {
+        return ImmutableList.of();
+    }
 
     /**
      * @return Only the active (as specified with by the knot index) inputs.
      */
-    List<InputAnchor> getActiveInputs();
+    default List<InputAnchor> getActiveInputs() {
+        return getAllInputs();
+    }
 }

@@ -54,7 +54,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
 
     public void update() {
         this.block.get().ifPresent(block -> {
-            Expr expr = block.updateExpr();
+            Expr expr = block.getExpr();
             String haskell = expr.toHaskell();
 
             String label = String.format("%s: %s", block.getClass().getSimpleName(), haskell);

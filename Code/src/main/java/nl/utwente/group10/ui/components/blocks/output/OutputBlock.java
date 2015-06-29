@@ -17,7 +17,9 @@ public interface OutputBlock {
     /**
      * @return The current output type of the block.
      */
-    Type getOutputType();
+    default Type getOutputType() {
+        return getOutputSignature();
+    }
 
     /**
      * @return The signature of the output.
