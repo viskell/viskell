@@ -1,10 +1,24 @@
 \chapter{Design}
 
+This chapter contains a high level description of the design choices made in the process of creating Viskell.
+The specific implementation details are discussed in chapter \ref{chap:implementation} on page \pageref{chap:implementation}.
+
 \section{Languages and libraries}
 
-% Java. Why?
-% JavaFX. Why?
-% TactileFX. Why?
+Viskell is written in Java using Java 8 with JavaFX.
+Java 8 is chosen because it, unlike Java 7, still receives public updates at the moment of writing.
+Language level 8 is chosen to make use of some of the new features in this version.
+
+Viskell uses TactileFX, a JavaFX touch screen library developed at the University of Twente.
+The client wanted the program to use this library, which also means that Viskell had to use Java and JavaFX.
+
+Furthermore, the following libraries have been used:
+
+\begin{itemize}
+	\item Antlr 4 (http://www.antlr.org/)
+	\item Guava (https://github.com/google/guava)
+	\item JFXtras (http://jfxtras.org/)
+\end{itemize}
 
 \section{High-level architecture}
 
@@ -38,8 +52,10 @@ Internally Haskell types are represented as instances of a class. These instance
 tree-like structure. This approach is chosen because it is easy to work with class instances and nested types form
 a tree-like structure. \index{type tree}
 
+An Antlr parser has been created to parse Haskell type signatures into our representation. This makes the catalog and interpreting types from GHCi easier.
+
 The type checker is implemented using Hindley-Milner type inference. We use this algorithm to (try to) unify two
-types. If the types cannot be unified, there exists a type error. The algorithm is described in detail by
+types. If the types cannot be unified, there exists a type error. The algorithm is described in detail in
 \cite{borisov}. \index{Hindley-Milner} \index{type inference}
 
 \subsection{Expressions}
@@ -50,8 +66,12 @@ Each expression holds its type including the types from the lower part of the ex
 expression tree therefore always knows the type of the whole tree.
 
 Function application can be done using a special kind of expression. This is done so function application does not
-directly modify other expressions in the tree. This allows for easy changes in the frontend. Types of expressions can
+directly modify other expressions in the tree. This allows for easy changes in the front end. Types of expressions can
 be updated on-the-fly taking into account the types that are applied to the arguments of functions.
+
+Custom functions can be created using a function expression.
+A function expression has an expression sub tree for the function body and a number of function arguments.
+The function arguments can be used in the expression to pass the input.
 
 The expressions that are available in the application are stored in a catalog. This catalog contains functions that are
 by default available in Haskell and are known to work with the application.
