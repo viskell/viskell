@@ -3,6 +3,12 @@
 This chapter contains a high level description of the design choices made in the process of creating Viskell.
 The specific implementation details are discussed in chapter \ref{chap:implementation} on page \pageref{chap:implementation}.
 
+\section{User interface}
+
+\subsection{Graphical design}
+
+\subsection{Behaviour and interaction design}
+
 \section{Languages and libraries}
 
 Viskell is written in Java using Java 8 with JavaFX.
@@ -28,7 +34,9 @@ The back end consists of a representation for Haskell code in Java, an interface
 This separation is made to make development and debugging for the part that generates Haskell code easier.
 It also makes using the user interface for a different purpose a bit easier, although the user interface is not specifically designed for this purpose.
 
-\section{Backend architecture}
+\section{Front end architecture}
+
+\section{Back end architecture}
 
 A result of our design choices is that our Java program needs to have a basic understanding of the Haskell programming
 language. For this purpose we implemented two tree structures - one for expressions, one for types - supported by an
