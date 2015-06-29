@@ -170,7 +170,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     }
     
     public void cascadeConnectionState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        //System.out.println(this + " Cascading connection state " + oldValue + " -> " + newValue);
+        System.out.println(this + " Cascading connection state " + oldValue + " -> " + newValue);
         if (oldValue != newValue) {
             boolean cascadedFurther = false;
             if (this instanceof OutputBlock) {
@@ -185,6 +185,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
             
             if (!cascadedFurther) {
                 try {
+                    System.out.println(this + ": Analyzing expression");
                     this.getExpr().analyze(getPane().getEnvInstance());
                 } catch (HaskellException e) {
                     // TODO TYPE ERROR

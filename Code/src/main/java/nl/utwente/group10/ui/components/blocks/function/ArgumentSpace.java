@@ -293,17 +293,13 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      */
     public void invalidateOutputContent() {
         String text = block.getOutputAnchor().getStringType();
-        rightArgument.setText(text);        
+        rightArgument.setText(text);
     }
     
     /**
      * Method to indicate that the content in the input argument Labels are possibly outdated.
      */
     public void invalidateInputContent() {
-        /*
-        for (int i = 0; i < leftArguments.size(); i++) {
-            leftArguments.get(i).setInputText(argumentText.get(index));
-        }*/
         for (InputArgument argument : leftArguments) {
             argument.setInputText(argument.getInputAnchor().getStringType());
         }

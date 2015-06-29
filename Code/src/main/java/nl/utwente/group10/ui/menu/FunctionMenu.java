@@ -30,6 +30,7 @@ import nl.utwente.group10.ui.components.blocks.input.GraphBlock;
 import nl.utwente.group10.ui.components.blocks.input.RGBBlock;
 import nl.utwente.group10.ui.components.blocks.output.SliderBlock;
 import nl.utwente.group10.ui.components.blocks.output.ValueBlock;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 /**
  * FunctionMenu is a viskell specific menu implementation. A FunctionMenu is an
@@ -145,6 +146,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         // Env here (don't just calculate it over and over). Or just pass the
         // signature String.
         FunctionBlock fb = new FunctionBlock(entry.getName(), entry.asHaskellObject(new Context()), parent);
+        fb.setConnectionState(ConnectionCreationManager.nextConnectionState());
         addBlock(fb);
     }
 
