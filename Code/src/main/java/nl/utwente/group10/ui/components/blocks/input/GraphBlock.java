@@ -87,11 +87,6 @@ public class GraphBlock extends Block implements InputBlock {
     }
 
     @Override
-    public List<InputAnchor> getActiveInputs() {
-        return ImmutableList.of(input);
-    }
-
-    @Override
     public void invalidateConnectionState() {
         ObservableList<XYChart.Series<Double, Double>> lineChartData = FXCollections.observableArrayList();
 

@@ -1,6 +1,7 @@
 package nl.utwente.group10.haskell.expr;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableList;
@@ -16,6 +17,35 @@ import nl.utwente.group10.haskell.type.Type;
 public abstract class Expr extends HaskellObject {
     /** Logger for this class. **/
     protected static final Logger logger = Logger.getLogger(Expr.class.getName());
+
+    /** The last known type for this expression. */
+    private Optional<Type> cachedType = Optional.empty();
+
+    /**
+     * Returns the latest type for this expression. If {@code analayze()} has not been called yet, it will be called to
+     * retrieve a type.
+     *
+     * @param env The current Haskell environment.
+     * @return The type for this usage of this expression.
+     * @throws HaskellException The type tree contains an application of an incompatible type.
+     */
+    public Type getType(Env env) throws HaskellException {
+        if (!this.cachedType.isPresent()) {
+            return this.analyze(env);
+        }
+
+        return this.cachedType.get();
+    }
+
+    /**
+     * Sets the cached type for this expression.
+     * @param type The type to cache.
+     */
+    protected final void setCachedType(final Type type) {
+        if (!this.cachedType.isPresent() || this.cachedType.get() != type) {
+            this.cachedType = Optional.ofNullable(type);
+        }
+    }
 
     /**
      * Analyzes the type tree and resolves the type for this usage of this expression.

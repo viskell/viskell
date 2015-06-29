@@ -88,8 +88,8 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     @Override
-    public final Expr updateExpr() {
-        return inputAnchor.asExpr();
+    public final void updateExpr() {
+        //return inputAnchor.asExpr();
     }
 
     @Override
@@ -118,10 +118,5 @@ public class DisplayBlock extends Block implements InputBlock {
     @Override
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(inputAnchor);
-    }
-
-    @Override
-    public List<InputAnchor> getActiveInputs() {
-        return getAllInputs();
     }
 }

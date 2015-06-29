@@ -66,6 +66,9 @@ public class Main extends Application {
         Scene scene = new Scene(zoomOverlay);
         scene.getStylesheets().add("/ui/style.css");
 
+        stage.setWidth(800);
+        stage.setHeight(600);
+
         stage.setOnCloseRequest(event -> System.exit(0));
         stage.setScene(scene);
 

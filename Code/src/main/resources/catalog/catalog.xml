@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="catalog.xsl" ?>
 <catalog version="0.4">
-    <classes>
+    <classes> 
+        <class name="Eq">
+            <instance name="Int"/>
+            <instance name="Ordering"/>
+            <instance name="Float"/>
+            <instance name="Double"/>
+            <instance name="Char"/>
+            <instance name="Bool"/>
+        </class>
+        <class name="Ord">
+        	<instance name="Ordering"/>
+        	<instance name="Bool"/>
+        	<instance name="Char"/>
+        	<instance name="Double"/>
+        	<instance name="Float"/>
+        	<instance name="Int"/>
+        </class>   	
         <class name="Num">
             <instance name="Int"/>
+            <instance name="Integer"/>
             <instance name="Float"/>
             <instance name="Double"/>
         </class>
@@ -18,105 +35,484 @@
         <class name="Integral">
             <instance name="Int"/>
         </class>
+        <class name="Real">
+        	<instance name="Int"/>
+        	<instance name="Integer"/>
+        	<instance name="Float"/>
+        	<instance name="Double"/>
+        </class>
         <class name="RealFrac">
             <instance name="Float"/>
             <instance name="Double"/>
         </class>
         <class name="Enum">
             <instance name="Ordering"/>
+            <instance name="Integer"/>
             <instance name="Int"/>
             <instance name="Char"/>
             <instance name="Bool"/>
             <instance name="Float"/>
             <instance name="Double"/>
         </class>
-        <class name="Eq">
-            <instance name="Int"/>
-            <instance name="Ordering"/>
-            <instance name="Float"/>
-            <instance name="Double"/>
-            <instance name="Char"/>
-            <instance name="Bool"/>
+        <class name="RealFloat">
+        	<instance name="Float"/>
+        	<instance name="Double"/>
+        </class>
+        <class name="Show">
+        	<instance name="Ordering"/>
+        	<instance name="Integer"/>
+        	<instance name="Int"/>
+        	<instance name="Char"/>
+        	<instance name="Bool"/>
+        	<instance name="Float"/>
+        	<instance name="Double"/>
+        </class>
+        <class name="Read">
+        	<instance name="Ordering"/>
+        	<instance name="Integer"/>
+        	<instance name="Int"/>
+        	<instance name="Char"/>
+        	<instance name="Bool"/>
+        	<instance name="Float"/>
+        	<instance name="Double"/>
         </class>
     </classes>
+    
+    
     <functions>
+        <category name="Basic">
+        	<function name="(&amp;&amp;)" signature="Bool -> Bool -> Bool">
+				and
+            </function>
+        	<function name="(||)" signature="Bool -> Bool -> Bool">
+        		or
+        	</function>
+        	<function name="not" signature="Bool -> Bool">
+        		not
+        	</function>
+        	<function name="otherwise" signature="Bool">
+        		otherwise is defined as the value True. It helps to make guards more readable.
+        	</function>
+        </category>
+        <category name="Tuples">
+        	<function name="fst" signature="(a, b) -> a">
+        		Extract the first component of a pair.
+        	</function>
+        	<function name="snd" signature="(a, b) -> b">
+        		Extract the second component of a pair
+        	</function>
+        	<function name="curry" signature="((a, b) -> c) -> (a, b) -> c">
+        		curry converts an uncurried function to a curried function
+        	</function>
+        	<function name="uncurry" signature="(a -> b -> c) -> (a, b) -> c">
+        		uncurry converts a curried function to a function on pairs
+        	</function>
+        </category>
         <category name="Equality">
-            <function name="(&lt;)" signature="Eq a => a -> a -> Bool">
-                Less than
-            </function>
-            <function name="(==)" signature="Eq a => a -> a -> Bool">
-                Equal
-            </function>
-            <function name="(/=)" signature="Eq a => a -> a -> Bool">
-                Not equal
-            </function>
-            <function name="(>)" signature="Eq a => a -> a -> Bool">
-                Greater than
-            </function>
+        	<function name="(==)" signature="Eq a => a -> a -> Bool"></function>
+        	<function name="(/=)" signature="Eq a => a -> a -> Bool"></function>
+        	<function name="(&lt;)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="(&lt;=)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="(&gt;)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="(&gt;=)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="max" signature="Ord a => a -> a -> a"></function>
+        	<function name="min" signature="Ord a => a -> a -> a"></function>
         </category>
-        <category name="Math">
-            <function name="(*)" signature="Num a => a -> a -> a">
-                Multiplication
-            </function>
-            <function name="(+)" signature="Num a => a -> a -> a">
-                Addition
-            </function>
-            <function name="(-)" signature="Num a => a -> a -> a">
-                Subtraction
-            </function>
-            <function name="(/)" signature="Fractional a => a -> a -> a">
-                Division
-            </function>
-            <function name="(^)" signature="(Num a, Integral b) => a -> b -> a">
-                Involution
-            </function>
+        <category name="Enum functions">
+        	<function name="succ" signature="Enum a => a -> a">
+        		The successor of a value.
+        	</function>
+        	<function name="pred" signature="Enum a => a -> a">
+        		The predecessor of a value.
+        	</function>
+        	<function name="toEnum" signature="Enum a => Int -> a">
+        		Convert from an Int.
+        	</function>
+        	<function name="fromEnum" signature="Enum a => a -> Int">
+        		Convert to an Int. It is implementation-dependent what fromEnum returns when applied to a value that is too large to fit in an Int.
+        	</function>
+        	<function name="enumFrom" signature="Enum a => a -> [a]">
+        		Used in Haskell's translation of [n..].
+        	</function>
+        	<function name="enumFromThen" signature="Enum a => a -> a -> [a]">
+        		used in Haskell's translation of [n, n'..].
+        	</function>
+        	<function name="enumFromTo" signature="Enum a => a -> a -> [a]">
+        		used in Haskell's translation of [n..m].
+        	</function>
+        	<function name="enumFromThenTo" signature="Enum a => a -> a -> a -> [a]">
+        		used in Haskell's translation of [n, n'..m].
+        	</function>
+        </category>
+        <category name="Numeric types">
+			<function name="(+)" signature="Num a => a -> a -> a">
+				Mathematical addition.
+			</function>
+			<function name="(*)" signature="Num a => a -> a -> a">
+				Mathematical multiplication.
+			</function>
+			<function name="(-)" signature="Num a => a -> a -> a">
+				Mathematical subtraction.
+			</function>
+        	<function name="negate" signature="Num a => a -> a">
+        		Unary negation.
+        	</function>
+        	<function name="abs" signature="Num a => a -> a">
+        		Absolute value.
+        	</function>
+        	<function name="signum" signature="Num a => a -> a">
+        		Sign of a number.
+        	</function>
+        	<function name="fromInteger" signature="Num a => Integer -> a">
+        		Conversion from an Integer. An integer literal represents the application of the
+        		function fromInteger to the appropriate value of type Integer, so such literals have
+        		type (Num a) => a.
+        	</function>
+        	<function name="toRational" signature="Real a => a -> Rational">
+        		the rational equivalent of its real argument with full precision.
+        	</function>
+        	<function name="quot" signature="Integral a => a -> a -> a">
+        		integer division truncated toward zero.
+        	</function>
+        	<function name="rem" signature="Integral a => a -> a -> a">
+        		integer remainder, satisfying (x 'quot' y)*y + (x 'rem' y) == x.
+        	</function>
+        	<function name="div" signature="Integral a => a -> a -> a">
+        		integer division truncated toward negative infinity.
+        	</function>
+        	<function name="mod" signature="Integral a => a -> a -> a">
+        		integer modulus, satisfying (x 'div' y)*y + (x 'mod y) == x.
+        	</function>
+        	<function name="quotRem" signature="Integral a => a -> a -> (a, a)">
+        		simultaneous quot and rem.
+        	</function>
+        	<function name="divMod" signature="Integral a => a -> a -> (a, a)">
+        		simultaneous div and mod.
+        	</function>
+        	<function name="toInteger" signature="Integral a => a -> Integer">
+        		Conversion to Integer.
+        	</function>
+        	<function name="(/)" signature="Fractional a => a -> a -> a">
+        		fractional division.
+        	</function>
+        	<function name="recip" signature="Fractional a => a -> a">
+        		reciprocal division.
+        	</function>
+        	<function name="fromRational" signature="Fractional a => Rational -> a">
+        		Conversion from a Rational (that is Ratio Integer).
+        	</function>
+        	<function name="pi" signature="Floating a => a"></function>
+        	<function name="exp" signature="Floating a => a -> a"></function>
+        	<function name="log" signature="Floating a => a -> a"></function>
+        	<function name="sqrt" signature="Floating a => a -> a"></function>
+        	<function name="(**)" signature="Floating a => a -> a -> a"></function>
+        	<function name="logBase" signature="Floating a => a -> a -> a"></function>
+        	<function name="sin" signature="Floating a => a -> a"></function>
+        	<function name="cos" signature="Floating a => a -> a"></function>
+        	<function name="tan" signature="Floating a => a -> a"></function>
+        	<function name="asin" signature="Floating a => a -> a"></function>
+        	<function name="acos" signature="Floating a => a -> a"></function>
+        	<function name="atan" signature="Floating a => a -> a"></function>
+        	<function name="sinh" signature="Floating a => a -> a"></function>
+        	<function name="cosh" signature="Floating a => a -> a"></function>
+        	<function name="tanh" signature="Floating a => a -> a"></function>
+        	<function name="asinh" signature="Floating a => a -> a"></function>
+        	<function name="acosh" signature="Floating a => a -> a"></function>
+        	<function name="atanh" signature="Floating a => a -> a"></function>
+        	<function name="properFraction" signature="(RealFrac a, Integral b) => a -> (b, a)">
+        		The function properFraction takes a real fractional number x and returns a pair (n,f) such that x = n+f, and:
+        		- n is an integral number with the same sign as x; and
+        		- f is a fraction with the same type and sign as x; and with absolute value less than 1.
+        	</function>
+        	<function name="truncate" signature="(RealFrac a, Integral b) => a -> b">
+        		truncate x returns the integer nearest x between zero and x
+        	</function>
+        	<function name="round" signature="(RealFrac a, Integral b) => a -> b">
+        		round x returns the nearest integer to x; the even integer if x is equidistant between two integers.
+        	</function>
+        	<function name="ceiling" signature="(RealFrac a, Integral b) => a -> b">
+        		ceiling x returns the least integer not less than x.
+        	</function>
+        	<function name="floor" signature="(RealFrac a, Integral b) => a -> b">
+        		floor x returns the greatest integer not greater than x.
+        	</function>
+        	<function name="isNaN" signature="RealFloat a => a -> Bool">
+        		True if the argument is an IEEE "not-a-number" (NaN) value.
+        	</function>
+        	<function name="isInfinite" signature="RealFloat a => a -> Bool">
+        		True if the argument is an IEEE infinity or negative infinity
+        	</function>
+        	<function name="isDenormalized" signature="RealFloat a => a -> Bool">
+        		True if the argument is too small to be represented in normalized format.
+        	</function>
+        	<function name="isNegativeZero" signature="RealFloat a => a -> Bool">
+        		True if the argument is an IEEE negative zero.
+        	</function>
+        	<function name="isIEEE" signature="RealFloat a => a -> Bool">
+        		True if the argument is an IEEE floating point number.
+        	</function>
+        	<function name="atan2" signature="RealFloat a => a -> a -> a">
+        		a version of arctangent taking two real floating-point arguments. For real floating x and 
+        		y, atan2 y x computes the angle (from the positive x-axis) of the vector from the 
+        		origin to the point (x,y). atan2 y x returns a value in the range [-pi, pi]. It follows 
+        		the Common Lisp semantics for the origin when signed zeroes are supported. atan2 y 
+        		1, with y in a type that is RealFloat, should return the same value as atan y. A 
+        		default definition of atan2 is provided, but implementors can provide a more accurate 
+        		implementation.
+        	</function>
+        	<function name="even" signature="Integral a => a -> Bool"></function>
+        	<function name="odd" signature="Integral a => a -> Bool"></function>
+        	<function name="gcd" signature="Integral a => a -> a -> a">
+        		gcd x y is the non-negative factor of both x and y of which every common factor of x and 
+        		y is also a factor; for example gcd 4 2 = 2, gcd (-4) 6 = 2, gcd 0 4 = 4. gcd 0 0 
+        		= 0. (That is, the common divisor that is "greatest" in the divisibility preordering.)
 
-            <function name="abs" signature="Num a => a -> a"></function>
-            <function name="acos" signature="Floating a => a -> a"></function>
-            <function name="acosh" signature="Floating a => a -> a"></function>
-            <function name="asin" signature="Floating a => a -> a"></function>
-            <function name="asinh" signature="Floating a => a -> a"></function>
-            <function name="atan" signature="Floating a => a -> a"></function>
-            <function name="atanh" signature="Floating a => a -> a"></function>
-            <function name="ceiling" signature="(RealFrac a, Integral b) => a -> b"></function>
-            <function name="cos" signature="Floating a => a -> a"></function>
-            <function name="cosh" signature="Floating a => a -> a"></function>
-            <function name="exp" signature="Floating a => a -> a"></function>
-            <function name="floor" signature="(RealFrac a, Integral b) => a -> b"></function>
-            <function name="log" signature="Floating a => a -> a"></function>
-            <function name="logBase" signature="Floating a => a -> a -> a"></function>
-            <function name="negate" signature="Num a => a -> a"></function>
-            <function name="pred" signature="Enum a => a -> a"></function>
-            <function name="recip" signature="Fractional a => a -> a"></function>
-            <function name="round" signature="(RealFrac a, Integral b) => a -> b"></function>
-            <function name="signum" signature="Num a => a -> a"></function>
-            <function name="sin" signature="Floating a => a -> a"></function>
-            <function name="sinh" signature="Floating a => a -> a"></function>
-            <function name="sqrt" signature="Floating a => a -> a"></function>
-            <function name="succ" signature="Enum a => a -> a"></function>
-            <function name="tan" signature="Floating a => a -> a"></function>
-            <function name="tanh" signature="Floating a => a -> a"></function>
-            <function name="truncate" signature="(RealFrac a, Integral b) => a -> b"></function>
-
-            <function name="pi" signature="Floating a => a">
-                The number &#960;
-            </function>
+				Note: Since for signed fixed-width integer types, abs minBound &lt; 0, the result may be
+				negative if one of the arguments is minBound (and necessarily is if the other is 0 or 
+				minBound) for such types.
+        	</function>
+        	<function name="lcm" signature="Integral a => a -> a -> a">
+        		lcm x y is the smallest positive integer that both x and y divide.
+        	</function>
+        	<function name="(^)" signature="(Num a, Integral b) => a -> b -> a">
+        		raise a number to an non-negative integral power.
+        	</function>
+        	<function name="(^^)" signature="(Integral b, Fractional a) => a -> b -> a">
+        		raise a number to an integral power
+        	</function>
+        	<function name="fromIntegral" signature="(Num b, Integral a) => a -> b">
+        		general coercion from integral types.
+        	</function>
+        	<function name="realToFrac" signature="(Real a, Fractional b) => a -> b">
+        		general coercion to fractional types
+        	</function>
         </category>
-        <category name="Maps, folds and lists">
-            <function name="head" signature="[a] -> a">
-                Extract the first element of a list, which must be non-empty.
-            </function>
+        <category name="Folds and traversals">
+        	<function name="foldr" signature="(a -> b -> b) -> b -> [a] -> b">
+        		Right-associative fold of a structure.
+        	</function>
+        	<function name="foldl" signature="(b -> a -> b) -> b -> [a] -> b">
+        		Left-associative fold of structure.
+        	</function>
+        	<function name="foldr1" signature="(a -> a -> a) -> [a] -> a">
+        		A variant of foldr that has no base case, an thus may only be applied to non-empty structures.
+        	</function>
+        	<function name="foldl1" signature="(a -> a -> a) -> [a] -> a">
+        		A variant of foldl that has no base case, and thus may only be applied to non-empty structures.
+        	</function>
+        	<function name="null" signature="[a] -> Bool">
+        		Test whether the structure is empty. The default implementation is optimized for
+        		structures that are similar to cons-lists, because there is no general way to do better.
+        	</function>
+        	<function name="length" signature="[a] -> Int">
+        		Returns the size/length of a finite structure as an Int. The default implementation is
+        		optimized for structures that are similar to cons-lists, because there is no general way to
+        		do better.
+        	</function>
+        	<function name="elem" signature="Eq a => a -> [a] -> Bool">
+        		Does the element occur in the structure?
+        	</function>
+        	<function name="maximum" signature="Ord a => [a] -> a">
+        		The largest element of a non-empty structure.
+        	</function>
+        	<function name="minimum" signature="Ord a => [a] -> a">
+        		The least element of a non-empty structure.
+        	</function>
+        	<function name="sum" signature="Num a => [a] -> a">
+        		The sum function computes the sum of the numbers of a structure.
+        	</function>
+        	<function name="product" signature="Num a => [a] -> a">
+        		The product function computes the product of the numbers of a structure.
+        	</function>
         </category>
-        <category name="Assorted">
-            <function name="id" signature="a -> a" >
-                Identity function.
-            </function>
-            <function name="const" signature="a -> b -> a">
-                Constant function.
-            </function>
-            <function name="undefined" signature="a">
-                Undefined function.
-            </function>
+        <category name="Miscellaneous functions">
+        	<function name="id" signature="a -> a">
+        		identity function.
+        	</function>
+        	<function name="const" signature="a -> b -> a">
+        		constant function.
+        	</function>
+        	<function name="(.)" signature="(b -> c) -> (a -> b) -> a -> c">
+        		Function composition
+        	</function>
+        	<function name="flip" signature="(a -> b -> c) -> b -> a -> c">
+        		flip f takes its (first) two arguments in the reverse order of f.
+        	</function>
+        	<function name="($)" signature="(a -> b) -> a -> b">
+        		Application operator. This operator is used to apply user defined functions, since ordinary application (f x) means
+        		the same as (f $ x). However, $ has low, right-associative binding precedence, so it 
+        		sometimes allows parentheses to be omitted.
+        	</function>
+        	<function name="until" signature="(a -> Bool) -> (a -> a) -> a -> a">
+        		until p f yields the result of applying f until p holds.
+        	</function>
+        	<function name="asTypeOf" signature="a -> a -> a">
+        		asTypeOf is a type-restricted version of const. It is usually used an infix operator, and
+        		its typing forces its first argument (which is usually overloaded) to have the same type as the
+        		second.
+        	</function>
+        	<function name="undefined" signature="a">
+        		A special case of error. It is expected that compilers will recognize this and insert error 
+        		messages which are more appropriate to the context in which undefined appears.
+        	</function>
+        	<function name="seq" signature="a -> b -> b">
+        		The value of seq a b is bottom if a is bottom, and otherwise equal to b. seq is usually 
+        		introduced to improve performance by avoiding unneeded laziness.
+        	</function>
+        	<function name="($!)" signature="(a -> b) -> a -> b">
+        		Strict (call-by-value) application operator. It takes a function and an argument, evaluates the 
+        		argument to weak head normal form (WHNF), then calls the function with that value.
+        	</function>
+        </category>
+        <category name="List operations">
+        	<function name="map" signature="(a -> b) [a] -> [b]">
+        		map f xs is the list obtained by applying f to each element of xs.
+        	</function>
+        	<function name="(++)" signature="[a] -> [a] -> [a]">
+        		append two lists.
+        	</function>
+        	<function name="filter" signature="(a -> Bool) -> [a] -> [a]">
+        		filter, applied to predicate and a list, returns the list of those elements that satisfy the predicate.
+        	</function>
+        	<function name="head" signature="[a] -> a">
+        		Extract the first element of a list, which must be non-empty.
+        	</function>
+        	<function name="last" signature="[a] -> a">
+        		Extract the last element of a list, which must be finite and non-empty.
+        	</function>
+        	<function name="tail" signature="[a] -> [a]">
+        		Extract the elements after the head of a list, which must be non-empty.
+        	</function>
+        	<function name="init" signature="[a] -> [a]">
+        		Return all the elements of a list except the last one. The list must be non-empty.
+        	</function>
+        	<function name="(!!)" signature="[a] -> Int -> a">
+        		List index (subscript) operator, starting from 0. It is an instance of the more general genericIndex, which takes an index of any integral type.
+        	</function>
+        	<function name="reverse" signature="[a] -> [a]">
+        		reverse xs returns the elements of xs in reverse order. xs must be finite.
+        	</function>
+        	<function name="and" signature="[Bool] -> Bool">
+        		and returns the conjuction of a container of Bools. For the result to be True, the
+        		container must be finite; False, however, results from a False value finitely far from
+        		the left end.
+        	</function>
+        	<function name="or" signature="[Bool] -> Bool">
+        		or returns the disjunction of a container of Bools. For the result to be False, the
+        		container must be finite; True, however, results from a True value finitely far from
+        		the left end.
+        	</function>
+        	<function name="any" signature="(a -> Bool) -> [a] -> Bool">
+        		Determines whether any element of the structure satisfies the predicate.
+        	</function>
+        	<function name="all" signature="(a -> Bool) -> [a] -> Bool">
+        		Determines whether all elements of the structure satisfy the pradicate.
+        	</function>
+        	<function name="concat" signature="[[a]] -> [a]">
+        		The concatenation of all the elements of a container of lists.
+        	</function>
+        	<function name="concatMap" signature="([a] -> [b]) -> [a] -> [b]">
+        		Map a function over all the elements of a container and concatenate the resulting.
+        	</function>
+        	<function name="scanl" signature="(b -> a -> b) -> b -> [a] -> [b]">
+        		scanl is similar to foldl, but returns a list of successive reduced values from the left.
+        	</function>
+        	<function name="scanl1" signature="(a -> a -> a) -> [a] -> [a]">
+        		scanl1 is a variant of scanl that has no starting value argument.
+        	</function>
+        	<function name="scanr" signature="(a -> b -> b) -> b -> [a] -> [b]">
+        		scanr is the right-to-left dual of scanl.
+        	</function>
+        	<function name="scanr1" signature="(a -> a -> a) -> [a] -> [a]">
+        		scanr1 is a variant of scanr that has no starting value argument.
+        	</function>
+        	<function name="iterate" signature="(a -> a) -> a -> [a]">
+        		iterate f x returns an infinite list of repeated applications of f to x
+        	</function>
+        	<function name="repeat" signature="a -> [a]">
+        		repeat x is an infinite list, with x the value of every element.
+        	</function>
+        	<function name="replicate" signature="a -> [a]">
+        		replicate n x is a list of length n with x the value of every element.
+        		It is an instance of the more general genericReplicate, in which n may be of any integral type.
+        	</function>
+        	<function name="cycle" signature="[a] -> [a]">
+        		cycle ties a finite list into a circular one, or equivalently, the infinite repetition of the orignal list. It is de identity on infinite lists.
+        	</function>
+        	<function name="take" signature="Int -> [a] -> [a]">
+        		take n, applied to a list xs, returns the prefix of xs of length n, or xs itself if n > length xs.
+        	</function>
+        	<function name="drop" signature="Int -> [a] -> [a]">
+        		drop n xs returns the suffix of xs after the first n elements, or [] if n > length xs.
+        	</function>
+        	<function name="splitAt" signature="Int -> [a] -> ([a], [a])">
+        		splitAt n xs returns a tuple where first element is xs prefix of length n and second element is the remainder of the list.
+        	</function>
+        	<function name="takeWhile" signature="(a -> Bool) -> [a] -> [a]">
+        		takeWhile, applied to a predicate p and a list xs, returns the longest prefix (possibly empty) of xs of elements that satisfy p.
+        	</function>
+        	<function name="dropWhile" signature="(a -> Bool) -> [a] -> [a]">
+        		dropWhile p returns the suffix remaning after takeWhile p xs.
+        	</function>
+        	<function name="span" signature="(a -> Bool) -> [a] -> ([a], [a])">
+        		span, applied to a predicate p and a list xs, returns a tuple where first element is longest prefix (possibly empty)
+        		of xs of elements that satisfy p and second element is the remainder of the list.
+        	</function>
+        	<function name="break" signature="(a -> Bool) -> [a] -> ([a], [a])">
+        		break, applied to a predicate p and a list xs, returns a tuple where first element is
+        		longest prefix (possibly empty) of xs of element that do not satisfy p and second element is the remainder of the list.
+        	</function>
+        	<function name="notElem" signature="Eq a => a -> [a] -> Bool">
+        		notElem is the negation of elem.
+        	</function>
+        	<function name="lookup" signature="Eq a => a -> [(a, b)] -> Maybe b">
+        		lookup key assocs looks up a key in an association list.
+        	</function>
+        	<function name="zip" signature="[a] -> [b] -> [(a, b)]">
+        		zip takes two lists and returns a list of corresponding pairs. If one input list is short,
+        		excess elements of the longer list are discarded.
+        	</function>
+        	<function name="zip3" signature="[a] -> [b] -> [b] -> [(a, b, c)]">
+        		zip3 takes three lists and returns a list of triples, analogous to zip.
+        	</function>
+        	<function name="zipWith" signature="(a -> b -> c) -> [a] -> [b] -> [c]">
+        		zipWith generalises zip by zipping with the function given as the first argument, instead of a tupling function.
+        		For example, zipWith (+) is applied to two lists to produce the list of corresponding sums.
+        	</function>
+        	<function name="zipWith3" signature="(a -> b -> c -> d) [a] -> [b] -> [c] -> [d]">
+        		The zipWith3 function takes a function which combines three elements, as well as three
+        		lists and returns a list of their point-wise combination, analogous to zipWith.
+        	</function>
+        	<function name="unzip" signature="[(a, b)] -> ([a], [b])">
+        		unzip transforms a list of pairs into a list of first components and a list of second
+        		components.
+        	</function>
+        	<function name="unzip3" signature="[(a, b, c)] -> ([a], [b], [c])">
+        		the unzip3 function takes a list of triples and returns three lists, analogous to unzip.
+        	</function>
+        	<function name="lines" signature="String -> [String]">
+        		lines breaks a string up into a list of strings at newline characters.
+        		The resulting strings do not contain newlines.
+        	</function>
+        	<function name="words" signature="String -> [String]">
+        		words breaks a string up into a list of words, which were delimited by white space.
+        	</function>
+        	<function name="unlines" signature="[String] -> String">
+	        	unlines is an inverse operation to lines. It joins lines, after appending a
+	        	terminating newline to each.
+        	</function>
+        	<function name="unwords" signature="[String] -> String">
+        		unwords is an inverse operation to words. It joins words with separating spaces.
+        	</function>
+        </category>
+        <category name="Converting to and from String">
+        	<function name="show" signature="Show a => a -> String">
+        		a specialised variant of showsPrec, using precedence context zero, and
+        		returning an ordinary String.
+        	</function>
+        	<function name="read" signature="Read a => String -> a">
+        		the read function reads input from a string, which must be completely consumed by the input process.
+        	</function>
         </category>
     </functions>
 </catalog>

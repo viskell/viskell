@@ -49,7 +49,7 @@ public class OutputAnchor extends ConnectionAnchor {
     @Override
     public Type getType() {
         if (getBlock() instanceof OutputBlock) {
-            return ((OutputBlock) getBlock()).getOutputType();
+            return ((OutputBlock) getBlock()).getOutputType(this.getPane().getEnvInstance());
         } else {
             throw new TypeUnavailableException();
         }

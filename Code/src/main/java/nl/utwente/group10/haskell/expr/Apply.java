@@ -48,17 +48,19 @@ public class Apply extends Expr {
         // THEN the type of our result is b
         HindleyMilner.unify(this, funcType, new FuncT(argType, resType));
 
+        this.setCachedType(resType);
+
         return resType;
     }
 
     @Override
     public final String toHaskell() {
-        return String.format("(%s %s)", this.func, this.arg);
+        return String.format("(%s %s)", this.func.toHaskell(), this.arg.toHaskell());
     }
 
     @Override
     public final String toString() {
-        return String.format("(%s %s)", this.func, this.arg);
+        return String.format("(%s %s)", this.func.toString(), this.arg.toString());
     }
 
     @Override
