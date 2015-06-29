@@ -28,8 +28,7 @@ public class SliderBlock extends ValueBlock {
 
         slider.valueProperty().addListener(ev -> {
             setValue(String.valueOf(slider.getValue()));
-            ConnectionCreationManager.nextConnectionState();
-            this.invalidateConnectionStateCascading();
+            this.setConnectionState(ConnectionCreationManager.nextConnectionState());
         });
     }
 }

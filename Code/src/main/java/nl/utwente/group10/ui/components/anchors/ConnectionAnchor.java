@@ -37,7 +37,7 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
  * 
  * The ConnectionAnchor keeps track of its accepted type (signature), and will typecheck this for new connections.
  */
-public abstract class ConnectionAnchor extends StackPane implements ComponentLoader, ConnectionStateDependent {
+public abstract class ConnectionAnchor extends StackPane implements ComponentLoader {
 
     /** The block this Anchor is connected to. */
     private Block block;
@@ -309,33 +309,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         if (!active.get()) {
             removeConnections();
         }
-    }
-    
-    @Override
-    public int getConnectionState() {
-        return connectionState;
-    }
-    
-    @Override
-    public void invalidateConnectionStateCascading(int state) {
-        if (!connectionStateIsUpToDate(state)) {
-            invalidateConnectionState();
-            if (this instanceof InputAnchor) {
-                getBlock().invalidateConnectionStateCascading(state);
-            } else if (this instanceof OutputAnchor) {
-                for (Optional<? extends ConnectionAnchor> opAnchor : getOppositeAnchors()) {
-                    if (opAnchor.isPresent()) {
-                        opAnchor.get().invalidateConnectionStateCascading(state);
-                    }
-                }
-            }
-            this.connectionState = state;
-        }
-    }
-    
-    @Override
-    public void invalidateConnectionState() {
-        // setIsError(!BackendUtils.typesMatch(getSignature().getFresh(), getType().getFresh()));
     }
 
     @Override

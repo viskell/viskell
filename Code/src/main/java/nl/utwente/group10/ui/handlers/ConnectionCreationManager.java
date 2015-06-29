@@ -184,7 +184,7 @@ public class ConnectionCreationManager {
     /**
      * Go to the next connection state.
      */
-    public static void nextConnectionState(){
-        connectionState++;
+    public static int nextConnectionState(){
+        return ++connectionState;
     }
 }

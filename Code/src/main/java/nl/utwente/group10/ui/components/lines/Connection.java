@@ -17,7 +17,9 @@ import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.transform.Transform;
 import javafx.beans.value.ObservableValue;
@@ -43,12 +45,12 @@ public class Connection extends ConnectionLine implements
 
     /** The Pane this Connection is on. */
     private CustomUIPane pane;
-
-    /** The connection state this Connection is in. */
-    private int connectionState;
     
     /** Property describing the error state. */
     private BooleanProperty isError;
+
+    
+    protected IntegerProperty connectionState;
 
     /** 
      * Construct a new Connection.
@@ -58,6 +60,11 @@ public class Connection extends ConnectionLine implements
         this.pane = pane;
         this.isError = new SimpleBooleanProperty(false);
         this.isErrorProperty().addListener(this::checkError);
+        
+        connectionState =  new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
+        
+        connectionState.addListener(c -> invalidateConnectionState());
+        connectionState.addListener(this::cascadeConnectionState);
     }
 
     /** 
@@ -143,11 +150,6 @@ public class Connection extends ConnectionLine implements
     public final Optional<Block> getOutputBlock() {
         return startAnchor.map(ConnectionAnchor::getBlock);
     }
-    
-    @Override
-    public int getConnectionState() {
-        return connectionState;
-    }
 
     /**
      * @param anchor
@@ -184,8 +186,7 @@ public class Connection extends ConnectionLine implements
         newAnchor.addConnection(this);
         addListeners(newAnchor);
 
-        ConnectionCreationManager.nextConnectionState();
-        invalidateConnectionStateCascading();
+        setConnectionState(ConnectionCreationManager.nextConnectionState());
     }
 
     /**
@@ -272,7 +273,6 @@ public class Connection extends ConnectionLine implements
                 added = true;
             }
         }
-        invalidateConnectionState();
 
         return added;
     }
@@ -296,9 +296,9 @@ public class Connection extends ConnectionLine implements
             ConnectionCreationManager.nextConnectionState();
     
             //Let the now disconnected anchor update its visuals.
-            anchor.invalidateConnectionStateCascading();
+            anchor.getBlock().setConnectionState(ConnectionCreationManager.nextConnectionState());
             //Let the remaining connected anchors update their visuals.
-            invalidateConnectionStateCascading();
+            this.setConnectionState(ConnectionCreationManager.getConnectionState());
         }
     }
 
@@ -373,26 +373,35 @@ public class Connection extends ConnectionLine implements
         startAnchor.ifPresent(a -> setStartPosition(a.getCenterInPane()));
         endAnchor.ifPresent(a -> setEndPosition(a.getCenterInPane()));
     }
-    
-    @Override
-    public void invalidateConnectionState() {
-        invalidateAnchorPositions();
-        setIsError(!typesMatch());
-    }
-
-    @Override
-    public void invalidateConnectionStateCascading(int state) {
-        if (!connectionStateIsUpToDate(state)) {
-            invalidateConnectionState();
-            startAnchor.ifPresent(a -> a.invalidateConnectionStateCascading(state));
-            endAnchor.ifPresent(a -> a.invalidateConnectionStateCascading(state));
-            this.connectionState = state;
-        }
-    }
 
     @Override
     public String toString() {
         return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  "
                 + endAnchor;
+    }
+    
+    @Override
+    public int getConnectionState() {
+        return connectionState.get();
+    }
+
+    @Override
+    public void setConnectionState(int state) {
+        connectionState.set(state);
+    }
+
+    @Override
+    public IntegerProperty connectionStateProperty() {
+        return connectionState;
+    }
+    
+    public void invalidateConnectionState() {
+        invalidateAnchorPositions();
+        setIsError(!typesMatch());
+    }
+
+    public void cascadeConnectionState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        startAnchor.ifPresent(a -> a.getBlock().setConnectionState((int) newValue));
+        endAnchor.ifPresent(a -> a.getBlock().setConnectionState((int) newValue));
     }
 }

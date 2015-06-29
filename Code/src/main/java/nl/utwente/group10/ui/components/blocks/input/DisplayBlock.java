@@ -89,6 +89,7 @@ public class DisplayBlock extends Block implements InputBlock {
 
     @Override
     public void invalidateConnectionState() {
+        super.invalidateConnectionState();
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
 
@@ -112,14 +113,7 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     @Override
-    public List<InputAnchor> getActiveInputs() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public Expr getExpr() {
-        System.out.println(this + ".getExpr(): " + inputAnchor.getExpr());
         return inputAnchor.getExpr();
     }
 }

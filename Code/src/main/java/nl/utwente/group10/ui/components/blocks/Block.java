@@ -1,18 +1,26 @@
 package nl.utwente.group10.ui.components.blocks;
 
+import java.util.Optional;
+
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.ConnectionStateDependent;
+import nl.utwente.group10.ui.components.VisualStateDependent;
+import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
@@ -34,7 +42,7 @@ import nl.utwente.group10.ui.menu.CircleMenu;
  * Each block implementation should also feature it's own FXML implementation.
  * </p>
  */
-public abstract class Block extends StackPane implements ComponentLoader, ConnectionStateDependent {
+public abstract class Block extends StackPane implements ComponentLoader, ConnectionStateDependent, VisualStateDependent {
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
     
@@ -42,13 +50,14 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     private CircleMenu circleMenu;
     
     /** The connection state this Block is in */
-    private int connectionState;
+    //private int connectionState;
     
     protected Expr signature;
     
     protected Expr expr;
     
-    protected BooleanProperty exprDirty;
+    protected IntegerProperty connectionState;
+    protected IntegerProperty visualState;
 
     /**
      * @param pane
@@ -56,9 +65,17 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
      */
     public Block(CustomUIPane pane) {
         parentPane = pane;
-        exprDirty = new SimpleBooleanProperty(true);
-        exprDirty.addListener(this::checkDirty);
-
+        connectionState = new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
+        visualState = new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
+        
+        connectionState.addListener(c -> invalidateConnectionState());
+        connectionState.addListener(this::cascadeConnectionState);
+        visualState.addListener(c -> invalidateVisualState());
+        visualState.addListener(this::cascadeVisualState);
+        
+        
+        
+        
         parentPane.selectedBlockProperty()
                 .addListener(
                         event -> {
@@ -75,24 +92,6 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseEvent);
 
         Platform.runLater(this::createCircleMenu);
-    }
-    
-    private void checkDirty(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if (newValue == true) {
-            updateExpr();
-        }
-    }
-    
-    public final Boolean getExprDirty() {
-        return exprDirty.get();
-    }
-
-    public void setExprDirty(Boolean state) {
-        this.exprDirty.set(state);
-    }
-    
-    public final BooleanProperty exprDirtyProperty() {
-        return exprDirty;
     }
 
     /**
@@ -123,44 +122,89 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
 
     /** Returns an expression that evaluates to what this block is. */
     public Expr getExpr() {
-        System.out.println(this + ".getExpr() (cached: " + expr + ")");
-        //System.out.println("Block: " + this + " getExpr() (cached: " + expr + ")");
-        if (getExprDirty() == false) {
-            //System.out.println("Returning cached expression: " + expr);
-            return expr;
-        } else {
-            //Should not be necessary.
-            updateExpr();
-            return expr;
-        }
+        return expr;
     }
     
     public void updateExpr() {
-        System.out.println(this + ".updateExpr()");
-        setExprDirty(false);
+        //System.out.println(this + ".updateExpr()");
+    }
+    
+    @Override
+    public final int getVisualState() {
+        return visualState.get();
     }
 
     @Override
+    public void setVisualState(int state) {
+        this.visualState.set(state);
+    }
+    
+    @Override
+    public final IntegerProperty visualStateProperty() {
+        return visualState;
+    }
+    
+    @Override
+    public int getConnectionState() {
+        return connectionState.get();
+    }
+
+    @Override
+    public void setConnectionState(int state) {
+        this.connectionState.set(state);
+    }
+    
+    @Override
+    public final IntegerProperty connectionStateProperty() {
+        return connectionState;
+    }
+    
     public void invalidateConnectionState() {
+        updateExpr();
         System.out.println(this + ".invalidateConnectionState()");
-        setExprDirty(true);
     }
-
-    @Override
-    public void invalidateConnectionStateCascading(int state) {
-        if (!connectionStateIsUpToDate(state)) {
-            invalidateConnectionState();
+    
+    public void invalidateVisualState() {
+        // Default does nothing
+        System.out.println(this + ".invalidateVisualState()");
+    }
+    
+    public void cascadeConnectionState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        //System.out.println(this + " Cascading connection state " + oldValue + " -> " + newValue);
+        if (oldValue != newValue) {
+            boolean cascadedFurther = false;
             if (this instanceof OutputBlock) {
-                ((OutputBlock) this).getOutputAnchor().invalidateConnectionStateCascading(state);
+                OutputBlock oblock = (OutputBlock) this;
+                for (Optional<? extends ConnectionAnchor> anchor : oblock.getOutputAnchor().getOppositeAnchors()) {
+                    if (anchor.isPresent()) {
+                        anchor.get().getBlock().setConnectionState((int) newValue);
+                        cascadedFurther = true;
+                    }
+                }
             }
-            this.connectionState = state;
+            
+            if (!cascadedFurther) {
+                try {
+                    this.getExpr().analyze(getPane().getEnvInstance());
+                } catch (HaskellException e) {
+                    // TODO TYPE ERROR
+                    e.printStackTrace();
+                }
+                this.setVisualState((int) newValue);
+            }
         } else {
             System.out.println(this + " connectionState is up to date");
         }
     }
     
-    @Override
-    public int getConnectionState() {
-        return connectionState;
+    public void cascadeVisualState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        if (this instanceof InputBlock) {
+            InputBlock iblock = (InputBlock) this;
+            for (InputAnchor input : iblock.getActiveInputs()) {
+                if (input.isPrimaryConnected()) {
+                    input.getPrimaryOppositeAnchor().get().getBlock().setVisualState((int) newValue);
+                }
+            }
+        }
     }
 }

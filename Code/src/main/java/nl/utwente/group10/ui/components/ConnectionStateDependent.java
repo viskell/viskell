@@ -1,5 +1,10 @@
 package nl.utwente.group10.ui.components;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.value.ObservableValue;
+import nl.utwente.group10.ui.components.anchors.InputAnchor;
+import nl.utwente.group10.ui.components.blocks.input.InputBlock;
+import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 /**
@@ -15,12 +20,12 @@ public interface ConnectionStateDependent {
      * This method will invalidate the Node's state and react to this even if
      * the state did not change.
      */
-    public void invalidateConnectionState();
+    //public void invalidateConnectionState();
     
     /**
      * @return The ConnectionState the Node is in.
      */
-    public int getConnectionState();
+    //public int getConnectionState();
     
     /**
      * Does the same as invalidateConnectionState(), but cascading to other
@@ -32,18 +37,27 @@ public interface ConnectionStateDependent {
      * @param state
      *            The newest visual state
      */
-    public void invalidateConnectionStateCascading(int state);
+    //public void invalidateConnectionStateCascading(int state);
     
     /**
      * @return Whether or not the state of this Node confirms to the given newest state.
      */
-    default public boolean connectionStateIsUpToDate(int state) {
-        return getConnectionState() == state;
-    }
+    //default public boolean connectionStateIsUpToDate(int state) {
+    //    return getConnectionState() == state;
+    //}
     /**
      * Shortcut to call invalidateConnectionStateCascading(int state) with the newest state.
      */
-    default public void invalidateConnectionStateCascading() {
-        invalidateConnectionStateCascading(ConnectionCreationManager.getConnectionState());
-    }
+    //default public void invalidateConnectionStateCascading() {
+    //    invalidateConnectionStateCascading(ConnectionCreationManager.getConnectionState());
+    //}
+    
+    
+    
+    public int getConnectionState();
+
+    public void setConnectionState(int state);
+    
+    public IntegerProperty connectionStateProperty();
+    
 }

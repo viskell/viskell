@@ -232,26 +232,17 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     @Override
     public final void updateExpr() {
-        super.updateExpr(); //TODO maybe after this method?
         expr = new Ident(getName());
         //System.out.println(getKnotIndex());
         for (InputAnchor in : getActiveInputs()) {
             expr = new Apply(expr, in.getExpr());
         }
+        super.updateExpr();
     }
     
     @Override
-    public void invalidateConnectionState() {
-        super.invalidateConnectionState();
-        try {
-            if(expr != null) {
-                expr.analyze(getPane().getEnvInstance());
-                //TODO why is this necessary?
-            }
-        } catch (HaskellException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public void invalidateVisualState() {
+        super.invalidateVisualState();
         invalidateInputVisuals();
         invalidateOutputVisuals();
     }
@@ -260,7 +251,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      * Updates the input types to the Block's new state.
      */
     private void invalidateInputVisuals() {
-        System.out.println(this + ".invalidateInputVisuals()");
         argumentSpace.invalidateInputContent();
     }
 
@@ -282,8 +272,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         }
         
         // Trigger invalidation for the now changed output type.
-        ConnectionCreationManager.nextConnectionState();
-        invalidateConnectionStateCascading();
+        this.setConnectionState(ConnectionCreationManager.nextConnectionState());
     }
     
     @Override
