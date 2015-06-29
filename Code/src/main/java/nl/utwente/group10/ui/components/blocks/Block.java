@@ -70,7 +70,8 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                                 this.getStyleClass().removeAll("selected");
                             }
                         });
-
+        //TODO Selecting a Block triggers getExpr() on the Block?
+        
         this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseEvent);
 
         Platform.runLater(this::createCircleMenu);
