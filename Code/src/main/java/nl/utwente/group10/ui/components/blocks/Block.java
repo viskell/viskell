@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.ConnectionStateDependent;
@@ -170,7 +171,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     }
     
     public void cascadeConnectionState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        System.out.println(this + " Cascading connection state " + oldValue + " -> " + newValue);
+        //System.out.println(this + " Cascading connection state " + oldValue + " -> " + newValue);
         if (oldValue != newValue) {
             boolean cascadedFurther = false;
             if (this instanceof OutputBlock) {
@@ -185,10 +186,19 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
             
             if (!cascadedFurther) {
                 try {
-                    System.out.println(this + ": Analyzing expression");
+                    //System.out.println(this + ": Analyzing expression");
                     this.getExpr().analyze(getPane().getEnvInstance());
                 } catch (HaskellException e) {
                     // TODO TYPE ERROR
+
+                    //getInput(0).setIsError(true);
+                    System.out.println(e.getHaskellObject());
+                    System.out.println(this.getExpr());
+                    //Get right argument of that?
+                    
+                    //System.out.println(((FuncT) e.getHaskellObject()).getArgs()[1]);
+                    
+                    
                     e.printStackTrace();
                 }
                 this.setVisualState((int) newValue);

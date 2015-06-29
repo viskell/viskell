@@ -208,8 +208,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         } catch (HaskellTypeError e) {
             // Display type mismatch
             // TODO
-            getInput(0).setIsError(true);
-            e.getHaskellObject();
+            e.printStackTrace();
         } catch (HaskellException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -233,7 +232,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public final void updateExpr() {
         expr = new Ident(getName());
-        //System.out.println(getKnotIndex());
         for (InputAnchor in : getActiveInputs()) {
             expr = new Apply(expr, in.getExpr());
         }
