@@ -37,7 +37,7 @@ import javafx.beans.value.ObservableValue;
  * </p>
  */
 public class Connection extends ConnectionLine implements
-        ChangeListener<Transform>, ConnectionStateDependent {
+        ChangeListener<Transform> {
     /** Starting point of this Line that can be Anchored onto other objects. */
     private Optional<OutputAnchor> startAnchor = Optional.empty();
     /** Ending point of this Line that can be Anchored onto other objects. */
@@ -62,9 +62,6 @@ public class Connection extends ConnectionLine implements
         this.isErrorProperty().addListener(this::checkError);
         
         connectionState =  new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
-        
-        connectionState.addListener(c -> invalidateConnectionState());
-        connectionState.addListener(this::cascadeConnectionState);
     }
 
     /** 
@@ -186,7 +183,12 @@ public class Connection extends ConnectionLine implements
         newAnchor.addConnection(this);
         addListeners(newAnchor);
 
-        setConnectionState(ConnectionCreationManager.nextConnectionState());
+        if (isConnected()) {
+            ConnectionCreationManager.nextConnectionState();
+            startAnchor.get().getBlock().setConnectionState(ConnectionCreationManager.getConnectionState());
+            endAnchor.get().getBlock().setConnectionState(ConnectionCreationManager.getConnectionState());
+        }
+        invalidateAnchorPositions();
     }
 
     /**
@@ -282,6 +284,7 @@ public class Connection extends ConnectionLine implements
      */
     public final void disconnect(ConnectionAnchor anchor) {
         boolean disconnected = false;
+        boolean wasConnected = isConnected();
         if (startAnchor.isPresent() && startAnchor.get().equals(anchor)) {
             startAnchor = Optional.empty();
             disconnected = true;
@@ -293,12 +296,16 @@ public class Connection extends ConnectionLine implements
         if(disconnected) {
             removeListeners(anchor);
             anchor.disconnectConnection(this);
-            ConnectionCreationManager.nextConnectionState();
+            
+            if (wasConnected) {
+                ConnectionCreationManager.nextConnectionState();
     
-            //Let the now disconnected anchor update its visuals.
-            anchor.getBlock().setConnectionState(ConnectionCreationManager.nextConnectionState());
-            //Let the remaining connected anchors update their visuals.
-            this.setConnectionState(ConnectionCreationManager.getConnectionState());
+                //Let the now disconnected anchor update its visuals.
+                anchor.getBlock().setConnectionState(ConnectionCreationManager.getConnectionState());
+                //Let the remaining connected anchors update their visuals.
+                startAnchor.ifPresent(a -> a.getBlock().setConnectionState(ConnectionCreationManager.getConnectionState()));
+                endAnchor.ifPresent(a -> a.getBlock().setConnectionState(ConnectionCreationManager.getConnectionState()));
+            }
         }
     }
 
@@ -322,7 +329,7 @@ public class Connection extends ConnectionLine implements
      * @return True if not fully connected or if their types match.
      */
     public final boolean typesMatch() {
-        return !isConnected(); // || BackendUtils.typesMatch(startAnchor.get().getType(), endAnchor.get().getSignature());
+        return true; //TODO
     }
     
     /**
@@ -380,6 +387,7 @@ public class Connection extends ConnectionLine implements
                 + endAnchor;
     }
     
+    /*
     @Override
     public int getConnectionState() {
         return connectionState.get();
@@ -404,4 +412,5 @@ public class Connection extends ConnectionLine implements
         startAnchor.ifPresent(a -> a.getBlock().setConnectionState((int) newValue));
         endAnchor.ifPresent(a -> a.getBlock().setConnectionState((int) newValue));
     }
+    */
 }

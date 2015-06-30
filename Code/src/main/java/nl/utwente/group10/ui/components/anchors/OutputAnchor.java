@@ -44,19 +44,6 @@ public class OutputAnchor extends ConnectionAnchor {
         return getBlock().getExpr();
     }
     
-
-    //TODO move to abstract super class
-    @Override
-    public String getStringType() {
-        try {
-            return getExpr().getType(getPane().getEnvInstance()).prune().toHaskellType();
-        } catch (HaskellException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return "ERROR";
-        }
-    }
-    
     /*
     @Override
     public Type getType() {

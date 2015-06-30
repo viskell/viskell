@@ -12,6 +12,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -21,6 +23,7 @@ import nl.utwente.group10.ui.components.VisualStateDependent;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
 import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
@@ -123,6 +126,11 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
 
     /** Returns an expression that evaluates to what this block is. */
     public Expr getExpr() {
+        if (ConnectionCreationManager.getConnectionState() > getConnectionState()) {
+            //System.out.println(this + " ConnectionState is outdated!");
+            //TODO look more into this.
+            updateExpr();
+        }
         return expr;
     }
     
@@ -162,7 +170,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     
     public void invalidateConnectionState() {
         updateExpr();
-        System.out.println(this + ".invalidateConnectionState()");
+        //System.out.println(this + ".invalidateConnectionState() " + getExpr());
     }
     
     public void invalidateVisualState() {
@@ -188,12 +196,24 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                 try {
                     //System.out.println(this + ": Analyzing expression");
                     this.getExpr().analyze(getPane().getEnvInstance());
+                } catch (HaskellTypeError e) {
+                    int index = -1;
+                    if (e.getHaskellObject() instanceof Expr) {
+                        Expr errorExpr = (Expr) e.getHaskellObject();
+                        while (errorExpr instanceof Apply) {
+                            errorExpr = ((Apply) errorExpr).getChildren().get(0);
+                            index++;
+                        }
+                        FunctionBlock.blockMap.get(errorExpr).getInput(index).setIsError(true);
+                    }
                 } catch (HaskellException e) {
                     // TODO TYPE ERROR
-
+                    // ((-) (((+) 5.0) 5.0))
+                    // (((==) undefined) undefined)
+                    
                     //getInput(0).setIsError(true);
                     System.out.println(e.getHaskellObject());
-                    System.out.println(this.getExpr());
+                    System.out.println(this + "" + this.getExpr());
                     //Get right argument of that?
                     
                     //System.out.println(((FuncT) e.getHaskellObject()).getArgs()[1]);

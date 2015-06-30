@@ -50,18 +50,6 @@ public class InputAnchor extends ConnectionAnchor {
             return connectionlessExpr;
         }
     }
-    
-    @Override
-    public String getStringType() {
-        try {
-            return getExpr().
-                    getType(getPane().getEnvInstance()).prune().toHaskellType();
-        } catch (HaskellException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return "ERROR";
-        }
-    }
 
     @Override
     public boolean canAddConnection() {

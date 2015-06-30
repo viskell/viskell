@@ -1,7 +1,9 @@
 package nl.utwente.group10.ui.components.blocks.function;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -55,6 +57,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     
     /** The space in which the information of the function is displayed. */
     @FXML private Pane functionInfo;
+    
+    public static Map<Expr, FunctionBlock> blockMap = new HashMap<Expr, FunctionBlock>();
     
     /**
      * Method that creates a newInstance of this class along with it's visual
@@ -231,7 +235,10 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     @Override
     public final void updateExpr() {
+        blockMap.remove(expr);
         expr = new Ident(getName());
+        blockMap.put(expr, this);
+        
         for (InputAnchor in : getActiveInputs()) {
             expr = new Apply(expr, in.getExpr());
         }
@@ -243,6 +250,12 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         super.invalidateVisualState();
         invalidateInputVisuals();
         invalidateOutputVisuals();
+    }
+    
+    @Override
+    public void invalidateConnectionState() {
+        super.invalidateConnectionState();
+        getAllInputs().forEach(i -> i.setIsError(false));
     }
 
     /**

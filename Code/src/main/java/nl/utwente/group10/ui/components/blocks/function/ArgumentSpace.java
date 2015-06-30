@@ -2,6 +2,7 @@ package nl.utwente.group10.ui.components.blocks.function;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.ComponentLoader;
@@ -292,8 +293,10 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * Method to indicate that the content in the output argument Label is possibly outdated.
      */
     public void invalidateOutputContent() {
-        String text = block.getOutputAnchor().getStringType();
-        rightArgument.setText(text);
+        Optional<String> text = block.getOutputAnchor().getStringType();
+        if (text.isPresent()) {
+            rightArgument.setText(text.get());
+        }
     }
     
     /**
@@ -301,7 +304,10 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      */
     public void invalidateInputContent() {
         for (InputArgument argument : leftArguments) {
-            argument.setInputText(argument.getInputAnchor().getStringType());
+            Optional<String> text = argument.getInputAnchor().getStringType();
+            if (text.isPresent()) {
+                argument.setInputText(text.get());
+            }
         }
     }
     
