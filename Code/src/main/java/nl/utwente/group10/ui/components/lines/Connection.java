@@ -47,7 +47,7 @@ public class Connection extends ConnectionLine implements
     private CustomUIPane pane;
     
     /** Property describing the error state. */
-    private BooleanProperty isError;
+    private BooleanProperty errorState;
 
     
     protected IntegerProperty connectionState;
@@ -58,8 +58,8 @@ public class Connection extends ConnectionLine implements
      */
     public Connection(CustomUIPane pane) {
         this.pane = pane;
-        this.isError = new SimpleBooleanProperty(false);
-        this.isErrorProperty().addListener(this::checkError);
+        this.errorState = new SimpleBooleanProperty(false);
+        this.errorStateProperty().addListener(this::checkErrorListener);
         
         connectionState =  new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
     }
@@ -104,18 +104,18 @@ public class Connection extends ConnectionLine implements
     }
     
     /** @return The current error state. */
-    public boolean getIsError() {
-        return isError.get();
+    public boolean getErrorState() {
+        return errorState.get();
     }
     
     /** Set a new error state. */
-    public void setIsError(boolean error) {
-        isError.set(error);
+    public void setErrorState(boolean error) {
+        errorState.set(error);
     }
     
     /** @return The property describing the error state. */
-    public BooleanProperty isErrorProperty() {
-        return isError;
+    public BooleanProperty errorStateProperty() {
+        return errorState;
     }
 
     
@@ -209,17 +209,9 @@ public class Connection extends ConnectionLine implements
      * Listener method that can be attached to a BooleanProperty in order to
      * update the error state based on that property.
      */
-    private void checkError(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
-        setError(newValue);
-    }
-    
-    /**
-     * Updates the visuals to the given error state.
-     * @param error
-     */
-    public void setError(boolean error) {
+    private void checkErrorListener(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
         ObservableList<String> styleClass = this.getStyleClass();
-        if (error) {
+        if (newValue) {
             styleClass.removeAll("error");
             styleClass.add("error");
         } else {
@@ -305,6 +297,7 @@ public class Connection extends ConnectionLine implements
                 //Let the remaining connected anchors update their visuals.
                 startAnchor.ifPresent(a -> a.getBlock().setConnectionState(ConnectionCreationManager.getConnectionState()));
                 endAnchor.ifPresent(a -> a.getBlock().setConnectionState(ConnectionCreationManager.getConnectionState()));
+                this.setErrorState(false);
             }
         }
     }
@@ -323,31 +316,6 @@ public class Connection extends ConnectionLine implements
     public final void remove() {
         disconnect();
         getPane().getChildren().remove(this);
-    }
-
-    /**
-     * @return True if not fully connected or if their types match.
-     */
-    public final boolean typesMatch() {
-        return true; //TODO
-    }
-    
-    /**
-     * @param potentialAnchor The ConnectionAnchor to check if it matches.
-     * @return Whether or not the given anchor's type unifies with the current opposite anchor.
-     */
-    public final boolean typesMatch(ConnectionAnchor potentialAnchor) {
-        throw new RuntimeException();
-        //return getInput(index).getType();
-        /*
-        if (potentialAnchor instanceof InputAnchor && startAnchor.isPresent()) {
-            return BackendUtils.typesMatch(startAnchor.get().getType(), ((InputAnchor) potentialAnchor).getSignature());
-        } else if (potentialAnchor instanceof OutputAnchor && endAnchor.isPresent()) {
-            return BackendUtils.typesMatch(endAnchor.get().getSignature(), potentialAnchor.getType());
-        } else {
-            return false;
-        }
-        */
     }
 
     /**
@@ -386,31 +354,4 @@ public class Connection extends ConnectionLine implements
         return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  "
                 + endAnchor;
     }
-    
-    /*
-    @Override
-    public int getConnectionState() {
-        return connectionState.get();
-    }
-
-    @Override
-    public void setConnectionState(int state) {
-        connectionState.set(state);
-    }
-
-    @Override
-    public IntegerProperty connectionStateProperty() {
-        return connectionState;
-    }
-    
-    public void invalidateConnectionState() {
-        invalidateAnchorPositions();
-        setIsError(!typesMatch());
-    }
-
-    public void cascadeConnectionState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        startAnchor.ifPresent(a -> a.getBlock().setConnectionState((int) newValue));
-        endAnchor.ifPresent(a -> a.getBlock().setConnectionState((int) newValue));
-    }
-    */
 }

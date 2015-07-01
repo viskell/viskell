@@ -70,7 +70,8 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         this.block = block;
         this.errorState = new SimpleBooleanProperty(false);
         this.activeState = new SimpleBooleanProperty(true);
-        activeState.addListener(p -> invalidateActive());
+        activeState.addListener(a -> invalidateActive());
+        errorState.addListener(this::checkError);
         
         this.loadFXML("ConnectionAnchor");
         connections = new ArrayList<Connection>();
@@ -136,6 +137,14 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         } catch (HaskellException e) {
             //e.printStackTrace();
             return Optional.empty();
+        }
+    }
+    
+    public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        for (Connection conn : getConnections()) {
+            if (conn.isConnected()) {
+                conn.setErrorState(newValue);
+            }
         }
     }
     
