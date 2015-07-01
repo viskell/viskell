@@ -90,8 +90,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         argumentSpace = new ArgumentSpace(this, inputCount);
 
         nestSpace.getChildren().add(argumentSpace);
-        //argumentSpace.knotIndexProperty().addListener(e -> invalidateKnotIndex());
-        
+
         // Create an anchor for the result
         output = new OutputAnchor(this);
         outputSpace.setCenter(output);
