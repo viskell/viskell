@@ -105,19 +105,20 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         
         // Make sure the prefWidth is correctly updated.
         this.prefWidthProperty().bind(functionInfo.widthProperty().add(argumentSpace.prefWidthProperty()));
-        // Force a redraw after updating prefWidth (in order to update its width).
-        this.prefWidthProperty().addListener(a -> {
-            if(this.getParent()!=null) {
-                Platform.runLater(this.getParent()::requestLayout);
-            }
-        });
         
         
         this.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         this.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         functionInfo.setMinWidth(Region.USE_PREF_SIZE);
         functionInfo.setMaxWidth(Region.USE_PREF_SIZE);
-        invalidateConnectionState();
+        
+        Platform.runLater(this::updateLayout);
+    }
+    
+    public void updateLayout() {
+        if (this.getParent() != null) {
+            this.getParent().requestLayout();
+        }
     }
     
     /** Returns the name property of this FunctionBlock. */

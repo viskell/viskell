@@ -135,7 +135,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     
     public void updateExpr() {
         setExprIsDirty(false);
-        System.out.println(this + ".updateExpr()");
+        //System.out.println(this + ".updateExpr()");
     }
     
     @Override
@@ -182,12 +182,12 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     
     public void invalidateConnectionState() {
         // Default does nothing.
-        System.out.println(this + ".invalidateConnectionState()");
+        //System.out.println(this + ".invalidateConnectionState()");
     }
     
     public void invalidateVisualState() {
         // Default does nothing.
-        System.out.println(this + ".invalidateVisualState()");
+        //System.out.println(this + ".invalidateVisualState()");
     }
     
     public void cascadeConnectionState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {

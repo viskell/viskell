@@ -7,6 +7,7 @@ import java.util.Optional;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
+import javafx.application.Platform;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -36,6 +37,8 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
     
     /** Vertical height of the ArgumentSpace. */
     public static final double HEIGHT = 50;
+    
+    public static final double KNOT_SNAP_MODIFIER = 0.3;
     
     /** The block to which this ArgumentSpace belongs. */
     private FunctionBlock block;
@@ -115,8 +118,8 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         this.setMaxWidth(USE_PREF_SIZE);
         
         this.prefWidthProperty().bind(getTotalWidthProperty());
+        rightArgument.widthProperty().addListener(a -> Platform.runLater(block::updateLayout));
         
-        //invalidateArgumentContent();
         snapToKnotIndex();
     }
     
@@ -209,7 +212,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
             knot.setLayoutX(Math.min(Math.max(localX, leftBound), rightBound));
             
             // Properly react on the change in the knot's position.
-            setKnotIndex((int) Math.round(determineKnotIndex()));
+            setKnotIndex((int) Math.round(determineKnotIndex() + KNOT_SNAP_MODIFIER));
             invalidateKnotPosition();
         }
     }
@@ -248,19 +251,21 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * property bindings.
      */
     public void snapToKnotIndex() {
-        int kti = getKnotIndex();
-        if (kti > 0 && kti <= leftArguments.size()) {
-            Region arg = leftArguments.get(kti-1); // First argument left of the knot.
-
-            // Binds the knot to the first argument on the left, so that if
-            // there is a length change to the left of the knot (because of a
-            // Label's text change), the knot moves accordingly.
-            knot.layoutXProperty().bind(arg.layoutXProperty().add(arg.widthProperty()).add(knot.radiusProperty()).add(H_GAP));
-        }else if (kti == 0) { // There is no argument left of the knot.
-            knot.setLayoutX(knot.getRadius());
+        if (inputID == ConnectionCreationManager.INPUT_ID_NONE) {
+            int kti = getKnotIndex();
+            if (kti > 0 && kti <= leftArguments.size()) {
+                Region arg = leftArguments.get(kti-1); // First argument left of the knot.
+    
+                // Binds the knot to the first argument on the left, so that if
+                // there is a length change to the left of the knot (because of a
+                // Label's text change), the knot moves accordingly.
+                knot.layoutXProperty().bind(arg.layoutXProperty().add(arg.widthProperty()).add(knot.radiusProperty()).add(H_GAP));
+            }else if (kti == 0) { // There is no argument left of the knot.
+                knot.setLayoutX(knot.getRadius());
+            }
+            
+            invalidateKnotPosition();
         }
-        
-        invalidateKnotPosition();
     }
     
     /**
