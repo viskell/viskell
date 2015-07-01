@@ -1,5 +1,7 @@
 package nl.utwente.group10.ui.components.blocks.function;
 
+import javafx.geometry.Pos;
+import javafx.scene.layout.BorderPane;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
@@ -16,7 +18,7 @@ import javafx.scene.layout.Pane;
  * A class that represents an input field inside a FunctionBlock.
  * This basically combines a label with an anchor to which an input can be connected.
  */
-public class InputArgument extends Pane implements ComponentLoader{
+public class InputArgument extends BorderPane implements ComponentLoader{
     
     /** The label on which to display type information. */
     @FXML Label inputLabel;
@@ -34,17 +36,16 @@ public class InputArgument extends Pane implements ComponentLoader{
      */
     public InputArgument(Block block) {
         inputText = new SimpleStringProperty("TODO");
-        this.loadFXML("InputArgument");
-        
+
+        inputLabel = new Label();
+        inputLabel.textProperty().bind(inputText);
+
         inputAnchor = new InputAnchor(block);
-        inputAnchor.layoutXProperty().bind(inputLabel.widthProperty().divide(2));
         inputAnchor.errorStateProperty().addListener(this::checkError);
 
-        // Vertically center the label
-        inputLabel.layoutYProperty().bind(this.heightProperty().divide(2).subtract(inputLabel.heightProperty().divide(2)));
-        
-        this.setPrefHeight(ArgumentSpace.HEIGHT);
-        this.getChildren().add(inputAnchor);
+        this.setTop(inputAnchor);
+        BorderPane.setAlignment(inputAnchor, Pos.CENTER);
+        this.setCenter(inputLabel);
     }
     
     /** @return the InputText. */

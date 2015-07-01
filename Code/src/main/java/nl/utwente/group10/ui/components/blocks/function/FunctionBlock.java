@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Apply;
@@ -20,7 +19,6 @@ import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.ui.BackendUtils;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
@@ -28,10 +26,6 @@ import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.exceptions.FunctionDefinitionException;
-import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 
 /**
  * Main building block for the visual interface, this class represents a Haskell
@@ -57,7 +51,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @FXML private Pane nestSpace;
     
     /** The space in which the information of the function is displayed. */
-    @FXML private Pane functionInfo;
+    @FXML private Label functionInfo;
     
     /**
      * Method that creates a newInstance of this class along with it's visual
@@ -94,25 +88,15 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         }
         
         argumentSpace = new ArgumentSpace(this, inputCount);
-        argumentSpace.setKnotIndex(getAllInputs().size());
-        
+
         nestSpace.getChildren().add(argumentSpace);
-        argumentSpace.knotIndexProperty().addListener(e -> invalidateKnotIndex());
+        //argumentSpace.knotIndexProperty().addListener(e -> invalidateKnotIndex());
         
         // Create an anchor for the result
         output = new OutputAnchor(this);
         outputSpace.setCenter(output);
         
-        // Make sure the prefWidth is correctly updated.
-        this.prefWidthProperty().bind(functionInfo.widthProperty().add(argumentSpace.prefWidthProperty()));
-        
-        
-        this.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        this.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        functionInfo.setMinWidth(Region.USE_PREF_SIZE);
-        functionInfo.setMaxWidth(Region.USE_PREF_SIZE);
-        
-        Platform.runLater(this::updateLayout);
+        invalidateConnectionState();
     }
     
     public void updateLayout() {
@@ -136,21 +120,9 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return name;
     }
 
-    /** Returns the knot index of this FunctionBlock. */
-    public final Integer getKnotIndex() {
-        return argumentSpace.knotIndexProperty().get();
-    }
-
-    /**
-     * @param index The new knot index for this FunctionBlock.
-     */
-    public final void setKnotIndex(int index) {
-        argumentSpace.setKnotIndex(index);
-    }
-
     @Override
     public final List<InputAnchor> getAllInputs() {
-        return argumentSpace.getInputArguments().stream().map(a -> a.getInputAnchor()).collect(Collectors.toList());
+        return argumentSpace.getInputAnchors();
     }
 
     /**
@@ -158,7 +130,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     @Override
     public List<InputAnchor> getActiveInputs() {
-        return getAllInputs().subList(0, getKnotIndex());
+        return argumentSpace.getActiveInputAnchors();
     }
 
     /**
@@ -219,20 +191,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         argumentSpace.invalidateOutputContent();
     }
 
-    /**
-     * React to a potential state change with regards to the knot index.
-     * This then activates / disables the inputs with regards to the knot index.
-     */
-    private void invalidateKnotIndex() {
-        List<InputAnchor> inputs = getAllInputs();
-        for (int i = 0; i < inputs.size(); i++) {
-            inputs.get(i).setActiveState(i < getKnotIndex());
-        }
-        
-        // Trigger invalidation for the now changed output type.
-        this.setConnectionState(ConnectionCreationManager.nextConnectionState());
-    }
-    
     @Override
     public String toString() {
         return this.getName();

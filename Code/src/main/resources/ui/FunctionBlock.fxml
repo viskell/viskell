@@ -14,15 +14,8 @@
 			<Pane fx:id="inputSpace" maxHeight="0"/>
 		</top>
 		<center>
-			<HBox styleClass="function, block">
-				<BorderPane fx:id="functionInfo">
-                    <padding><Insets top="0" right="10" bottom="0" left="10"/></padding>
-					<center>
-						<Label text="${controller.name}" styleClass="title" />
-					</center>
-				</BorderPane>
-				    <Pane fx:id="nestSpace">
-				</Pane>
+			<HBox styleClass="function, block" fx:id="nestSpace" spacing="10" alignment="CENTER">
+                <Label text="${controller.name}" styleClass="title" fx:id="functionInfo" />
 			</HBox>
 		</center>
 		<bottom>
