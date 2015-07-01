@@ -198,8 +198,11 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     
     @Override
     public void invalidateConnectionState() {
-        super.invalidateConnectionState();
-        getAllInputs().forEach(i -> i.setErrorState(false));
+        for (InputAnchor input : ((InputBlock) this).getAllInputs()) {
+            if (!input.isPrimaryConnected() || !getPane().getErrorOccured()) {
+                input.setErrorState(false);
+            }
+        }
     }
 
     /**

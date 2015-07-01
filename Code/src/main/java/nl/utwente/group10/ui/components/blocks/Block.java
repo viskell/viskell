@@ -77,9 +77,6 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         visualState.addListener(a -> invalidateVisualState());
         visualState.addListener(this::cascadeVisualState);
         
-        
-        
-        
         parentPane.selectedBlockProperty()
                 .addListener(
                         event -> {
@@ -207,6 +204,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                 try {
                     // Analyze the entire tree.
                     this.getExpr().analyze(getPane().getEnvInstance());
+                    getPane().setErrorOccurred(false);
                 } catch (HaskellTypeError e) {
                     // A Type mismatch occurred.
                     int index = -1;
@@ -217,6 +215,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                             index++;
                         }
                         getPane().getExprToFunction(errorExpr).getInput(index).setErrorState(true);
+                        getPane().setErrorOccurred(true);
                     } else {
                         // TODO Now what?
                     }

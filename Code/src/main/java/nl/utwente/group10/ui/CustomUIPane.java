@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -31,6 +33,7 @@ import nl.utwente.group10.ui.menu.FunctionMenu;
 public class CustomUIPane extends TactilePane {
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
+    private BooleanProperty errorOccurred;
     private Optional<GhciSession> ghci;
     private InspectorWindow inspector;
 
@@ -47,6 +50,7 @@ public class CustomUIPane extends TactilePane {
     public CustomUIPane(HaskellCatalog catalog) {
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
+        this.errorOccurred = new SimpleBooleanProperty(false);
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
         this.catalog = catalog;
@@ -168,6 +172,18 @@ public class CustomUIPane extends TactilePane {
 
     public ObjectProperty<Optional<Block>> selectedBlockProperty() {
         return selectedBlock;
+    }
+    
+    public boolean getErrorOccured() {
+        return errorOccurred.get();
+    }
+    
+    public void setErrorOccurred(boolean error) {
+        errorOccurred.set(error);
+    }
+    
+    public BooleanProperty errorOccurredProperty() {
+        return errorOccurred;
     }
 
     /** Remove the given block from this UI pane, including its connections. */
