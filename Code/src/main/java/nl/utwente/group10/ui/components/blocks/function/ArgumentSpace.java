@@ -184,6 +184,9 @@ public class ArgumentSpace extends HBox implements ComponentLoader {
             double eventX = sceneToLocal(sceneX,0).getX();
 
             // Move the knot to the mouse/touch position
+            double maxX = rightArgument.getLayoutX() - knot.getRadius() - H_GAP;
+            if (eventX > maxX) eventX = maxX;
+
             knot.setTranslateX(eventX - layoutX);
 
             // Update the program to match the new touch position
