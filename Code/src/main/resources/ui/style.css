@@ -23,7 +23,6 @@ CustomUIPane {
 .block .header {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
-    -fx-font-family: fantasy;
     -fx-text-fill: black;
 }
 
@@ -44,6 +43,7 @@ CustomUIPane {
 }
 
 .function.block {
+    -fx-padding: 0 10 0 10;
     -fx-background-color: #E97F02;
 }
 
@@ -129,6 +129,10 @@ CustomUIPane {
     -fx-font-size: 14px;
     -fx-font-weight: normal;
     -fx-background-color: white;
+}
+
+.argumentSpace #functionInfo {
+    -fx-padding: 5 5 5 5;
 }
 
 .argumentSpace Label.rightArgument {

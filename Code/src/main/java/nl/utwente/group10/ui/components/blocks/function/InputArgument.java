@@ -1,5 +1,7 @@
 package nl.utwente.group10.ui.components.blocks.function;
 
+import javafx.scene.layout.BorderPane;
+import javafx.geometry.Pos;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
@@ -7,19 +9,18 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 
 /**
  * A class that represents an input field inside a FunctionBlock.
  * This basically combines a label with an anchor to which an input can be connected.
  */
-public class InputArgument extends Pane implements ComponentLoader {
+public class InputArgument extends BorderPane implements ComponentLoader{
+    
     /** The label on which to display type information. */
-    @FXML Label inputLabel;
+    private Label inputLabel;
     
     /** The property of the text to be displayed on the inputLabel. */
     private StringProperty inputText;
@@ -35,32 +36,19 @@ public class InputArgument extends Pane implements ComponentLoader {
      * @param block Block to which this InputArgument belongs.
      */
     public InputArgument(Block block) {
-        this.inputText = new SimpleStringProperty("-");
-        this.loadFXML("InputArgument");
+        inputText = new SimpleStringProperty("");
 
-        this.errorImage = new ImageView(new Image(this.getClass().getResourceAsStream("/ui/warningTriangle.png")));
+        inputLabel = new Label();
+        inputLabel.textProperty().bind(inputText);
 
-        this.inputAnchor = new InputAnchor(block);
-        this.inputAnchor.layoutXProperty().bind(this.inputLabel.widthProperty().divide(2));
-        this.inputAnchor.errorStateProperty().addListener(this::checkError);
-        
-        double height = this.inputAnchor.getVisibleAnchor().getBoundsInLocal().getHeight();
-        double width = this.inputAnchor.getVisibleAnchor().getBoundsInLocal().getWidth();
-        this.errorImage.setFitHeight(height);
-        this.errorImage.setFitWidth(width);
-        
-        // -.0.5 is necessary to correct a slight offset (with an unknown cause).
-        this.errorImage.layoutXProperty().bind(this.inputAnchor.layoutXProperty().subtract(width / 2 - 0.5));
-        this.errorImage.layoutYProperty().bind(this.inputAnchor.layoutYProperty().subtract(height / 2 - 0.5));
-        this.errorImage.setMouseTransparent(true);
+        errorImage = new ImageView(new Image(this.getClass().getResourceAsStream("/ui/warningTriangle.png")));
 
-        // Vertically center the label
-        this.inputLabel.layoutYProperty().bind(this.heightProperty().divide(2).subtract(this.inputLabel.heightProperty().divide(2)));
-        
-        this.setPrefHeight(ArgumentSpace.HEIGHT);
-        this.getChildren().add(this.inputAnchor);
-        this.getChildren().add(this.errorImage);
-        this.setError(false);
+        inputAnchor = new InputAnchor(block);
+        inputAnchor.errorStateProperty().addListener(this::checkError);
+
+        this.setTop(inputAnchor);
+        BorderPane.setAlignment(inputAnchor, Pos.CENTER);
+        this.setCenter(inputLabel);
     }
     
     /** @return the InputText. */
@@ -72,21 +60,11 @@ public class InputArgument extends Pane implements ComponentLoader {
     public void setInputText(String text) {
         inputText.set(text);
     }
-    
-    /** @return The inputTextProperty. */
-    public StringProperty inputTextProperty() {
-        return inputText;
-    }
-    
+
     /** @return The InputAnchor belonging to this InputArgument. */
     public InputAnchor getInputAnchor() {
         return inputAnchor;
     }
-    /** @return The Label that displays the input's type. */
-    public Label getInputLabel() {
-        return inputLabel;
-    }
-    
 
     /**
      * ChangeListener that will set the error state according to the error state property.

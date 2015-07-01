@@ -1,22 +1,20 @@
 package nl.utwente.group10.ui.components.blocks.function;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import javafx.geometry.Pos;
+import javafx.scene.layout.HBox;
 import nl.utwente.group10.ui.components.ComponentLoader;
+import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
-import javafx.application.Platform;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.shape.Circle;
 
 /**
@@ -29,36 +27,33 @@ import javafx.scene.shape.Circle;
  * 
  * Supports multi-touch interaction.
  */
-public class ArgumentSpace extends Pane implements ComponentLoader {    
+public class ArgumentSpace extends HBox implements ComponentLoader {
     /** Horizontal space to keep between elements in ArgumentSpace. */
     public static final double H_GAP = 10;
     
     /** Vertical height of the ArgumentSpace. */
     public static final double HEIGHT = 50;
-    
-    /**
-     * Modifies the snap range of the knot. Lower value results in a wider snap
-     * range, effect is limited between -0.5 and 0.5.
-     */
-    public static final double KNOT_SNAP_MODIFIER = 0.3;
-    
+
     /** The block to which this ArgumentSpace belongs. */
     private FunctionBlock block;
     
     /** The knot, used to control the knot index. */
-    @FXML private Circle knot;
+    private Circle knot;
     
     /**
      * The index of the knot, all inputs with index higher or equal to the
      * knot are inactive, creating a function as output.
      */
-    private IntegerProperty knotIndex;
+    private int knotIndex;
     
     /** List of input arguments. */
     private List<InputArgument> leftArguments;
     
     /** The argument containing the function's output, its return value. */
-    @FXML private Label rightArgument;
+    private Label rightArgument;
+
+    /** Number of input arguments. */
+    private int inputs;
     
     /** 
      * InputID of the current action (INPUT_ID_NONE if idle)
@@ -72,95 +67,51 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * @param block FunctionBlock to which this ArgumentSpace belongs.
      */
     public ArgumentSpace(FunctionBlock block, int inputCount) {
-        this.loadFXML("ArgumentSpace");
-        
         this.block = block;
+        this.inputs = inputCount;
         this.inputID = ConnectionCreationManager.INPUT_ID_NONE;
-        this.leftArguments = new ArrayList<InputArgument>();
-        this.knotIndex = new SimpleIntegerProperty(0);
-        
-        this.knotIndex.addListener(event -> snapToKnotIndex());
-        
-        //Create and attach InputArguments for the inputs.
+        leftArguments = new ArrayList<>();
+        knotIndex = inputCount;
+
+        //Create and attach Labels for the (left) arguments.
         for (int i = 0; i < inputCount; i++) {
             InputArgument arg = new InputArgument(block);
-            // Make sure that when input widht changes, the total width also changes.
-            arg.getInputLabel().widthProperty().addListener(a -> Platform.runLater(block::updateLayout));
-            this.leftArguments.add(arg);
-            
-            if (i > 0) {
-                Region prev = this.leftArguments.get(i-1);
-                // The i-th (left)argument is placed to the right of argument i-1, with a horizontal space of H_GAP between them.
-                arg.layoutXProperty().bind(prev.layoutXProperty().add(prev.widthProperty()).add(H_GAP));
-            }            
-            this.getChildren().add(arg);
+            leftArguments.add(arg);            
         }
-        
-        //Put rightArgument's drawOrder on top 
-        this.rightArgument.toFront();
-        //Place rightArgument to the right of the knot, with a horizontal space of H_GAP between them.
-        this.rightArgument.layoutXProperty().bind(this.knot.layoutXProperty().add(this.knot.radiusProperty()).add(H_GAP));
-        centerLayoutVertical(this.rightArgument);
-        
-        //Put knot's drawOrder on to (above rightArgument)
-        this.knot.toFront();
-        //Vertically center the knot.
-        this.knot.layoutYProperty().bind(this.heightProperty().divide(2));
 
-        //Mouse listeners
-        this.knot.setOnMousePressed(event -> {onKnotPressed(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
+        knot = new Circle(10);
+
+        // Mouse listeners
+        this.knot.setOnMousePressed(event -> {knotPressed(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
         this.knot.setOnMouseDragged(event -> {onKnotMoved(event); event.consume();});
         this.knot.setOnMouseReleased(event -> {onKnotReleased(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
         
-        //Touch listeners
-        this.knot.setOnTouchPressed(event -> {onKnotPressed(event.getTouchPoint().getId()); event.consume();});
-        this.knot.setOnTouchMoved(event -> {onKnotMoved(event); event.consume();});
-        this.knot.setOnTouchReleased(event -> {onKnotReleased(event.getTouchPoint().getId()); event.consume();});
-        
-        //Update the size of this Pane
-        this.setPrefHeight(HEIGHT);
-        this.setMaxHeight(USE_PREF_SIZE);
-        this.setMinWidth(USE_PREF_SIZE);
-        this.setMaxWidth(USE_PREF_SIZE);
-        
-        this.prefWidthProperty().bind(getTotalWidthProperty());
-        
-        // Since at the point of a layout update the width of the Labels is unknown, we have to ask for another layout pass.
-        this.rightArgument.widthProperty().addListener(a -> Platform.runLater(block::updateLayout));
-        
-        snapToKnotIndex();
-    }
-    
-    /**
-     * @return DoubleBinding that represents the entire width of all the elements represented in this ArgumentSpace.
-     */
-    public DoubleBinding getTotalWidthProperty() {
-        return rightArgument.layoutXProperty().add(rightArgument.translateXProperty()).add(rightArgument.widthProperty()).add(H_GAP);
-    }
-    
-    /**
-     * Binds a region's layoutY property to always be vertically centered in the ArgumentSpace. 
-     * @param region
-     */
-    private void centerLayoutVertical(Region region) {
-        region.layoutYProperty().bind(this.heightProperty().divide(2).subtract(region.heightProperty().divide(2)));
-    }    
+        // Touch listeners
+        knot.setOnTouchPressed(event -> {knotPressed(event.getTouchPoint().getId()); event.consume();});
+        knot.setOnTouchMoved(event -> {onKnotMoved(event); event.consume();});
+        knot.setOnTouchReleased(event -> {onKnotReleased(event.getTouchPoint().getId()); event.consume();});
 
-    /**
-     * @return The knot's position used to determine the knot's index.
-     */
-    public double getKnotPos() {
-        return knot.getLayoutX() - knot.getRadius();
+        rightArgument = new Label();
+        rightArgument.getStyleClass().add("rightArgument");
+
+        this.getChildren().addAll(leftArguments);
+        this.getChildren().addAll(knot, rightArgument);
+        
+        this.setPrefHeight(HEIGHT);
+        this.setSpacing(H_GAP);
+        this.setAlignment(Pos.CENTER);
+        this.getStyleClass().add("argumentSpace");
+
+        updateArguments();
     }
-    
+
     /**
      * To be called when the knot gets pressed.
      * Sets up a new drag action by storing the inputID.
      * 
      * @param inputID InputID of the input that pressed the knot.
      */
-    private void onKnotPressed(int inputID) {
-        knot.layoutXProperty().unbind();
+    private void knotPressed(int inputID) {
         if(this.inputID == ConnectionCreationManager.INPUT_ID_NONE) {
             this.inputID = inputID;
         } else {
@@ -175,10 +126,32 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
     private void onKnotReleased(int inputID) {
         if(this.inputID == inputID) {
             this.inputID = ConnectionCreationManager.INPUT_ID_NONE;
-            snapToKnotIndex();
+            updateKnotIndex();
+            knot.setTranslateX(0);
+            updateArguments();
         } else {
             // Ignore, different touch point;
         }
+    }
+
+    private void updateKnotIndex() {
+        int result;
+        double x = knot.getLayoutX() + knot.getTranslateX() - (knot.getRadius() / 2);
+
+        if (x > rightArgument.getBoundsInParent().getMinX()) {
+            result = knotIndex + 1;
+        } else {
+            int bowtieIndex = 0;
+
+            for (InputArgument arg : leftArguments) {
+                if (x > arg.getLayoutX()) {
+                    bowtieIndex++;
+                }
+            }
+
+            result = bowtieIndex;
+        }
+        setKnotIndex(result);
     }
     
     /**
@@ -207,97 +180,34 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      */
     private void knotMoved(int inputID, double sceneX) {
         if(this.inputID == inputID) {
-            // Transform X coordinate to local space.
-            double localX = sceneToLocal(sceneX,0).getX();
-            
-            // Calculate knot's bounds and limit the knot's position to that
-            double leftBound = 0 + knot.getRadius();
-            Region leftMostArg = leftArguments.get(leftArguments.size() - 1);            
-            double rightBound = leftMostArg.getLayoutX() + leftMostArg.getWidth() + H_GAP + knot.getRadius();
+            double layoutX = knot.getLayoutX();
+            double eventX = sceneToLocal(sceneX,0).getX();
 
-            //Set the knot's new position.
-            if (knot.layoutXProperty().isBound()) {
-                knot.layoutXProperty().unbind();
-            }
-            knot.setLayoutX(Math.min(Math.max(localX, leftBound), rightBound));
-            
-            // Properly react on the change in the knot's position.
-            double modifier = Math.max(-0.49, Math.min(KNOT_SNAP_MODIFIER, 0.49));
-            setKnotIndex((int) Math.round(determineKnotIndex() + modifier));
-            invalidateKnotPosition();
+            // Move the knot to the mouse/touch position
+            knot.setTranslateX(eventX - layoutX);
+
+            // Update the program to match the new touch position
+            updateKnotIndex();
+            updateArguments();
+
+            // Do a layout pass
+            layout();
+
+            // Move the knot relative to its new layout position
+            layoutX = knot.getLayoutX();
+            knot.setTranslateX(eventX - layoutX);
         }
-    }
-    
-    /**
-     * @return Determines the index of the knot, based on the knot's current
-     *         position. This index has a decimal part, this represents the
-     *         percentage of the next argument that the knot has moved.
-     */
-    private double determineKnotIndex() {
-        if (Double.isNaN(getKnotPos())) {
-            //This is needed for when the knot does not have a position yet (initializing).
-            return getKnotIndex();
-        }
-        
-        double bowtieIndex = 0;
-        for (int i = 0; i < leftArguments.size(); i++) {
-            Region argument = leftArguments.get(i);
-            double min = argument.getLayoutX();
-            double max = min + argument.getWidth();
-            if (getKnotPos() > max) {
-                // Knot is positioned fully to the left of this argument.
-                bowtieIndex++;
-            } else {
-                // Knot is positioned somewhere halfway this argument.
-                bowtieIndex += Math.max(Math.min((getKnotPos() - min) / (max - min), 1), 0);
-                break;
-            }
-        }
-        return bowtieIndex;
     }
 
-    /**
-     * This repositions the knot to a position based on the current knot index,
-     * regardless of the knot's current position.
-     * 
-     * Changes in Label length after snapping are accounted for by using
-     * property bindings.
-     */
-    public void snapToKnotIndex() {
-        if (inputID == ConnectionCreationManager.INPUT_ID_NONE) {
-            int kti = getKnotIndex();
-            if (kti > 0 && kti <= leftArguments.size()) {
-                Region arg = leftArguments.get(kti-1); // First argument left of the knot.
-    
-                // Binds the knot to the first argument on the left, so that if
-                // there is a length change to the left of the knot (because of a
-                // Label's text change), the knot moves accordingly.
-                knot.layoutXProperty().bind(arg.layoutXProperty().add(arg.widthProperty()).add(knot.radiusProperty()).add(H_GAP));
-            }else if (kti == 0) { // There is no argument left of the knot.
-                knot.setLayoutX(knot.getRadius());
-            }
-            
-            invalidateKnotPosition();
-        }
-    }
-    
     /**
      * Method to indicate that the position of the knot might have changed.
      * 
      * It repositions the arguments based on the current position of the knot.
      */
-    public void invalidateKnotPosition() {
-        double bti = determineKnotIndex();
+    public void updateArguments() {
         for (int i = 0; i < leftArguments.size(); i++) {
-            Region argument = leftArguments.get(i);
-            // Get only the percentage for this argument, clamped between 0 and 1, inverted.
-            double percentage = Math.min(Math.max(bti - i,  0), 1);            
-            percentage = Math.pow(percentage, 0.4); //Better looking curve
-            
-            //Updates the argument based on the percentage
-            argument.setTranslateX((H_GAP + knot.getRadius() * 2) * (1 - percentage));
-            argument.setOpacity(percentage);
-            argument.setVisible(percentage > 0);
+            leftArguments.get(i).setManaged(i < knotIndex);
+            leftArguments.get(i).setVisible(i < knotIndex);
         }
     }
 
@@ -306,7 +216,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      */
     public void invalidateOutputContent() {
         Optional<String> text = block.getOutputAnchor().getStringType();
-        text.ifPresent(a -> rightArgument.setText(a));
+        text.ifPresent(rightArgument::setText);
     }
     
     /**
@@ -320,37 +230,28 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
             }
         }
     }
-    
-    /**
-     * @return The InputArguments this ArgumentSpace has.
-     */
-    public List<InputArgument> getInputArguments() {
-        return leftArguments;
+
+    public List<InputAnchor> getInputAnchors() {
+        return anchorsFor(leftArguments);
+    }
+
+    public List<InputAnchor> getActiveInputAnchors() {
+        return anchorsFor(leftArguments.subList(0, knotIndex));
+    }
+
+    private List<InputAnchor> anchorsFor(Collection<InputArgument> args) {
+        return args.stream().map(InputArgument::getInputAnchor).collect(Collectors.toList());
     }
 
     /**
      * Sets the knot index to the given index
      * @param index New knot index.
      */
-    public void setKnotIndex(int index) {
-        if (index >= -1 && index <= getInputArguments().size()) {
-            knotIndex.set(index); 
-        } else {
-            throw new IndexOutOfBoundsException();
-        }       
-    }
-    
-    /**
-     * @return The knot's index.
-     */
-    public int getKnotIndex() {
-        return knotIndex.get();        
-    }
-    
-    /**
-     * @return The knotIndex property
-     */
-    public IntegerProperty knotIndexProperty() {
-        return knotIndex;
+    private void setKnotIndex(int index) {
+        int clamped = Math.max(0, Math.min(inputs, index));
+        if (clamped != knotIndex) {
+            knotIndex = clamped;
+            block.setConnectionState(ConnectionCreationManager.nextConnectionState());
+        }
     }
 }
