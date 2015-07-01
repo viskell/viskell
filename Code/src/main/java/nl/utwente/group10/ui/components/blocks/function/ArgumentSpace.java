@@ -7,6 +7,7 @@ import java.util.Optional;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
@@ -112,6 +113,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         this.setMaxHeight(USE_PREF_SIZE);
         this.setMinWidth(USE_PREF_SIZE);
         this.setMaxWidth(USE_PREF_SIZE);
+        
         this.prefWidthProperty().bind(getTotalWidthProperty());
         
         //invalidateArgumentContent();
@@ -121,8 +123,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
     /**
      * @return ObservableValue that represents the entire width of all the elements represented in this ArgumentSpace.
      */
-    public ObservableValue<? extends Number> getTotalWidthProperty() {
-        // TODO pref width instead of width here?
+    public DoubleBinding getTotalWidthProperty() {
         return rightArgument.layoutXProperty().add(rightArgument.translateXProperty()).add(rightArgument.widthProperty()).add(H_GAP);
     }
     

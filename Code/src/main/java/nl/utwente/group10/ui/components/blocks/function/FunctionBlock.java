@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -104,6 +105,12 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         
         // Make sure the prefWidth is correctly updated.
         this.prefWidthProperty().bind(functionInfo.widthProperty().add(argumentSpace.prefWidthProperty()));
+        // Force a redraw after updating prefWidth (in order to update its width).
+        this.prefWidthProperty().addListener(a -> {
+            if(this.getParent()!=null) {
+                Platform.runLater(this.getParent()::requestLayout);
+            }
+        });
         
         
         this.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
