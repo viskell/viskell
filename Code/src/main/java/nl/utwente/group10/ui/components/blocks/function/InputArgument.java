@@ -10,6 +10,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
 /**
@@ -27,6 +29,8 @@ public class InputArgument extends Pane implements ComponentLoader{
     /** The InputAnchor belonging to this InputArgument */
     private InputAnchor inputAnchor;
     
+    private ImageView errorImage;
+    
     /**
      * Constructs a new InputArgument.
      * @param block Block to which this InputArgument belongs.
@@ -36,15 +40,30 @@ public class InputArgument extends Pane implements ComponentLoader{
         inputText = new SimpleStringProperty("TODO");
         this.loadFXML("InputArgument");
         
+        errorImage = new ImageView(new Image(this.getClass().getResourceAsStream("/ui/warningTriangle.png")));
+        
         inputAnchor = new InputAnchor(block);
         inputAnchor.layoutXProperty().bind(inputLabel.widthProperty().divide(2));
         inputAnchor.errorStateProperty().addListener(this::checkError);
+        
+        double height = inputAnchor.getVisibleAnchor().getBoundsInLocal().getHeight();
+        double width = inputAnchor.getVisibleAnchor().getBoundsInLocal().getWidth();
+        
+        errorImage.setFitHeight(height);
+        errorImage.setFitWidth(width);
+        
+        //TODO: Why is - 0.5 necessary?
+        errorImage.layoutXProperty().bind(inputAnchor.layoutXProperty().subtract(width / 2 - 0.5));
+        errorImage.layoutYProperty().bind(inputAnchor.layoutYProperty().subtract(height / 2 - 0.5));
+        errorImage.setMouseTransparent(true);
 
         // Vertically center the label
         inputLabel.layoutYProperty().bind(this.heightProperty().divide(2).subtract(inputLabel.heightProperty().divide(2)));
         
         this.setPrefHeight(ArgumentSpace.HEIGHT);
         this.getChildren().add(inputAnchor);
+        this.getChildren().add(errorImage);
+        setError(false);
     }
     
     /** @return the InputText. */
@@ -78,9 +97,11 @@ public class InputArgument extends Pane implements ComponentLoader{
     public void setError(boolean error) {
         ObservableList<String> styleClass = this.getStyleClass();
         if (error) {
+            errorImage.setOpacity(1);
             styleClass.removeAll("error");
             styleClass.add("error");
         } else {
+            errorImage.setOpacity(0);
             styleClass.removeAll("error");
         }        
     }

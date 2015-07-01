@@ -12,6 +12,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
@@ -119,6 +120,10 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         return errorState;
     }
     
+    public Shape getVisibleAnchor() {
+        return visibleAnchor;
+    }
+    
     /**
      * @return The Shape that is the invisible part (touch zone) of this ConnectionAnchor.
      */
@@ -126,6 +131,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         return invisibleAnchor;
     }
 
+    
     public abstract Expr getExpr();
     
     /**

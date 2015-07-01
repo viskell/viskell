@@ -158,8 +158,6 @@ CustomUIPane {
 
 .anchorPoint {
     -fx-fill: black;
-    -fx-stroke-width: 2;
-    -fx-stroke: black;
 }
 
 .alert {
