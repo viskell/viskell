@@ -65,12 +65,6 @@ public class GraphBlock extends Block implements InputBlock {
         borderPane.getChildren().remove(inputSpace);
         borderPane.setTop(inputSpace);
     }
-    
-    @Override
-    public Type getInputType(int index) {
-        throw new RuntimeException();
-        //return getInput(index).getType();
-    }
 
     @Override
     public List<InputAnchor> getAllInputs() {

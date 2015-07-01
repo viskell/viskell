@@ -51,20 +51,14 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** The invisible part of the ConnectionAnchor (the touchZone). */
     @FXML private Shape invisibleAnchor;
     
-    /** The signature that is accepted by this anchor. */
-    // private Type signature;
-    
     /** Property storing the error state. */
-    private BooleanProperty isError;
+    private BooleanProperty errorState;
     
     /**
      * Property storing the active state.
      * When active, the ConnectionAnchor will react to user input.
      */
-    private BooleanProperty active;
-    
-    /** The connection state this Block is in */
-    private int connectionState;
+    private BooleanProperty activeState;
 
     /**
      * @param block
@@ -74,9 +68,9 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      */
     public ConnectionAnchor(Block block) {
         this.block = block;
-        this.isError = new SimpleBooleanProperty(false);
-        this.active = new SimpleBooleanProperty(true);
-        active.addListener(p -> invalidateActive());
+        this.errorState = new SimpleBooleanProperty(false);
+        this.activeState = new SimpleBooleanProperty(true);
+        activeState.addListener(p -> invalidateActive());
         
         this.loadFXML("ConnectionAnchor");
         connections = new ArrayList<Connection>();
@@ -85,43 +79,43 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /**
      * @return Whether or not this ConnectionAnchor is in active mode.
      */
-    public boolean getActive() {
-        return active.get();
+    public boolean getActiveState() {
+        return activeState.get();
     }
     
     /**
      * @param active The new active state for this ConnectionAnchor.
      */
-    public void setActive(boolean active) {
-        this.active.set(active);
+    public void setActiveState(boolean active) {
+        this.activeState.set(active);
     }
     
     /**
      * @return The property describing the active state of this ConnectionAnchor.
      */
-    public BooleanProperty activeProperty() {
-        return active;
+    public BooleanProperty activeStateProperty() {
+        return activeState;
     }
     
     /**
      * @return Whether or not this ConnectionAnchor is in an error state.
      */
-    public boolean getIsError() {
-        return isError.get();
+    public boolean getErrorState() {
+        return errorState.get();
     }
     
     /**
      * @param state The new error state for this ConnectionAnchor.
      */
-    public void setIsError(boolean state) {
-        isError.set(state);
+    public void setErrorState(boolean state) {
+        errorState.set(state);
     }
     
     /**
      * @return The property describing the error state of this ConnectionAnchor.
      */
-    public BooleanProperty isErrorProperty() {
-        return isError;
+    public BooleanProperty errorStateProperty() {
+        return errorState;
     }
     
     /**
@@ -144,15 +138,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
             return Optional.empty();
         }
     }
-    
-    /**
-     * @return The signature as accepted by this ConnectionAnchor.
-     */
-    /*
-    public Type getSignature() {
-        return signature;
-    }
-    */
     
     /**
      * Removes the connection from its pane, first disconnecting it from its
@@ -313,7 +298,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * Reacts to a possible change in active state.
      */
     public void invalidateActive() {
-        if (!active.get()) {
+        if (!activeState.get()) {
             removeConnections();
         }
     }

@@ -121,7 +121,8 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
     /**
      * @return ObservableValue that represents the entire width of all the elements represented in this ArgumentSpace.
      */
-    public ObservableValue<? extends Number> getTotalWidthProperty() {       
+    public ObservableValue<? extends Number> getTotalWidthProperty() {
+        // TODO pref width instead of width here?
         return rightArgument.layoutXProperty().add(rightArgument.translateXProperty()).add(rightArgument.widthProperty()).add(H_GAP);
     }
     

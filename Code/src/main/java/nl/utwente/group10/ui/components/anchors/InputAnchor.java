@@ -21,8 +21,6 @@ public class InputAnchor extends ConnectionAnchor {
     
     private Expr connectionlessExpr;
     
-    private int argumentIndex;
-    
     /**
      * @param block
      *            The Block this anchor is connected to.
@@ -43,10 +41,8 @@ public class InputAnchor extends ConnectionAnchor {
     @Override
     public final Expr getExpr() {
         if (isPrimaryConnected()) {
-            //System.out.println("InputAnchor.getExpr(), return " + getPrimaryOppositeAnchor().get().getBlock().getExpr());
             return getPrimaryOppositeAnchor().get().getBlock().getExpr();
         } else {
-            //System.out.println("InputAnchor.getExpr(), return connectionlessExpr");
             return connectionlessExpr;
         }
     }

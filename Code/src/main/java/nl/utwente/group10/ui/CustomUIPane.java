@@ -1,6 +1,8 @@
 package nl.utwente.group10.ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javafx.application.Platform;
@@ -16,7 +18,9 @@ import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import nl.utwente.group10.ui.menu.FunctionMenu;
@@ -35,6 +39,7 @@ public class CustomUIPane extends TactilePane {
 
     private HaskellCatalog catalog;
     private Env envInstance;
+    private Map<Expr, FunctionBlock> exprToFunction;
 
     /**
      * Constructs a new instance.
@@ -46,6 +51,7 @@ public class CustomUIPane extends TactilePane {
         this.offset = Point2D.ZERO;
         this.catalog = catalog;
         this.envInstance = catalog.asEnvironment();
+        exprToFunction = new HashMap<Expr, FunctionBlock>();
 
         try {
             this.ghci = Optional.of(new GhciSession());
@@ -145,6 +151,7 @@ public class CustomUIPane extends TactilePane {
         for (Node node : getChildren()) {
             if (node instanceof Block) {
                 ((Block) node).invalidateConnectionState();
+                ((Block) node).invalidateVisualState();
             }
         }
 
@@ -215,5 +222,17 @@ public class CustomUIPane extends TactilePane {
         this.setScale(scale * ratio);
         this.setTranslateX(this.getTranslateX() * ratio);
         this.setTranslateY(this.getTranslateY() * ratio);
+    }
+    
+    public void removeExprToFunction(Expr expr) {
+        exprToFunction.remove(expr);
+    }
+    
+    public void putExprToFunction(Expr expr, FunctionBlock block) {
+        exprToFunction.put(expr,block);
+    }
+    
+    public FunctionBlock getExprToFunction(Expr expr) {
+        return exprToFunction.get(expr);
     }
 }

@@ -99,19 +99,6 @@ public class RGBBlock extends DisplayBlock {
     private InputAnchor getInput(int index) {
         return getAllInputs().get(index);
     }
-    
-    /*
-    @Override
-    public Type getInputSignature(int index) {
-        return getInput(index).getSignature();
-    }
-    */
-
-    @Override
-    public Type getInputType(int index) {
-        throw new RuntimeException();
-        //return getInput(index).getType();
-    }
 
     @Override
     public List<InputAnchor> getAllInputs() {

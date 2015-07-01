@@ -100,13 +100,6 @@ public class DisplayBlock extends Block implements InputBlock {
             setOutput("???");
         }
     }
-    
-    @Override
-    public Type getInputType(int index) {
-        throw new RuntimeException();
-        //return getInput(index).getType();
-    }
-
     @Override
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(inputAnchor);
@@ -115,5 +108,10 @@ public class DisplayBlock extends Block implements InputBlock {
     @Override
     public Expr getExpr() {
         return inputAnchor.getExpr();
+    }
+    
+    @Override
+    public String toString() {
+        return "DisplayBlock[" + getOutput() + "]";
     }
 }

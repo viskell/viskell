@@ -82,25 +82,14 @@ public class ValueBlock extends Block implements OutputBlock {
         this.expr = new Value(new ConstT("Float"), getValue()); 
         super.updateExpr();
     }
-    
-
-    @Override
-    public Type getOutputType() {
-        return getOutputSignature();
-    }
-    @Override
-    public Type getOutputSignature() {
-        try {
-            return new Value(new ConstT("Float"), getValue()).analyze(getPane().getEnvInstance());
-        } catch (HaskellException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     @Override
     public OutputAnchor getOutputAnchor() {
         return output;
+    }
+    
+    @Override
+    public String toString() {
+        return "ValueBlock[" + getValue() + "]";
     }
 }

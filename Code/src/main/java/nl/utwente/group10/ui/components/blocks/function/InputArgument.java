@@ -38,7 +38,7 @@ public class InputArgument extends Pane implements ComponentLoader{
         
         inputAnchor = new InputAnchor(block);
         inputAnchor.layoutXProperty().bind(inputLabel.widthProperty().divide(2));
-        inputAnchor.isErrorProperty().addListener(this::checkError);
+        inputAnchor.errorStateProperty().addListener(this::checkError);
 
         // Vertically center the label
         inputLabel.layoutYProperty().bind(this.heightProperty().divide(2).subtract(inputLabel.heightProperty().divide(2)));

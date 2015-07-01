@@ -53,15 +53,13 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     /** The context menu associated with this block instance. */
     private CircleMenu circleMenu;
     
-    /** The connection state this Block is in */
-    //private int connectionState;
-    
     protected Expr signature;
     
     protected Expr expr;
     
     protected IntegerProperty connectionState;
     protected IntegerProperty visualState;
+    private BooleanProperty exprIsDirty;
 
     /**
      * @param pane
@@ -71,10 +69,12 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         parentPane = pane;
         connectionState = new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
         visualState = new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
+        exprIsDirty = new SimpleBooleanProperty(true);
         
-        connectionState.addListener(c -> invalidateConnectionState());
+        connectionState.addListener(a -> invalidateConnectionState());
+        connectionState.addListener(a -> setExprIsDirty(true));
         connectionState.addListener(this::cascadeConnectionState);
-        visualState.addListener(c -> invalidateVisualState());
+        visualState.addListener(a -> invalidateVisualState());
         visualState.addListener(this::cascadeVisualState);
         
         
@@ -126,16 +126,16 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
 
     /** Returns an expression that evaluates to what this block is. */
     public Expr getExpr() {
-        if (ConnectionCreationManager.getConnectionState() > getConnectionState()) {
-            //System.out.println(this + " ConnectionState is outdated!");
-            //TODO look more into this.
+        // Asssure expr is up-to-date.
+        if (getExprIsDirty()) {
             updateExpr();
         }
         return expr;
     }
     
     public void updateExpr() {
-        //System.out.println(this + ".updateExpr()");
+        setExprIsDirty(false);
+        System.out.println(this + ".updateExpr()");
     }
     
     @Override
@@ -168,18 +168,29 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         return connectionState;
     }
     
+    public boolean getExprIsDirty() {
+        return exprIsDirty.get();
+    }
+    
+    public void setExprIsDirty(boolean dirty) {
+        exprIsDirty.set(dirty);
+    }
+    
+    public BooleanProperty exprIsDirtyProperty() {
+        return exprIsDirty;
+    }
+    
     public void invalidateConnectionState() {
-        updateExpr();
-        //System.out.println(this + ".invalidateConnectionState() " + getExpr());
+        // Default does nothing.
+        System.out.println(this + ".invalidateConnectionState()");
     }
     
     public void invalidateVisualState() {
-        // Default does nothing
+        // Default does nothing.
         System.out.println(this + ".invalidateVisualState()");
     }
     
     public void cascadeConnectionState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        //System.out.println(this + " Cascading connection state " + oldValue + " -> " + newValue);
         if (oldValue != newValue) {
             boolean cascadedFurther = false;
             if (this instanceof OutputBlock) {
@@ -194,9 +205,10 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
             
             if (!cascadedFurther) {
                 try {
-                    //System.out.println(this + ": Analyzing expression");
+                    // Analyze the entire tree.
                     this.getExpr().analyze(getPane().getEnvInstance());
                 } catch (HaskellTypeError e) {
+                    // A Type mismatch occurred.
                     int index = -1;
                     if (e.getHaskellObject() instanceof Expr) {
                         Expr errorExpr = (Expr) e.getHaskellObject();
@@ -204,27 +216,17 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                             errorExpr = ((Apply) errorExpr).getChildren().get(0);
                             index++;
                         }
-                        FunctionBlock.blockMap.get(errorExpr).getInput(index).setIsError(true);
+                        getPane().getExprToFunction(errorExpr).getInput(index).setErrorState(true);
+                    } else {
+                        // TODO Now what?
                     }
                 } catch (HaskellException e) {
-                    // TODO TYPE ERROR
-                    // ((-) (((+) 5.0) 5.0))
-                    // (((==) undefined) undefined)
-                    
-                    //getInput(0).setIsError(true);
-                    System.out.println(e.getHaskellObject());
-                    System.out.println(this + "" + this.getExpr());
-                    //Get right argument of that?
-                    
-                    //System.out.println(((FuncT) e.getHaskellObject()).getArgs()[1]);
-                    
-                    
+                    // TODO Now what?
                     e.printStackTrace();
                 }
+                // Now that the expressions are updated, propagate a visual refresh upwards.
                 this.setVisualState((int) newValue);
             }
-        } else {
-            System.out.println(this + " connectionState is up to date");
         }
     }
     

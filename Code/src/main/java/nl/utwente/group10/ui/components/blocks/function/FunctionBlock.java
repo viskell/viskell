@@ -58,8 +58,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** The space in which the information of the function is displayed. */
     @FXML private Pane functionInfo;
     
-    public static Map<Expr, FunctionBlock> blockMap = new HashMap<Expr, FunctionBlock>();
-    
     /**
      * Method that creates a newInstance of this class along with it's visual
      * representation
@@ -84,8 +82,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         try {
             t = signature.getType(pane.getEnvInstance()).prune();
         } catch (HaskellException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            throw new FunctionDefinitionException();
         }
         int inputCount = 0;
         while (t instanceof FuncT) {
@@ -94,19 +91,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
             t = ft.getArgs()[1];
             inputCount++;
         }
-        
-        //List<Type> inputSignatures = new ArrayList<>();
-        /*
-        Type functionSignature = getFunctionSignature();
-        for (int i = 0; i < args.size(); i++) {
-            if (functionSignature instanceof FuncT) {
-                Type inputSignature = BackendUtils.dive((FuncT) functionSignature, i + 1);
-                inputSignatures.add(inputSignature);
-            } else {
-                throw new FunctionDefinitionException();
-            }
-        }
-        */
         
         argumentSpace = new ArgumentSpace(this, inputCount);
         argumentSpace.setKnotIndex(getAllInputs().size());
@@ -182,62 +166,14 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         return output;
     }
 
-    
-    /**
-     * @return The function signature as specified in the catalog.
-     */
-    /*
-    public Type getFunctionSignature() {
-        return signature.getType(getPane());
-    }
-    */
-    
-    /*
-    @Override
-    public Type getInputSignature(int index) {
-        return getInput(index).getSignature();
-    }
-    */
-    
-    @Override
-    public Type getInputType(int index) {
-        throw new RuntimeException();
-        //return getInput(index).getType();
-    }
-    
-    @Override
-    public Type getOutputSignature() {
-        try {
-            return expr.getType(getPane().getEnvInstance());
-        } catch (HaskellTypeError e) {
-            // Display type mismatch
-            // TODO
-            e.printStackTrace();
-        } catch (HaskellException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        System.out.println("OutputSignature is brak");
-        return null;
-    }
-
-    @Override
-    public Type getOutputType() {
-        try {
-            return getExpr().getType(getPane().getEnvInstance());
-        } catch (HaskellException e) {
-            return getOutputSignature();
-        }
-    }
-
     /**
      * @return The current (output) expression belonging to this block.
      */
     @Override
     public final void updateExpr() {
-        blockMap.remove(expr);
+        getPane().removeExprToFunction(expr);
         expr = new Ident(getName());
-        blockMap.put(expr, this);
+        getPane().putExprToFunction(expr, this);
         
         for (InputAnchor in : getActiveInputs()) {
             expr = new Apply(expr, in.getExpr());
@@ -255,7 +191,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public void invalidateConnectionState() {
         super.invalidateConnectionState();
-        getAllInputs().forEach(i -> i.setIsError(false));
+        getAllInputs().forEach(i -> i.setErrorState(false));
     }
 
     /**
@@ -279,7 +215,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     private void invalidateKnotIndex() {
         List<InputAnchor> inputs = getAllInputs();
         for (int i = 0; i < inputs.size(); i++) {
-            inputs.get(i).setActive(i < getKnotIndex());
+            inputs.get(i).setActiveState(i < getKnotIndex());
         }
         
         // Trigger invalidation for the now changed output type.

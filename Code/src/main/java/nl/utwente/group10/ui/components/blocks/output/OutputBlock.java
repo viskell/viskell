@@ -13,16 +13,4 @@ public interface OutputBlock {
      * @return the output Anchor for this Block
      */
     public OutputAnchor getOutputAnchor();
-
-    /**
-     * @return The current output type of the block.
-     */
-    default Type getOutputType() {
-        return getOutputSignature();
-    }
-
-    /**
-     * @return The signature of the output.
-     */
-    Type getOutputSignature();
 }
