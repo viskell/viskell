@@ -78,7 +78,7 @@ public class GraphBlock extends Block implements InputBlock {
     }
 
     @Override
-    public void invalidateConnectionState() {
+    public void invalidateVisualState() {
         ObservableList<XYChart.Series<Double, Double>> lineChartData = FXCollections.observableArrayList();
 
         double step = 0.01;
@@ -86,7 +86,6 @@ public class GraphBlock extends Block implements InputBlock {
         double max = x.getUpperBound();
         // Haskell equivalent:
         // putStrLn $ unwords $ map show $ map (id) [1.0,1.1..5.0]
-        System.out.println("GraphBlock getExpr(): "+getExpr());
         Expr expr = new Apply(
             new Ident("putStrLn"),
             new Apply(
@@ -106,12 +105,8 @@ public class GraphBlock extends Block implements InputBlock {
                 )
             )
         );
-        System.out.println("GraphBlock expr 0.5: " + null);
-        
-        System.out.println("GraphBlock expr 1: " + expr);
         
         try {
-            System.out.println("GraphBlock expr 2: "+expr);
             String results = getPane().getGhciSession().get().pull(expr);
 
             LineChart.Series<Double, Double> series = new LineChart.Series<>();
