@@ -64,6 +64,11 @@ public class Function extends Expr {
         this.expr = expr;
     }
 
+    public Function(Expr expr, List<FunctionArgument> arguments) {
+        this.expr = expr;
+        this.arguments = arguments;
+    }
+
     /**
      * @return An ordered array of the arguments for this function.
      */
@@ -88,6 +93,7 @@ public class Function extends Expr {
     @Override
     public String toHaskell() {
         StringBuilder out = new StringBuilder();
+        out.append("(");
 
         if (!this.arguments.isEmpty()) {
             out.append("\\");
@@ -97,10 +103,10 @@ public class Function extends Expr {
             }
 
             out.append(" -> ");
-            out.append(this.expr.toHaskell());
-        } else {
-            out.append(this.expr.toHaskell());
         }
+
+        out.append(this.expr.toHaskell());
+        out.append(")");
 
         return out.toString();
     }

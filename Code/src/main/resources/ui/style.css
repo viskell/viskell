@@ -188,3 +188,18 @@ CustomUIPane {
     -fx-font-weight: bold;
     -fx-background-color: rgba(0, 0, 0, 0.3);
 }
+
+.def {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+}
+
+.signature {
+    -fx-text-fill: white;
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 0, 0;
+    -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+.anchor {
+    -fx-fill: rgba(255, 255, 255, 0.5);
+}
