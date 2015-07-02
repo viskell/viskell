@@ -60,7 +60,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
                             }
                         });
 
-        this.addEventHandler(MouseEvent.MOUSE_CLICKED, this::handleMouseEvent);
+        this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseEvent);
 
         Platform.runLater(this::createCircleMenu);
     }
@@ -74,9 +74,7 @@ public abstract class Block extends StackPane implements ComponentLoader {
      * selected it spawns a {@link CircleMenu} instead.
      */
     private void handleMouseEvent(MouseEvent t) {
-        if (parentPane.getSelectedBlock().isPresent()
-                && parentPane.getSelectedBlock().get().equals(this)
-                && t.getButton().equals(MouseButton.PRIMARY)) {
+        if (t.getButton() == MouseButton.SECONDARY) {
             circleMenu.show(t);
         } else {
             parentPane.setSelectedBlock(this);
