@@ -120,6 +120,7 @@ public class GraphBlock extends Block implements InputBlock {
             lineChartData.add(series);
         } catch (HaskellException | NoSuchElementException | NumberFormatException ignored) {
             // Pretend we didn't hear anything.
+            assert Boolean.TRUE;
         }
 
         chart.setData(lineChartData);
