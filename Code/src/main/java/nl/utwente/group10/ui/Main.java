@@ -11,9 +11,6 @@ import nl.utwente.group10.ghcj.GhciEvaluator;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.CustomAlert;
-import nl.utwente.group10.ui.components.blocks.DisplayBlock;
-import nl.utwente.group10.ui.components.blocks.SliderBlock;
-import nl.utwente.group10.ui.components.blocks.ValueBlock;
 
 /**
  * Main application class for the GUI.
@@ -35,10 +32,6 @@ public class Main extends Application {
         tactilePane.setMaxHeight(3000);
 
         tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
-
-        ValueBlock valueBlock = new ValueBlock(tactilePane);
-        DisplayBlock displayBlock = new DisplayBlock(tactilePane);
-        tactilePane.getChildren().addAll(valueBlock, displayBlock);
 
         // Init Debug
         DebugParent debug = new DebugParent(tactilePane);
@@ -72,9 +65,6 @@ public class Main extends Application {
         stage.setScene(scene);
 
         stage.show();
-
-        valueBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2);
-        displayBlock.relocate(tactilePane.getWidth() / 2, tactilePane.getHeight() / 2 + 100);
 
         // Invalidate
         tactilePane.invalidateAll();

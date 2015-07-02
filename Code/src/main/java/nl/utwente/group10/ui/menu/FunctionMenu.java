@@ -2,19 +2,16 @@ package nl.utwente.group10.ui.menu;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.control.*;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.Node;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -22,6 +19,10 @@ import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.expr.Ident;
+import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.*;
@@ -103,7 +104,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
         /* Create content for utilSpace. */
         Button valBlockButton = new Button("Value Block");
-        valBlockButton.setOnAction(event -> addBlock(new ValueBlock(parent)));
+        valBlockButton.setOnAction(event -> addValueBlock());
         Button disBlockButton = new Button("Display Block");
         disBlockButton.setOnAction(event -> addBlock(new DisplayBlock(parent)));
         Button sliderBlockButton = new Button("Slider Block");
@@ -141,6 +142,31 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         // signature String.
         FunctionBlock fb = new FunctionBlock(entry.getName(), entry.asHaskellObject(new Context()), parent);
         addBlock(fb);
+    }
+
+    private void addValueBlock() {
+        TextInputDialog dialog = new TextInputDialog("val");
+        dialog.setTitle("Add value block");
+        dialog.setHeaderText("Add value block");
+        dialog.setContentText("Value");
+
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(value -> {
+            parent.getGhciSession().ifPresent(ghci -> {
+                try {
+                    String t = ghci.pull(new Ident(":t " + value)).split(" :: ")[1].trim();
+                    System.out.println("t = " + t);
+                    Type type = new TypeBuilder().build(t);
+
+                    System.out.println("type = " + type.toHaskellType());
+                    ValueBlock val = new ValueBlock(this.parent, type, value);
+                    addBlock(val);
+                } catch (HaskellException e) {
+                    e.printStackTrace();
+                }
+            });
+        });
     }
 
     private void addBlock(Block block) {
