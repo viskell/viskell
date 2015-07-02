@@ -490,27 +490,27 @@
         	<function name="unzip3" signature="[(a, b, c)] -> ([a], [b], [c])">
         		the unzip3 function takes a list of triples and returns three lists, analogous to unzip.
         	</function>
-        	<function name="lines" signature="String -> [String]">
+        	<function name="lines" signature="[Char] -> [[Char]]">
         		lines breaks a string up into a list of strings at newline characters.
         		The resulting strings do not contain newlines.
         	</function>
-        	<function name="words" signature="String -> [String]">
+        	<function name="words" signature="[Char] -> [[Char]]">
         		words breaks a string up into a list of words, which were delimited by white space.
         	</function>
-        	<function name="unlines" signature="[String] -> String">
+        	<function name="unlines" signature="[[Char]] -> [Char]">
 	        	unlines is an inverse operation to lines. It joins lines, after appending a
 	        	terminating newline to each.
         	</function>
-        	<function name="unwords" signature="[String] -> String">
+        	<function name="unwords" signature="[[Char]] -> [Char]">
         		unwords is an inverse operation to words. It joins words with separating spaces.
         	</function>
         </category>
         <category name="Converting to and from String">
-        	<function name="show" signature="Show a => a -> String">
+        	<function name="show" signature="Show a => a -> [Char]">
         		a specialised variant of showsPrec, using precedence context zero, and
-        		returning an ordinary String.
+        		returning an ordinary [Char].
         	</function>
-        	<function name="read" signature="Read a => String -> a">
+        	<function name="read" signature="Read a => [Char] -> a">
         		the read function reads input from a string, which must be completely consumed by the input process.
         	</function>
         </category>
