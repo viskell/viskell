@@ -1,11 +1,10 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
-import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.components.blocks.ComponentTest;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,9 +19,10 @@ public class FunctionBlockTest extends ComponentTest {
      */
     @Before
     public void setUp() throws Exception {
+        //TODO: not entirely correct.
         FuncT func = new FuncT(new ConstT("Int"), new FuncT(new ConstT("Int"), new ConstT("Int")));
 
-        functionBlock = new FunctionBlock("", func, getPane());
+        functionBlock = new FunctionBlock("(+)", func, getPane());
     }
 
     /**

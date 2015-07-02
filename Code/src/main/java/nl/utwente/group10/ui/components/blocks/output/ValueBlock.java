@@ -1,18 +1,20 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.output;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Value;
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 
 /**
@@ -31,8 +33,7 @@ public class ValueBlock extends Block implements OutputBlock {
     private OutputAnchor output;
 
     /** The space containing the output anchor. */
-    @FXML
-    private Pane outputSpace;
+    @FXML private BorderPane outputSpace;
 
     /**
      * @param pane
@@ -41,15 +42,16 @@ public class ValueBlock extends Block implements OutputBlock {
     public ValueBlock(CustomUIPane pane) {
         this(pane, "ValueBlock");
     }
+    
     protected ValueBlock(CustomUIPane pane, String fxml) {
         super(pane);
-
         value = new SimpleStringProperty("5.0");
-        output = new OutputAnchor(this, pane);
-
+        
         this.loadFXML(fxml);
+        output = new OutputAnchor(this);
 
-        outputSpace.getChildren().add(this.getOutputAnchor());
+        outputSpace.setCenter(this.getOutputAnchor());
+        outputSpace.toFront();
     }
 
     /**
@@ -73,24 +75,21 @@ public class ValueBlock extends Block implements OutputBlock {
     public final StringProperty valueProperty() {
         return value;
     }
-
+    
     @Override
-    public Expr asExpr() {
-        // TODO: support more types than floats
-        return new Value(new ConstT("Float"), getValue());
-    }
-
-    @Override
-    public Type getOutputSignature(Env env) {
-        try {
-            return asExpr().analyze(env);
-        } catch (HaskellException e) {
-            throw new TypeUnavailableException();
-        }
+    public void updateExpr() {
+        //TODO control if this gets called only once.
+        this.expr = new Value(new ConstT("Float"), getValue()); 
+        super.updateExpr();
     }
 
     @Override
     public OutputAnchor getOutputAnchor() {
         return output;
+    }
+    
+    @Override
+    public String toString() {
+        return "ValueBlock[" + getValue() + "]";
     }
 }

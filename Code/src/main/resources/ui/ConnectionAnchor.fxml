@@ -1,3 +1,6 @@
 <?import nl.utwente.group10.ui.components.anchors.ConnectionAnchor?>
-<fx:root type="nl.utwente.group10.ui.components.anchors.ConnectionAnchor" xmlns:fx="http://javafx.com/fxml/" radius="10">
+<?import javafx.scene.shape.Rectangle?>
+<fx:root type="nl.utwente.group10.ui.components.anchors.ConnectionAnchor" xmlns:fx="http://javafx.com/fxml/" maxHeight="0" minHeight="0" maxWidth="0" minWidth="0">
+    <Rectangle fx:id="invisibleAnchor" translateY="-10" height="50" width="50" styleClass="invisTouchZone"/>
+    <Rectangle fx:id="visibleAnchor" height="15" width="15" styleClass="anchorPoint"/>
 </fx:root>

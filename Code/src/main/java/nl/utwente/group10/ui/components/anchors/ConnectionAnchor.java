@@ -4,49 +4,156 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.ui.BackendUtils;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
+import nl.utwente.group10.ui.components.ConnectionStateDependent;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 /**
  * Represents an anchor of a Block that can connect to (1 or more) Connections.
  * 
+ * Has an invisible part that acts as an enlargement of the touch zone.
+ * 
  * The primary Connection (if present) is the first element in getConnections().
  * This means that the oldest Connection is the primary connection.
+ * 
+ * The ConnectionAnchor keeps track of its accepted type (signature), and will typecheck this for new connections.
  */
-public abstract class ConnectionAnchor extends Circle implements ComponentLoader {
-    /** The pane on which this Anchor resides. */
-    private CustomUIPane pane;
+public abstract class ConnectionAnchor extends StackPane implements ComponentLoader {
 
     /** The block this Anchor is connected to. */
     private Block block;
 
     /** The connections this anchor has, can be empty for no connections. */
     private List<Connection> connections;
+    
+    /** The visual representation of the ConnectionAnchor. */
+    @FXML private Shape visibleAnchor;
+    
+    /** The invisible part of the ConnectionAnchor (the touchZone). */
+    @FXML private Shape invisibleAnchor;
+    
+    /** Property storing the error state. */
+    private BooleanProperty errorState;
+    
+    /**
+     * Property storing the active state.
+     * When active, the ConnectionAnchor will react to user input.
+     */
+    private BooleanProperty activeState;
 
     /**
      * @param block
      *            The block where this Anchor is connected to.
-     * @param pane
-     *            The pane this Anchor belongs to.
+     * @param Type
+     *            The signature that is accepted by this anchor.
      */
-    public ConnectionAnchor(Block block, CustomUIPane pane) {
+    public ConnectionAnchor(Block block) {
         this.block = block;
-        this.pane = pane;
-
+        this.errorState = new SimpleBooleanProperty(false);
+        this.activeState = new SimpleBooleanProperty(true);
+        activeState.addListener(a -> invalidateActive());
+        errorState.addListener(this::checkError);
+        
         this.loadFXML("ConnectionAnchor");
         connections = new ArrayList<Connection>();
     }
+    
+    /**
+     * @return Whether or not this ConnectionAnchor is in active mode.
+     */
+    public boolean getActiveState() {
+        return activeState.get();
+    }
+    
+    /**
+     * @param active The new active state for this ConnectionAnchor.
+     */
+    public void setActiveState(boolean active) {
+        this.activeState.set(active);
+    }
+    
+    /**
+     * @return The property describing the active state of this ConnectionAnchor.
+     */
+    public BooleanProperty activeStateProperty() {
+        return activeState;
+    }
+    
+    /**
+     * @return Whether or not this ConnectionAnchor is in an error state.
+     */
+    public boolean getErrorState() {
+        return errorState.get();
+    }
+    
+    /**
+     * @param state The new error state for this ConnectionAnchor.
+     */
+    public void setErrorState(boolean state) {
+        errorState.set(state);
+    }
+    
+    /**
+     * @return The property describing the error state of this ConnectionAnchor.
+     */
+    public BooleanProperty errorStateProperty() {
+        return errorState;
+    }
+    
+    public Shape getVisibleAnchor() {
+        return visibleAnchor;
+    }
+    
+    /**
+     * @return The Shape that is the invisible part (touch zone) of this ConnectionAnchor.
+     */
+    public Shape getInvisibleAnchor() {
+        return invisibleAnchor;
+    }
 
+    
+    public abstract Expr getExpr();
+    
     /**
      * @return Input or output type of the block associated with this anchor.
      */
-    public abstract Type getType();
-
+    public Optional<String> getStringType() {
+        try {
+            return Optional.of(getExpr().getType(getPane().getEnvInstance()).prune().toHaskellType());
+        } catch (HaskellException e) {
+            //e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+    
+    public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        for (Connection conn : getConnections()) {
+            if (conn.isConnected()) {
+                conn.setErrorState(newValue);
+            }
+        }
+    }
+    
     /**
      * Removes the connection from its pane, first disconnecting it from its
      * anchors.
@@ -103,7 +210,7 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         connections.add(connection);
     }
 
-    /** Returns true this anchor has 1 or more connections. */
+    /** Returns true if this anchor has 1 or more connections. */
     public boolean hasConnection() {
         return !connections.isEmpty();
     }
@@ -114,17 +221,24 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
     public boolean isPrimaryConnected() {
         return isConnected(0);
     }
+    
+    /**
+     * @return True if the primary connection is connected, and its types match.
+     */
+    public boolean isPrimaryConnectedCorrect() {
+        return isPrimaryConnected(); // && BackendUtils.typesMatch(getSignature().getFresh(), getType().getFresh());
+    }
 
     /**
      * @param index
      *            Index of the connection to check
-     * @return Wether or not the connection specified by the index is connected.
+     * @return Whether or not the connection specified by the index is connected.
      */
     public boolean isConnected(int index) {
         return index >= 0 && index < getConnections().size() && getConnections().get(index).isConnected();
     }
 
-    /** Wether or not this anchor allows adding an extra connection. */
+    /** Whether or not this anchor allows adding an extra connection. */
     public abstract boolean canAddConnection();
 
     /**
@@ -163,12 +277,12 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
         }
     }
 
-    /** Returns the block this anchor belongs to. */
+    /** @return the block this anchor belongs to. */
     public final Block getBlock() {
         return block;
     }
 
-    /** Returns the connections this anchor is connected to. */
+    /** @return the connections this anchor is connected to. */
     public List<Connection> getConnections() {
         return connections;
     }
@@ -186,13 +300,22 @@ public abstract class ConnectionAnchor extends Circle implements ComponentLoader
 
     /** Returns the position of the center of this anchor relative to its pane. */
     public Point2D getCenterInPane() {
-        Point2D scenePos = localToScene(getCenterX(), getCenterY());
+        Point2D scenePos = localToScene(0, 0);
         return getPane().sceneToLocal(scenePos);
     }
 
     /** Returns the pane this anchor resides on. */
     public final CustomUIPane getPane() {
-        return pane;
+        return block.getPane();
+    }
+    
+    /**
+     * Reacts to a possible change in active state.
+     */
+    public void invalidateActive() {
+        if (!activeState.get()) {
+            removeConnections();
+        }
     }
 
     @Override

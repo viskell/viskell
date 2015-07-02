@@ -1,26 +1,41 @@
 package nl.utwente.group10.ui.components.blocks;
 
+import java.util.Optional;
+
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
+import nl.utwente.group10.ui.components.ConnectionStateDependent;
+import nl.utwente.group10.ui.components.VisualStateDependent;
+import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
+import nl.utwente.group10.ui.components.blocks.input.InputBlock;
+import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import nl.utwente.group10.ui.menu.CircleMenu;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.
- * All components that can represent their information in a block always have at
- * least an {@link OutputAnchor}. {@link InputAnchor}s are optionally implemented.
- * <p>
- * Blocks should all have a way to indicate an error state that is relevant to
- * their implementation.
- * </p>
+ * Blocks can add input and output values by implementing the InputBlock and
+ * OutputBlock interfaces. Blocks typically are dependent on the
+ * ConnectionState, although the default invalidateConnectionState()
+ * implementation does nothing.
  * <p>
  * MouseEvents are used for setting the selection state of a block, single
  * clicks can toggle the state to selected. When a block has already been
@@ -31,15 +46,20 @@ import nl.utwente.group10.ui.menu.CircleMenu;
  * Each block implementation should also feature it's own FXML implementation.
  * </p>
  */
-public abstract class Block extends StackPane implements ComponentLoader {
-
+public abstract class Block extends StackPane implements ComponentLoader, ConnectionStateDependent, VisualStateDependent {
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
+    
     /** The context menu associated with this block instance. */
     private CircleMenu circleMenu;
     
-    /** The connection state this Block is in */
-    private int connectionState;
+    protected Expr signature;
+    
+    protected Expr expr;
+    
+    protected IntegerProperty connectionState;
+    protected IntegerProperty visualState;
+    private BooleanProperty exprIsDirty;
 
     /**
      * @param pane
@@ -47,7 +67,16 @@ public abstract class Block extends StackPane implements ComponentLoader {
      */
     public Block(CustomUIPane pane) {
         parentPane = pane;
-
+        connectionState = new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
+        visualState = new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
+        exprIsDirty = new SimpleBooleanProperty(true);
+        
+        connectionState.addListener(a -> invalidateConnectionState());
+        connectionState.addListener(a -> setExprIsDirty(true));
+        connectionState.addListener(this::cascadeConnectionState);
+        visualState.addListener(a -> invalidateVisualState());
+        visualState.addListener(this::cascadeVisualState);
+        
         parentPane.selectedBlockProperty()
                 .addListener(
                         event -> {
@@ -65,6 +94,9 @@ public abstract class Block extends StackPane implements ComponentLoader {
         Platform.runLater(this::createCircleMenu);
     }
 
+    /**
+     * Creates the CircleMenu for this Block.
+     */
     protected void createCircleMenu() {
         circleMenu = new CircleMenu(this);
     }
@@ -87,68 +119,121 @@ public abstract class Block extends StackPane implements ComponentLoader {
     }
 
     /** Returns an expression that evaluates to what this block is. */
-    public abstract Expr asExpr();
-
-    /**
-     * Tells the block that its current state (considering connections) possibly has
-     * changed. Default implementation does not react to a potential state
-     * change.
-     *
-     * This method should only be called after the Block's constructor is done.
-     * 
-     * This method will invalidate the Block even if the state did not change.
-     */
-    public void invalidateConnectionState() {
+    public Expr getExpr() {
+        // Asssure expr is up-to-date.
+        if (getExprIsDirty()) {
+            updateExpr();
+        }
+        return expr;
+    }
+    
+    public void updateExpr() {
+        setExprIsDirty(false);
+        //System.out.println(this + ".updateExpr()");
+    }
+    
+    @Override
+    public final int getVisualState() {
+        return visualState.get();
     }
 
-    /**
-     * Does the same as invalidateConnectionState(), but cascading down to other
-     * blocks which are possibly also (indirectly) affected by the state change.
-     * 
-     * Cascading only happens if this Block is not up-to-date, implying that if
-     * this Block is up-to-date, then so are all following Blocks.
-     * 
-     * @param state
-     *            The newest visual state
-     */
-    public void invalidateConnectionStateCascading(int state) {
-        if (!connectionStateIsUpToDate(state)) {
-            invalidateConnectionState();
+    @Override
+    public void setVisualState(int state) {
+        this.visualState.set(state);
+    }
+    
+    @Override
+    public final IntegerProperty visualStateProperty() {
+        return visualState;
+    }
+    
+    @Override
+    public int getConnectionState() {
+        return connectionState.get();
+    }
+
+    @Override
+    public void setConnectionState(int state) {
+        this.connectionState.set(state);
+    }
+    
+    @Override
+    public final IntegerProperty connectionStateProperty() {
+        return connectionState;
+    }
+    
+    public boolean getExprIsDirty() {
+        return exprIsDirty.get();
+    }
+    
+    public void setExprIsDirty(boolean dirty) {
+        exprIsDirty.set(dirty);
+    }
+    
+    public BooleanProperty exprIsDirtyProperty() {
+        return exprIsDirty;
+    }
+    
+    public void invalidateConnectionState() {
+        // Default does nothing.
+        //System.out.println(this + ".invalidateConnectionState()");
+    }
+    
+    public void invalidateVisualState() {
+        // Default does nothing.
+        //System.out.println(this + ".invalidateVisualState()");
+    }
+    
+    public void cascadeConnectionState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        if (oldValue != newValue) {
+            boolean cascadedFurther = false;
             if (this instanceof OutputBlock) {
-                for (Connection c : ((OutputBlock) this).getOutputAnchor().getConnections()) {
-                    if (c.isConnected()) {
-                        c.getInputBlock().get().invalidateConnectionStateCascading(state);
+                OutputBlock oblock = (OutputBlock) this;
+                for (Optional<? extends ConnectionAnchor> anchor : oblock.getOutputAnchor().getOppositeAnchors()) {
+                    if (anchor.isPresent()) {
+                        anchor.get().getBlock().setConnectionState((int) newValue);
+                        cascadedFurther = true;
                     }
                 }
             }
-            this.connectionState = state;
+            
+            if (!cascadedFurther) {
+                try {
+                    // Analyze the entire tree.
+                    this.getExpr().analyze(getPane().getEnvInstance());
+                    getPane().setErrorOccurred(false);
+                } catch (HaskellTypeError e) {
+                    // A Type mismatch occurred.
+                    int index = -1;
+                    if (e.getHaskellObject() instanceof Expr) {
+                        Expr errorExpr = (Expr) e.getHaskellObject();
+                        while (errorExpr instanceof Apply) {
+                            errorExpr = ((Apply) errorExpr).getChildren().get(0);
+                            index++;
+                        }
+                        getPane().getExprToFunction(errorExpr).getInput(index).setErrorState(true);
+                        getPane().setErrorOccurred(true);
+                    } else {
+                        // TODO Now what?
+                    }
+                } catch (HaskellException e) {
+                    // TODO Now what?
+                    e.printStackTrace();
+                }
+                // Now that the expressions are updated, propagate a visual refresh upwards.
+                this.setVisualState((int) newValue);
+            }
         }
     }
-
-    /**
-     * Shortcut to call invalidateConnectionStateCascading(int state) with the newest state.
-     */
-    public void invalidateConnectionStateCascading() {
-        invalidateConnectionStateCascading(ConnectionCreationManager.getConnectionState());
-    }
-
-    /**
-     * @return Whether or not the state of the block confirms to the given newest state.
-     */
-    public boolean connectionStateIsUpToDate(int state) {
-        return this.connectionState == state;
-    }
-
-    /**
-     * Enables or disables the error state of this Block.
-     * @param error True to enable, False to disable.
-     */
-    public void setError(boolean error) {
-        if (error) {
-            this.getStyleClass().removeAll("error");
-            this.getStyleClass().add("error");
-        } else {
-            this.getStyleClass().removeAll("error");
+    
+    public void cascadeVisualState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        if (this instanceof InputBlock) {
+            InputBlock iblock = (InputBlock) this;
+            for (InputAnchor input : iblock.getActiveInputs()) {
+                if (input.isPrimaryConnected()) {
+                    input.getPrimaryOppositeAnchor().get().getBlock().setVisualState((int) newValue);
+                }
+            }
         }
     }
 }

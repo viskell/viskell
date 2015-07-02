@@ -1,12 +1,14 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.input;
 
 import java.util.List;
 import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
@@ -15,6 +17,7 @@ import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
+import nl.utwente.group10.ui.components.blocks.Block;
 
 /**
  * DisplayBlock is an extension of {@link Block} that only provides a display of
@@ -24,29 +27,27 @@ import nl.utwente.group10.ui.components.anchors.InputAnchor;
  * input source using a {@link Connection}.
  */
 public class DisplayBlock extends Block implements InputBlock {
-    /** The output String to display **/
+    /** The output String that is displayed on a Label. */
     protected StringProperty output;
 
     /** The Anchor that is used as input. */
     protected InputAnchor inputAnchor;
 
     /** The space containing the input anchor. */
-    @FXML
-    protected Pane anchorSpace;
+    @FXML protected Pane inputSpace;
 
     /** The space containing the output anchor. */
-    @FXML
-    protected Pane outputSpace;
-
+    @FXML protected Pane outputSpace;
+    
     /**
      * Creates a new instance of DisplayBlock.
-     *
      * @param pane
      *            The pane on which this DisplayBlock resides.
      */
     public DisplayBlock(CustomUIPane pane) {
         this(pane, "DisplayBlock");
     }
+    
     protected DisplayBlock(CustomUIPane pane, String fxml) {
         super(pane);
 
@@ -54,26 +55,28 @@ public class DisplayBlock extends Block implements InputBlock {
 
         this.loadFXML(fxml);
 
-        inputAnchor = new InputAnchor(this, pane);
-        anchorSpace.getChildren().add(inputAnchor);
+        inputAnchor = new InputAnchor(this);
+        inputAnchor.layoutXProperty().bind(inputSpace.widthProperty().divide(2));
+        inputSpace.getChildren().add(inputAnchor);        
+        
+        //Make sure inputSpace is drawn on top.
+        BorderPane borderPane = (BorderPane) inputSpace.getParent();
+        borderPane.getChildren().remove(inputSpace);
+        borderPane.setTop(inputSpace);
     }
 
     /**
-     * Sets the output flowing into the DisplayBlock and refresh the display.
-     *
-     * @param value
-     *            The value to show.
-     */
-    public void setOutput(final String value) {
-        output.set(value);
-    }
-
-    /**
-     * Returns the output value this Block has.
-     * @return outputValue
+     * @return The output this Block is displaying.
      */
     public String getOutput() {
         return output.get();
+    }
+
+    /**
+     * Sets the output that is displayed.
+     */
+    public void setOutput(final String value) {
+        output.set(value);
     }
 
     /**
@@ -85,41 +88,30 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     @Override
-    public final Expr asExpr() {
-        return inputAnchor.asExpr();
-    }
-
-    /** Invalidates the outputted value and triggers re-evaluation of the value. */
     public void invalidateConnectionState() {
+        super.invalidateConnectionState();
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
 
             if (ghci.isPresent()) {
-                setOutput(ghci.get().pull(inputAnchor.asExpr()));
+                setOutput(ghci.get().pull(inputAnchor.getExpr()));
             }
         } catch (GhciException e) {
             setOutput("???");
         }
     }
-
-    @Override
-    public Type getInputType(InputAnchor anchor) {
-        if(anchor.getPrimaryOppositeAnchor().isPresent()) {
-            return anchor.getPrimaryOppositeAnchor().get().getType();
-        } else {
-            return getInputSignature(anchor);
-        }
-    }
-
-    @Override
-    public Type getInputSignature(InputAnchor anchor) {
-        // Return the type 'a', that matches anything.
-        // In the future this should probably be changed to '(Show a)'
-        return HindleyMilner.makeVariable();
-    }
-
     @Override
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(inputAnchor);
+    }
+
+    @Override
+    public Expr getExpr() {
+        return inputAnchor.getExpr();
+    }
+    
+    @Override
+    public String toString() {
+        return "DisplayBlock[" + getOutput() + "]";
     }
 }

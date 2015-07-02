@@ -1,11 +1,17 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.output;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 import java.io.IOException;
 
+/**
+ * An extension of ValueBlock.
+ * The value of this Block can be changed by dragging a slider.
+ * Ranges from 0 to 1 (both inclusive).
+ */
 public class SliderBlock extends ValueBlock {
     @FXML
     private Slider slider;
@@ -22,7 +28,7 @@ public class SliderBlock extends ValueBlock {
 
         slider.valueProperty().addListener(ev -> {
             setValue(String.valueOf(slider.getValue()));
-            pane.invalidateAll();
+            this.setConnectionState(ConnectionCreationManager.nextConnectionState());
         });
     }
 }

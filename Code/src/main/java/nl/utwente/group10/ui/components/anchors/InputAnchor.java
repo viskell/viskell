@@ -3,12 +3,13 @@ package nl.utwente.group10.ui.components.anchors;
 import java.util.Optional;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.InputBlock;
+import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 import nl.utwente.group10.ui.handlers.AnchorHandler;
@@ -17,24 +18,32 @@ import nl.utwente.group10.ui.handlers.AnchorHandler;
  * Anchor that specifically functions as an input.
  */
 public class InputAnchor extends ConnectionAnchor {
+    
+    private Expr connectionlessExpr;
+    
     /**
-     * @param block The Block this anchor is connected to.
-     * @param pane The parent pane this Anchor resides on.
+     * @param block
+     *            The Block this anchor is connected to.
+     * @param signature
+     *            The Type signature as is accepted by this InputAnchor.
      */
-    public InputAnchor(Block block, CustomUIPane pane) {
-        super(block, pane);
-        new AnchorHandler(pane.getConnectionCreationManager(), this);
+    public InputAnchor(Block block) {
+        super(block);
+        new AnchorHandler(super.getPane().getConnectionCreationManager(), this);
+        connectionlessExpr = new Ident("undefined");
     }
 
     /**
      * @return The expression carried by the connection connected to this
      *         anchor.
      */
-    public final Expr asExpr() {
+    
+    @Override
+    public final Expr getExpr() {
         if (isPrimaryConnected()) {
-            return getPrimaryOppositeAnchor().get().getBlock().asExpr();
+            return getPrimaryOppositeAnchor().get().getBlock().getExpr();
         } else {
-            return new Ident("undefined");
+            return connectionlessExpr;
         }
     }
 
@@ -48,21 +57,5 @@ public class InputAnchor extends ConnectionAnchor {
     public String toString() {
         return "InputAnchor for " + getBlock();
     }
-
-    @Override
-    public Type getType() {
-        if (getBlock() instanceof InputBlock) {
-            return ((InputBlock) getBlock()).getInputType(this);
-        } else {
-            throw new TypeUnavailableException();
-        }
-    }
     
-    public Type getSignature() {
-        if (getBlock() instanceof InputBlock) {
-            return ((InputBlock) getBlock()).getInputSignature(this);
-        } else {
-            throw new TypeUnavailableException();
-        }
-    }
 }

@@ -7,13 +7,103 @@ CustomUIPane {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-font-family: Titillium;
-    -fx-background-color: aliceblue;
-    -fx-border-color: black;
+    -fx-text-fill: black;
     -fx-border-width: 2;
+    -fx-border-color: black;
+}
+
+.error .block {
+    -fx-border-color: red;
+}
+
+.selected .block {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+.block .header {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-font-family: fantasy;
+    -fx-text-fill: black;
+}
+
+.block .title {
+    -fx-text-fill: black;
+    -fx-font-size: 20px;
+    -fx-font-weight: bolder;
+}
+
+.block .content {
+    -fx-font-size: 25px;
+    -fx-font-weight: normal;
+    -fx-text-fill: black;
+}
+
+.selected .function.block {
+    -fx-background-color: #BA6602;
+}
+
+.function.block {
+    -fx-background-color: #E97F02;
+}
+
+.selected .value.block {
+    -fx-background-color: #971140;
+}
+
+.value.block {
+    -fx-padding: 0 20 0 20;
+    -fx-background-color: #BD1550;
+}
+
+.selected .display.block {
+    -fx-background-color: #6E7C0C;
+}
+
+.display.block {
+    -fx-background-color: #8A9B0F;
+    -fx-text-alignment: center;
+}
+
+.graph.block LineChart {
+    -fx-font-size: 14px;
+    -fx-background-color: #8A9B0F;
 }
 
 .menu.block {
     -fx-font-size: 12px;
+    -fx-background-color: #490A3D;
+}
+
+.menu.block .title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-font-color: #FCEBB6;
+    -fx-background-color: #A4849E;
+}
+
+.menu.block .title:hover {
+    -fx-background-color: #926C8B;
+}
+
+
+
+.menu.block .title .arrow-button .arrow {
+    -fx-background-color: #EDE6EC;
+    -fx-focus-color: white;
+}
+
+.menu.block .content {
+    -fx-font-size: 15px;
+    -fx-font-weight: normal;
+}
+
+.menu.block Button {
+    -fx-background-color: #A4849E;
+}
+
+.menu.block Button:hover {
+    -fx-background-color: #926C8B;
 }
 
 .menu.block #categorySpace TitledPane {
@@ -25,77 +115,50 @@ CustomUIPane {
     -fx-spacing: 6px;
 }
 
-.error .block {
-    -fx-border-color: red;
-}
-.selected .block {
-    -fx-background-color: skyblue;
+.menu.block .list-cell:even {
+    -fx-background-color: #DBCED8;
 }
 
-.function.block .title {
-    -fx-text-fill: #333333;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
+.menu.block .list-cell:odd {
+    -fx-background-color: #C8B6C5;
 }
 
-.function.block .description {
-    -fx-font-size: 12px;
-    -fx-padding: 0;
-}
-
-.function.block .nestSpace {
-    -fx-padding: 15;
-}
-
-.function.block #argumentSpace Label {
+.argumentSpace Label {
     -fx-padding: 0 5 0 5;
+    -fx-text-fill: black;
     -fx-font-size: 14px;
-    -fx-font-weight: none;
-    -fx-background-color:white;
-    -fx-border-color: black;
-    -fx-border-width: 1;
+    -fx-font-weight: normal;
+    -fx-background-color: white;
 }
 
-.function.block #argumentSpace Label.error {
-    -fx-background-color:pink;
-    -fx-border-color: red;
-}
-
-.function.block #argumentSpace Label.result {
-    -fx-background-color: black;
+.argumentSpace Label.rightArgument {
     -fx-text-fill: white;
+    -fx-background-color: black;
 }
 
-.value.block {
-    -fx-background-color: #8e44ad;
-}
-
-.display.block {
-    -fx-background-color: #c0392b;
-}
-
-.graph.block {
-    -fx-background-color: #ecf0f1;
-}
-
-.value.block .title, .display.block .title {
-
-}
-
-.block .title {
-    -fx-text-fill: #ecf0f1;
+.argumentSpace .error Label{
+    -fx-background-color:red;
+    -fx-border-color: red;
+    -fx-text-fill: white;
 }
 
 .connection {
     -fx-stroke-width: 3px;
-    -fx-stroke: white;
+    -fx-stroke: #FCEBB6;
     -fx-fill: null;
 }
 
 .connection.error {
-    -fx-stroke: orange;
+    -fx-stroke: red;
 }
 
+.invisTouchZone { 
+    -fx-fill: rgba(0,255,0,0);
+}
+
+.anchorPoint {
+    -fx-fill: black;
+}
 
 .alert {
     -fx-background-color: white;
@@ -118,14 +181,25 @@ CustomUIPane {
     -fx-font-weight: bold;
 }
 
-LineChart {
-    -fx-font-size: 14px;
-}
-
 .zoomButtons Button {
     -fx-font-family: monospace;
     -fx-font-size: 16px;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-color: rgba(0, 0, 0, 0.3);
+}
+
+.def {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+}
+
+.signature {
+    -fx-text-fill: white;
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 0, 0;
+    -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+.anchor {
+    -fx-fill: rgba(255, 255, 255, 0.5);
 }

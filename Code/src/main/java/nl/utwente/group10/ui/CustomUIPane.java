@@ -1,10 +1,14 @@
 package nl.utwente.group10.ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -16,7 +20,9 @@ import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import nl.utwente.group10.ui.menu.FunctionMenu;
@@ -27,6 +33,7 @@ import nl.utwente.group10.ui.menu.FunctionMenu;
 public class CustomUIPane extends TactilePane {
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
+    private BooleanProperty errorOccurred;
     private Optional<GhciSession> ghci;
     private InspectorWindow inspector;
 
@@ -35,6 +42,7 @@ public class CustomUIPane extends TactilePane {
 
     private HaskellCatalog catalog;
     private Env envInstance;
+    private Map<Expr, FunctionBlock> exprToFunction;
 
     /**
      * Constructs a new instance.
@@ -42,10 +50,12 @@ public class CustomUIPane extends TactilePane {
     public CustomUIPane(HaskellCatalog catalog) {
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
+        this.errorOccurred = new SimpleBooleanProperty(false);
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
         this.catalog = catalog;
         this.envInstance = catalog.asEnvironment();
+        exprToFunction = new HashMap<Expr, FunctionBlock>();
 
         try {
             this.ghci = Optional.of(new GhciSession());
@@ -145,20 +155,11 @@ public class CustomUIPane extends TactilePane {
         for (Node node : getChildren()) {
             if (node instanceof Block) {
                 ((Block) node).invalidateConnectionState();
+                ((Block) node).invalidateVisualState();
             }
         }
 
         if (inspector != null) inspector.update();
-    }
-
-    public final void errorAll() {
-        for (Node node : getChildren()) {
-            if (node instanceof Block) {
-                ((Block) node).setError(true);
-            } else if (node instanceof Connection) {
-                ((Connection) node).setError(true);
-            }
-        }
     }
 
     public Optional<Block> getSelectedBlock() {
@@ -171,6 +172,18 @@ public class CustomUIPane extends TactilePane {
 
     public ObjectProperty<Optional<Block>> selectedBlockProperty() {
         return selectedBlock;
+    }
+    
+    public boolean getErrorOccured() {
+        return errorOccurred.get();
+    }
+    
+    public void setErrorOccurred(boolean error) {
+        errorOccurred.set(error);
+    }
+    
+    public BooleanProperty errorOccurredProperty() {
+        return errorOccurred;
     }
 
     /** Remove the given block from this UI pane, including its connections. */
@@ -225,5 +238,17 @@ public class CustomUIPane extends TactilePane {
         this.setScale(scale * ratio);
         this.setTranslateX(this.getTranslateX() * ratio);
         this.setTranslateY(this.getTranslateY() * ratio);
+    }
+    
+    public void removeExprToFunction(Expr expr) {
+        exprToFunction.remove(expr);
+    }
+    
+    public void putExprToFunction(Expr expr, FunctionBlock block) {
+        exprToFunction.put(expr,block);
+    }
+    
+    public FunctionBlock getExprToFunction(Expr expr) {
+        return exprToFunction.get(expr);
     }
 }

@@ -2,18 +2,19 @@ package nl.utwente.group10.ui;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.group10.ghcj.GhciEvaluator;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.CustomAlert;
-import nl.utwente.group10.ui.components.blocks.DisplayBlock;
-import nl.utwente.group10.ui.components.blocks.SliderBlock;
-import nl.utwente.group10.ui.components.blocks.ValueBlock;
+import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
+import nl.utwente.group10.ui.components.blocks.input.DisplayBlock;
+import nl.utwente.group10.ui.components.blocks.output.SliderBlock;
+import nl.utwente.group10.ui.components.blocks.output.ValueBlock;
 
 /**
  * Main application class for the GUI.
