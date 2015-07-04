@@ -28,17 +28,17 @@ Software projects have a tendency to become quite large, and Java projects more 
 
 \subsection{Maven}
 
-Larger Java projects usually have dependencies. These dependencies can also have dependencies. To make sure every team member was using the same versions of the libraries the project was no doubt going to use, we decided to use Maven, a Java build tool. Using Maven as a standardized build process also allowed team members to work from their preferred environment: the back end crew preferred IntelliJ IDEA by JetBrains, while the front end developers worked mostly in Eclipse. \index{Maven}
+Larger Java projects usually have dependencies. These dependencies can also have dependencies. To make sure every team member was using the same versions of the libraries the project, we decided to use Maven, a Java build tool. Using Maven as a standardized build process also allowed team members to work from their preferred environment: the back end crew preferred IntelliJ IDEA by JetBrains, while the front end developers worked mostly in Eclipse. \index{Maven}
 
 \subsection{Git, GitHub and GitHub Flow}
 
 For the version control system, we decided on git, with the central repository stored on GitHub. \index{git} \index{GitHub}
 
-As for a branching model, we decided on GitHub Flow\cite{githubflow}. In this model, small, independent changes are published to their own branches, tested, checked, then proposed as a Pull Request. At this point the person responsible for code integration (either Wander or Jan-Jelle) reviews the code and merge it into the master branch. \index{GitHub Flow} Additionally, GitHub is used as issue tracker.
+As for a branching model, we decided on GitHub Flow\cite{githubflow}. In this model, small, independent changes are published to their own branches, tested, checked, then proposed as a Pull Request. At this point the person responsible for code integration (either Wander or Jan-Jelle) reviewed the code and merged it into the master branch. \index{GitHub Flow} Additionally, GitHub was used as issue tracker.
 
 \subsection{Travis}
 
-It is no use having automated unit tests if they are never executed. To make sure we would get alerted to broken tests quickly, we decided to use Travis CI with the project to build every change and run the unit tests. Travis automatically sends email notifications when a build fails. It also integrates with GitHub's pull request feature, showing the build status there as well to help keep broken code out of the master branch. Travis has proven to be a very useful tool. \index{Travis} \index{continuous integration}
+It is no use having automated unit tests if they are never executed. To make sure we would get alerted to broken tests quickly, we decided to use Travis CI with the project to build every (pushed) change and run the unit tests. Travis automatically sends email notifications when a build fails. It also integrates with GitHub's pull request feature, showing the build status there as well to help keep broken code out of the master branch. Travis has proven to be a very useful tool. \index{Travis} \index{continuous integration}
 
 \section{Process tools}
 
