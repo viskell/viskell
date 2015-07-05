@@ -19,13 +19,14 @@ The lines between blocks represent this flow.
 Thus, a program can be built like an electronic circuit.
 
 We chose to make a distinction between three kinds of blocks.
-The first kind in an input block, which represents a value.
+The first kind in an input block, which represents a constant value.
 This input block can be connected to other blocks to use the value as an input.
-Besides an input block that takes a string as input and automatically detects the type, there is also a slider available.
+Besides the most basic input block, the value block which takes a string as input and automatically detects the type, there is also a slider available.
 
 The second kind of block is a function block. This block has a number of inputs and a single output, and defines the number of inputs that are going to be used.
 The number of inputs can be changed by moving a knot over the function arguments.
-This allows for passing functions as input for other functions.
+This allows for passing (partially applied) functions as input for other functions.
+A useful example for this is the \code{map} function.
 
 The third kind of block displays an output.
 There are multiple versions, ranging from a simple block that displays the string representation to a graph block which can show a function.
@@ -56,7 +57,7 @@ This location is chosen to make them quickly available.
 The primary menu can be opened multiple times at once and moved around the screen so multiple users can work on a single program.
 
 The context menu is compact so is does not take up too much space.
-It contains clear icons which represent different actions.
+It contains clear icons which represent different actions for that single block, like delete.
 The icons are large enough to touch, even for people with large fingers.
 
 \subsubsection{Color scheme}
@@ -82,18 +83,18 @@ The client wanted the program to use this library, which also means that Viskell
 Furthermore, the following libraries have been used:
 
 \begin{itemize}
-	\item Antlr 4 (http://www.antlr.org/)
-	\item Guava (https://github.com/google/guava)
-	\item JFXtras (http://jfxtras.org/)
+	\item Antlr 4 (\url{http://www.antlr.org/})
+	\item Guava (\url{https://github.com/google/guava})
+	\item JFXtras (\url{http://jfxtras.org/})
 \end{itemize}
 
 \section{High-level architecture}
 
 Viskell consists of two parts, a front end and a back end.
 The front end is responsible for providing a user interface, handling user input, displaying error messages, and communicating with the back end.
-The back end consists of a representation for Haskell code in Java, an interface to GHCi and functionality to make working with the back end easier.
+The back end consists of a representation for Haskell code in Java, an interface to GHCi (see \ref{GHCi} on page \pageref{GHCi}) and functionality to make working with the back end easier.
 This separation is made to make development and debugging for the part that generates Haskell code easier.
-It also makes using the user interface for a different purpose a bit easier, although the user interface is not specifically designed to be reusable.
+It also makes using the user interface for a different purpose a bit easier, although the user interface has been designed specifically for our use case.
 
 \section{Front end architecture}
 
@@ -104,6 +105,7 @@ language. For this purpose we implemented two tree structures - one for expressi
 interface for GHCi, a type signature parser and a catalog.
 
 \subsection{Communication with GHCi}
+\label{GHCi}
 \index{GHCi}
 
 The base of the back-end is an interface for communication with GHCi. This interface allows us to run Haskell code
