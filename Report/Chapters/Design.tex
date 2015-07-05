@@ -32,6 +32,7 @@ The third kind of block displays an output. \index{output block}
 There are multiple versions, ranging from a simple block that displays the string representation to a graph block which can show a function. \index{graph block}
 
 Each kind of block has a different color to make them easily recognizable.
+% Niet geheel correct.
 
 \subsubsection{Errors}
 
@@ -52,9 +53,10 @@ The final design has two separate menus, one for adding new blocks and one for o
 
 The primary menu (or `function menu') uses `drawers' for the categories of the functions. \index{primary menu} \index{function menu}
 This way it is easy to find functions even without an extensive knowledge of Haskell.
-In- and ontput blocks and the function definition block can be created using buttons at the bottom of the menu.
+In- and output blocks and the function definition block can be created using buttons at the bottom of the menu.
 This location is chosen to make them quickly available.
 The primary menu can be opened multiple times at once and moved around the screen so multiple users can work on a single program.
+% And not limited by the size of the screen.
 
 The context menu is compact so is does not take up too much space. \index{context menu}
 It contains clear icons which represent different actions for that single block, like delete.
@@ -72,10 +74,11 @@ This color scheme provides good contrast with the background and good recognizab
 \subsection{Behaviour and interaction design}
 
 \section{Languages and libraries}
-
+%Dit stuk is krom en kan een beter verhaal worden.
 Viskell is written in Java using Java 8 with JavaFX. \index{JavaFX}
 Java 8 is chosen because it, unlike Java 7, still receives public updates at the moment of writing.
 Language level 8 is chosen to make use of some of the new features in this version.
+% dubbelop
 
 Viskell uses TactileFX, a JavaFX touch screen library developed at the University of Twente.
 The client wanted the program to use this library, which also means that Viskell had to use Java and JavaFX.
@@ -97,6 +100,35 @@ This separation is made to make development and debugging for the part that gene
 It also makes using the user interface for a different purpose a bit easier, although the user interface has been designed specifically for our use case.
 
 \section{Front end architecture}
+Since Viskell is designed for multi-touch and to make use of TactileAPI, we also used javaFX for the rest of the UI.
+We made a CustomUIPane that extended the TactilePane, in order to add some extra functionality of our own without cluttering the already big TactilePane.
+CustomUIPane functions as the big Pane which has everything on it, and it also has some event listeners for menus and such.
+Main.java builds a Scene and combines the CustomUIPane with a zoomOverlay.
+
+General gestures (made on the 'empty' space) where implemented on the Pane itself, most small gestures where implemented on the Component that needed them.
+This was done so that the gestures could easily change the state of the component it belonged to. Since the project was aimed at providing support for multi-touch, most handlers needed additional functionality to accommodate for this, often resulting in binding an input identifier to an action that was performed.
+
+Placed on CustomUIPane are Components, detailed further on. Wheverever possible complex handlers were given there own class, such as AnchorHandler.
+For all of the Components we made use of the FXML language available in javaFX.
+
+\subsection{Components}
+Basically everything visible on the CustomUIPane are components of some kind (menus fall in somewhere in-between component and non-component.)
+Each component is represented by a custom java Object that extends an javaFX class.
+This is done in order to be able to directly link interactivity to the objects that are visible on the screen.
+putting each object in a seperate component also added modularity and made it easily extendible.
+To further support extendibility, all the components are written in such a way that it should not be hard to make a new component with sligtly different needs.
+
+We decided to have 3 kinds of components, blocks, anchors and lines, since most components could be categorized in one of these 3 classes.
+Anchors and Lines ended up having only a couple of classes, not a lot special anchors or lines were needed.
+
+Blocks were further categorzied into functions, input and output blocks.
+Input blocks are blocks that can get inputs, these were all grouped together in a single interface, which ended up requiring only 2 methods.
+Output blocks are blocks that have outputs, these were also grouped together in a single interface and also ended up requiring only 1 method.
+Function Blocks implement both interfaces
+
+\subsection{FXML \& CSS}
+FXML was used in an attempt to separate structure from behaviour, this turned out to be very hard to keep. The end result is that FXML is used to construct most Components where the Code added or changed the Component loaded from FXML. We did use FXML to set most of the (often arbitrary) UI settings like height, width and other attributes.
+CSS was used to seperate style from structure, this turned out to be easy to keep. We added style classes mostly in FXML, some (like an changing  'error' style class) in Java. A single Style.css file was used for the entire UI, this contained fx styling for all the components we used.
 
 \section{Back end architecture}
 
