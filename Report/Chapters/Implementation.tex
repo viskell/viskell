@@ -2,6 +2,20 @@
 \label{chap:implementation}
 
 \section{Front end}
+\subsection{Block structure}
+As mentioned earlier, we expressed the majority of the Block's structure in FXML. The general structure of a Block consisted of a top level BorderPane, where the top and bottom parts contained new panes. These top and bottom panes where used to attach the anchors that the block needed. We chose to use a naked Pane instead of a pane, this because we did not really needed the extra features a specialized Pane would offer and this provided us with direct and only control over the anchor's positions. This direct control was better manageable with the blocks that changed a lot in size and provided extra extensibility.
+
+Inside the center of this top level BorderPane were the Block's content. For input and output blocks this often resulted in a single element (for example a Label) representing either its output or input. FunctionBlocks made use of a custom Pane, the ArgumentSpace, to represent its inner parts. This ArgumentSpace in turn contained several InputArguments, 1 knot and 1 output label. The InputArguments represented a single input, containing a Label and anchor for that input. The knot was used to control the knot index of the function (how many inputs are applied). And finally the output label contained the current output type, the output anchor was always positioned in the output space (bottom part of the top level BorderPane). These elements where positioned from left to right, where moving the knot resulted in the InputArguments fading. Features like the fading, and adjustable snapping range, were made possible since we used a standard Pane.
+
+Since the information in the labels updated often (with new type information), their length changed often aswell. This resulted in the Blocks having to resize often. To easily make sure that everything adjusted correctly, extensive use was made of properties, a typical JavaFX addition. These properties allowed to let a single change somewhere in the block (like a label's size) propagate to everything that was dependent on that. This also had the benefit of easier instantiation order, since everything would update till the last element was created. The extensive usage of properties resulted in a lot of positional aspects being defined in Java instead of FXML.
+ 
+\subsection{anchors}
+\subsection{Connections}
+\subsubsection{Connections - creation}
+\subsection{invalidation}
+\subsection{Menus}
+\subsection{Putting it all together}
+
 
 \section{Back end}
 
