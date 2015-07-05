@@ -18,6 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * A definition block is a block that represents a named lambda. It can be used to build lambda abstractions.
+ *
+ * For now, it requires the complete type of the function to be known in advance.
+ */
 public class DefinitionBlock extends Block implements InputBlock, OutputBlock, ComponentLoader {
     @Override
     public OutputAnchor getOutputAnchor() {
@@ -34,6 +39,7 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
         return resType;
     }
 
+    /** A block for attaching the argument (top) anchors to. */
     private class ArgumentBlock extends Block implements OutputBlock {
         private Type type;
         private Function.FunctionArgument arg;
@@ -52,6 +58,7 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
             return arg;
         }
 
+        /** Returns the FunctionArgument expression we built. */
         public Function.FunctionArgument getArgument() {
             return arg;
         }
@@ -75,10 +82,16 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
     private List<ArgumentBlock> args;
 
+    /** The result anchor (first bottom anchor) */
     private InputAnchor res;
+
+    /** The function anchor (second bottom anchor) */
     private OutputAnchor fun;
 
+    /** The complete type of the function (and the type of the function anchor). */
     private Type type;
+
+    /** The type of the result of the function (the last part of the signature). */
     private Type resType;
 
 
@@ -90,12 +103,11 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
         signature.setText(name + " :: " + type.toHaskellType());
 
+        // Collect argument types and result type
         Type t = type;
         while (t instanceof FuncT) {
             FuncT ft = (FuncT) t;
-            Type argType = ft.getArgs()[0];
-            args.add(new ArgumentBlock(this, argType));
-
+            args.add(new ArgumentBlock(this, ft.getArgs()[0]));
             t = ft.getArgs()[1];
         }
 

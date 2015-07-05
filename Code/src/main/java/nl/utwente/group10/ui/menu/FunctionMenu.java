@@ -147,6 +147,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         addBlock(fb);
     }
 
+    /** Add a new definition block (named, typed lambda block) */
     private void addDefinitionBlock() {
         TextInputDialog dialog = new TextInputDialog("example :: Int -> Int");
         dialog.setTitle("Add definition block");

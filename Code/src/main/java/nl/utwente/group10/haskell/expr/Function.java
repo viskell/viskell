@@ -58,11 +58,16 @@ public class Function extends Expr {
 
     /**
      * @param expr The expression that forms the base of this function.
+     * @param arguments Expressions that represent the function's arguments.
      */
     public Function(Expr expr, FunctionArgument ... arguments) {
         this(expr, Arrays.asList(arguments));
     }
 
+    /**
+     * @param expr The expression that forms the base of this function.
+     * @param arguments Expressions that represent the function's arguments.
+     */
     public Function(Expr expr, List<FunctionArgument> arguments) {
         this.expr = expr;
         this.arguments = arguments;
