@@ -126,6 +126,22 @@ This color scheme provides good contrast with the background and good recognizab
 
 \subsection{Behaviour and interaction design}
 
+Interaction with the user interface is possible through touch gestures on the touch screen and on mouse actions on the computer.
+We wanted the application to be very easy to use.
+Since JavaFX only supports three different touch events, we decided to only use the matching gestures drag, tap and tap-hold (or right click on a computer).
+With these three gestures everything is accessible in the program.
+More complicated gestures were considered, but implementation proved to be difficult, especially with multiple users in mind.
+
+We also wanted the user to have to perform as little unnecessary actions to complete an action.
+An example is that a user does not have to disconnect a line first but can connect a new line to a connected anchor, which will automatically disconnect the old line.
+Also, users are able to restore opening the context-menu by just clicking somewhere else.
+
+Providing the possibility to easily spot the result of an action and undo wrong actions helps to keep the learning curve of the program flat and the behavior of the program predictable.
+
+In the figure \ref{fig:activitydiagram} on page \pageref{fig:activitydiagram} it is shown that the number of actions a user can perform is not very large. This results in a short learning curve, as mentioned before. Although the number of actions is not very large, the number of possibilities in the program at a given point is quite extensive. This is visualised by the many lines in the activity diagram.
+
+We also kept in mind that the program might have to be usable for multiple users at the same time in the future; we made it possible to open multiple menus at the same time. Different users can also perform the same or different gestures at the same time.
+
 \begin{figure}[p]
 	\centering
 	\includegraphics[width=\textwidth]{Images/activitydiagram}
