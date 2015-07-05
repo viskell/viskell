@@ -5,7 +5,7 @@ The specific implementation details are discussed in chapter \ref{chap:implement
 
 \section{User interface}
 
-The user interface basically consists of two parts, namely the menus for the different options a user can select and the part where the user can manipulate functions and create their own (the canvas).
+The user interface basically consists of two parts, namely the menus for the different options a user can select and the part where the user can manipulate functions and create their own (the \gls{canvas}). \index{canvas}
 
 \subsection{Graphical design}
 
@@ -14,22 +14,22 @@ The user interface basically consists of two parts, namely the menus for the dif
 We chose to represent Haskell functions by function blocks since this is a logical element for users, a combination of blocks forms a program.
 Each block consists of a function name and its associated arguments. With each argument comes an anchor node to which other block can be connected through lines.
 
-In Haskell, values are being passed to functions without being saved to memory.
+In Haskell, values are passed to functions without being saved as variables.
 The lines between blocks represent this flow.
 Thus, a program can be built like an electronic circuit.
 
 We chose to make a distinction between three kinds of blocks.
-The first kind in an input block, which represents a constant value.
+The first kind in an input block, which represents a constant value. \index{value block} \index{input block}
 This input block can be connected to other blocks to use the value as an input.
-Besides the most basic input block, the value block which takes a string as input and automatically detects the type, there is also a slider available.
+Besides the most basic input block, the value block which takes a string as input and automatically detects the type, there is also a slider available. \index{slider block}
 
-The second kind of block is a function block. This block has a number of inputs and a single output, and defines the number of inputs that are going to be used.
+The second kind of block is a function block. This block has a number of inputs and a single output, and defines the number of inputs that are going to be used. \index{function block}
 The number of inputs can be changed by moving a knot over the function arguments.
-This allows for passing (partially applied) functions as input for other functions.
+This allows for passing (partially applied) functions as input for other functions. \index{partial application}
 A useful example for this is the \code{map} function.
 
-The third kind of block displays an output.
-There are multiple versions, ranging from a simple block that displays the string representation to a graph block which can show a function.
+The third kind of block displays an output. \index{output block}
+There are multiple versions, ranging from a simple block that displays the string representation to a graph block which can show a function. \index{graph block}
 
 Each kind of block has a different color to make them easily recognizable.
 
@@ -43,20 +43,20 @@ An icon is displayed as well to help color blind users.
 \subsubsection{Menus}
 
 During the design process many ideas for the menus came up.
-One of the first ideas was to have a circular menu. \label{circular_menu}
+One of the first ideas was to have a circular menu. \label{circular_menu} \index{circle menu}
 The advantages of the circle menu would be that the orientation of the device would not have any influence on the usability of the menu.
 This makes using the program on a large multi-touch table easier.
 However, the implementation of the menu would take too much time and the idea was therefore dismissed.
 
 The final design has two separate menus, one for adding new blocks and one for options on existing blocks.
 
-The primary menu uses `drawers' for the categories of the functions.
+The primary menu (or `function menu') uses `drawers' for the categories of the functions. \index{primary menu} \index{function menu}
 This way it is easy to find functions even without an extensive knowledge of Haskell.
 In- and ontput blocks and the function definition block can be created using buttons at the bottom of the menu.
 This location is chosen to make them quickly available.
 The primary menu can be opened multiple times at once and moved around the screen so multiple users can work on a single program.
 
-The context menu is compact so is does not take up too much space.
+The context menu is compact so is does not take up too much space. \index{context menu}
 It contains clear icons which represent different actions for that single block, like delete.
 The icons are large enough to touch, even for people with large fingers.
 
@@ -73,7 +73,7 @@ This color scheme provides good contrast with the background and good recognizab
 
 \section{Languages and libraries}
 
-Viskell is written in Java using Java 8 with JavaFX.
+Viskell is written in Java using Java 8 with JavaFX. \index{JavaFX}
 Java 8 is chosen because it, unlike Java 7, still receives public updates at the moment of writing.
 Language level 8 is chosen to make use of some of the new features in this version.
 
@@ -90,7 +90,7 @@ Furthermore, the following libraries have been used:
 
 \section{High-level architecture}
 
-Viskell consists of two parts, a front end and a back end.
+Viskell consists of two parts, a front end and a back end. \index{front end} \index{back end}
 The front end is responsible for providing a user interface, handling user input, displaying error messages, and communicating with the back end.
 The back end consists of a representation for Haskell code in Java, an interface to GHCi (see \ref{GHCi} on page \pageref{GHCi}) and functionality to make working with the back end easier.
 This separation is made to make development and debugging for the part that generates Haskell code easier.
@@ -115,7 +115,7 @@ interface can also be used to check a program for faults.
 \subsection{Type system and type checker}
 
 The error messages from GHCi are hard to parse and do not always provide detailed information about where the error
-occured. Therefore we implemented our own type checker. This type checker is designed to catch most of the type errors
+occured. Therefore we implemented our own type checker. This type checker is designed to catch most of the type errors \index{type checker}
 which are in the design scope of the project and not raise false negatives. Pushing Haskell code to GHCi is still needed
 to be sure that the code compiles (and will always be needed to catch runtime errors).
 
@@ -131,14 +131,16 @@ types. If the types cannot be unified, there exists a type error. The algorithm 
 
 \subsection{Expressions}
 
-Haskell expressions are represented in a tree. By design each function can have only one argument. Functions with more
-arguments are represented as a function with a single argument that produces another function with the other arguments.
+Haskell expressions are represented in a tree.
+By design each function can have only one argument.
+Functions with more arguments are represented as a function with a single argument that produces another function with the other arguments.
 Each expression holds its type including the types from the lower part of the expression tree. The root of the
 expression tree therefore always knows the type of the whole tree.
 
-Function application can be done using a special kind of expression. This is done so function application does not
-directly modify other expressions in the tree. This allows for easy changes in the front end. Types of expressions can
-be updated on-the-fly taking into account the types that are applied to the arguments of functions.
+Function application can be done using a special kind of expression.
+This is done so function application does not directly modify other expressions in the tree.
+This allows for easy changes in the front end.
+Types of expressions can be updated on-the-fly taking into account the types that are applied to the arguments of functions.
 
 Custom functions can be created using a function expression.
 A function expression has an expression sub tree for the function body and a number of function arguments.

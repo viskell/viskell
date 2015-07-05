@@ -104,6 +104,7 @@ This information is used by the type checker to check whether a variable type is
 \end{figure}
 
 \subsection{Type checker}
+\index{type checker}
 
 From our own experience as beginning Haskell programmers, we often encountered type errors, and therefore GHC's type error messages.
 Very early in the project, we decided that the back end had to do at least some type-related work itself, to provide better errors to the user, and also to be able to show type hints, without having to parse GHC's error messages.
@@ -120,6 +121,8 @@ As mentioned, the type checker is not nearly powerful enough to understand or ev
 However, we have found it to be `good enough' for our purposes.
 
 \subsection{Environment management}
+\index{catalog}
+\index{environment}
 
 In Haskell a lot of things depend on the environment, for example the functions that are available, the types in type classes, etc.
 Our implementation solves this by introducing an environmet (\code{Env}).
