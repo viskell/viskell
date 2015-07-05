@@ -188,3 +188,7 @@ CustomUIPane {
     -fx-font-weight: bold;
     -fx-background-color: rgba(0, 0, 0, 0.3);
 }
+
+ImageView.hoverMenu {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,1), 20, 0, 0, 0);
+}

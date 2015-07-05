@@ -31,25 +31,29 @@ public class CircleMenu extends CirclePopupMenu {
         this.block = block;
 
         // Define menu items
-
+        
         // Cut Option
-        MenuItem delete = new MenuItem("cut", new ImageView(new Image(this
-                .getClass().getResourceAsStream("/ui/cut32.png"))));
+        ImageView image = new ImageView(new Image(this.getClass().getResourceAsStream("/ui/cut32.png")));
+        image.getStyleClass().add("hoverMenu");
+        MenuItem delete = new MenuItem("cut", image);
         delete.setOnAction(t -> delete());
 
         // Copy Option
-        MenuItem copy = new MenuItem("copy", new ImageView(new Image(this
-                .getClass().getResourceAsStream("/ui/copy32.png"))));
+        image = new ImageView(new Image(this.getClass().getResourceAsStream("/ui/copy32.png")));
+        image.getStyleClass().add("hoverMenu");
+        MenuItem copy = new MenuItem("copy", image);
         copy.setOnAction(t -> copy());
 
         // Paste Option
-        MenuItem paste = new MenuItem("paste", new ImageView(new Image(this
-                .getClass().getResourceAsStream("/ui/paste32.png"))));
+        image = new ImageView(new Image(this.getClass().getResourceAsStream("/ui/paste32.png")));
+        image.getStyleClass().add("hoverMenu");
+        MenuItem paste = new MenuItem("paste", image);
         paste.setOnAction(t -> paste());
 
         // Save Option
-        MenuItem save = new MenuItem("save", new ImageView(new Image(this
-                .getClass().getResourceAsStream("/ui/save32.png"))));
+        image = new ImageView(new Image(this.getClass().getResourceAsStream("/ui/save32.png")));
+        image.getStyleClass().add("hoverMenu");
+        MenuItem save = new MenuItem("save", image);
         save.setOnAction(t -> saveBlock());
 
         // Registration
