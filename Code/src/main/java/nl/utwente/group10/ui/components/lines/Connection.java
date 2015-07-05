@@ -107,13 +107,12 @@ public class Connection extends ConnectionLine implements
 
         Optional<? extends ConnectionAnchor> slot = getAnchorSlot(anchor);
 
-        if (!slot.isPresent() || overrideExisting) {
+        if (overrideExisting || !slot.isPresent()) {
             slot.ifPresent(a -> disconnect(a));
             // TODO since invalidateConnectionState(), and thus checkError()
             // gets called after this typeMatch(), a small duplication of
             // type getting occurs.
-            boolean typesMatch = typesMatch(anchor);
-            if (typesMatch || allowTypeMismatch) {
+            if (allowTypeMismatch || typesMatch(anchor)) {
                 setAnchor(anchor);
                 added = true;
             }

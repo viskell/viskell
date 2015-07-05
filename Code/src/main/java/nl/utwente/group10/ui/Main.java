@@ -11,6 +11,7 @@ import nl.utwente.group10.ghcj.GhciEvaluator;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.components.CustomAlert;
+import nl.utwente.group10.ui.components.blocks.DefinitionBlock;
 import nl.utwente.group10.ui.components.blocks.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.SliderBlock;
 import nl.utwente.group10.ui.components.blocks.ValueBlock;

@@ -2,19 +2,18 @@ package nl.utwente.group10.ui.menu;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
+import com.google.common.base.Splitter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.control.*;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.Node;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -22,6 +21,8 @@ import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.*;
@@ -112,6 +113,8 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         rgbBlockButton.setOnAction(event -> addBlock(new RGBBlock(parent)));
         Button graphBlockButton = new Button("Graph Block");
         graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
+        Button defBlockButton = new Button("Definition Block");
+        defBlockButton.setOnAction(event -> addDefinitionBlock());
 
         // TODO remove once debugging is done
         Button debugButton = new Button("Error All");
@@ -125,6 +128,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             sliderBlockButton,
             rgbBlockButton,
             graphBlockButton,
+            defBlockButton,
             debugButton,
             closeButton
         );
@@ -141,6 +145,26 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         // signature String.
         FunctionBlock fb = new FunctionBlock(entry.getName(), entry.asHaskellObject(new Context()), parent);
         addBlock(fb);
+    }
+
+    /** Add a new definition block (named, typed lambda block) */
+    private void addDefinitionBlock() {
+        TextInputDialog dialog = new TextInputDialog("example :: Int -> Int");
+        dialog.setTitle("Add definition block");
+        dialog.setHeaderText("Add function definition");
+        dialog.setContentText("Function signature:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(signature -> {
+            List<String> parts = Splitter.on(" :: ").splitToList(signature);
+            String name = parts.get(0);
+            String hs = parts.get(1);
+
+            Type type = new TypeBuilder().build(hs);
+
+            DefinitionBlock def = new DefinitionBlock(this.parent, name, type);
+            addBlock(def);
+        });
     }
 
     private void addBlock(Block block) {
