@@ -23,6 +23,7 @@ import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
+import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import nl.utwente.group10.ui.menu.CircleMenu;
 
@@ -256,11 +257,13 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                         // Without an expression we do not really now where the
                         // type error occurred, so ignore it and let GHCi handle
                         // it.
+                        throw new TypeUnavailableException();
                     }
                 } catch (HaskellException e) {
                     // This should be impossible:
                     // The possible exception would come from an Ident not found in the catalog,
                     // A FunctionBlock without a valid Ident should never exist.
+                    throw new TypeUnavailableException();
                 }
                 
                 // Now that the expressions are updated, propagate a visual refresh upwards.
