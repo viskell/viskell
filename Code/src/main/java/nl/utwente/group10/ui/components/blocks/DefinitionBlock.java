@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.expr.*;
 import nl.utwente.group10.haskell.type.FuncT;
@@ -108,6 +109,8 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
         fun = new OutputAnchor(this, pane);
         funSpace.getChildren().add(fun);
+
+        TactilePane.setGoToForegroundOnContact(this, false);
     }
 
     private List<OutputAnchor> getArgumentAnchors() {
