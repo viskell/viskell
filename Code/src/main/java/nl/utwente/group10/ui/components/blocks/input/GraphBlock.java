@@ -15,9 +15,6 @@ import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
-import nl.utwente.group10.haskell.type.ConstT;
-import nl.utwente.group10.haskell.type.FuncT;
-import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
@@ -53,7 +50,6 @@ public class GraphBlock extends Block implements InputBlock {
      */
     public GraphBlock(CustomUIPane pane) {
         super(pane);
-
         loadFXML("GraphBlock");
 
         input = new InputAnchor(this);
@@ -79,11 +75,13 @@ public class GraphBlock extends Block implements InputBlock {
 
     @Override
     public void invalidateVisualState() {
+        super.invalidateVisualState();
         ObservableList<XYChart.Series<Double, Double>> lineChartData = FXCollections.observableArrayList();
 
         double step = 0.01;
         double min = x.getLowerBound();
         double max = x.getUpperBound();
+        
         // Haskell equivalent:
         // putStrLn $ unwords $ map show $ map (id) [1.0,1.1..5.0]
         Expr expr = new Apply(

@@ -13,8 +13,6 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
-import nl.utwente.group10.haskell.hindley.HindleyMilner;
-import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
@@ -46,8 +44,8 @@ public class RGBBlock extends DisplayBlock {
         super(pane, "RGBBlock");
 
         r = super.getAllInputs().get(0);
-        g = new InputAnchor(this); //, HindleyMilner.makeVariable());
-        b = new InputAnchor(this); //, HindleyMilner.makeVariable());
+        g = new InputAnchor(this);
+        b = new InputAnchor(this);
         inputSpace.getChildren().setAll(ImmutableList.of(r, g, b));
         
         // Spread them out over the top of the Block.
@@ -60,13 +58,19 @@ public class RGBBlock extends DisplayBlock {
         borderPane.getChildren().remove(inputSpace);
         borderPane.setTop(inputSpace);
 
+        //Makes the default background.
         Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(0.5, Color.GREEN), new Stop(1, Color.BLUE)};
         LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
         defaultBackground = new Background(new BackgroundFill(lg1, null, null));
-        well.setBackground(defaultBackground);
     }
 
-    private int evaluate(InputAnchor anchor) {
+    /**
+     * Evaluates a the expression belonging to a single anchor.
+     * @param anchor The Anchor to return.
+     * @return The result of the evaluated anchor clamped between 0 and 1, multiplied by 255.
+     *         Or 0 if an error occurred.
+     */
+    private int evaluateAnchor(InputAnchor anchor) {
         try {
             GhciSession ghci = getPane().getGhciSession().get();
             String result = ghci.pull(anchor.getExpr());
@@ -83,9 +87,9 @@ public class RGBBlock extends DisplayBlock {
         super.invalidateConnectionState();
 
         if(r.isPrimaryConnected() || g.isPrimaryConnected() || b.isPrimaryConnected()) {
-            int rv = evaluate(r);
-            int gv = evaluate(g);
-            int bv = evaluate(b);
+            int rv = evaluateAnchor(r);
+            int gv = evaluateAnchor(g);
+            int bv = evaluateAnchor(b);
     
             well.setBackground(new Background(new BackgroundFill(Color.rgb(rv, gv, bv), null, null)));
         } else {

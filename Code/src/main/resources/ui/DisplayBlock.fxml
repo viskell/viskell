@@ -13,7 +13,7 @@
 		</top>
 		<center>
 			<BorderPane fx:id="block" styleClass="display, block" 
-				minHeight="75" maxHeight="75" minWidth="150" maxWidth="150">
+				minHeight="75" maxHeight="75" minWidth="150">
 				<center>
 					<Label text="${controller.output}" styleClass="content" />
 				</center>

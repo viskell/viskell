@@ -7,7 +7,7 @@
 	xmlns:fx="http://javafx.com/fxml/">
 	<BorderPane>
 		<center>
-			<BorderPane fx:id="block" styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150" maxWidth="150">
+			<BorderPane fx:id="block" styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150">
 				<center>
 					<Label text="${controller.value}" styleClass="content" />
 				</center>

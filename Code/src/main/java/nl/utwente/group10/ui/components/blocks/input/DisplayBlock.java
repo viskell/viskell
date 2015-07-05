@@ -13,8 +13,6 @@ import javafx.scene.layout.Pane;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.expr.Expr;
-import nl.utwente.group10.haskell.hindley.HindleyMilner;
-import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
@@ -50,14 +48,13 @@ public class DisplayBlock extends Block implements InputBlock {
     
     protected DisplayBlock(CustomUIPane pane, String fxml) {
         super(pane);
-
-        output = new SimpleStringProperty("New Output");
+        output = new SimpleStringProperty("???");
 
         this.loadFXML(fxml);
 
         inputAnchor = new InputAnchor(this);
         inputAnchor.layoutXProperty().bind(inputSpace.widthProperty().divide(2));
-        inputSpace.getChildren().add(inputAnchor);        
+        inputSpace.getChildren().add(inputAnchor);
         
         //Make sure inputSpace is drawn on top.
         BorderPane borderPane = (BorderPane) inputSpace.getParent();
@@ -80,16 +77,15 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     /**
-     * Property getter for the output property.
-     * @return outputProperty
+     * @return The StringProperty containing the output.
      */
     public StringProperty outputProperty() {
         return output;
     }
 
     @Override
-    public void invalidateConnectionState() {
-        super.invalidateConnectionState();
+    public void invalidateVisualState() {
+        super.invalidateVisualState();
         try {
             Optional<GhciSession> ghci = getPane().getGhciSession();
 
@@ -100,6 +96,7 @@ public class DisplayBlock extends Block implements InputBlock {
             setOutput("???");
         }
     }
+    
     @Override
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(inputAnchor);

@@ -152,6 +152,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
     private void addBlock(Block block) {
         parent.getChildren().add(block);
+        block.setConnectionState(ConnectionCreationManager.nextConnectionState());
         Point2D pos = this.localToParent(0, 0);
         block.relocate(pos.getX() - 200, pos.getY());
     }
