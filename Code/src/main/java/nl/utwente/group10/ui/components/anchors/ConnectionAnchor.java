@@ -45,7 +45,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     
     /**
      * Property storing the active state.
-     * When active, the ConnectionAnchor will react to user input.
+     * When true, the ConnectionAnchor will react to user input.
      */
     private BooleanProperty activeState;
 
@@ -59,10 +59,10 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         this.block = block;
         this.errorState = new SimpleBooleanProperty(false);
         this.activeState = new SimpleBooleanProperty(true);
-        connections = new ArrayList<Connection>();
+        this.connections = new ArrayList<Connection>();
         
-        activeState.addListener(a -> invalidateActive());
-        errorState.addListener(this::checkError);
+        this.activeState.addListener(a -> invalidateActive());
+        this.errorState.addListener(this::checkError);
     }
     
     /**
@@ -127,7 +127,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public abstract Expr getExpr();
     
     /**
-     * @return Input or output type of the block associated with this anchor.
+     * @return Optional of the string representation of the in- or output type.
      */
     public Optional<String> getStringType() {
         try {
@@ -302,7 +302,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
     
     /**
-     * Reacts to a possible change in active state.
+     * Reacts to a possible change in active state. Removes all connections if the state is not active.
      */
     public void invalidateActive() {
         if (!activeState.get()) {

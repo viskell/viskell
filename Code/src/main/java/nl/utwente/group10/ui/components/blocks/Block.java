@@ -44,7 +44,6 @@ import nl.utwente.group10.ui.menu.CircleMenu;
  * Each block implementation should also feature it's own FXML implementation.
  * </p>
  */
-@SuppressWarnings("restriction")
 public abstract class Block extends StackPane implements ComponentLoader, ConnectionStateDependent, VisualStateDependent {
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
@@ -65,7 +64,6 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     private BooleanProperty exprIsDirty;
 
     /**
-     * Constructs a new Block.
      * @param pane
      *            The pane this block belongs to.
      */
@@ -224,7 +222,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                 for (Optional<? extends ConnectionAnchor> anchor : oblock.getOutputAnchor().getOppositeAnchors()) {
                     if (anchor.isPresent()) {
                         // This Block is an OutputBlock, and that Output is connected to at least 1 Block.
-                        anchor.get().getBlock().setConnectionState((int) newValue);
+                        anchor.get().getBlock().setConnectionState(newValue.intValue());
                         cascadedFurther = true;
                     }
                 }
@@ -291,7 +289,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         }
     }
     
-    private void informUnkownHaskellException() {
+    protected void informUnkownHaskellException() {
         String msg = "Whoops! An unkown error has occured. We're sorry, but can't really tell you more than this.";
         CustomAlert alert = new CustomAlert(getPane(), msg);
         getPane().getChildren().add(alert);

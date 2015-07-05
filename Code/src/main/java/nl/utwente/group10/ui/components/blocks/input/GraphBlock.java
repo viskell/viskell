@@ -81,7 +81,7 @@ public class GraphBlock extends Block implements InputBlock {
         double step = 0.01;
         double min = x.getLowerBound();
         double max = x.getUpperBound();
-        
+
         // Haskell equivalent:
         // putStrLn $ unwords $ map show $ map (id) [1.0,1.1..5.0]
         Expr expr = new Apply(
@@ -98,7 +98,7 @@ public class GraphBlock extends Block implements InputBlock {
                             new Ident("map"),
                             getExpr()
                         ),
-                        new Ident(String.format(Locale.US,"[%f,%f..%f]", min, min+step, max))
+                        new Ident(String.format(Locale.US, "[%f,%f..%f]", min, min+step, max))
                     )
                 )
             )
@@ -118,7 +118,6 @@ public class GraphBlock extends Block implements InputBlock {
             lineChartData.add(series);
         } catch (HaskellException | NoSuchElementException | NumberFormatException ignored) {
             // Pretend we didn't hear anything.
-            assert Boolean.TRUE;
         }
 
         chart.setData(lineChartData);

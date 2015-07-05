@@ -19,7 +19,6 @@ import nl.utwente.group10.ui.components.blocks.Block;
  * Block should be extended instead.
  * </p>
  */
-@SuppressWarnings("restriction")
 public class ValueBlock extends Block implements OutputBlock {
     /** The value of this ValueBlock. */
     private StringProperty value;

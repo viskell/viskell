@@ -99,7 +99,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         // Make sure the prefWidth is correctly updated.
         this.prefWidthProperty().bind(functionInfo.widthProperty().add(argumentSpace.prefWidthProperty()));
         
-        
         this.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         this.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         functionInfo.setMinWidth(Region.USE_PREF_SIZE);
@@ -120,11 +119,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     public final String getName() {
         return name.get();
     }
-
-    /** Sets the name of this FunctionBlock. */
-    public void setName(String name) {
-        this.name.set(name);
-    }
     
     /** @return the StringProperty for the name of the function. */
     public final StringProperty nameProperty() {
@@ -134,11 +128,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     /** @return the knot index of this FunctionBlock. */
     public final Integer getKnotIndex() {
         return argumentSpace.knotIndexProperty().get();
-    }
-
-    /** Sets the new knot index for this FunctionBlock. */
-    public final void setKnotIndex(int index) {
-        argumentSpace.setKnotIndex(index);
     }
 
     @Override
@@ -168,7 +157,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     /**
      * On top of updating the expression, this method also adds a record to the
-     * CustomUIPane that maps the expr to this block.
+     * CustomUIPane that maps the expr to this block. Clears the dirty flag.
      */
     @Override
     public final void updateExpr() {
@@ -185,8 +174,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public void invalidateVisualState() {
         super.invalidateVisualState();
-        invalidateInputVisuals();
-        invalidateOutputVisuals();
+        argumentSpace.invalidateInputContent();
+        argumentSpace.invalidateOutputContent();
     }
     
     /**
@@ -199,25 +188,15 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      */
     @Override
     public void invalidateConnectionState() {
-        for (InputAnchor input : ((InputBlock) this).getAllInputs()) {
-            if (!input.isPrimaryConnected() || !getPane().getErrorOccured()) {
+        for (InputAnchor input : this.getAllInputs()) {
+            if (!input.isPrimaryConnected()) {
+                // Remove error state is not connected.
+                input.setErrorState(false);
+            } else if (!getPane().getErrorOccured()) {
+                // Remove error state is no error occured.
                 input.setErrorState(false);
             }
         }
-    }
-
-    /**
-     * Updates the input types to the Block's new state.
-     */
-    private void invalidateInputVisuals() {
-        argumentSpace.invalidateInputContent();
-    }
-
-    /**
-     * Updates the output types to the Block's new state.
-     */
-    private void invalidateOutputVisuals() {
-        argumentSpace.invalidateOutputContent();
     }
 
     /**

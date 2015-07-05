@@ -110,7 +110,7 @@ public class Connection extends ConnectionLine implements
     }
 
     
-    /* GET METHODS */
+    /* GETTERS */
     
     /**
      * @return The CustomUIPane this Conneciton is on.
@@ -164,7 +164,7 @@ public class Connection extends ConnectionLine implements
     }
     
     
-    /* SET METHODS */
+    /* SETTERS */
 
     /**
      * Sets an OutputAnchor or InputAnchor for this line. After setting the line
@@ -216,12 +216,10 @@ public class Connection extends ConnectionLine implements
      */
     private void checkErrorListener(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
         ObservableList<String> styleClass = this.getStyleClass();
+        styleClass.removeAll("error");
         if (newValue) {
-            styleClass.removeAll("error");
             styleClass.add("error");
-        } else {
-            styleClass.removeAll("error");
-        }  
+        }
     }
     
 
@@ -278,7 +276,7 @@ public class Connection extends ConnectionLine implements
             disconnected = true;
         }
         
-        if(disconnected) {
+        if (disconnected) {
             // Fully disconnect the anchor from this Connection.
             removeListeners(anchor);
             anchor.disconnectConnection(this);

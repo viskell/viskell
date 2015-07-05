@@ -1,20 +1,13 @@
 package nl.utwente.group10.ui.menu;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.Node;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -23,7 +16,7 @@ import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
-import nl.utwente.group10.ui.components.blocks.*;
+import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
 import nl.utwente.group10.ui.components.blocks.input.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.input.GraphBlock;
@@ -31,6 +24,9 @@ import nl.utwente.group10.ui.components.blocks.input.RGBBlock;
 import nl.utwente.group10.ui.components.blocks.output.SliderBlock;
 import nl.utwente.group10.ui.components.blocks.output.ValueBlock;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * FunctionMenu is a viskell specific menu implementation. A FunctionMenu is an

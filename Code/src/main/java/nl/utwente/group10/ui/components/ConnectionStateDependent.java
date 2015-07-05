@@ -3,9 +3,9 @@ package nl.utwente.group10.ui.components;
 import javafx.beans.property.IntegerProperty;
 
 /**
- * Interface for Nodes who are dependent on their ConnectionState.
+ * Interface for Nodes who are dependent on their connection state.
  * 
- * The ConnectionState is an integer controlled by the
+ * The connection state is an integer controlled by the
  * ConnectionCreationManager. It changes (increments) whenever somewhere
  * something related to connections change. This could be adding a new
  * (completed) Connection, or removing an existing (complete) connection.

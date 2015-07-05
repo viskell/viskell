@@ -106,7 +106,7 @@ public class RGBBlock extends DisplayBlock {
 
     @Override
     public List<InputAnchor> getAllInputs() {
-        return Arrays.asList(r,g,b);
+        return ImmutableList.of(r,g,b);
     }
 
     @Override

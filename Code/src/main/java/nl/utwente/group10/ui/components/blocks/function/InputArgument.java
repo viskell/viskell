@@ -18,7 +18,7 @@ import javafx.scene.layout.Pane;
  * A class that represents an input field inside a FunctionBlock.
  * This basically combines a label with an anchor to which an input can be connected.
  */
-public class InputArgument extends Pane implements ComponentLoader{
+public class InputArgument extends Pane implements ComponentLoader {
     /** The label on which to display type information. */
     @FXML Label inputLabel;
     
@@ -36,32 +36,32 @@ public class InputArgument extends Pane implements ComponentLoader{
      * @param block Block to which this InputArgument belongs.
      */
     public InputArgument(Block block) {
-        inputText = new SimpleStringProperty("-");
+        this.inputText = new SimpleStringProperty("-");
         this.loadFXML("InputArgument");
+
+        this.errorImage = new ImageView(new Image(this.getClass().getResourceAsStream("/ui/warningTriangle.png")));
+
+        this.inputAnchor = new InputAnchor(block);
+        this.inputAnchor.layoutXProperty().bind(this.inputLabel.widthProperty().divide(2));
+        this.inputAnchor.errorStateProperty().addListener(this::checkError);
         
-        errorImage = new ImageView(new Image(this.getClass().getResourceAsStream("/ui/warningTriangle.png")));
-        
-        inputAnchor = new InputAnchor(block);
-        inputAnchor.layoutXProperty().bind(inputLabel.widthProperty().divide(2));
-        inputAnchor.errorStateProperty().addListener(this::checkError);
-        
-        double height = inputAnchor.getVisibleAnchor().getBoundsInLocal().getHeight();
-        double width = inputAnchor.getVisibleAnchor().getBoundsInLocal().getWidth();
-        errorImage.setFitHeight(height);
-        errorImage.setFitWidth(width);
+        double height = this.inputAnchor.getVisibleAnchor().getBoundsInLocal().getHeight();
+        double width = this.inputAnchor.getVisibleAnchor().getBoundsInLocal().getWidth();
+        this.errorImage.setFitHeight(height);
+        this.errorImage.setFitWidth(width);
         
         // -.0.5 is necessary to correct a slight offset (with an unknown cause).
-        errorImage.layoutXProperty().bind(inputAnchor.layoutXProperty().subtract(width / 2 - 0.5));
-        errorImage.layoutYProperty().bind(inputAnchor.layoutYProperty().subtract(height / 2 - 0.5));
-        errorImage.setMouseTransparent(true);
+        this.errorImage.layoutXProperty().bind(this.inputAnchor.layoutXProperty().subtract(width / 2 - 0.5));
+        this.errorImage.layoutYProperty().bind(this.inputAnchor.layoutYProperty().subtract(height / 2 - 0.5));
+        this.errorImage.setMouseTransparent(true);
 
         // Vertically center the label
-        inputLabel.layoutYProperty().bind(this.heightProperty().divide(2).subtract(inputLabel.heightProperty().divide(2)));
+        this.inputLabel.layoutYProperty().bind(this.heightProperty().divide(2).subtract(this.inputLabel.heightProperty().divide(2)));
         
         this.setPrefHeight(ArgumentSpace.HEIGHT);
-        this.getChildren().add(inputAnchor);
-        this.getChildren().add(errorImage);
-        setError(false);
+        this.getChildren().add(this.inputAnchor);
+        this.getChildren().add(this.errorImage);
+        this.setError(false);
     }
     
     /** @return the InputText. */
@@ -90,7 +90,7 @@ public class InputArgument extends Pane implements ComponentLoader{
     
 
     /**
-     * ChangeListener that will set the error state accordingly.
+     * ChangeListener that will set the error state according to the error state property.
      */
     private void checkError(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
         setError(newValue);

@@ -78,20 +78,20 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         
         this.block = block;
         this.inputID = ConnectionCreationManager.INPUT_ID_NONE;
-        leftArguments = new ArrayList<InputArgument>();
-        knotIndex = new SimpleIntegerProperty(0);
+        this.leftArguments = new ArrayList<InputArgument>();
+        this.knotIndex = new SimpleIntegerProperty(0);
         
-        knotIndex.addListener(event -> snapToKnotIndex());    
+        this.knotIndex.addListener(event -> snapToKnotIndex());
         
         //Create and attach InputArguments for the inputs.
         for (int i = 0; i < inputCount; i++) {
             InputArgument arg = new InputArgument(block);
             // Make sure that when input widht changes, the total width also changes.
             arg.getInputLabel().widthProperty().addListener(a -> Platform.runLater(block::updateLayout));
-            leftArguments.add(arg);
+            this.leftArguments.add(arg);
             
             if (i > 0) {
-                Region prev = leftArguments.get(i-1);
+                Region prev = this.leftArguments.get(i-1);
                 // The i-th (left)argument is placed to the right of argument i-1, with a horizontal space of H_GAP between them.
                 arg.layoutXProperty().bind(prev.layoutXProperty().add(prev.widthProperty()).add(H_GAP));
             }            
@@ -99,25 +99,25 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         }
         
         //Put rightArgument's drawOrder on top 
-        rightArgument.toFront();
+        this.rightArgument.toFront();
         //Place rightArgument to the right of the knot, with a horizontal space of H_GAP between them.
-        rightArgument.layoutXProperty().bind(knot.layoutXProperty().add(knot.radiusProperty()).add(H_GAP));
-        centerLayoutVertical(rightArgument);
+        this.rightArgument.layoutXProperty().bind(this.knot.layoutXProperty().add(this.knot.radiusProperty()).add(H_GAP));
+        centerLayoutVertical(this.rightArgument);
         
         //Put knot's drawOrder on to (above rightArgument)
-        knot.toFront();
+        this.knot.toFront();
         //Vertically center the knot.
-        knot.layoutYProperty().bind(this.heightProperty().divide(2));
+        this.knot.layoutYProperty().bind(this.heightProperty().divide(2));
 
         //Mouse listeners
-        knot.setOnMousePressed(event -> {knotPressed(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
-        knot.setOnMouseDragged(event -> {knotMoved(event); event.consume();});
-        knot.setOnMouseReleased(event -> {knotReleased(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
+        this.knot.setOnMousePressed(event -> {knotPressed(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
+        this.knot.setOnMouseDragged(event -> {knotMoved(event); event.consume();});
+        this.knot.setOnMouseReleased(event -> {knotReleased(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
         
         //Touch listeners
-        knot.setOnTouchPressed(event -> {knotPressed(event.getTouchPoint().getId()); event.consume();});
-        knot.setOnTouchMoved(event -> {knotMoved(event); event.consume();});
-        knot.setOnTouchReleased(event -> {knotReleased(event.getTouchPoint().getId()); event.consume();});
+        this.knot.setOnTouchPressed(event -> {knotPressed(event.getTouchPoint().getId()); event.consume();});
+        this.knot.setOnTouchMoved(event -> {knotMoved(event); event.consume();});
+        this.knot.setOnTouchReleased(event -> {knotReleased(event.getTouchPoint().getId()); event.consume();});
         
         //Update the size of this Pane
         this.setPrefHeight(HEIGHT);
@@ -128,7 +128,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         this.prefWidthProperty().bind(getTotalWidthProperty());
         
         // Since at the point of a layout update the width of the Labels is unknown, we have to ask for another layout pass.
-        rightArgument.widthProperty().addListener(a -> Platform.runLater(block::updateLayout));
+        this.rightArgument.widthProperty().addListener(a -> Platform.runLater(block::updateLayout));
         
         snapToKnotIndex();
     }
@@ -295,20 +295,12 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
             percentage = Math.pow(percentage, 0.4); //Better looking curve
             
             //Updates the argument based on the percentage
-            argument.setTranslateX((H_GAP +knot.getRadius() * 2) * (1 - percentage));
+            argument.setTranslateX((H_GAP + knot.getRadius() * 2) * (1 - percentage));
             argument.setOpacity(percentage);
             argument.setVisible(percentage > 0);
         }
     }
-    
-    /**
-     * Method to indicate that the content in the argument Labels are possibly outdated.
-     */
-    public void invalidateArgumentContent() {
-        invalidateOutputContent();
-        invalidateInputContent();
-    }
-    
+
     /**
      * Method to indicate that the content in the output argument Label is possibly outdated.
      */
@@ -336,13 +328,6 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      */
     public List<InputArgument> getInputArguments() {
         return leftArguments;
-    }
-    
-    /**
-     * @return The outputArgument.
-     */
-    public Region getOutputArgument() {
-        return rightArgument;
     }
 
     /**

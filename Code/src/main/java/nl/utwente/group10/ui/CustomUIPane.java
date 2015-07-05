@@ -42,6 +42,11 @@ public class CustomUIPane extends TactilePane {
 
     private HaskellCatalog catalog;
     private Env envInstance;
+
+    /**
+     * Maps expressions to function blocks for looking up the function block responsible for an expression in case of an
+     * error.
+     */
     private Map<Expr, FunctionBlock> exprToFunction;
 
     /**
@@ -55,7 +60,7 @@ public class CustomUIPane extends TactilePane {
         this.offset = Point2D.ZERO;
         this.catalog = catalog;
         this.envInstance = catalog.asEnvironment();
-        exprToFunction = new HashMap<Expr, FunctionBlock>();
+        this.exprToFunction = new HashMap<Expr, FunctionBlock>();
 
         try {
             this.ghci = Optional.of(new GhciSession());
@@ -239,15 +244,31 @@ public class CustomUIPane extends TactilePane {
         this.setTranslateX(this.getTranslateX() * ratio);
         this.setTranslateY(this.getTranslateY() * ratio);
     }
-    
+
+    /**
+     * Removes the association of the given expression. This should be called when an expression no longer exists in the
+     * tree.
+     * @param expr The expression to remove.
+     */
     public void removeExprToFunction(Expr expr) {
         exprToFunction.remove(expr);
     }
-    
+
+    /**
+     * Associates the given expression with the given function block. This should be called when a new expression is
+     * created and used in the tree.
+     * @param expr The expression to associate.
+     * @param block The function block for the expression.
+     */
     public void putExprToFunction(Expr expr, FunctionBlock block) {
         exprToFunction.put(expr,block);
     }
-    
+
+    /**
+     * Returns the function block for an expression.
+     * @param expr The expression to get the function block for.
+     * @return The function block for the given expression.
+     */
     public FunctionBlock getExprToFunction(Expr expr) {
         return exprToFunction.get(expr);
     }

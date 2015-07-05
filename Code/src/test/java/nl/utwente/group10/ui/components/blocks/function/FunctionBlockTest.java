@@ -35,15 +35,6 @@ public class FunctionBlockTest extends ComponentTest {
     }
 
     /**
-     * Test the setName and getName methods of FunctionBlock
-     */
-    @Test
-    public void nameTest() {
-        functionBlock.setName("name change");
-        assertEquals(functionBlock.getName(), "name change");
-    }
-
-    /**
      * Test if all input anchors have been properly initialized
      */
     @Test
