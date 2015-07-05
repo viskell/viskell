@@ -9,6 +9,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.components.ComponentLoader;
@@ -16,6 +17,10 @@ import nl.utwente.group10.ui.components.blocks.Block;
 
 import java.util.Optional;
 
+/**
+ * This class provides a developer interface to inspect the current state
+ * of the Viskell expr tree and give details on the used Haskell source code.
+ */
 public class InspectorWindow extends BorderPane implements ComponentLoader {
     private ObjectProperty<Optional<Block>> block;
     private Stage stage;
@@ -67,6 +72,9 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
         });
     }
 
+    /**
+     * Walks the expr tree, walk recursively calls itself on its children.
+     */
     private void walk(TreeItem<String> treeItem, Expr expr) {
         String type;
 

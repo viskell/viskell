@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javafx.geometry.Point2D;
+
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
@@ -16,15 +17,21 @@ import nl.utwente.group10.ui.exceptions.InvalidInputIdException;
  * A Manager class mainly used to keep track of multiple, possibly concurrent,
  * actions performed on Connections.
  * These actions are associated with an input id.
- * 
+ * <p>
  * This class also provides the methods to perform actions based on user input.
- * 
+ * Possible actions include: {@linkplain #buildConnectionWith(int, ConnectionAnchor)},<br> 
+ * {@linkplain #finishConnection(int, ConnectionAnchor)},<br> 
+ * {@linkplain #removeConnection(int)},<br> 
+ * {@linkplain #editConnection(int, ConnectionAnchor)}.
+ * </p>
+ * <p>
  * This class also stores a ConnectionState.
  * This is an always increasing int used to check if components's (connection) states are fresh. 
- *
+ * </p>
  */
 public class ConnectionCreationManager {
 
+    /** The CustomUIPane associated with this class.*/
     CustomUIPane pane;
 
     /**
@@ -32,6 +39,7 @@ public class ConnectionCreationManager {
      * is the ID associated with the Mouse.
      */
     public static final Integer MOUSE_ID = 0;
+    
     /**
      * Maps an (Touch or Mouse) ID to a line, used to keep track of what touch
      * point is dragging what line.
@@ -59,15 +67,14 @@ public class ConnectionCreationManager {
     }
 
     /**
-     * Creates a new Connection, with the given anchor being part of it (can be
-     * either start or end anchor). This Connection is still being made (a
-     * second anchor still needs to be selected).
+     * Creates a new temporary Connection, with the given start or end anchor. 
+     * The Connection will be finalized when a matching anchor has been added.
      * 
      * @param id
      *            The id associated with the action on which to follow up.
      * @param anchor
      *            The anchor to build a Connection with
-     * @return The newly build Connection object.
+     * @return The newly built Connection object.
      */
     public Connection buildConnectionWith(int id, ConnectionAnchor anchor) {
         Connection newConnection = null;
@@ -82,16 +89,14 @@ public class ConnectionCreationManager {
     }
 
     /**
-     * Finishes building the Connection associated with the given ID, by giving
-     * it its second anchor.
-     * 
-     * Throws an InvalidInputException if an invalid input id is given.
+     * Assigns the second anchor to finish the building of the Connection.
      * 
      * @param id
-     *            The id associated with the action on which to follow up.
+     *            The id associated with this action.
      * @param anchor
      *            The anchor to add to the connection being finished.
      * @return The finished connection.
+     * @throws InvalidInputException.
      */
     public Connection finishConnection(int id, ConnectionAnchor anchor) {
         Connection connection = connections.get(id);
@@ -100,13 +105,12 @@ public class ConnectionCreationManager {
                 anchor.removeConnections();
             }
             
-            if (anchor.canAddConnection() && connection.tryAddAnchor(anchor) && connection.isConnected()) {
-                // Succesfully made connection.
-            } else {
+            if (!(anchor.canAddConnection() && connection.tryAddAnchor(anchor) 
+                    && connection.isConnected())) {
                 removeConnection(id);
                 return null;
             }
-
+            
             connections.remove(id);
             return connection;
         }else{
@@ -115,12 +119,7 @@ public class ConnectionCreationManager {
     }
 
     /**
-     * Completely Removes the Connection associated with the given id, that is
-     * to remove the Connection from the Connections being build and from its
-     * pane.
-     * 
-     * @param id
-     *            The id associated with the action on which to follow up.
+     * Completely Removes the Connection associated with the given id.
      */
     public void removeConnection(int id) {
         Connection connection = connections.get(id);
@@ -132,9 +131,9 @@ public class ConnectionCreationManager {
     }
 
     /**
-     * Indicates that the primary connection belonging to the given anchor is
-     * being edited. This means that the primary connection of the given anchor
-     * will be disconnected, and stored as if the finishConnection() method was
+     * Changes the primary state of the Connection associated with the anchor to
+     * an edit state. This means that the primary connection of the given anchor
+     * will be disconnected, and stored as if the {@linkplain #finishConnection()} method was
      * not called for this connection.
      * 
      * @param id
@@ -165,7 +164,7 @@ public class ConnectionCreationManager {
     }
     
     /**
-     * @return The current connection state.
+     * Returns the current connection state.
      */
     public static int getConnectionState(){
         return connectionState;

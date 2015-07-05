@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
@@ -59,7 +60,7 @@ public class CustomUIPane extends TactilePane {
 
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
 
-        // Inspector
+        /* Run the Inspector window. */
         Platform.runLater(() -> {
             inspector = new InspectorWindow(this);
             inspector.blockProperty().bind(this.selectedBlock);
@@ -122,7 +123,7 @@ public class CustomUIPane extends TactilePane {
     }
 
     private void handleScroll(ScrollEvent scrollEvent) {
-        // Ignore (drop) scroll events synthesized from touches
+        /* Ignore (drop) scroll events synthesized from touches. */
         if (scrollEvent.getTouchCount() > 0) return;
 
         if (scrollEvent.getDeltaY() > 0) {
@@ -220,7 +221,7 @@ public class CustomUIPane extends TactilePane {
     private void zoom(double ratio) {
         double scale = this.getScaleX();
 
-        // Limit zoom to reasonable range
+        /* Limit zoom to reasonable range. */
         if (scale <= 0.25 && ratio < 1) return;
         if (scale >= 8 && ratio > 1) return;
 
