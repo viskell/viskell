@@ -38,7 +38,7 @@ public class FunctionTest {
         Expr applies = new Apply(new Ident("(+)"), arg);
         Function f = new Function(applies, arg);
 
-        assertEquals(String.format("\\ %1$s -> ((+) %1$s)", arg.toHaskell()), f.toHaskell());
+        assertEquals(String.format("(\\ %1$s -> ((+) %1$s))", arg.toHaskell()), f.toHaskell());
     }
 
     @Test
