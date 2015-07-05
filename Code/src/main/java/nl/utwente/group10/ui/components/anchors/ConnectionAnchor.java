@@ -9,24 +9,14 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Expr;
-import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.ui.BackendUtils;
-import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
-import nl.utwente.group10.ui.components.ConnectionStateDependent;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
-import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 /**
  * Represents an anchor of a Block that can connect to (1 or more) Connections.
