@@ -5,7 +5,68 @@ The specific implementation details are discussed in chapter \ref{chap:implement
 
 \section{User interface}
 
+The user interface basically consists of two parts, namely the menus for the different options a user can select and the part where the user can manipulate functions and create their own (the canvas).
+
 \subsection{Graphical design}
+
+\subsubsection{Blocks and lines}
+
+We chose to represent Haskell functions by function blocks since this is a logical element for users, a combination of blocks forms a program.
+Each block consists of a function name and its associated arguments. With each argument comes an anchor node to which other block can be connected through lines.
+
+In Haskell, values are being passed to functions without being saved to memory.
+The lines between blocks represent this flow.
+Thus, a program can be built like an electronic circuit.
+
+We chose to make a distinction between three kinds of blocks.
+The first kind in an input block, which represents a value.
+This input block can be connected to other blocks to use the value as an input.
+Besides an input block that takes a string as input and automatically detects the type, there is also a slider available.
+
+The second kind of block is a function block. This block has a number of inputs and a single output, and defines the number of inputs that are going to be used.
+The number of inputs can be changed by moving a knot over the function arguments.
+This allows for passing functions as input for other functions.
+
+The third kind of block displays an output.
+There are multiple versions, ranging from a simple block that displays the string representation to a graph block which can show a function.
+
+Each kind of block has a different color to make them easily recognizable.
+
+\subsubsection{Errors}
+
+An important part of Viskell is representing programming errors.
+Instead of requiring users to compile a complete program, type errors are displayed as soon as a user connects two blocks.
+An error is represented as a colored line and colored type in the target block.
+An icon is displayed as well to help color blind users.
+
+\subsubsection{Menus}
+
+During the design process many ideas for the menus came up.
+One of the first ideas was to have a circular menu.
+The advantages of the circle menu would be that the orientation of the device would not have any influence on the usability of the menu.
+This makes using the program on a large multi-touch table easier.
+However, the implementation of the menu would take too much time and the idea was therefore dismissed.
+
+The final design has two separate menus, one for adding new blocks and one for options on existing blocks.
+
+The primary menu uses `drawers' for the categories of the functions.
+This way it is easy to find functions even without an extensive knowledge of Haskell.
+In- and ontput blocks and the function definition block can be created using buttons at the bottom of the menu.
+This location is chosen to make them quickly available.
+The primary menu can be opened multiple times at once and moved around the screen so multiple users can work on a single program.
+
+The context menu is compact so is does not take up too much space.
+It contains clear icons which represent different actions.
+The icons are large enough to touch, even for people with large fingers.
+
+\subsubsection{Color scheme}
+
+The background color is a dark gray.
+This is chosen because it is less tiring for the eyes than white and allows for a high contrast.
+The background also incorporates a grid pattern so users can align elements on the screen if they like to.
+
+All other components feature a cheerful color scheme.
+This color scheme provides good contrast with the background and good recognizability for the different kinds of blocks.
 
 \subsection{Behaviour and interaction design}
 
