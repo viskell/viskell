@@ -112,38 +112,38 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         functionInfo.setMinWidth(Region.USE_PREF_SIZE);
         functionInfo.setMaxWidth(Region.USE_PREF_SIZE);
         
+        // Since at this point of the width of the Labels is unknown, we have to ask for another layout pass.
         Platform.runLater(this::updateLayout);
     }
     
+    /** Updates the layout, if this Pane has a parent. */
     public void updateLayout() {
         if (this.getParent() != null) {
             this.getParent().requestLayout();
         }
     }
     
-    /** Returns the name property of this FunctionBlock. */
+    /** @return the name of this FunctionBlock. */
     public final String getName() {
         return name.get();
     }
 
-    /** Sets the name property of this FunctionBlock. */
+    /** Sets the name of this FunctionBlock. */
     public void setName(String name) {
         this.name.set(name);
     }
     
-    /** Returns the StringProperty for the name of the function. */
+    /** @return the StringProperty for the name of the function. */
     public final StringProperty nameProperty() {
         return name;
     }
 
-    /** Returns the knot index of this FunctionBlock. */
+    /** @return the knot index of this FunctionBlock. */
     public final Integer getKnotIndex() {
         return argumentSpace.knotIndexProperty().get();
     }
 
-    /**
-     * @param index The new knot index for this FunctionBlock.
-     */
+    /** Sets the new knot index for this FunctionBlock. */
     public final void setKnotIndex(int index) {
         argumentSpace.setKnotIndex(index);
     }
@@ -162,7 +162,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     /**
-     * @param index Index of the InputAnchor to return.
      * @return InputAnchor with the given index.
      */
     public InputAnchor getInput(int index) {
@@ -175,7 +174,8 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     /**
-     * @return The current (output) expression belonging to this block.
+     * On top of updating the expression, this method also adds a record to the
+     * CustomUIPane that maps the expr to this block.
      */
     @Override
     public final void updateExpr() {

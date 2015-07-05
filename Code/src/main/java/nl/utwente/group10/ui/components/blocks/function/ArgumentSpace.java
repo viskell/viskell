@@ -127,7 +127,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         
         this.prefWidthProperty().bind(getTotalWidthProperty());
         
-        // Since at this point the width of the Labels is unknown, we have to ask for another layout pass.
+        // Since at the point of a layout update the width of the Labels is unknown, we have to ask for another layout pass.
         rightArgument.widthProperty().addListener(a -> Platform.runLater(block::updateLayout));
         
         snapToKnotIndex();

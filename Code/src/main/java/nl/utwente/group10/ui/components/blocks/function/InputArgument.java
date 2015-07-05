@@ -19,7 +19,6 @@ import javafx.scene.layout.Pane;
  * This basically combines a label with an anchor to which an input can be connected.
  */
 public class InputArgument extends Pane implements ComponentLoader{
-    
     /** The label on which to display type information. */
     @FXML Label inputLabel;
     
@@ -29,15 +28,15 @@ public class InputArgument extends Pane implements ComponentLoader{
     /** The InputAnchor belonging to this InputArgument */
     private InputAnchor inputAnchor;
     
+    /** The ImageView used to indicate a type mismatch. */
     private ImageView errorImage;
     
     /**
      * Constructs a new InputArgument.
      * @param block Block to which this InputArgument belongs.
-     * @param signature Type signature as should be accepted by the InputAnchor.
      */
     public InputArgument(Block block) {
-        inputText = new SimpleStringProperty("TODO");
+        inputText = new SimpleStringProperty("-");
         this.loadFXML("InputArgument");
         
         errorImage = new ImageView(new Image(this.getClass().getResourceAsStream("/ui/warningTriangle.png")));
@@ -48,11 +47,10 @@ public class InputArgument extends Pane implements ComponentLoader{
         
         double height = inputAnchor.getVisibleAnchor().getBoundsInLocal().getHeight();
         double width = inputAnchor.getVisibleAnchor().getBoundsInLocal().getWidth();
-        
         errorImage.setFitHeight(height);
         errorImage.setFitWidth(width);
         
-        //TODO: Why is - 0.5 necessary?
+        // -.0.5 is necessary to correct a slight offset (with an unknown cause).
         errorImage.layoutXProperty().bind(inputAnchor.layoutXProperty().subtract(width / 2 - 0.5));
         errorImage.layoutYProperty().bind(inputAnchor.layoutYProperty().subtract(height / 2 - 0.5));
         errorImage.setMouseTransparent(true);
@@ -85,17 +83,21 @@ public class InputArgument extends Pane implements ComponentLoader{
     public InputAnchor getInputAnchor() {
         return inputAnchor;
     }
-    
+    /** @return The Label that displays the input's type. */
     public Label getInputLabel() {
         return inputLabel;
     }
     
+
+    /**
+     * ChangeListener that will set the error state accordingly.
+     */
     private void checkError(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
         setError(newValue);
     }
     
     /**
-     * Sets this InputArgument to a possible error state.
+     * Sets this InputArgument to a new error state.
      * @param error Whether or not this InputArgument should be in error state.
      */
     public void setError(boolean error) {
