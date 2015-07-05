@@ -29,7 +29,7 @@ public class OutputAnchor extends ConnectionAnchor {
         // anchor (for InputAnchors), this switches that around to cover more of
         // the area under the visible anchor.
         getInvisibleAnchor().setTranslateY(getInvisibleAnchor().getTranslateY() * -1);
-        new AnchorHandler(super.getPane().getConnectionCreationManager(), this);
+        new AnchorHandler(super.getBlock().getPane().getConnectionCreationManager(), this);
     }
     
     @Override

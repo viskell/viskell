@@ -29,7 +29,7 @@ public class InputAnchor extends ConnectionAnchor {
      */
     public InputAnchor(Block block) {
         super(block);
-        new AnchorHandler(super.getPane().getConnectionCreationManager(), this);
+        new AnchorHandler(super.getBlock().getPane().getConnectionCreationManager(), this);
         connectionlessExpr = new Ident("undefined");
     }
 

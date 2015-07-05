@@ -31,16 +31,14 @@ import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 /**
  * Represents an anchor of a Block that can connect to (1 or more) Connections.
  * 
- * Has an invisible part that acts as an enlargement of the touch zone.
+ * A ConnectionAnchor has an invisible part that acts as an enlargement of the touch zone.
  * 
  * The primary Connection (if present) is the first element in getConnections().
  * This means that the oldest Connection is the primary connection.
- * 
- * The ConnectionAnchor keeps track of its accepted type (signature), and will typecheck this for new connections.
  */
 public abstract class ConnectionAnchor extends StackPane implements ComponentLoader {
 
-    /** The block this Anchor is connected to. */
+    /** The block this ConnectionAnchor belongs to. */
     private Block block;
 
     /** The connections this anchor has, can be empty for no connections. */
@@ -49,7 +47,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** The visual representation of the ConnectionAnchor. */
     @FXML private Shape visibleAnchor;
     
-    /** The invisible part of the ConnectionAnchor (the touchZone). */
+    /** The invisible part of the ConnectionAnchor (the touch zone). */
     @FXML private Shape invisibleAnchor;
     
     /** Property storing the error state. */
@@ -63,19 +61,18 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
 
     /**
      * @param block
-     *            The block where this Anchor is connected to.
-     * @param Type
-     *            The signature that is accepted by this anchor.
+     *            The block this ConnectionAnchor belongs to.
      */
     public ConnectionAnchor(Block block) {
         this.block = block;
         this.errorState = new SimpleBooleanProperty(false);
         this.activeState = new SimpleBooleanProperty(true);
+        connections = new ArrayList<Connection>();
+        
         activeState.addListener(a -> invalidateActive());
         errorState.addListener(this::checkError);
         
         this.loadFXML("ConnectionAnchor");
-        connections = new ArrayList<Connection>();
     }
     
     /**
@@ -120,6 +117,9 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         return errorState;
     }
     
+    /**
+     * @return The Shape that is the visible part of the ConnectionAnchor.
+     */
     public Shape getVisibleAnchor() {
         return visibleAnchor;
     }
@@ -131,7 +131,9 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         return invisibleAnchor;
     }
 
-    
+    /**
+     * @return The Expr this ConnectionAnchor represents (coming from a Block).
+     */
     public abstract Expr getExpr();
     
     /**
@@ -139,13 +141,16 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      */
     public Optional<String> getStringType() {
         try {
-            return Optional.of(getExpr().getType(getPane().getEnvInstance()).prune().toHaskellType());
+            Type type = getExpr().getType(getBlock().getPane().getEnvInstance()).prune();
+            return Optional.of(type.toHaskellType());
         } catch (HaskellException e) {
-            //e.printStackTrace();
             return Optional.empty();
         }
     }
     
+    /**
+     * ChangeListener that will set the error state if isConnected().
+     */
     public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         for (Connection conn : getConnections()) {
             if (conn.isConnected()) {
@@ -210,7 +215,9 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         connections.add(connection);
     }
 
-    /** Returns true if this anchor has 1 or more connections. */
+    /**
+     * @return True if this anchor has 1 or more connections.
+     */
     public boolean hasConnection() {
         return !connections.isEmpty();
     }
@@ -221,24 +228,19 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public boolean isPrimaryConnected() {
         return isConnected(0);
     }
-    
-    /**
-     * @return True if the primary connection is connected, and its types match.
-     */
-    public boolean isPrimaryConnectedCorrect() {
-        return isPrimaryConnected(); // && BackendUtils.typesMatch(getSignature().getFresh(), getType().getFresh());
-    }
 
     /**
      * @param index
      *            Index of the connection to check
-     * @return Whether or not the connection specified by the index is connected.
+     * @return Whether or not the connection specified by the index is connected. False if the index is invalid.
      */
     public boolean isConnected(int index) {
         return index >= 0 && index < getConnections().size() && getConnections().get(index).isConnected();
     }
 
-    /** Whether or not this anchor allows adding an extra connection. */
+    /**
+     * @return Whether or not this anchor allows adding an extra connection.
+     */
     public abstract boolean canAddConnection();
 
     /**
@@ -267,7 +269,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
 
     /**
-     * @return Just the primary's opposite anchor.
+     * @return Optional of the primary connection's opposite anchor.
      */
     public Optional<? extends ConnectionAnchor> getPrimaryOppositeAnchor() {
         if (!getOppositeAnchors().isEmpty()) {
@@ -277,18 +279,22 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         }
     }
 
-    /** @return the block this anchor belongs to. */
+    /**
+     * @return The block this anchor belongs to.
+     */
     public final Block getBlock() {
         return block;
     }
 
-    /** @return the connections this anchor is connected to. */
+    /**
+     * @return the connections this anchor is connected to.
+     */
     public List<Connection> getConnections() {
         return connections;
     }
 
     /**
-     * @return The primary connection.
+     * @return Optional of the primary connection.
      */
     public Optional<Connection> getPrimaryConnection() {
         if (getConnections().size() > 0) {
@@ -298,15 +304,13 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         }
     }
 
-    /** Returns the position of the center of this anchor relative to its pane. */
+    /**
+     * @return the position of the center of this anchor relative to its pane.
+     */
     public Point2D getCenterInPane() {
+        //TODO
         Point2D scenePos = localToScene(0, 0);
-        return getPane().sceneToLocal(scenePos);
-    }
-
-    /** Returns the pane this anchor resides on. */
-    public final CustomUIPane getPane() {
-        return block.getPane();
+        return getBlock().getPane().sceneToLocal(scenePos);
     }
     
     /**
@@ -320,6 +324,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
 
     @Override
     public String toString() {
-        return String.format("%s for %s", this.getClass().getSimpleName(), getBlock());
+        return String.format("%s belonging to %s", this.getClass().getSimpleName(), getBlock());
     }
 }

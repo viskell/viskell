@@ -82,7 +82,7 @@ public class RGBBlock extends DisplayBlock {
     public final void invalidateConnectionState() {
         super.invalidateConnectionState();
 
-        if(r.isPrimaryConnectedCorrect() || g.isPrimaryConnectedCorrect() || b.isPrimaryConnectedCorrect()) {
+        if(r.isPrimaryConnected() || g.isPrimaryConnected() || b.isPrimaryConnected()) {
             int rv = evaluate(r);
             int gv = evaluate(g);
             int bv = evaluate(b);
