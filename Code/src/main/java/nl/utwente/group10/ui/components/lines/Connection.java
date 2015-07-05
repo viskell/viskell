@@ -23,6 +23,7 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.transform.Transform;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Point2D;
 
 
 /**
@@ -72,7 +73,7 @@ public class Connection extends ConnectionLine implements
     public Connection(CustomUIPane pane, OutputAnchor from) {
         this(pane);
         tryAddAnchor(from);
-        setEndPosition(from.getCenterInPane());
+        setEndPositionParent(getPane().sceneToLocal(from.localToScene(from.getLocalCenter())));
     }
 
     /** 
@@ -83,7 +84,7 @@ public class Connection extends ConnectionLine implements
     public Connection(CustomUIPane pane, InputAnchor to) {
         this(pane);
         tryAddAnchor(to);
-        setStartPosition(to.getCenterInPane());
+        setStartPositionParent(getPane().sceneToLocal(to.localToScene(to.getLocalCenter())));
     }
 
     /** 
@@ -193,15 +194,14 @@ public class Connection extends ConnectionLine implements
 
     /**
      * Sets the free ends (empty anchors) to the specified position.
-     * @param x X coordinate local to the getPane().
-     * @param y Y coordinate local to the getPane().
+     * @param point Coordinates local to the Line's parent.
      */
-    public void setFreeEnds(double x, double y) {
+    public void setFreeEnds(Point2D point) {
         if (!startAnchor.isPresent()) {
-            setStartPosition(x, y);
+            setStartPositionParent(point);
         }
         if (!endAnchor.isPresent()) {
-            setEndPosition(x, y);
+            setEndPositionParent(point);
         }
     }
     
@@ -345,8 +345,8 @@ public class Connection extends ConnectionLine implements
      * refreshing UI representation of the Line.
      */
     public void invalidateAnchorPositions() {
-        startAnchor.ifPresent(a -> setStartPosition(a.getCenterInPane()));
-        endAnchor.ifPresent(a -> setEndPosition(a.getCenterInPane()));
+        startAnchor.ifPresent(a -> setStartPositionParent(getPane().sceneToLocal(a.localToScene(a.getLocalCenter()))));
+        endAnchor.ifPresent(a -> setEndPositionParent(getPane().sceneToLocal(a.localToScene(a.getLocalCenter()))));
     }
 
     @Override

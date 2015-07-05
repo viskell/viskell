@@ -41,45 +41,23 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     /**
      * Sets the start coordinates for this ConnectionLine object.
      *
-     * @param xCoord X coordinate local to parent.
-     * @param yCoord Y coordinate local to parent.
+     * @param point Coordinates local to this Line's parent.
      */
-    public void setStartPosition(double xCoord, double yCoord) {
-        setStartX(xCoord);
-        setStartY(yCoord);
+    public void setStartPositionParent(Point2D point) {
+        setStartX(point.getX());
+        setStartY(point.getY());
         updateBezierControlPoints();
-    }
-
-    /**
-     * Sets the start coordinates for this ConnectionLine object.
-     * 
-     * @param point
-     *            X and Y coordinate local to parent.
-     */
-    public void setStartPosition(Point2D point) {
-        setStartPosition(point.getX(), point.getY());
     }
 
     /**
      * Sets the end coordinates for this ConnectionLine object.
      *
-     * @param xCoord X coordinate local to parent.
-     * @param yCoord Y coordinate local to parent.
+     * @param point coordinates local to this Line's parent.
      */
-    public void setEndPosition(double xCoord, double yCoord) {
-        setEndX(xCoord);
-        setEndY(yCoord);
+    public void setEndPositionParent(Point2D point) {
+        setEndX(point.getX());
+        setEndY(point.getY());
         updateBezierControlPoints();
-    }
-
-    /**
-     * Sets the end coordinates for this ConnectionLine object.
-     * 
-     * @param point
-     *            X and Y coordinate local to parent.
-     */
-    public void setEndPosition(Point2D point) {
-        setEndPosition(point.getX(), point.getY());
     }
 
     /**

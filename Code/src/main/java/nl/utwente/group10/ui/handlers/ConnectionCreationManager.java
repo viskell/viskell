@@ -170,7 +170,7 @@ public class ConnectionCreationManager {
     public void updateLine(int id, double x, double y) {
         Point2D localPos = pane.sceneToLocal(x, y);
         if (connections.get(id) != null) {
-            connections.get(id).setFreeEnds(localPos.getX(), localPos.getY());
+            connections.get(id).setFreeEnds(localPos);
         }
     }
     

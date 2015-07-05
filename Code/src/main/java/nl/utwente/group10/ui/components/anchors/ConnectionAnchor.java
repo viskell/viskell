@@ -297,10 +297,8 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /**
      * @return the position of the center of this anchor relative to its pane.
      */
-    public Point2D getCenterInPane() {
-        //TODO
-        Point2D scenePos = localToScene(0, 0);
-        return getBlock().getPane().sceneToLocal(scenePos);
+    public Point2D getLocalCenter() {
+        return new Point2D(0, 0);
     }
     
     /**
