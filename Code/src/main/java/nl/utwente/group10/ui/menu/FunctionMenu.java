@@ -148,7 +148,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     }
 
     private void addDefinitionBlock() {
-        TextInputDialog dialog = new TextInputDialog("def");
+        TextInputDialog dialog = new TextInputDialog("example :: Int -> Int");
         dialog.setTitle("Add definition block");
         dialog.setHeaderText("Add function definition");
         dialog.setContentText("Function signature:");
