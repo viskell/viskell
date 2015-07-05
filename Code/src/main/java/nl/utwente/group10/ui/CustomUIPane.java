@@ -107,11 +107,13 @@ public class CustomUIPane extends TactilePane {
     }
 
     private void handleDrag(MouseEvent e) {
-        Point2D dragCurrent = new Point2D(e.getScreenX(), e.getScreenY());
-        Point2D delta = dragStart.subtract(dragCurrent);
+        if (!e.isSecondaryButtonDown()) {
+            Point2D dragCurrent = new Point2D(e.getScreenX(), e.getScreenY());
+            Point2D delta = dragStart.subtract(dragCurrent);
 
-        this.setTranslateX(offset.getX() - delta.getX());
-        this.setTranslateY(offset.getY() - delta.getY());
+            this.setTranslateX(offset.getX() - delta.getX());
+            this.setTranslateY(offset.getY() - delta.getY());
+        }
     }
 
     private void setScale(double scale) {

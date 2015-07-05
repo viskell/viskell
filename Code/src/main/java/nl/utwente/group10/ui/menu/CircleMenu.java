@@ -78,23 +78,4 @@ public class CircleMenu extends CirclePopupMenu {
     public void saveBlock() {
         // TODO store block in custom catalog?
     }
-
-    /*
-     * Below functions should probably be factored out to a more centralized,
-     * non contextual menu. TODO implement undo and redo if time permits.
-     */
-
-    /** Undo last action. */
-    public void undo() {
-    }
-
-    /** Redo last undone action. */
-    public void redo() {
-    }
-
-    /** Spawn a new Function drawer. */
-    public void functionDrawer() {
-        // TODO spawn function list
-        System.out.println("Clicked Drawer!");
-    }
 }

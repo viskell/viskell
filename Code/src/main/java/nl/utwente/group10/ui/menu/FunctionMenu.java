@@ -56,6 +56,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     public FunctionMenu(HaskellCatalog catalog, CustomUIPane pane) {
         this.parent = pane;
         this.loadFXML("FunctionMenu");
+        /*
+         * Consume scroll events to prevent mixing of zooming and list
+         * scrolling.
+         */
         this.addEventHandler(ScrollEvent.SCROLL, Event::consume);
 
         /* Create content for searchSpace. */
@@ -70,18 +74,18 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
             ArrayList<FunctionEntry> entries = new ArrayList<>(catalog.getCategory(category));
             Collections.sort(entries);
+            items.addAll(entries);
 
-            for (FunctionEntry entry : entries) {
-                items.add(entry);
-            }
-
-            ListView<FunctionEntry> listView = new ListView<FunctionEntry>(items);
-            listView.getSelectionModel().selectedItemProperty().addListener((c, oV, nV) -> {
-                        addFunctionBlock(nV);
-                    });
+            ListView<FunctionEntry> listView = new ListView<>(items);
 
             listView.setCellFactory((list) -> {
                 return new ListCell<FunctionEntry>() {
+                    {
+                        this.setOnMouseReleased(e -> {
+                            addFunctionBlock(this.getItem());
+                        });
+                    }
+
                     @Override
                     protected void updateItem(FunctionEntry item, boolean empty) {
                         super.updateItem(item, empty);
@@ -116,22 +120,12 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         Button defBlockButton = new Button("Definition Block");
         defBlockButton.setOnAction(event -> addDefinitionBlock());
 
-        // TODO remove once debugging is done
-        Button debugButton = new Button("Error All");
-        debugButton.setOnAction(event -> parent.errorAll());
         Button closeButton = new Button("Close");
         closeButton.setOnAction(event -> close());
 
-        utilSpace.getChildren().addAll(
-            valBlockButton,
-            disBlockButton,
-            sliderBlockButton,
-            rgbBlockButton,
-            graphBlockButton,
-            defBlockButton,
-            debugButton,
-            closeButton
-        );
+        utilSpace.getChildren().addAll(valBlockButton, disBlockButton,
+                sliderBlockButton, rgbBlockButton, graphBlockButton,
+                closeButton);
 
         for (Node button : utilSpace.getChildren()) {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);
@@ -143,7 +137,8 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         // TODO: Once the Env is available, the type should be pulled from the
         // Env here (don't just calculate it over and over). Or just pass the
         // signature String.
-        FunctionBlock fb = new FunctionBlock(entry.getName(), entry.asHaskellObject(new Context()), parent);
+        FunctionBlock fb = new FunctionBlock(entry.getName(),
+                entry.asHaskellObject(new Context()), parent);
         addBlock(fb);
     }
 
