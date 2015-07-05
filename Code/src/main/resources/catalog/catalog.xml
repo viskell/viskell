@@ -365,7 +365,7 @@
         	</function>
         </category>
         <category name="List operations">
-        	<function name="map" signature="(a -> b) [a] -> [b]">
+        	<function name="map" signature="(a -> b) -> [a] -> [b]">
         		map f xs is the list obtained by applying f to each element of xs.
         	</function>
         	<function name="(++)" signature="[a] -> [a] -> [a]">
