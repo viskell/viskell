@@ -3,6 +3,20 @@
 
 \section{Front end}
 
+\subsection{ContextMenu}
+
+In order to enable context specific actions in a touch environment we needed some kind of specific menu.
+The CircleMenu class, an extension of the CirclePopupMenu of the JFXtras library, fulfils this role by spawning a series of icons that trigger context specific actions such as: copy, paste, save and delete.
+As of this writing delete is the only context specific actions that has been implemented.
+
+\subsection{FunctionMenu}
+
+The front end uses the FunctionMenu class as a main toolbar for interaction.
+The menu can be called using a right click on the workspace and is constructed using a series of ListViews inside an Accordion.
+Additional components have been listed inside of the Accordion as Buttons for quick and convenient access.
+Each List inside of the Accordion corresponds to a catalog category in Haskell, this is done in order to make it easier for a user
+to find a specific function.
+
 \section{Back end}
 
 \subsection{GHC integration}
