@@ -41,7 +41,7 @@ Standard functions (functions that are known to the Haskell environment) are rep
 This class is very simple and does not include more than the name of the function (so it can be called) and a way to lookup the type.
 
 Values are represented in a similar way, a \code{Value} object keeps track of the string representation of the value and its type. \index{Value}
-The string representation of the value should be written in a way that GHCi natively understands what is meant by it, altough this is not validated.
+The string representation of the value should be written in a way that GHCi natively understands what is meant by it, although this is not validated.
 
 Function application is done by using an \code{Apply} object. \index{Apply}
 This class holds two expressions where the second expression is applied to the first expression.
@@ -77,11 +77,11 @@ Each type is represented as an instance of \code{Type} (or any subclass of it).
 The subclasses of \code{Type} are used to make working with types easier.
 There is no subclass for every distinct type in Haskell, only for groups of types that are alike.
 
-First of all types are separated into two groups: variable types and nonvariable types.
-Variable types are types of which the actual type is not known - types that can unify into any nonvariable type (possibly with constraints).
+First of all types are separated into two groups: variable types and non-variable types.
+Variable types are types of which the actual type is not known - types that can unify into any non-variable type (possibly with constraints).
 Variable types are represented as \code{VarT}.
 
-Nonvariable types (constant types) are represented as \code{ConstT} and consist of a type constructor and a number of (optional) argument types.
+Non-variable types (constant types) are represented as \code{ConstT} and consist of a type constructor and a number of (optional) argument types.
 A type is considered constant when it is clear which type constructor to use. A type with a known type constructor but variable types as argument types is still a constant type.
 
 Composite types, e.g. list and tuple, are represented by respectively \code{ListT} and \code{TupleT} which are subclasses of \code{ConstT}.
@@ -94,7 +94,7 @@ Variable types are only equal if it is the same instance. This is used to avoid 
 
 Type classes are represented as \code{TypeClass} instances and can be used as constraints on variable types.
 Each \code{TypeClass} instance keeps a set of constant types that belong to the type class.
-This information is used by the type checker to check whether a variable type is unifyable with a constant type or another variable type.
+This information is used by the type checker to check whether a variable type is unifiable with a constant type or another variable type.
 
 \begin{figure}[h]
 \centering
@@ -125,7 +125,7 @@ However, we have found it to be `good enough' for our purposes.
 \index{environment}
 
 In Haskell a lot of things depend on the environment, for example the functions that are available, the types in type classes, etc.
-Our implementation solves this by introducing an environmet (\code{Env}).
+Our implementation solves this by introducing an environment (\code{Env}).
 Objects of this class keep the types of the available functions and the type classes for every type.
 Furthermore, we provide a XML-based catalog where the initial functions and type classes can be configured.
 This catalog contains information that can be used by the front end, such as documentation as well.
