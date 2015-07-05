@@ -75,12 +75,14 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             }
 
             ListView<FunctionEntry> listView = new ListView<FunctionEntry>(items);
-            listView.getSelectionModel().selectedItemProperty().addListener((c, oV, nV) -> {
-                        addFunctionBlock(nV);
-                    });
 
             listView.setCellFactory((list) -> {
                 return new ListCell<FunctionEntry>() {
+                    {
+                        this.setOnMouseReleased(e -> {
+                            addFunctionBlock(this.getItem());
+                        });
+                    }
                     @Override
                     protected void updateItem(FunctionEntry item, boolean empty) {
                         super.updateItem(item, empty);
@@ -113,9 +115,6 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         Button graphBlockButton = new Button("Graph Block");
         graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
 
-        // TODO remove once debugging is done
-        Button debugButton = new Button("Error All");
-        debugButton.setOnAction(event -> parent.errorAll());
         Button closeButton = new Button("Close");
         closeButton.setOnAction(event -> close());
 
@@ -125,7 +124,6 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             sliderBlockButton,
             rgbBlockButton,
             graphBlockButton,
-            debugButton,
             closeButton
         );
 
