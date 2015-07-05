@@ -23,15 +23,43 @@ The first kind in an input block, which represents a constant value.
 This input block can be connected to other blocks to use the value as an input.
 Besides the most basic input block, the value block which takes a string as input and automatically detects the type, there is also a slider available.
 
+%\begin{figure}[h]
+%	\centering
+%	\includegraphics[scale=0.5]{Images/block-inputs}
+%	\label{fig:blocks-inputs}
+%	\caption{Different input blocks}
+%\end{figure}
+
 The second kind of block is a function block. This block has a number of inputs and a single output, and defines the number of inputs that are going to be used.
 The number of inputs can be changed by moving a knot over the function arguments.
 This allows for passing (partially applied) functions as input for other functions.
 A useful example for this is the \code{map} function.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{Images/blocks-bowties}
+	\label{fig:blocks-bowties}
+	\caption{Partial application of functions}
+\end{figure}
+
 The third kind of block displays an output.
 There are multiple versions, ranging from a simple block that displays the string representation to a graph block which can show a function.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{Images/blocks-outputs}
+	\label{fig:blocks-outputs}
+	\caption{Different output blocks}
+\end{figure}
+
 Each kind of block has a different color to make them easily recognizable.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{Images/blocks-example}
+	\label{fig:blocks-example}
+	\caption{Different kinds of blocks}
+\end{figure}
 
 \subsubsection{Errors}
 
@@ -56,9 +84,23 @@ In- and ontput blocks and the function definition block can be created using but
 This location is chosen to make them quickly available.
 The primary menu can be opened multiple times at once and moved around the screen so multiple users can work on a single program.
 
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{Images/menu}
+	\label{fig:ui-menu}
+	\caption{Primary menu}
+\end{figure}
+
 The context menu is compact so is does not take up too much space.
 It contains clear icons which represent different actions for that single block, like delete.
 The icons are large enough to touch, even for people with large fingers.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.5]{Images/blocks-menu}
+	\label{fig:blocks-menu}
+	\caption{Context menu}
+\end{figure}
 
 \subsubsection{Color scheme}
 
@@ -70,6 +112,13 @@ All other components feature a cheerful color scheme.
 This color scheme provides good contrast with the background and good recognizability for the different kinds of blocks.
 
 \subsection{Behaviour and interaction design}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{Images/activitydiagram}
+	\label{fig:activitydiagram}
+	\caption{Activity diagram}
+\end{figure}
 
 \section{Languages and libraries}
 
