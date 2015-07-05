@@ -18,6 +18,7 @@ import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.ConnectionStateDependent;
+import nl.utwente.group10.ui.components.CustomAlert;
 import nl.utwente.group10.ui.components.VisualStateDependent;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
@@ -257,17 +258,20 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                         // Without an expression we do not really now where the
                         // type error occurred, so ignore it and let GHCi handle
                         // it.
+                        informUnkownHaskellException();
                         throw new TypeUnavailableException();
                     }
                 } catch (HaskellException e) {
                     // This should be impossible:
                     // The possible exception would come from an Ident not found in the catalog,
                     // A FunctionBlock without a valid Ident should never exist.
+                    informUnkownHaskellException();
                     throw new TypeUnavailableException();
                 }
                 
                 // Now that the expressions are updated, propagate a visual refresh upwards.
                 this.setVisualState((int) newValue);
+                
             }
         }
     }
@@ -285,5 +289,13 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                 }
             }
         }
+    }
+    
+    private void informUnkownHaskellException() {
+        String msg = "Whoops! An unkown error has occured. We're sorry, but can't really tell you more than this.";
+        CustomAlert alert = new CustomAlert(getPane(), msg);
+        getPane().getChildren().add(alert);
+        alert.relocate(this.getLayoutX() + 100, this.getLayoutY() + 100);
+
     }
 }

@@ -20,6 +20,11 @@ import nl.utwente.group10.ui.components.blocks.output.ValueBlock;
  * Main application class for the GUI.
  */
 public class Main extends Application {
+    /** The Width of the TactilePane used within Viskell. */
+    public static final int PANE_WIDTH = 3000;
+    
+    /** The Height of the TactilePane used within Viskell. */
+    public static final int PANE_HEIGHT = 3000;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -30,10 +35,10 @@ public class Main extends Application {
         // Init TactilePane
         CustomUIPane tactilePane = new CustomUIPane(catalog);
         tactilePane.setBordersCollide(true);
-        tactilePane.setMinWidth(3000);
-        tactilePane.setMinHeight(3000);
-        tactilePane.setMaxWidth(3000);
-        tactilePane.setMaxHeight(3000);
+        tactilePane.setMinWidth(PANE_WIDTH);
+        tactilePane.setMinHeight(PANE_HEIGHT);
+        tactilePane.setMaxWidth(PANE_WIDTH);
+        tactilePane.setMaxHeight(PANE_HEIGHT);
 
         tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
 
@@ -57,11 +62,13 @@ public class Main extends Application {
                     "available. Executing programs will not be enabled. We " +
                     "strongly recommend you install GHC, for example by " +
                     "installing the Haskell Platform (haskell.org/platform).";
-            tactilePane.getChildren().add(new CustomAlert(tactilePane, msg));
+            CustomAlert alert = new CustomAlert(tactilePane, msg);
+            tactilePane.getChildren().add(alert);
+            alert.relocate(tactilePane.getWidth() / 2 - 200, tactilePane.getHeight() / 2 - 200);
 
             e.printStackTrace(); // In case it's not a file-not-found
         }
-
+        
         // Init scene
         Scene scene = new Scene(zoomOverlay);
         scene.getStylesheets().add("/ui/style.css");
