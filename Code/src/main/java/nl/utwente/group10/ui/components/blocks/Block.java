@@ -15,27 +15,23 @@ import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
-import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.ConnectionStateDependent;
 import nl.utwente.group10.ui.components.VisualStateDependent;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
-import nl.utwente.group10.ui.components.anchors.OutputAnchor;
-import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
 import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
-import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import nl.utwente.group10.ui.menu.CircleMenu;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.
  * Blocks can add input and output values by implementing the InputBlock and
- * OutputBlock interfaces. Blocks typically are dependent on the
- * ConnectionState, although the default invalidateConnectionState()
- * implementation does nothing.
+ * OutputBlock interfaces. Blocks typically are dependent on the ConnectionState
+ * and VisualState, although the default invalidateConnectionState() and
+ * invalidateVisualState() implementation do nothing.
  * <p>
  * MouseEvents are used for setting the selection state of a block, single
  * clicks can toggle the state to selected. When a block has already been
@@ -46,22 +42,28 @@ import nl.utwente.group10.ui.menu.CircleMenu;
  * Each block implementation should also feature it's own FXML implementation.
  * </p>
  */
+@SuppressWarnings("restriction")
 public abstract class Block extends StackPane implements ComponentLoader, ConnectionStateDependent, VisualStateDependent {
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
     
-    /** The context menu associated with this block instance. */
+    /** The Circle (Context) menu associated with this block instance. */
     private CircleMenu circleMenu;
     
-    protected Expr signature;
-    
+    /** The expression of this Block. */
     protected Expr expr;
     
+    /** Property for the ConnectionState. */
     protected IntegerProperty connectionState;
+    
+    /** Property for the VisualState. */
     protected IntegerProperty visualState;
+    
+    /** Property for the expression freshness. */
     private BooleanProperty exprIsDirty;
 
     /**
+     * Constructs a new Block.
      * @param pane
      *            The pane this block belongs to.
      */
@@ -71,25 +73,28 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         visualState = new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
         exprIsDirty = new SimpleBooleanProperty(true);
         
+        // Add listeners to the states.
+        // Invalidate listeners give the Block a change to react on the state
+        // change before it is cascaded.
+        // Cascade listeners make sure state changes are correctly propagated.
         connectionState.addListener(a -> invalidateConnectionState());
         connectionState.addListener(a -> setExprIsDirty(true));
         connectionState.addListener(this::cascadeConnectionState);
         visualState.addListener(a -> invalidateVisualState());
         visualState.addListener(this::cascadeVisualState);
         
-        parentPane.selectedBlockProperty()
-                .addListener(
-                        event -> {
-                            if (parentPane.getSelectedBlock().isPresent()
-                                    && this.equals(parentPane
-                                            .getSelectedBlock().get())) {
-                                this.getStyleClass().add("selected");
-                            } else {
-                                this.getStyleClass().removeAll("selected");
-                            }
-                        });
+        // Visually react on selection.
+        parentPane.selectedBlockProperty().addListener(event -> {
+            if (parentPane.getSelectedBlock().isPresent() && this.equals(parentPane.getSelectedBlock().get())) {
+                this.getStyleClass().add("selected");
+            } else {
+                this.getStyleClass().removeAll("selected");
+            }
+        });
+        // Add selection trigger.
         this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseEvent);
 
+        // Create the CircleMenu after fully creating the Block.
         Platform.runLater(this::createCircleMenu);
     }
 
@@ -101,23 +106,26 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     }
 
     /**
-     * Sets this block as the selected block. When this block has already been
-     * selected it spawns a {@link CircleMenu} instead.
+     * Sets this block as the selected block.
+     * A right click also opens the CircleMenu.
      */
     private void handleMouseEvent(MouseEvent t) {
+        parentPane.setSelectedBlock(this);
         if (t.getButton() == MouseButton.SECONDARY) {
             circleMenu.show(t);
-        } else {
-            parentPane.setSelectedBlock(this);
         }
     }
 
-    /** Returns the parent pane of this component. */
+    /** @return the parent CustomUIPane of this component. */
     public final CustomUIPane getPane() {
         return parentPane;
     }
 
-    /** Returns an expression that evaluates to what this block is. */
+    /**
+     * @return The expression this Block represents.
+     * 
+     * If the expression is not up-to-date it gets updated.
+     */
     public Expr getExpr() {
         // Assure expr is up-to-date.
         if (getExprIsDirty()) {
@@ -126,6 +134,9 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         return expr;
     }
     
+    /**
+     * Updates the expression, clearing the expression dirty flag.
+     */
     public void updateExpr() {
         setExprIsDirty(false);
     }
@@ -160,68 +171,108 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         return connectionState;
     }
     
+    /**
+     * @return True if the expression is not fresh.
+     */
     public boolean getExprIsDirty() {
         return exprIsDirty.get();
     }
     
+    /**
+     * Sets the dirty-ness of the expression
+     */
     public void setExprIsDirty(boolean dirty) {
         exprIsDirty.set(dirty);
     }
     
+    /**
+     * @return The BooleanProperty for the expression dirty-ness.
+     */
     public BooleanProperty exprIsDirtyProperty() {
         return exprIsDirty;
     }
     
+    /**
+     * Called when the ConnectionState changed.
+     */
     public void invalidateConnectionState() {
         // Default does nothing.
     }
     
+    /**
+     * Called when the VisualState changed.
+     */
     public void invalidateVisualState() {
         // Default does nothing.
     }
     
+    /**
+     * ChangeListener that propagates the new ConnectionState to other Blocks
+     * that use this Block's output as input.
+     * 
+     * When the ConnectionState can not be propagated further, a VisualState
+     * cascade gets triggered in the reverse direction.
+     */
     public void cascadeConnectionState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         if (oldValue != newValue) {
+            // Boolean to check if this was the last Block that changed.
             boolean cascadedFurther = false;
             if (this instanceof OutputBlock) {
                 OutputBlock oblock = (OutputBlock) this;
                 for (Optional<? extends ConnectionAnchor> anchor : oblock.getOutputAnchor().getOppositeAnchors()) {
                     if (anchor.isPresent()) {
+                        // This Block is an OutputBlock, and that Output is connected to at least 1 Block.
                         anchor.get().getBlock().setConnectionState((int) newValue);
                         cascadedFurther = true;
                     }
                 }
             }
             
+            
             if (!cascadedFurther) {
+                // The ConnectionState change is not cascaded any further, now a
+                // visual update should be propagated upwards.
                 try {
                     // Analyze the entire tree.
                     this.getExpr().analyze(getPane().getEnvInstance());
                     getPane().setErrorOccurred(false);
+                    // No type mismatches.
                 } catch (HaskellTypeError e) {
                     // A Type mismatch occurred.
                     int index = -1;
+                    // Determine the input index of the Type error.
                     if (e.getHaskellObject() instanceof Expr) {
                         Expr errorExpr = (Expr) e.getHaskellObject();
                         while (errorExpr instanceof Apply) {
                             errorExpr = ((Apply) errorExpr).getChildren().get(0);
                             index++;
                         }
+                        // Get the Block in which the type error occurred and
+                        // set the error state for the mismatched input to true.
                         getPane().getExprToFunction(errorExpr).getInput(index).setErrorState(true);
+                        // Indicate that an error occurred in the latest analyze attempt.
                         getPane().setErrorOccurred(true);
                     } else {
-                        // TODO Now what?
+                        // Without an expression we do not really now where the
+                        // type error occurred, so ignore it and let GHCi handle
+                        // it.
                     }
                 } catch (HaskellException e) {
-                    // TODO Now what?
-                    e.printStackTrace();
+                    // This should be impossible:
+                    // The possible exception would come from an Ident not found in the catalog,
+                    // A FunctionBlock without a valid Ident should never exist.
                 }
+                
                 // Now that the expressions are updated, propagate a visual refresh upwards.
                 this.setVisualState((int) newValue);
             }
         }
     }
     
+    /**
+     * ChangeListener that propagates the new VisualState to other Blocks
+     * used as input for this Block.
+     */
     public void cascadeVisualState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         if (this instanceof InputBlock) {
             InputBlock iblock = (InputBlock) this;

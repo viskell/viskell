@@ -75,7 +75,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         this.name = new SimpleStringProperty(name);
 
         this.loadFXML("FunctionBlock");
-        signature = new Ident(getName());
+        Expr signature = new Ident(getName());
 
         // Collect argument types
         ArrayList<String> args = new ArrayList<>();
@@ -196,6 +196,14 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         invalidateOutputVisuals();
     }
     
+    /**
+     * If the latest analyze attempt was successful, remove all kept error
+     * indications.
+     * 
+     * Since only 1 error can be detected by analyzing, only setting error state
+     * to false whenever everything goes well makes it possible in some cases to
+     * show multiple errors.
+     */
     @Override
     public void invalidateConnectionState() {
         for (InputAnchor input : ((InputBlock) this).getAllInputs()) {
