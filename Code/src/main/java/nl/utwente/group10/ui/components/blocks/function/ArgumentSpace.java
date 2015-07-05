@@ -38,6 +38,10 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
     /** Vertical height of the ArgumentSpace. */
     public static final double HEIGHT = 50;
     
+    /**
+     * Modifies the snap range of the knot. Lower value results in a wider snap
+     * range, effect is limited between -0.5 and 0.5.
+     */
     public static final double KNOT_SNAP_MODIFIER = 0.3;
     
     /** The block to which this ArgumentSpace belongs. */
@@ -48,7 +52,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
     
     /**
      * The index of the knot, all inputs with index higher or equal to the
-     * knot are inactive, creating higher order functions.
+     * knot are inactive, creating a function as output.
      */
     private IntegerProperty knotIndex;
     
@@ -61,7 +65,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
     /** 
      * InputID of the current action (INPUT_ID_NONE if idle)
      * The inputID is associated with an input (INPUT_ID_MOUSE for mouse, > 0 for touch).
-     * This is required to support multi-touch.
+     * This is required to support multi-touch inputs.
      */
     private int inputID;
     
@@ -76,13 +80,16 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         this.inputID = ConnectionCreationManager.INPUT_ID_NONE;
         leftArguments = new ArrayList<InputArgument>();
         knotIndex = new SimpleIntegerProperty(0);
+        
         knotIndex.addListener(event -> snapToKnotIndex());    
         
-        //Create and attach Labels for the (left) arguments.
+        //Create and attach InputArguments for the inputs.
         for (int i = 0; i < inputCount; i++) {
             InputArgument arg = new InputArgument(block);
+            // Make sure that when input widht changes, the total width also changes.
             arg.getInputLabel().widthProperty().addListener(a -> Platform.runLater(block::updateLayout));
-            leftArguments.add(arg);            
+            leftArguments.add(arg);
+            
             if (i > 0) {
                 Region prev = leftArguments.get(i-1);
                 // The i-th (left)argument is placed to the right of argument i-1, with a horizontal space of H_GAP between them.
@@ -119,13 +126,15 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         this.setMaxWidth(USE_PREF_SIZE);
         
         this.prefWidthProperty().bind(getTotalWidthProperty());
+        
+        // Since at this point the width of the Labels is unknown, we have to ask for another layout pass.
         rightArgument.widthProperty().addListener(a -> Platform.runLater(block::updateLayout));
         
         snapToKnotIndex();
     }
     
     /**
-     * @return ObservableValue that represents the entire width of all the elements represented in this ArgumentSpace.
+     * @return DoubleBinding that represents the entire width of all the elements represented in this ArgumentSpace.
      */
     public DoubleBinding getTotalWidthProperty() {
         return rightArgument.layoutXProperty().add(rightArgument.translateXProperty()).add(rightArgument.widthProperty()).add(H_GAP);
@@ -155,7 +164,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         if(this.inputID == ConnectionCreationManager.INPUT_ID_NONE) {
             this.inputID = inputID;
         } else {
-            //Ignore, another touch point is already dragging;
+            // Ignore, another touch point is already dragging;
         }
     }
     
@@ -168,7 +177,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
             this.inputID = ConnectionCreationManager.INPUT_ID_NONE;
             snapToKnotIndex();
         } else {
-            //Ignore, different touch point;
+            // Ignore, different touch point;
         }
     }
     
@@ -213,7 +222,8 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
             knot.setLayoutX(Math.min(Math.max(localX, leftBound), rightBound));
             
             // Properly react on the change in the knot's position.
-            setKnotIndex((int) Math.round(determineKnotIndex() + KNOT_SNAP_MODIFIER));
+            double modifier = Math.max(-0.49, Math.min(KNOT_SNAP_MODIFIER, 0.49));
+            setKnotIndex((int) Math.round(determineKnotIndex() + modifier));
             invalidateKnotPosition();
         }
     }
@@ -235,8 +245,10 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
             double min = argument.getLayoutX();
             double max = min + argument.getWidth();
             if (getKnotPos() > max) {
+                // Knot is positioned fully to the left of this argument.
                 bowtieIndex++;
             } else {
+                // Knot is positioned somewhere halfway this argument.
                 bowtieIndex += Math.max(Math.min((getKnotPos() - min) / (max - min), 1), 0);
                 break;
             }

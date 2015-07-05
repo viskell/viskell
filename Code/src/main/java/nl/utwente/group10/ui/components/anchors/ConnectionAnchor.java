@@ -54,6 +54,8 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      *            The block this ConnectionAnchor belongs to.
      */
     public ConnectionAnchor(Block block) {
+        this.loadFXML("ConnectionAnchor");
+        
         this.block = block;
         this.errorState = new SimpleBooleanProperty(false);
         this.activeState = new SimpleBooleanProperty(true);
@@ -61,8 +63,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         
         activeState.addListener(a -> invalidateActive());
         errorState.addListener(this::checkError);
-        
-        this.loadFXML("ConnectionAnchor");
     }
     
     /**
