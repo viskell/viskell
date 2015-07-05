@@ -60,8 +60,7 @@ public class Function extends Expr {
      * @param expr The expression that forms the base of this function.
      */
     public Function(Expr expr, FunctionArgument ... arguments) {
-        this.arguments = Arrays.asList(arguments);
-        this.expr = expr;
+        this(expr, Arrays.asList(arguments));
     }
 
     public Function(Expr expr, List<FunctionArgument> arguments) {
