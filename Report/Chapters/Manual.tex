@@ -1,2 +1,38 @@
 \chapter{User Guide}
 \label{chap:Guide}
+
+Welcome to Viskell!
+Viskell is a tool to experiment with the Haskell programming language in a visual and playful way.
+You don't need to be a Haskell expert to use Viskell: this User Guide will tell you everything you know to get started.
+
+\textbf{Squares!}
+First, we're building a program that calculates the product of two numbers.
+To do that, right-click (or tap-and-hold) anywhere to open the \emph{function menu}, if it isn't open already.
+(It's the big, purple box: it's hard to miss.)
+The function menu has a number of buttons to choose from.
+For now, click the button that says \emph{Display Block} to add a display to your program.
+The display block doesn't do much on its own: it only displays the value that it's connected to.
+Next, add a \emph{value block} by clicking the respective button on the function menu.
+You'll be asked to provide a value: something like 1234 will do.
+You should now have two blocks: drag the output block so that it's a bit below the value block.
+Then, from the \emph{Numeric types} category, click \emph{(*)}, the multiplication function.
+The multiplication function has two inputs.
+Connect both inputs (the top dots) to the value block you created by clicking and dragging from one dots to the other.
+Then attach the function block's output anchor (the bottom dot) to the display block's input.
+The square of the number you picked (1522756) should now appear in the output block.
+Congratulations!
+You've made a real Haskell program!
+
+\textbf{Sliders!}
+Our first program isn't very exciting.
+You could write the same program in regular Haskell by typing \texttt{5 * 5}.
+Viskell has a few tricks up its sleeve, however.
+For our second example, we'll try adding a \emph{slider block}.
+From the function menu, click the button to get a slider block.
+Then connect it to one of the inputs (again, the top dots) of your multiplication function block.
+Drag the slider to change its value: you should see the value on the output block change as well.
+
+\textbf{Getting the Haskell code for your program}
+Viskell generates Haskell code for you, which you can see by selecting your display block, pressing the \textbf{Z} key, and then selecting the `Haskell Source' tab.
+Be careful, though: this is the Haskell code that actually gets executed.
+It's probably not `good' Haskell code.
