@@ -8,6 +8,11 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 
+/**
+ * ZoomOverlay provides a convient way to enable zoom functionality on
+ * touch interfaces. The main application window is outfitted with small
+ * minus and plus buttons so the user can tap to change the zoom level. 
+ */
 public class ZoomOverlay extends StackPane {
     public static final Pos BUTTON_POS = Pos.BOTTOM_CENTER;
 
