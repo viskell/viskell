@@ -12,13 +12,13 @@ The function menu has a number of buttons to choose from.
 For now, click the button that says \emph{Display Block} to add a display to your program.
 The display block doesn't do much on its own: it only displays the value that it's connected to.
 Next, add a \emph{value block} by clicking the respective button on the function menu.
-You'll be asked to provide a value: for now, we're going to try a floating point value: enter 1234.0.
+You'll be asked to provide a value. For now, go with \texttt{1234.0}, a floating point value.
 You should now have two blocks: drag the output block so that it's a bit below the value block.
-Then, from the \emph{Numeric types} category, click \emph{(*)}, the multiplication function.
+Then, from the \emph{Numeric types} category, click \texttt{(*)}, the multiplication function.
 The multiplication function has two inputs.
 Connect both inputs (the top dots) to the value block you created by clicking and dragging from one dots to the other.
 Then attach the function block's output anchor (the bottom dot) to the display block's input.
-The square of the number you picked (1522756.0) should now appear in the output block.
+The square of the number you picked (\texttt{1522756.0}) should now appear in the output block.
 Congratulations!
 You've made a real Haskell program!
 
@@ -32,15 +32,15 @@ Drag the slider to change its value: you should see the value on the output bloc
 
 \textbf{Graphs!}
 In Haskell, it's possible to give functions to other functions as values.
-For example, a graph block expects a \textit{function} as its input (more specifically, a function from Float to Float).
+For example, a graph block expects a \emph{function} as its input (more specifically, a function from Float to Float).
 In our third program, we want to draw a sine wave.
 First of all, grab a \texttt{sin} function from the Numeric category.
 The sine function normally takes a floating point value and returns a floating point value, not a function like the graph block needs.
-To have it return a function, drag the \textit{knot}, the dot between the input type and the output type, to the left.
+To have it return a function, drag the \emph{knot}, the dot between the input type and the output type, to the left.
 Our function block now takes no inputs and provides in a function.
 Feed that function into the graph block and watch your sine wave appear.
 
 \textbf{More!}
-There are more blocks: the \emph{definition block} allows you to turn parts of your program into reusable functions, and the \emph{RGB block} takes red, green and blue floating point values and shows them as a color. 
+There are more blocks: the \emph{definition block} allows you to turn parts of your program into reusable functions, and the \emph{RGB block} takes red, green and blue floating point values and shows them as a color.
 The possibilities are endless.
 Have fun!
