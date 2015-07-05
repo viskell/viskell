@@ -2,6 +2,7 @@ package nl.utwente.group10.ui.components.blocks;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
+import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.ui.CustomUIPane;
 
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class SliderBlock extends ValueBlock {
      * @throws IOException when the FXML definition cannot be loaded.
      */
     public SliderBlock(CustomUIPane pane) {
-        super(pane, "SliderBlock");
+        super(pane, new ConstT("Float"), "0.0", "SliderBlock");
 
         slider.setValue(0.0);
         this.setValue("0.0");

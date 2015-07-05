@@ -5,15 +5,12 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
 
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Value;
-import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
-import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 
 /**
  * ValueBlock is an extension of Block that contains only a value and does not
@@ -34,18 +31,22 @@ public class ValueBlock extends Block implements OutputBlock {
     @FXML
     private Pane outputSpace;
 
+    /** The type of this value. */
+    private Type type;
+
     /**
      * @param pane
      *            The parent pane this Block resides on.
      */
-    public ValueBlock(CustomUIPane pane) {
-        this(pane, "ValueBlock");
+    public ValueBlock(CustomUIPane pane, Type type, String value) {
+        this(pane, type, value, "ValueBlock");
     }
-    protected ValueBlock(CustomUIPane pane, String fxml) {
+    protected ValueBlock(CustomUIPane pane, Type type, String value, String fxml) {
         super(pane);
 
-        value = new SimpleStringProperty("5.0");
-        output = new OutputAnchor(this, pane);
+        this.value = new SimpleStringProperty(value);
+        this.output = new OutputAnchor(this, pane);
+        this.type = type;
 
         this.loadFXML(fxml);
 
@@ -76,17 +77,12 @@ public class ValueBlock extends Block implements OutputBlock {
 
     @Override
     public Expr asExpr() {
-        // TODO: support more types than floats
-        return new Value(new ConstT("Float"), getValue());
+        return new Value(type, getValue());
     }
 
     @Override
     public Type getOutputSignature(Env env) {
-        try {
-            return asExpr().analyze(env);
-        } catch (HaskellException e) {
-            throw new TypeUnavailableException();
-        }
+        return type;
     }
 
     @Override

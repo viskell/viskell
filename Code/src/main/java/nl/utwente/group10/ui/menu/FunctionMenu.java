@@ -21,6 +21,8 @@ import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -108,7 +110,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
         /* Create content for utilSpace. */
         Button valBlockButton = new Button("Value Block");
-        valBlockButton.setOnAction(event -> addBlock(new ValueBlock(parent)));
+        valBlockButton.setOnAction(event -> addValueBlock());
         Button disBlockButton = new Button("Display Block");
         disBlockButton.setOnAction(event -> addBlock(new DisplayBlock(parent)));
         Button sliderBlockButton = new Button("Slider Block");
@@ -125,7 +127,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
         utilSpace.getChildren().addAll(valBlockButton, disBlockButton,
                 sliderBlockButton, rgbBlockButton, graphBlockButton,
-                closeButton);
+                defBlockButton, closeButton);
 
         for (Node button : utilSpace.getChildren()) {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);
@@ -140,6 +142,30 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         FunctionBlock fb = new FunctionBlock(entry.getName(),
                 entry.asHaskellObject(new Context()), parent);
         addBlock(fb);
+    }
+
+    private void addValueBlock() {
+        TextInputDialog dialog = new TextInputDialog("Value");
+        dialog.setTitle("Add value block");
+        dialog.setHeaderText("Add value block");
+        dialog.setContentText("Value");
+
+        Optional<String> result = dialog.showAndWait();
+
+        result.ifPresent(value -> {
+            parent.getGhciSession().ifPresent(ghci -> {
+                try {
+                    String t = ghci.pull(new Ident(":t " + value)).split(" :: ")[1].trim();
+                    Type type = new TypeBuilder(parent.getEnvInstance().getTypeClasses()).build(t);
+
+                    ValueBlock val = new ValueBlock(this.parent, type, value);
+                    addBlock(val);
+                } catch (HaskellException | ArrayIndexOutOfBoundsException e) {
+                    // Retry.
+                    addValueBlock();
+                }
+            });
+        });
     }
 
     /** Add a new definition block (named, typed lambda block) */
