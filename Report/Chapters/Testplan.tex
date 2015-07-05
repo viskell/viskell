@@ -6,8 +6,107 @@ The unit tests mainly cover the back end of the application because it is diffic
 The acceptance tests are focused on the front end.
 
 \section{Acceptance tests} \label{acceptance tests}
+	\subsection{Test 1}
+		This test evaluates the functioning of the FunctionMenu and the spawning of basic blocks.
+		
+		\begin{enumerate}
+			\item Right click on the workspace to open the FunctionMenu.
+			\item Click on the item labelled Basic.
+			\item Observe that contents are present in the opened list.
+			\item Click on the Basic item again to close the list.
+			\item Press the button at the bottom of the menu labelled Value Block.
+			\item Enter "Hello" into the opened dialog window (using quotation).
+			\item Confirm the presence of a block labelled "Hello" in the workspace.
+		\end{enumerate}
+		
+	\subsection{Test 2}
+		This test is a follow up to Test 1 and will evaluate the functioning of the context menu
+		and the delete function.
+		
+		\begin{enumerate}
+			\item Right click on the workspace to open the FunctionMenu.
+			\item Press the button at the bottom of the menu labelled Value Block.
+			\item Enter "DeleteMe" into the opened dialog window (using quotation).
+			\item Confirm the presence of a block labelled "DeleteMe" in the workspace.
+			\item Select the "DeleteMe" block by left clicking on it.
+			\item Right click on the selected block to open the context menu.
+			\item Click on the scissor icon.
+			\item Confirm that the "DeleteMe" block has been removed from the workspace.
+		\end{enumerate}
+		
+	\subsection{Test 3}
+		This test will evaluate the functioning of the plus operator FunctionBlock and the Display Block.
+		
+		\begin{enumerate}
+			\item Right click on the workspace to open the FunctionMenu.
+			\item Press the button at the bottom of the menu labelled Value Block.
+			\item Enter the number 5 into the opened dialog window.
+			\item Confirm the presence of a block labelled 5 in the workspace.
+			\item Repeat steps 2,3 and 4.
+			\item Click on the item labelled "Numeric Types".
+			\item Observe that contents are present in the opened list.
+			\item Select the entry in the list labelled "(+)".
+			\item Confirm that a FunctionBlock titled "(+)" has been made in the workspace.
+			\item Left click on the bottom anchor on one of the ValueBlocks and drag a line all the way to one of the upper anchors of the (+) FunctionBlock.
+			\item Repeat the previous step for the other ValueBlock.
+			\item Click on the button at the bottom of the FunctionMenu labelled Display Block.
+			\item Confirm that creation of a DisplayBlock in the workspace.
+			\item Left click on the bottom anchor of the (+) FunctionBlock and drag a line all the way to the upper anchor of the Display Block.
+			\item Confirm that the Display Block now displays the value 10.
+		\end{enumerate}
+		
+	\subsection{Test 4}
+		This test will verify that the the type evaluation of Viskell is working accordingly.
+		
+		\begin{enumerate}
+			\item Right click on the workspace to open the FunctionMenu.
+			\item Press the button at the bottom of the menu labelled Value Block.
+			\item Enter the value False into the opened dialog window.
+			\item Click on the item labelled "Numeric Types".
+			\item Observe that contents are present in the opened list.
+			\item Select the entry in the list labelled "(+)".
+			\item Confirm that a FunctionBlock titled "(+)" has been made in the workspace.
+			\item Connect the output of the Value Block with the FunctionBlock.
+			\item Confirm that the argument in the FunctionBlock and the Connection line are highlighted red.
+		\end{enumerate}
+	
+	\subsection{Test 5}
+		This test will evaluate the functionality of higher order functions, knots and GraphBlocks as defined in Viskell.
+		
+		\begin{enumerate}
+			\item Right click on the workspace to open the FunctionMenu.
+			\item Press the button at the bottom of the menu labelled Graph Block.
+			\item Select the entry in the FunctionMenu labelled ?Numeric Types?.
+			\item	Scroll down in the newly opened list until you find the Sin function.
+			\item Click on the item to create a new Sin FunctionBlock.
+			\item Press the black circular knot and drag it to the left.
+			\item If done correctly the FunctionBlock should now display: ((Floating a) -> (Floating a))
+			\item Click on the output anchor at the bottom of the Sin FunctionBlock and drag a line to the Input anchor of the Graph Block.
+			\item The Graph Block should now display the Sin function in a graphical way.
+		\end{enumerate}
 
+	\subsection{Test 6}
+		This test will test the workings of the DefinitionBlock feature of Viskell, it will also illustrate the updating capacity of the GraphBlock through function translation.
 
+		\begin{enumerate}
+			\item Right click on the workspace to open the FunctionMenu.
+			\item Select the entry in the FunctionMenu labelled ?Numeric Types?.
+			\item Select the (*) function to create a new FunctionBlock.
+			\item	Scroll down in the newly opened list until you find the Sin function.
+			\item Click on the item to create a new Sin FunctionBlock.
+			\item Press the button at the bottom of the menu labelled Graph Block.
+			\item Press the button at the bottom of the menu labelled Slider Block.
+			\item Press the button at the bottom of the menu labelled Definition Block.
+			\item In the opened dialog window input: ?trans :: Float -> Float? and press enter.
+			\item Left click on the upper input anchor of the Definition Block and drag a line to the left input anchor of the (*) function.
+			\item Left click on the output anchor of the Slider Block and drag a line to the right input anchor of the (*) function.
+			\item Left click on the output anchor of the (*) function and drag a line to the input anchor of the Sin function.
+			\item Left click on the output anchor of the Sin function and connect it to the bottom input anchor of the Definition Block.
+			\item Left click the output anchor of the Definition Block and connect it to the input anchor of the Graph Block.
+			\item Confirm that the connections between all the blocks are working by observing a red line along the X-axis of the Graph Block.
+			\item Drag the slider of the Slider Block slowly to the right and observe the output in the Graph Block.
+			\item If done correctly you should have observed the increase in frequency of the Sin function.
+		\end{enumerate}
 
 \section{Unit tests} \label{unit tests}
 
