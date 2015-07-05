@@ -13,12 +13,11 @@ import java.io.IOException;
  * Ranges from 0 to 1 (both inclusive).
  */
 public class SliderBlock extends ValueBlock {
-    @FXML
-    private Slider slider;
+    @FXML private Slider slider;
 
     /**
+     * Constructs a new SliderBlock
      * @param pane The parent pane this Block resides on.
-     * @throws IOException when the FXML definition cannot be loaded.
      */
     public SliderBlock(CustomUIPane pane) {
         super(pane, "SliderBlock");

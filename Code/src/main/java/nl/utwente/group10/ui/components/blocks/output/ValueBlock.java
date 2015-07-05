@@ -4,18 +4,11 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Value;
-import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.ConstT;
-import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 
 /**
  * ValueBlock is an extension of Block that contains only a value and does not
@@ -26,16 +19,19 @@ import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
  * Block should be extended instead.
  * </p>
  */
+@SuppressWarnings("restriction")
 public class ValueBlock extends Block implements OutputBlock {
     /** The value of this ValueBlock. */
     private StringProperty value;
 
+    /** The OutputAnchor of this ValueBlock. */
     private OutputAnchor output;
 
     /** The space containing the output anchor. */
     @FXML private BorderPane outputSpace;
 
     /**
+     * Construct a new ValueBlock.
      * @param pane
      *            The parent pane this Block resides on.
      */
@@ -63,8 +59,6 @@ public class ValueBlock extends Block implements OutputBlock {
     }
 
     /**
-     * Returns the value that is outputted by this Block.
-     *
      * @return output The value that is outputted by this Block.
      */
     public final String getValue() {
@@ -78,7 +72,6 @@ public class ValueBlock extends Block implements OutputBlock {
     
     @Override
     public void updateExpr() {
-        //TODO control if this gets called only once.
         this.expr = new Value(new ConstT("Float"), getValue()); 
         super.updateExpr();
     }

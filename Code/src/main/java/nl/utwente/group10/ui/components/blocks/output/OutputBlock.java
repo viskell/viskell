@@ -1,7 +1,5 @@
 package nl.utwente.group10.ui.components.blocks.output;
 
-import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 
 /**
