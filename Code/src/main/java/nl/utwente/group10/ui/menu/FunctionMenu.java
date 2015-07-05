@@ -145,7 +145,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     }
 
     private void addValueBlock() {
-        TextInputDialog dialog = new TextInputDialog("val");
+        TextInputDialog dialog = new TextInputDialog("Value");
         dialog.setTitle("Add value block");
         dialog.setHeaderText("Add value block");
         dialog.setContentText("Value");
@@ -156,14 +156,13 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             parent.getGhciSession().ifPresent(ghci -> {
                 try {
                     String t = ghci.pull(new Ident(":t " + value)).split(" :: ")[1].trim();
-                    System.out.println("t = " + t);
-                    Type type = new TypeBuilder().build(t);
+                    Type type = new TypeBuilder(parent.getEnvInstance().getTypeClasses()).build(t);
 
-                    System.out.println("type = " + type.toHaskellType());
                     ValueBlock val = new ValueBlock(this.parent, type, value);
                     addBlock(val);
-                } catch (HaskellException e) {
-                    e.printStackTrace();
+                } catch (HaskellException | ArrayIndexOutOfBoundsException e) {
+                    // Retry.
+                    addValueBlock();
                 }
             });
         });
