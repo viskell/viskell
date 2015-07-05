@@ -86,6 +86,10 @@ public class InputArgument extends Pane implements ComponentLoader{
         return inputAnchor;
     }
     
+    public Label getInputLabel() {
+        return inputLabel;
+    }
+    
     private void checkError(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
         setError(newValue);
     }

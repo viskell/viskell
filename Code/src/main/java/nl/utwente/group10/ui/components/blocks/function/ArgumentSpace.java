@@ -80,7 +80,8 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         
         //Create and attach Labels for the (left) arguments.
         for (int i = 0; i < inputCount; i++) {
-            InputArgument arg = new InputArgument(block); // TODO
+            InputArgument arg = new InputArgument(block);
+            arg.getInputLabel().widthProperty().addListener(a -> Platform.runLater(block::updateLayout));
             leftArguments.add(arg);            
             if (i > 0) {
                 Region prev = leftArguments.get(i-1);
