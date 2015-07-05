@@ -6,15 +6,29 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
+
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 
+/**
+ * Handler class that reacts to user inputs on ConnectionAnchors to be able to
+ * create, edit and drag Connections.
+ */
 public class AnchorHandler implements EventHandler<InputEvent> {
-
+    /** The ConnectionCreationManager to which this AnchorHandler belongs. */
 	private ConnectionCreationManager manager;
+	/** The ConnectionAnchor to which this AnchorHandler belongs. */
 	private ConnectionAnchor anchor;
 
-	public AnchorHandler(ConnectionCreationManager manager,
-			ConnectionAnchor anchor) {
+	/**
+     * Constructs a new AnchorHandler
+     * 
+     * @param manager
+     *            The ConnectionCreationManager to which this AnchorHandler
+     *            belongs.
+     * @param anchor
+     *            The ConnectionAnchor to which this AnchorHandler belongs.
+     */
+	public AnchorHandler(ConnectionCreationManager manager, ConnectionAnchor anchor) {
 		this.manager = manager;
 		this.anchor = anchor;
 
@@ -34,8 +48,8 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 		double x = 0;
 		double y = 0;
 
-		if (event instanceof MouseEvent
-				&& !((MouseEvent) event).isSynthesized()) {
+		/* Extract input information for either mouse or touch. */
+		if (event instanceof MouseEvent && !((MouseEvent) event).isSynthesized()) {
 			MouseEvent mEvent = ((MouseEvent) event);
 			pickResult = mEvent.getPickResult().getIntersectedNode();
 			inputId = ConnectionCreationManager.MOUSE_ID;
@@ -49,6 +63,7 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 			y = tp.getSceneY();
 		}
 
+		/* Use the input information to call the appropriate method.*/
 		if (pickResult != null && inputId >= 0) {
 			if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)
 					|| event.getEventType().equals(TouchEvent.TOUCH_PRESSED)) {
@@ -64,6 +79,12 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 		event.consume();
 	}
 	
+	/**
+     * Method to indicate that the Anchor with the given inputId is pressed.
+     * 
+     * @param inputId
+     *            The id associated with the input that triggered this action.
+     */
 	private void inputPressed(int inputId){
 		if (anchor.getPrimaryConnection().isPresent() && !anchor.canAddConnection()) {
 			manager.editConnection(inputId, anchor);
@@ -72,10 +93,29 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 		}
 	}
 	
+	/**
+     * Method to indicate that the input moved.
+     * 
+     * @param inputId
+     *            The id associated with the input that triggered this action.
+     * @param x
+     *            The sceneX coordinate of the input.
+     * @param y
+     *            The sceneY coordinate of the input.
+     */
 	private void inputMoved(int inputId, double x, double y){
 		manager.updateLine(inputId, x, y);
 	}
 	
+	/**
+     * Method to indicate that the input was released.
+     * 
+     * @param inputId
+     *            The id associated with the input that triggered this action.
+     * @param pickResult
+     *            The PickResult done at the position where the input was
+     *            released.
+     */
 	private void inputReleased(int inputId, Node pickResult){
 		if (pickResult instanceof ConnectionAnchor) {
 			manager.finishConnection(
