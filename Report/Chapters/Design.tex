@@ -92,7 +92,6 @@ Furthermore, the following libraries have been used:
 \end{itemize}
 
 \section{High-level architecture}
-
 Viskell consists of two parts, a front end and a back end. \index{front end} \index{back end}
 The front end is responsible for providing a user interface, handling user input, displaying error messages, and communicating with the back end.
 The back end consists of a representation for Haskell code in Java, an interface to GHCi (see \ref{GHCi} on page \pageref{GHCi}) and functionality to make working with the back end easier.
@@ -100,35 +99,33 @@ This separation is made to make development and debugging for the part that gene
 It also makes using the user interface for a different purpose a bit easier, although the user interface has been designed specifically for our use case.
 
 \section{Front end architecture}
-Since Viskell is designed for multi-touch and to make use of TactileAPI, we also used javaFX for the rest of the UI.
-We made a CustomUIPane that extended the TactilePane, in order to add some extra functionality of our own without cluttering the already big TactilePane.
-CustomUIPane functions as the big Pane which has everything on it, and it also has some event listeners for menus and such.
-Main.java builds a Scene and combines the CustomUIPane with a zoomOverlay.
+We designed Viskell with multi-touch interfaces in mind. \code{\gls{TactileAPI}}, a public library, was made available to us to assist with multi-touch interfacing. In order to add onto the existing functionality of TactileAPI and to implement our own new functionality we used JavaFX.
+The implementation of our own extra functionality came in the form of \code{CustomUIPane}, an extension of \code{TactilePane}.
+\code{CustomUIPane} has many of the same responsibilities of a main \code{Window} and stores most of the program state.
+Listeners are attached to \code{CustomUIPane} to monitor \code{Mouse- and \code{TouchEvents} that are directly responsible for the interaction with Menus.
 
-General gestures (made on the 'empty' space) where implemented on the Pane itself, most small gestures where implemented on the Component that needed them.
-This was done so that the gestures could easily change the state of the component it belonged to. Since the project was aimed at providing support for multi-touch, most handlers needed additional functionality to accommodate for this, often resulting in binding an input identifier to an action that was performed.
+While the general listeners where controlled from the \code{CustomUIPane}, components often have specific listeners attached to them.
+This was done so that the gestures could easily change the state of the component it belonged to. Wherever possible, complex handlers were given their own class, such as \code{AnchorHandler}. Since the project was aimed at providing support for multi-touch we needed additional functionality to accommodate this. A solution that was often chosen was the mapping of an input identifier to performed actions.
 
-Placed on CustomUIPane are Components, detailed further on. Wheverever possible complex handlers were given there own class, such as AnchorHandler.
-For all of the Components we made use of the FXML language available in javaFX.
+Placed on \code{CustomUIPane} are components, detailed further on. For all of the Components we made use of the FXML language available in javaFX.
 
 \subsection{Components}
-Basically everything visible on the CustomUIPane are components of some kind (menus fall in somewhere in-between component and non-component.)
-Each component is represented by a custom java Object that extends an javaFX class.
-This is done in order to be able to directly link interactivity to the objects that are visible on the screen.
-putting each object in a seperate component also added modularity and made it easily extendible.
-To further support extendibility, all the components are written in such a way that it should not be hard to make a new component with sligtly different needs.
+Basically everything visible on the \code{CustomUIPane} are components of some kind (menus fall in somewhere in-between component and non-component).
+Each component is made by extending an existing javaFX \code{Node}, this is done in order to be able to directly link interactivity to the objects that are visible on the screen.
+Putting each object in a separate component also added modularity and made it more easily extendible.
+To further support extendibility, all the components are written in such a way that it should not be hard to make a new component with slightly different needs.
 
 We decided to have 3 kinds of components, blocks, anchors and lines, since most components could be categorized in one of these 3 classes.
-Anchors and Lines ended up having only a couple of classes, not a lot special anchors or lines were needed.
 
-Blocks were further categorzied into functions, input and output blocks.
-Input blocks are blocks that can get inputs, these were all grouped together in a single interface, which ended up requiring only 2 methods.
-Output blocks are blocks that have outputs, these were also grouped together in a single interface and also ended up requiring only 1 method.
-Function Blocks implement both interfaces
+\code{Blocks} were further categorized into \code{FunctionBlocks}, \code{InputBlocks} and \code{OutputBlocks}.
+\code{InputBlocks} are blocks that can receive input, these were all grouped together in a single two method interface.
+\code{OutputBlocks} are blocks that provide output, these were also grouped together in a single one method interface
+\code{FunctionBlocks} implement both interfaces.
 
 \subsection{FXML \& CSS}
-FXML was used in an attempt to separate structure from behaviour, this turned out to be very hard to keep. The end result is that FXML is used to construct most Components where the Code added or changed the Component loaded from FXML. We did use FXML to set most of the (often arbitrary) UI settings like height, width and other attributes.
-CSS was used to seperate style from structure, this turned out to be easy to keep. We added style classes mostly in FXML, some (like an changing  'error' style class) in Java. A single Style.css file was used for the entire UI, this contained fx styling for all the components we used.
+FXML was used in an attempt to separate structure from behaviour, this turned out to be very hard to stick to. The end result is that FXML is used to construct most components where the code added or changed the component loaded from FXML. We did use FXML to set most of the (often arbitrary) UI settings like height, width and other attributes.
+
+CSS was used to seperate style from structure, this turned out to be more easy to stick to. Style classes were added mostly in FXML, some (like a changing 'error' style class) in Java. A single CSS style file was used for the entire UI, this contained fx styling for all the components we used.
 
 \section{Back end architecture}
 
