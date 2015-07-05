@@ -1,26 +1,76 @@
 \chapter{Requirements Analysis}
 
-The first step in creating an application or program is defining the requirements. In our discussions with the client, he emphasized that the main goal of this project was making a user-friendly interface.
+The first step in creating an application or program was defining the requirements. In order to do this, we planned meetings with our client. Against our expectations the client did not have many demands to the project. He wanted us to be free in the design and implementation. The main goal of the project was not creating a program, which is 100\% finished and could be used right away, but to explore the possibilities of the client's ideas (a proof of concept).
 
-\subsection{User}
+To start however, we needed something more than just an idea. We needed a base from which we could work. This resulted in a set of requirements, which we defined based on the ideas of our client.
 
-How to divide the requirements in necessary and desirable requirements depends on the kind of target user for which the application is to be designed. 
-In this project the focus lies mainly on users who already know how to programme in Haskell. %nog aanvulling nodig,..
+\section{Target audience}
 
-\subsection{Requirements}
-For this project, the requirements can be devided in three subgroups, namely: visual requirements, functional requirements and multi-touch requirements. In the following subsections each of the groups will be discussed. In some cases a requirement fits in multiple groups; in these cases the best fitting group has been chosen to contain this requirement.
+How to divide the requirements in necessary and desirable requirements depends on the kind of target audience for which the application is designed. \index{audience} \index{target audience}
 
+In this project the focus lies mainly on users who already know how to program in Haskell. This includes people who are just starting with Haskell.
+The program should aid these users in creating an overview of their program and informing them about (possible) mistakes without the user having to write a complete program and then compile it.
 
-\subsubsection{Visual requirements} 
+Furthermore, the users are generally advanced computer users and therefore do not require an in-depth explanation on how to operate a program. The users will also have a basic understanding of touch gestures, most likely obtained through the use of a smart phone or tablet.
 
-As discussed earlier, the user experience is a very important aspect in this project. With this in mind, the visual aspects of the application are important. De visual requirements are the following:
+\section{Hardware}
+
+The program will be designed to use on a large multi-touch screen with a screen resolution of 1920x1080 pixels, but should also work with a smaller (for example laptop) screen and a mouse. The program should be efficient enough to run on average modern-day hardware. The client provided a desktop computer and multi-touch screen for reference.
+
+\section{Requirements}
+
+For this project, the requirements can be divided in three subgroups, namely: visual requirements, functional requirements and multi-touch requirements. In the following subsections each of the groups will be discussed. In some cases a requirement fits in multiple groups; in these cases the best fitting group has been chosen to contain this requirement.
 
 \begin{enumerate}
- \item the structure of the visual program has to logically represent Haskell.
- \begin{enumerate}
- \item[1.1.] Haskell functions are represented by functionblocks.
- \item[1.2.] The program has to be able to show a compact notation in which nesting and stacking of functionblocks is possible.
- \end{enumerate}
- \item
- \item
+\item \subsection*{Visual requirements}
+
+\begin{enumerate}
+	\item The structure of the visual program must logically represent the structure of a regular Haskell program.
+		\begin{enumerate}
+			\item Haskell functions are represented by a separate element.
+			\item The program has to be able to show a compact notation for a program using stacked and nested blocks.
+			\item Blocks must be movable to prevent them from overlap.
+		\end{enumerate}
+	\item The program must allow functions/blocks to be interconnected.
+		\begin{enumerate}
+			\item Function arguments must be connected individually.
+			\item A block has a single output which can be the final result of the function or the result of a partial application.
+		\end{enumerate}
+	\item The user interface design must be minimalistic.
+	\item The user interface must be resizeable.
+	\item Actions performed by the user must give feedback.
+	\item Errors and warnings (for example type errors) must be easily recognizable.
+	\item In case blocks and lines overlap, lines must be drawn behind the blocks.
+	\item Users must be able to select functions to using a touch screen only.
+\end{enumerate}
+
+\item \subsection*{Functional requirements}
+
+\begin{enumerate}
+	\item The program has to support incomplete programs.
+	\begin{enumerate}
+		\item It must be possible to have blocks or groups of blocks that are not interconnected.
+		\item The program must give feedback (for example type errors) about incomplete programs.
+	\end{enumerate}
+	\item It must be possible to define custom Haskell functions. This includes a free choice in number of arguments, type and name of the function.
+	\item The program must generate executable Haskell code from the visual representation. This implies that objects in the visual representation have a precise meaning.
+	\item The program must perform real-time type checking of the connected functions.
+	\item The program must be able to show the real-time output at any point in the program. The user may be required to perform a small number of actions to achieve this.
+	\item The program must be expandable by different developers.
+	\begin{enumerate}
+		\item The source code must be documented properly.
+		\item The design choices must be documented properly.
+	\end{enumerate}
+\end{enumerate}
+
+\item \subsection*{Multi-touch requirements}
+
+\begin{enumerate}
+	\item Users with large fingers should be able to use the program. This may be achieved with either large visual elements or touch areas larger than the visual element.
+	\item Actions may use gestures that are simple and have a short learning curve.
+	\item It should be possible to use the program with more than one person at the same time on the same touch screen.
+	\item It should be possible to use the program with only one hand.
+	\item The program should only require a keyboard as input method when absolutely necessary.
+\end{enumerate}
+
 \end{enumerate}

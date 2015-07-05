@@ -1,23 +1,111 @@
 \chapter{Design}
 
+This chapter contains a high level description of the design choices made in the process of creating Viskell.
+The specific implementation details are discussed in chapter \ref{chap:implementation} on page \pageref{chap:implementation}.
+
+\section{User interface}
+
+The user interface basically consists of two parts, namely the menus for the different options a user can select and the part where the user can manipulate functions and create their own (the canvas).
+
+\subsection{Graphical design}
+
+\subsubsection{Blocks and lines}
+
+We chose to represent Haskell functions by function blocks since this is a logical element for users, a combination of blocks forms a program.
+Each block consists of a function name and its associated arguments. With each argument comes an anchor node to which other block can be connected through lines.
+
+In Haskell, values are being passed to functions without being saved to memory.
+The lines between blocks represent this flow.
+Thus, a program can be built like an electronic circuit.
+
+We chose to make a distinction between three kinds of blocks.
+The first kind in an input block, which represents a constant value.
+This input block can be connected to other blocks to use the value as an input.
+Besides the most basic input block, the value block which takes a string as input and automatically detects the type, there is also a slider available.
+
+The second kind of block is a function block. This block has a number of inputs and a single output, and defines the number of inputs that are going to be used.
+The number of inputs can be changed by moving a knot over the function arguments.
+This allows for passing (partially applied) functions as input for other functions.
+A useful example for this is the \code{map} function.
+
+The third kind of block displays an output.
+There are multiple versions, ranging from a simple block that displays the string representation to a graph block which can show a function.
+
+Each kind of block has a different color to make them easily recognizable.
+
+\subsubsection{Errors}
+
+An important part of Viskell is representing programming errors.
+Instead of requiring users to compile a complete program, type errors are displayed as soon as a user connects two blocks.
+An error is represented as a colored line and colored type in the target block.
+An icon is displayed as well to help color blind users.
+
+\subsubsection{Menus}
+
+During the design process many ideas for the menus came up.
+One of the first ideas was to have a circular menu. \label{circular_menu}
+The advantages of the circle menu would be that the orientation of the device would not have any influence on the usability of the menu.
+This makes using the program on a large multi-touch table easier.
+However, the implementation of the menu would take too much time and the idea was therefore dismissed.
+
+The final design has two separate menus, one for adding new blocks and one for options on existing blocks.
+
+The primary menu uses `drawers' for the categories of the functions.
+This way it is easy to find functions even without an extensive knowledge of Haskell.
+In- and ontput blocks and the function definition block can be created using buttons at the bottom of the menu.
+This location is chosen to make them quickly available.
+The primary menu can be opened multiple times at once and moved around the screen so multiple users can work on a single program.
+
+The context menu is compact so is does not take up too much space.
+It contains clear icons which represent different actions for that single block, like delete.
+The icons are large enough to touch, even for people with large fingers.
+
+\subsubsection{Color scheme}
+
+The background color is a dark gray.
+This is chosen because it is less tiring for the eyes than white and allows for a high contrast.
+The background also incorporates a grid pattern so users can align elements on the screen if they like to.
+
+All other components feature a cheerful color scheme.
+This color scheme provides good contrast with the background and good recognizability for the different kinds of blocks.
+
+\subsection{Behaviour and interaction design}
+
 \section{Languages and libraries}
 
-% Java. Why?
-% JavaFX. Why?
-% TactileFX. Why?
+Viskell is written in Java using Java 8 with JavaFX.
+Java 8 is chosen because it, unlike Java 7, still receives public updates at the moment of writing.
+Language level 8 is chosen to make use of some of the new features in this version.
+
+Viskell uses TactileFX, a JavaFX touch screen library developed at the University of Twente.
+The client wanted the program to use this library, which also means that Viskell had to use Java and JavaFX.
+
+Furthermore, the following libraries have been used:
+
+\begin{itemize}
+	\item Antlr 4 (\url{http://www.antlr.org/})
+	\item Guava (\url{https://github.com/google/guava})
+	\item JFXtras (\url{http://jfxtras.org/})
+\end{itemize}
 
 \section{High-level architecture}
 
-% Frontend/backend split
-% Communication between frontend and backend (when we've got that settled)
+Viskell consists of two parts, a front end and a back end.
+The front end is responsible for providing a user interface, handling user input, displaying error messages, and communicating with the back end.
+The back end consists of a representation for Haskell code in Java, an interface to GHCi (see \ref{GHCi} on page \pageref{GHCi}) and functionality to make working with the back end easier.
+This separation is made to make development and debugging for the part that generates Haskell code easier.
+It also makes using the user interface for a different purpose a bit easier, although the user interface has been designed specifically for our use case.
 
-\section{Backend architecture}
+\section{Front end architecture}
+
+\section{Back end architecture}
 
 A result of our design choices is that our Java program needs to have a basic understanding of the Haskell programming
 language. For this purpose we implemented two tree structures - one for expressions, one for types - supported by an
 interface for GHCi, a type signature parser and a catalog.
 
 \subsection{Communication with GHCi}
+\label{GHCi}
 \index{GHCi}
 
 The base of the back-end is an interface for communication with GHCi. This interface allows us to run Haskell code
@@ -35,8 +123,10 @@ Internally Haskell types are represented as instances of a class. These instance
 tree-like structure. This approach is chosen because it is easy to work with class instances and nested types form
 a tree-like structure. \index{type tree}
 
+An Antlr parser has been created to parse Haskell type signatures into our representation. This makes the catalog and interpreting types from GHCi easier.
+
 The type checker is implemented using Hindley-Milner type inference. We use this algorithm to (try to) unify two
-types. If the types cannot be unified, there exists a type error. The algorithm is described in detail by
+types. If the types cannot be unified, there exists a type error. The algorithm is described in detail in
 \cite{borisov}. \index{Hindley-Milner} \index{type inference}
 
 \subsection{Expressions}
@@ -47,8 +137,12 @@ Each expression holds its type including the types from the lower part of the ex
 expression tree therefore always knows the type of the whole tree.
 
 Function application can be done using a special kind of expression. This is done so function application does not
-directly modify other expressions in the tree. This allows for easy changes in the frontend. Types of expressions can
+directly modify other expressions in the tree. This allows for easy changes in the front end. Types of expressions can
 be updated on-the-fly taking into account the types that are applied to the arguments of functions.
+
+Custom functions can be created using a function expression.
+A function expression has an expression sub tree for the function body and a number of function arguments.
+The function arguments can be used in the expression to pass the input.
 
 The expressions that are available in the application are stored in a catalog. This catalog contains functions that are
 by default available in Haskell and are known to work with the application.
