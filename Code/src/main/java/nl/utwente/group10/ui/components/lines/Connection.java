@@ -368,7 +368,7 @@ public class Connection extends ConnectionLine implements
      * displayed.
      */
     private void checkError() {
-        //setError(!typesMatch());
+        setError(!typesMatch());
     }
     
     public void setError(boolean error) {
