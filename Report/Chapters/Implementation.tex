@@ -24,14 +24,20 @@ Since supporting multi-touch means that a (or multiple) user can perform multipl
 \subsection{Invalidation}
 The end goal of the UI is to visually represent and interact with the back end. For that goal, the expression that is created by linking \code{Blocks} using Connections, needs to be send to the back end to evaluate it and get the result. In order to correctly and efficiently push calls to the back end and process the result of it, an invalidation scheme is implemented using several phases. In these phases an integer is used to represent the state a \code{Block} is in, namely connection state and visual state. This state can then be used to prevent duplication when traversing the tree of \code{Blocks} and even possible cycles.
 
-The first phase of invalidation is entered upon a change in connection state, caused by either connecting or disconnected a \code{Connection} somewhere in the program. This will change the connection state property of the \code{Blocks} involved and in turn trigger a cascading reaction. A \code{Block} first has a chance to react on the state change, and then tells all the \code{Blocks} that are dependent on him (use his output) of the change, by setting their connection state to the new value. When the state change can no longer be cascaded further, the next phase is entered.
+The first phase of invalidation is entered upon a change in connection state, caused by either connecting or disconnected a \code{Connection} somewhere in the program (Figure \ref{fig:invalidation}:0). This will change the connection state property of the \code{Blocks} involved and in turn trigger a cascading reaction (Figure \ref{fig:invalidation}:1). A \code{Block} first has a chance to react on the state change, and then tells all the \code{Blocks} that are dependent on him (use his output) of the change, by setting their connection state to the new value. When the state change can no longer be cascaded further, the next phase is entered.
 
-After the connection state change reaches its end, the entire expression tree gets analyzed. If everything goes well, this results in types being inferred for all the expressions in each \code{Block}. When it does not go well, if a type mismatch occurs, the faulty input gets localized using the exception thrown and a mapping of expressions to \code{FunctionBlocks}. The input responsible for the error gets an error state, and execution of the program is halted. Since this way only 1 error can be detected at a time, previous errors are remembered whenever possible to give as much information as possible. When the expression is analyzed, either correctly or incorrectly, the next phase is entered.
+After the connection state change reaches its end, the entire expression tree gets analysed. If everything goes well, this results in types being inferred for all the expressions in each \code{Block}. When it does not go well, if a type mismatch occurs, the faulty input gets localized using the exception thrown and a mapping of expressions to \code{FunctionBlocks} (Figure \ref{fig:invalidation}:2). The input responsible for the error gets an error state, and execution of the program is halted. Since this way only 1 error can be detected at a time, previous errors are remembered whenever possible to give as much information as possible. When the expression is analysed, either correctly or incorrectly, the next phase is entered.
 
-After having found the end of the expression and having inferred (insofar possible) its types, it is time to update the visual representation. Similar to the way the connection state cascaded, a visual state is propagated in reverse direction. Each \code{Block} then also reacts whenever this visual update happens, updating its labels. When the visual state can propagate no further, the invalidation is done.
+After having found the end of the expression and having inferred (insofar possible) its types, it is time to update the visual representation. Similar to the way the connection state cascaded, a visual state is propagated in reverse direction (Figure \ref{fig:invalidation}:2). Each \code{Block} then also reacts whenever this visual update happens, updating its labels. When the visual state can propagate no further, the invalidation is done.
 
-Using this system it is assured that all the \code{Blocks} are fully updated before updating their visually representation and expressions are only updated and analyzed when needed, separate trees won't trigger recalculation for each other.
-%TODO FIGUURTJE
+Using this system it is assured that all the \code{Blocks} are fully updated before updating their visually representation and expressions are only updated and analysed when needed, separate trees won't trigger recalculation for each other.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.23]{Images/invalidation}
+	\label{fig:invalidation}
+	\caption{Invalidation scheme}
+\end{figure}
 
 \subsection{Menus}
 
