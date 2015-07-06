@@ -134,10 +134,7 @@ To make sure that the user has a good overview of what he is doing we focussed o
 
 An activity diagram of the interaction a user can have with Viskell is shown in Figure \ref{fig:activitydiagram} on page \pageref{fig:activitydiagram}. As can be seen in the figure, the number of actions a user can perform is not very large (amount of blocks in the 'User' column). This confirms the short learning curve we wanted to achieve. Although the number of actions is not very large, the number of possibilities in the program at a given point is quite extensive. This is visualised by the many lines in the activity diagram. This means that you can almost do anything from any state in the program.
 
-The fact that it is almost possible to do anything from anywhere is probably a (positive) side effect of our goals regarding multi touch. While the client's wants on the matter were a bit vague, we eventually set the requirement that all single user actions needed to be able to be concurrently performed in the case of multiple users. This resulted in almost all actions being able to happen concurrently. Despite our attempts, some actions still do not support multi touch (for example opening a function menu), yet this should be relatively easy to solve in the future.
-
-Interaction with the user interface is possible through touch gestures on the touch screen or by using a mouse. Since JavaFX only supports three different multi-touch events: pressed, moved and released, we had not choice but to base as much as possible of the interaction on these 3 events. Equivalent mouse events are used to preserve symmetry and ease of development. Some more advanced mouse gestures are used, these can be accessed with touch from synthesized touch events. These more advanced gestures do not however work correctly with multi-touch.
-%TODO move to implementation or something
+The fact that it is almost possible to do anything from anywhere is probably a (positive) side effect of our goals regarding multi touch. While the client's wants on the matter were a bit vague, we eventually settled on the requirement that all single user actions needed to be able to be concurrently performed in the case of multiple users. This resulted in almost all actions being able to happen concurrently. Despite our attempts, some actions still do not support multi touch (for example opening a function menu), yet this should be relatively easy to solve in the future.
 
 
 
@@ -152,9 +149,7 @@ Interaction with the user interface is possible through touch gestures on the to
 
 \section{Languages and libraries}
 Viskell is written in Java 8, which comes bundled with JavaFX. \index{JavaFX}
-Java 8 is chosen because it, unlike Java 7, still receives public updates at the moment of writing.
-Language level 8 is chosen to make use of some of the new features in this version.
-% redundant
+Java 8 is chosen because it, unlike Java 7, still receives public updates at the moment of writing and allows us to make use of some of the new features in this version.
 
 Viskell uses TactileFX, a JavaFX touch screen library developed at the University of Twente.
 The client wanted the program to use this library, which also means that Viskell had to use Java and JavaFX.
@@ -183,17 +178,19 @@ This is done so that the gestures could easily change the state of the component
 
 Placed on \code{CustomUIPane} are components, detailed further on. For all of the Components we made use of the FXML language available in javaFX.
 
+\subsection{Gestures}
+Interaction with the user interface is possible through touch gestures on the touch screen or by using a mouse. Since JavaFX only supports three different multi-touch events: pressed, moved and released, we had no choice but to base as much as possible of the interaction on these 3 events. Equivalent mouse events are used to preserve symmetry and ease of development. Some more advanced mouse gestures are used (for example when opening menus), these can be accessed with touch from synthesized touch events. These more advanced gestures do not however work correctly with multi-touch.
+%Not 100 % sure this belongs here.
+
 \subsection{Components}
-Basically everything visible on the \code{CustomUIPane} are components of some kind (menus fall in somewhere in-between component and non-component).
+everything visible on the \code{CustomUIPane} are components of some kind.
 Each component is made by extending an existing javaFX \code{Node}, this is done in order to be able to directly link interactivity to the objects that are visible on the screen.
 Putting each object in a separate component also added modularity and made it more easily extendible.
 
-Most components can be categorized in 3 classes: blocks, anchors and lines.
+Components can be categorized in 4 classes: blocks, anchors, lines and menus.
 \code{Blocks} can be further categorized into \code{FunctionBlocks}, \code{InputBlocks} and \code{OutputBlocks}.
 
 \code{InputBlocks}, blocks that can receive input, and \code{OutputBlocks}, blocks that provide output, each have their own interface that a \code{Block} can implement. \code{DisplayBlock} is an example of such an \code{InputBlock}, \code{ValueBlock} is an example of an \code{OutputBlock}, \code{FunctionBlocks} implement both interfaces.
-
-%TODO menus
 
 \subsection{FXML \& CSS}
 FXML is used in an attempt to separate structure from behaviour, this separation turned out to be very hard to keep. The end result is that FXML is used to construct most components were the code adds or changes the component after being loaded from FXML. We did use FXML to set most of the (often arbitrary) UI settings like height, width and other attributes.
