@@ -1,11 +1,9 @@
 package nl.utwente.group10.ui.components.blocks;
 
-import com.google.common.collect.ImmutableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
-import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.expr.*;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
@@ -13,6 +11,8 @@ import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.blocks.input.InputBlock;
+import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,16 +29,6 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
         return fun;
     }
 
-    @Override
-    public Type getOutputSignature(Env env) {
-        return type;
-    }
-
-    @Override
-    public Type getInputSignature(InputAnchor input) {
-        return resType;
-    }
-
     /** A block for attaching the argument (top) anchors to. */
     private class ArgumentBlock extends Block implements OutputBlock {
         private Type type;
@@ -50,12 +40,7 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
             this.type = type;
             this.arg = new Function.FunctionArgument(type);
 
-            anchor = new OutputAnchor(this, parent.getPane());
-        }
-
-        @Override
-        public Expr asExpr() {
-            return arg;
+            anchor = new OutputAnchor(this);
         }
 
         /** Returns the FunctionArgument expression we built. */
@@ -66,11 +51,6 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
         @Override
         public OutputAnchor getOutputAnchor() {
             return anchor;
-        }
-
-        @Override
-        public Type getOutputSignature(Env env) {
-            return type;
         }
     }
 
@@ -116,10 +96,10 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
         argSpace.getChildren().addAll(getArgumentAnchors());
 
-        res = new InputAnchor(this, pane);
+        res = new InputAnchor(this);
         resSpace.getChildren().add(res);
 
-        fun = new OutputAnchor(this, pane);
+        fun = new OutputAnchor(this);
         funSpace.getChildren().add(fun);
 
         TactilePane.setGoToForegroundOnContact(this, false);
@@ -131,10 +111,5 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
     private List<Function.FunctionArgument> getArguments() {
         return this.args.stream().map(ArgumentBlock::getArgument).collect(Collectors.toList());
-    }
-
-    @Override
-    public Expr asExpr() {
-        return new Function(res.asExpr(), getArguments());
     }
 }
