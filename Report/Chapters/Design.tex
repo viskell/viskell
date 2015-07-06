@@ -115,32 +115,33 @@ The icons are large enough to touch, even for people with large fingers.
 	\caption{Context menu}
 \end{figure}
 
-\subsubsection{Color scheme}
+\subsubsection{Colour scheme}
 
-The background color is a dark gray.
+The background colour of the canvas is a type of dark grey.
 This is chosen because it is less tiring for the eyes than white and allows for a high contrast.
 The background also incorporates a grid pattern so users can align elements on the screen if they like to.
 
-All other components feature a cheerful color scheme.
-This color scheme provides good contrast with the background and good recognizability for the different kinds of blocks.
+All other components feature a cheerful colour scheme.
+This colour scheme provides good contrast with the background and solid recognizability for the different kinds of blocks.
 
 \subsection{Behaviour and interaction design}
 
-Interaction with the user interface is possible through touch gestures on the touch screen and on mouse actions on the computer.
-We wanted the application to be very easy to use.
-Since JavaFX only supports three different touch events, we decided to only use the matching gestures drag, tap and tap-hold (or right click on a computer).
-With these three gestures everything is accessible in the program.
-More complicated gestures were considered, but implementation proved to be difficult, especially with multiple users in mind.
+Our goal was to provide an easy to use and intuitive (multi) touch interface, with a very easy learning curve. To achieve this we looked at the way smart phones provided touch interaction and tried to stick to their philosophy on the matter.
 
-We also wanted the user to have to perform as little unnecessary actions to complete an action.
-An example is that a user does not have to disconnect a line first but can connect a new line to a connected anchor, which will automatically disconnect the old line.
-Also, users are able to restore opening the context-menu by just clicking somewhere else.
+A very clear rule in that philosophy is to always have to perform as little actions as possible to do what you want to do, we strived to achieve this with Viskell. An example of this is the ability to edit a connection. Instead of having to delete one first and then create a new one, we added the ability to edit a connection, combining what would otherwise be 2 actions into a single action. Our menus were also constructed with the same goal in mind.
 
-Providing the possibility to easily spot the result of an action and undo wrong actions helps to keep the learning curve of the program flat and the behavior of the program predictable.
+To make sure that the user has a good overview of what he is doing we focussed on as much and as direct live feedback as possible. This can be seen in the way a type mismatch is displayed. The idea was to also be able to quickly undo incorrect actions, by using an undo button, which should also keep the learning curve low.
 
-In the figure \ref{fig:activitydiagram} on page \pageref{fig:activitydiagram} it is shown that the number of actions a user can perform is not very large. This results in a short learning curve, as mentioned before. Although the number of actions is not very large, the number of possibilities in the program at a given point is quite extensive. This is visualised by the many lines in the activity diagram.
+An activity diagram of the interaction a user can have with Viskell is shown in Figure \ref{fig:activitydiagram} on page \pageref{fig:activitydiagram}. As can be seen in the figure, the number of actions a user can perform is not very large (amount of blocks in the 'User' column). This confirms the short learning curve we wanted to achieve. Although the number of actions is not very large, the number of possibilities in the program at a given point is quite extensive. This is visualised by the many lines in the activity diagram. This means that you can almost do anything from any state in the program.
 
-We also kept in mind that the program might have to be usable for multiple users at the same time in the future; we made it possible to open multiple menus at the same time. Different users can also perform the same or different gestures at the same time.
+The fact that it is almost possible to do anything from anywhere is probably a (positive) side effect of our goals regarding multi touch. While the client's wants on the matter were a bit vague, we eventually set the requirement that all single user actions needed to be able to be concurrently performed in the case of multiple users. This resulted in almost all actions being able to happen concurrently. Despite our attempts, some actions still do not support multi touch (for example opening a function menu), yet this should be relatively easy to solve in the future.
+
+Interaction with the user interface is possible through touch gestures on the touch screen or by using a mouse. Since JavaFX only supports three different multi-touch events: pressed, moved and released, we had not choice but to base as much as possible of the interaction on these 3 events. Equivalent mouse events are used to preserve symmetry and ease of development. Some more advanced mouse gestures are used, these can be accessed with touch from synthesized touch events. These more advanced gestures do not however work correctly with multi-touch.
+%TODO move to implementation or something
+
+
+
+
 
 \begin{figure}[p]
 	\centering
