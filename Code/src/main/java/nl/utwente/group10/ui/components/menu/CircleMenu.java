@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.menu;
+package nl.utwente.group10.ui.components.menu;
 
 import javafx.util.Duration;
 

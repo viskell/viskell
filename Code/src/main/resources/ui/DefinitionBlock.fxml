@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.geometry.Insets?>
-<fx:root type="nl.utwente.group10.ui.components.blocks.DefinitionBlock" xmlns:fx="http://javafx.com/fxml/">
+<fx:root type="nl.utwente.group10.ui.components.blocks.function.DefinitionBlock" xmlns:fx="http://javafx.com/fxml/">
     <VBox>
         <Label fx:id="signature" styleClass="signature" />
         <BorderPane styleClass="def">

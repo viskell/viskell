@@ -26,7 +26,7 @@ import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
-import nl.utwente.group10.ui.menu.FunctionMenu;
+import nl.utwente.group10.ui.components.menu.FunctionMenu;
 
 /**
  * Extension of TactilePane that keeps state for the user interface.
