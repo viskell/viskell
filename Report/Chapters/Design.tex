@@ -5,23 +5,30 @@ The specific implementation details are discussed in chapter \ref{chap:implement
 
 \section{User interface}
 
-The user interface basically consists of two parts, namely the menus for the different options a user can select and the part where the user can manipulate functions and create their own (the \gls{canvas}). \index{canvas}
+The entire user interface consists of components floating around on a drag and drop canvas, the \code{CustomUIPane}. Menus can be opened on empty \gls{canvas} and from their different blocks can be created and interacted with.
 
 \subsection{Graphical design}
 
 \subsubsection{Blocks and lines}
+Among the other components floating around in the canvas, blocks and the way they are connected make up the Haskell program. We chose blocks since this is a logical element for users, they can be seen as small calculators that perform a specific action.
 
-We chose to represent Haskell functions by function blocks since this is a logical element for users, a combination of blocks forms a program.
-Each block consists of a function name and its associated arguments. With each argument comes an anchor node to which other block can be connected through lines.
-
-In Haskell, values are passed to functions without being saved as variables.
-The lines between blocks represent this flow.
-Thus, a program can be built like an electronic circuit.
+Blocks have input and output anchors that can be used to create connections from one block to another, essentially representing the Haskell program flow. Input anchors are positioned on the top of a block, the output anchor on the bottom side. The inside of a block is defined by the block itself, for functions this is a name and the types of the arguments it expects.
 
 We chose to make a distinction between three kinds of blocks.
-The first kind in an input block, which represents a constant value. \index{value block} \index{input block}
-This input block can be connected to other blocks to use the value as an input.
-Besides the most basic input block, the value block which takes a string as input and automatically detects the type, there is also a slider available. \index{slider block}
+The first kind in an output block, which represents a constant value. \index{value block} \index{output block}
+This input block can be connected to other blocks which can use its outputted value as input.
+Besides the most basic output block, the value block which takes a string as input for creation and then automatically detects the type, there is also a slider available. \index{slider block}
+
+The second kind of block displays the program's output (yet is called an input block, since it receives input).  \index{input block}
+There are multiple versions, ranging from a simple block that displays the string representation of its input to a graph block which can show a function. \index{graph block}
+
+The third kind of block is a function block. This block has a number of inputs, a single output, and a knot defining the number of inputs that need to be connected. \index{function block}
+
+The number of inputs can be changed by moving the knot left or right, over the function's arguments.
+This allows for passing (partially applied) functions as input for other functions. \index{partial application}
+A useful example for this is the \code{map} function.
+
+Each kind of block has a different colour to make them easily recognizable.
 
 \begin{figure}[p]
 	\centering
@@ -30,20 +37,12 @@ Besides the most basic input block, the value block which takes a string as inpu
 	\caption{Different input blocks}
 \end{figure}
 
-The second kind of block is a function block. This block has a number of inputs and a single output, and defines the number of inputs that are going to be used. \index{function block}
-The number of inputs can be changed by moving a knot over the function arguments.
-This allows for passing (partially applied) functions as input for other functions. \index{partial application}
-A useful example for this is the \code{map} function.
-
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/blocks-bowties}
 	\label{fig:blocks-bowties}
 	\caption{Partial application of functions}
 \end{figure}
-
-The third kind of block displays an output.  \index{output block}
-There are multiple versions, ranging from a simple block that displays the string representation to a graph block which can show a function. \index{graph block}
 
 \begin{figure}[p]
 	\centering
@@ -52,15 +51,14 @@ There are multiple versions, ranging from a simple block that displays the strin
 	\caption{Different output blocks}
 \end{figure}
 
-Each kind of block has a different color to make them easily recognizable.
-% Not entirely correct
-
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/blocks-example}
 	\label{fig:blocks-example}
 	\caption{Different kinds of blocks}
 \end{figure}
+
+%TODO position these images better
 
 \subsubsection{Errors}
 
