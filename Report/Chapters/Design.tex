@@ -14,8 +14,8 @@ Among the other components floating around in the canvas, blocks and the way the
 
 Blocks have input and output anchors that can be used to create connections from one block to another, essentially representing the Haskell program flow. Input anchors are positioned on the top of a block, the output anchor on the bottom side. The inside of a block is defined by the block itself, for functions this is a name and the types of the arguments it expects.
 
-We chose to make a distinction between three kinds of blocks.
-The first kind in an output block, which represents a constant value. \index{value block} \index{output block}
+We chose to make a distinction between three kinds of blocks, each having their own colour to make them easily recognizable.
+The first kind is an output block, which represents a constant value. \index{value block} \index{output block}
 This input block can be connected to other blocks which can use its outputted value as input.
 Besides the most basic output block, the value block which takes a string as input for creation and then automatically detects the type, there is also a slider available. \index{slider block}
 
@@ -28,10 +28,7 @@ The number of inputs can be changed by moving the knot left or right, over the f
 This allows for passing (partially applied) functions as input for other functions. \index{partial application}
 A useful example for this is the \code{map} function.
 
-Each kind of block has a different colour to make them easily recognizable.
-
-\subsection{Previous function block concepts}
-%TODO
+During the project, many different ideas where pitched for blocks, eventually we went with something a bit different from the client's initial idea. Some more information about this can be found in \ref{chap:Evaluation}.
 
 \begin{figure}[p]
 	\centering
@@ -136,10 +133,6 @@ An activity diagram of the interaction a user can have with Viskell is shown in 
 
 The fact that it is almost possible to do anything from anywhere is probably a (positive) side effect of our goals regarding multi touch. While the client's wants on the matter were a bit vague, we eventually settled on the requirement that all single user actions needed to be able to be concurrently performed in the case of multiple users. This resulted in almost all actions being able to happen concurrently. Despite our attempts, some actions still do not support multi touch (for example opening a function menu), yet this should be relatively easy to solve in the future.
 
-
-
-
-
 \begin{figure}[p]
 	\centering
 	\includegraphics[width=\textwidth]{Images/activitydiagram}
@@ -190,7 +183,7 @@ Putting each object in a separate component also added modularity and made it mo
 Components can be categorized in 4 classes: blocks, anchors, lines and menus.
 \code{Blocks} can be further categorized into \code{FunctionBlocks}, \code{InputBlocks} and \code{OutputBlocks}.
 
-\code{InputBlocks}, blocks that can receive input, and \code{OutputBlocks}, blocks that provide output, each have their own interface that a \code{Block} can implement. \code{DisplayBlock} is an example of such an \code{InputBlock}, \code{ValueBlock} is an example of an \code{OutputBlock}, \code{FunctionBlocks} implement both interfaces.
+\code{InputBlocks}, blocks that can receive input, and \code{OutputBlocks}, blocks that provide output, each have their own interface that a \code{Block} can implement. \code{DisplayBlock} is an example of such an \code{InputBlock}, \code{ValueBlock} is an example of an \code{OutputBlock}, \code{FunctionBlocks} implement both interfaces and are loaded from the back end catalog, specified in an XML file.
 
 \subsection{FXML \& CSS}
 FXML is used in an attempt to separate structure from behaviour, this separation turned out to be very hard to keep. The end result is that FXML is used to construct most components were the code adds or changes the component after being loaded from FXML. We did use FXML to set most of the (often arbitrary) UI settings like height, width and other attributes.
