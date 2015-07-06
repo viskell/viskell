@@ -26,7 +26,7 @@ import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
-import nl.utwente.group10.ui.menu.CircleMenu;
+import nl.utwente.group10.ui.components.menu.CircleMenu;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.

@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.function;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -11,6 +11,7 @@ import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
+import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 

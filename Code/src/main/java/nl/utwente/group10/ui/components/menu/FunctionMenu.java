@@ -1,4 +1,4 @@
-package nl.utwente.group10.ui.menu;
+package nl.utwente.group10.ui.components.menu;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.google.common.base.Splitter;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -27,7 +28,7 @@ import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.DefinitionBlock;
+import nl.utwente.group10.ui.components.blocks.function.DefinitionBlock;
 import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
 import nl.utwente.group10.ui.components.blocks.input.DisplayBlock;
 import nl.utwente.group10.ui.components.blocks.input.GraphBlock;
