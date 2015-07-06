@@ -1,10 +1,14 @@
 package nl.utwente.group10.ui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -17,7 +21,9 @@ import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import nl.utwente.group10.ui.menu.FunctionMenu;
@@ -28,6 +34,14 @@ import nl.utwente.group10.ui.menu.FunctionMenu;
 public class CustomUIPane extends TactilePane {
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
+    
+    /**
+     * Property that keeps track of Haskell errors occurring somewhere in the
+     * program. This gets sets to true when an error first occurs somewhere,
+     * and only gets set to false again when the entire program is error free.
+     */
+    private BooleanProperty errorOccurred;
+    
     private Optional<GhciSession> ghci;
     private InspectorWindow inspector;
 
@@ -38,15 +52,23 @@ public class CustomUIPane extends TactilePane {
     private Env envInstance;
 
     /**
+     * Maps expressions to function blocks for looking up the function block responsible for an expression in case of an
+     * error.
+     */
+    private Map<Expr, FunctionBlock> exprToFunction;
+
+    /**
      * Constructs a new instance.
      */
     public CustomUIPane(HaskellCatalog catalog) {
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
+        this.errorOccurred = new SimpleBooleanProperty(false);
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
         this.catalog = catalog;
         this.envInstance = catalog.asEnvironment();
+        this.exprToFunction = new HashMap<Expr, FunctionBlock>();
 
         try {
             this.ghci = Optional.of(new GhciSession());
@@ -148,20 +170,11 @@ public class CustomUIPane extends TactilePane {
         for (Node node : getChildren()) {
             if (node instanceof Block) {
                 ((Block) node).invalidateConnectionState();
+                ((Block) node).invalidateVisualState();
             }
         }
 
         if (inspector != null) inspector.update();
-    }
-
-    public final void errorAll() {
-        for (Node node : getChildren()) {
-            if (node instanceof Block) {
-                ((Block) node).setError(true);
-            } else if (node instanceof Connection) {
-                ((Connection) node).setError(true);
-            }
-        }
     }
 
     public Optional<Block> getSelectedBlock() {
@@ -174,6 +187,18 @@ public class CustomUIPane extends TactilePane {
 
     public ObjectProperty<Optional<Block>> selectedBlockProperty() {
         return selectedBlock;
+    }
+    
+    public boolean getErrorOccured() {
+        return errorOccurred.get();
+    }
+    
+    public void setErrorOccurred(boolean error) {
+        errorOccurred.set(error);
+    }
+    
+    public BooleanProperty errorOccurredProperty() {
+        return errorOccurred;
     }
 
     /** Remove the given block from this UI pane, including its connections. */
@@ -228,5 +253,33 @@ public class CustomUIPane extends TactilePane {
         this.setScale(scale * ratio);
         this.setTranslateX(this.getTranslateX() * ratio);
         this.setTranslateY(this.getTranslateY() * ratio);
+    }
+
+    /**
+     * Removes the association of the given expression. This should be called when an expression no longer exists in the
+     * tree.
+     * @param expr The expression to remove.
+     */
+    public void removeExprToFunction(Expr expr) {
+        exprToFunction.remove(expr);
+    }
+
+    /**
+     * Associates the given expression with the given function block. This should be called when a new expression is
+     * created and used in the tree.
+     * @param expr The expression to associate.
+     * @param block The function block for the expression.
+     */
+    public void putExprToFunction(Expr expr, FunctionBlock block) {
+        exprToFunction.put(expr,block);
+    }
+
+    /**
+     * Returns the function block for an expression.
+     * @param expr The expression to get the function block for.
+     * @return The function block for the given expression.
+     */
+    public FunctionBlock getExprToFunction(Expr expr) {
+        return exprToFunction.get(expr);
     }
 }

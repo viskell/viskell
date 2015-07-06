@@ -17,7 +17,6 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-
 import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
@@ -27,7 +26,15 @@ import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
-import nl.utwente.group10.ui.components.blocks.*;
+import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.DefinitionBlock;
+import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
+import nl.utwente.group10.ui.components.blocks.input.DisplayBlock;
+import nl.utwente.group10.ui.components.blocks.input.GraphBlock;
+import nl.utwente.group10.ui.components.blocks.input.RGBBlock;
+import nl.utwente.group10.ui.components.blocks.output.SliderBlock;
+import nl.utwente.group10.ui.components.blocks.output.ValueBlock;
+import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 /**
  * FunctionMenu is a viskell specific menu implementation. A FunctionMenu is an
@@ -139,8 +146,8 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         // TODO: Once the Env is available, the type should be pulled from the
         // Env here (don't just calculate it over and over). Or just pass the
         // signature String.
-        FunctionBlock fb = new FunctionBlock(entry.getName(),
-                entry.asHaskellObject(new Context()), parent);
+        FunctionBlock fb = new FunctionBlock(entry.getName(), entry.asHaskellObject(new Context()), parent);
+        fb.setConnectionState(ConnectionCreationManager.nextConnectionState());
         addBlock(fb);
     }
 
@@ -190,6 +197,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
     private void addBlock(Block block) {
         parent.getChildren().add(block);
+        block.setConnectionState(ConnectionCreationManager.nextConnectionState());
         Point2D pos = this.localToParent(0, 0);
         block.relocate(pos.getX() - 200, pos.getY());
     }

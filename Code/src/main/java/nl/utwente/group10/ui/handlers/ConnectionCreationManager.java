@@ -30,15 +30,20 @@ import nl.utwente.group10.ui.exceptions.InvalidInputIdException;
  * </p>
  */
 public class ConnectionCreationManager {
-
-    /** The CustomUIPane associated with this class.*/
+    /** The Pane on which this ConnectionCreationManager is active. */
     CustomUIPane pane;
 
     /**
      * Touch points have an ID associated with each specific touch point, this
      * is the ID associated with the Mouse.
      */
-    public static final Integer MOUSE_ID = 0;
+    public static final Integer INPUT_ID_MOUSE = -1;
+    
+    /**
+     * Touch points have an ID associated with each specific touch point, this
+     * is the ID associated with no input.
+     */
+    public static final Integer INPUT_ID_NONE = -2;
     
     /**
      * Maps an (Touch or Mouse) ID to a line, used to keep track of what touch
@@ -47,7 +52,7 @@ public class ConnectionCreationManager {
     private Map<Integer, Connection> connections;
 
     /**
-     * When set to true, the connection to create can override existing
+     * When set to true, the connection to be created can override existing
      * connections to a ConnectionAnchor.
      */
     public static final boolean CONNECTIONS_OVERRIDE_EXISTING = true;
@@ -61,6 +66,10 @@ public class ConnectionCreationManager {
     /** The int representing the current connection state */
     private static int connectionState = 0; 
     
+    /**
+     * Constructs a new ConnectionCreationManager.
+     * @param pane The CustomUIPane to which this ConnectionCreationManager belongs.
+     */
     public ConnectionCreationManager(CustomUIPane pane) {
         this.pane = pane;
         connections = new HashMap<Integer, Connection>();
@@ -159,7 +168,7 @@ public class ConnectionCreationManager {
     public void updateLine(int id, double x, double y) {
         Point2D localPos = pane.sceneToLocal(x, y);
         if (connections.get(id) != null) {
-            connections.get(id).setFreeEnds(localPos.getX(), localPos.getY());
+            connections.get(id).setFreeEnds(localPos);
         }
     }
     
@@ -173,7 +182,7 @@ public class ConnectionCreationManager {
     /**
      * Go to the next connection state.
      */
-    public static void nextConnectionState(){
-        connectionState++;
+    public static int nextConnectionState(){
+        return ++connectionState;
     }
 }

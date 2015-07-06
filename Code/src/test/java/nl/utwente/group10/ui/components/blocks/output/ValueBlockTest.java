@@ -1,7 +1,8 @@
-package nl.utwente.group10.ui.components.blocks;
+package nl.utwente.group10.ui.components.blocks.output;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import nl.utwente.group10.ui.components.blocks.ComponentTest;
 
 import nl.utwente.group10.haskell.type.ConstT;
 import org.junit.Test;

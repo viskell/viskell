@@ -1,3 +1,2 @@
-<?import nl.utwente.group10.ui.components.lines.ConnectionLine?>
 <fx:root type="nl.utwente.group10.ui.components.lines.ConnectionLine" xmlns:fx="http://javafx.com/fxml/" styleClass="connection">
 </fx:root>

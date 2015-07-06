@@ -27,6 +27,9 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     public static final double BEZIER_CONTROL_OFFSET_MINIMUM = 10f;
     public static final double BEZIER_CONTROL_OFFSET_MAXIMUM = 200f;
 
+    /**
+     * Constructs a new ConnectionLine from FXML.
+     */
     public ConnectionLine() {
         this.loadFXML("ConnectionLine");
 
@@ -36,35 +39,25 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     }
 
     /**
-     * Sets the start coordinates for this Line object.
+     * Sets the start coordinates for this ConnectionLine object.
      *
-     * @param xCoord
-     * @param yCoord
+     * @param point Coordinates local to this Line's parent.
      */
-    public void setStartPosition(double xCoord, double yCoord) {
-        setStartX(xCoord);
-        setStartY(yCoord);
+    public void setStartPositionParent(Point2D point) {
+        setStartX(point.getX());
+        setStartY(point.getY());
         updateBezierControlPoints();
-    }
-
-    public void setStartPosition(Point2D point) {
-        setStartPosition(point.getX(), point.getY());
     }
 
     /**
-     * Sets the end coordinate for this Line object.
+     * Sets the end coordinates for this ConnectionLine object.
      *
-     * @param xCoord
-     * @param yCoord
+     * @param point coordinates local to this Line's parent.
      */
-    public void setEndPosition(double xCoord, double yCoord) {
-        setEndX(xCoord);
-        setEndY(yCoord);
+    public void setEndPositionParent(Point2D point) {
+        setEndX(point.getX());
+        setEndY(point.getY());
         updateBezierControlPoints();
-    }
-
-    public void setEndPosition(Point2D point) {
-        setEndPosition(point.getX(), point.getY());
     }
 
     /**

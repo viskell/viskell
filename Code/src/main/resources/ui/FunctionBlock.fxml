@@ -1,28 +1,27 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import nl.utwente.group10.ui.components.blocks.FunctionBlock?>
-<fx:root type="nl.utwente.group10.ui.components.blocks.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
-    <BorderPane>
-        <top>
-            <FlowPane fx:id="anchorSpace" prefWrapLength="100" vgap="50" hgap="10"/>
-        </top>
-        <center>
-            <HBox styleClass="function, block">
-                <HBox>
-                    <padding><Insets top="5" right="10" bottom="5" left="10"/></padding>
-                    <Label text="${controller.name}" styleClass="title" />
-                </HBox>
-                <HBox fx:id="argumentSpace" spacing="5">
-                    <padding><Insets top="5" right="5" bottom="5" left="5"/></padding>
-                </HBox>
-            </HBox>
-        </center>
-        <bottom>
-            <VBox fx:id="outputSpace" alignment = "center"/>
-        </bottom>
-    </BorderPane>
+
+<fx:root type="nl.utwente.group10.ui.components.blocks.function.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
+	<BorderPane>
+		<top>
+			<Pane fx:id="inputSpace" maxHeight="0"/>
+		</top>
+		<center>
+			<HBox styleClass="function, block">
+				<BorderPane fx:id="functionInfo">
+                    <padding><Insets top="0" right="10" bottom="0" left="10"/></padding>
+					<center>
+						<Label text="${controller.name}" styleClass="title" />
+					</center>
+				</BorderPane>
+			    <Pane fx:id="nestSpace"/>
+			</HBox>
+		</center>
+		<bottom>
+			<BorderPane fx:id="outputSpace" maxHeight="0"/>
+		</bottom>
+	</BorderPane>
 </fx:root>

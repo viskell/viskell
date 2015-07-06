@@ -1,13 +1,7 @@
 package nl.utwente.group10.ui.components.anchors;
 
-import java.util.Optional;
-
-import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.blocks.OutputBlock;
-import nl.utwente.group10.ui.components.lines.Connection;
-import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 import nl.utwente.group10.ui.handlers.AnchorHandler;
 
 /**
@@ -17,26 +11,27 @@ public class OutputAnchor extends ConnectionAnchor {
     /**
      * @param block
      *            The block this Anchor is connected to.
-     * @param pane
-     *            The parent pane on which this anchor resides.
      */
-    public OutputAnchor(Block block, CustomUIPane pane) {
-        super(block, pane);
-        new AnchorHandler(pane.getConnectionCreationManager(), this);
+    public OutputAnchor(Block block) {
+        super(block);
+        // By default the invisible anchor covers an area above the visible
+        // anchor (for InputAnchors), this switches that around to cover more of
+        // the area under the visible anchor.
+        getInvisibleAnchor().setTranslateY(getInvisibleAnchor().getTranslateY() * -1);
+        new AnchorHandler(super.getBlock().getPane().getConnectionCreationManager(), this);
     }
-
+    
     @Override
     public boolean canAddConnection() {
         // OutputAnchors can have multiple connections;
         return true;
     }
 
+    /**
+     * @return The expression carried by the block to which this anchor belongs.
+     */
     @Override
-    public Type getType() {
-        if (getBlock() instanceof OutputBlock) {
-            return ((OutputBlock) getBlock()).getOutputType(this.getPane().getEnvInstance());
-        } else {
-            throw new TypeUnavailableException();
-        }
+    public Expr getExpr() {
+        return getBlock().getExpr();
     }
 }

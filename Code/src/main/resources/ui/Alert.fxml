@@ -3,6 +3,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.layout.VBox?>
+
 <fx:root type="nl.utwente.group10.ui.components.CustomAlert" xmlns:fx="http://javafx.com/fxml/">
     <VBox styleClass="alert" spacing="12">
         <Text fx:id="text" styleClass="msg" wrappingWidth="500" />

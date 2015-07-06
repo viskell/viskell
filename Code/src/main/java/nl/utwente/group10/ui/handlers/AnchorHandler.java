@@ -19,7 +19,7 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 	/** The ConnectionAnchor to which this AnchorHandler belongs. */
 	private ConnectionAnchor anchor;
 
-	/**
+    /**
      * Constructs a new AnchorHandler
      * 
      * @param manager
@@ -28,7 +28,8 @@ public class AnchorHandler implements EventHandler<InputEvent> {
      * @param anchor
      *            The ConnectionAnchor to which this AnchorHandler belongs.
      */
-	public AnchorHandler(ConnectionCreationManager manager, ConnectionAnchor anchor) {
+	public AnchorHandler(ConnectionCreationManager manager,
+			ConnectionAnchor anchor) {
 		this.manager = manager;
 		this.anchor = anchor;
 
@@ -44,27 +45,27 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 	@Override
 	public void handle(InputEvent event) {
 		Node pickResult = null;
-		int inputId = -1;
+		int inputId = ConnectionCreationManager.INPUT_ID_NONE;
 		double x = 0;
 		double y = 0;
 
 		/* Extract input information for either mouse or touch. */
 		if (event instanceof MouseEvent && !((MouseEvent) event).isSynthesized()) {
 			MouseEvent mEvent = ((MouseEvent) event);
-			pickResult = mEvent.getPickResult().getIntersectedNode();
-			inputId = ConnectionCreationManager.MOUSE_ID;
+			pickResult = mEvent.getPickResult().getIntersectedNode().getParent();
+			inputId = ConnectionCreationManager.INPUT_ID_MOUSE;
 			x = mEvent.getSceneX();
 			y = mEvent.getSceneY();
 		} else if (event instanceof TouchEvent) {
 			TouchPoint tp = ((TouchEvent) event).getTouchPoint();
-			pickResult = tp.getPickResult().getIntersectedNode();
+			pickResult = tp.getPickResult().getIntersectedNode().getParent();
 			inputId = tp.getId();
 			x = tp.getSceneX();
 			y = tp.getSceneY();
 		}
 
-		/* Use the input information to call the appropriate method.*/
-		if (pickResult != null && inputId >= 0) {
+		/* Use the input information to call the appropriate method. */
+		if (pickResult != null && (inputId == ConnectionCreationManager.INPUT_ID_MOUSE || inputId > 0)) {
 			if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)
 					|| event.getEventType().equals(TouchEvent.TOUCH_PRESSED)) {
 				inputPressed(inputId);
@@ -93,7 +94,7 @@ public class AnchorHandler implements EventHandler<InputEvent> {
 		}
 	}
 	
-	/**
+    /**
      * Method to indicate that the input moved.
      * 
      * @param inputId
