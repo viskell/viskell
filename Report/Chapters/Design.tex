@@ -152,8 +152,7 @@ We also kept in mind that the program might have to be usable for multiple users
 \end{figure}
 
 \section{Languages and libraries}
-%Dit stuk is krom en kan een beter verhaal worden.
-Viskell is written in Java using Java 8 with JavaFX. \index{JavaFX}
+Viskell is written in Java 8, which comes bundled with JavaFX. \index{JavaFX}
 Java 8 is chosen because it, unlike Java 7, still receives public updates at the moment of writing.
 Language level 8 is chosen to make use of some of the new features in this version.
 % redundant
@@ -219,7 +218,7 @@ interface can also be used to check a program for faults.
 \subsection{Type system and type checker}
 
 The error messages from GHCi are hard to parse and do not always provide detailed information about where the error
-occured. Therefore we implemented our own type checker. This type checker is designed to catch most of the type errors \index{type checker}
+occurred. Therefore we implemented our own type checker. This type checker is designed to catch most of the type errors \index{type checker}
 which are in the design scope of the project and not raise false negatives. Pushing Haskell code to GHCi is still needed
 to be sure that the code compiles (and will always be needed to catch runtime errors).
 
