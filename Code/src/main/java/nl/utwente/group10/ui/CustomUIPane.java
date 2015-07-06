@@ -33,7 +33,14 @@ import nl.utwente.group10.ui.menu.FunctionMenu;
 public class CustomUIPane extends TactilePane {
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
+    
+    /**
+     * Property that keeps track of Haskell errors occurring somewhere in the
+     * program. This gets sets to true when an error first occurs somewhere,
+     * and only gets set to false again when the entire program is error free.
+     */
     private BooleanProperty errorOccurred;
+    
     private Optional<GhciSession> ghci;
     private InspectorWindow inspector;
 

@@ -1,14 +1,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import nl.utwente.group10.ui.components.blocks.function.FunctionBlock?>
-<fx:root type="nl.utwente.group10.ui.components.blocks.function.FunctionBlock"
-	xmlns:fx="http://javafx.com/fxml/1">
+
+<fx:root type="nl.utwente.group10.ui.components.blocks.function.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
 	<BorderPane>
 		<top>
 			<Pane fx:id="inputSpace" maxHeight="0"/>
@@ -21,8 +17,7 @@
 						<Label text="${controller.name}" styleClass="title" />
 					</center>
 				</BorderPane>
-				    <Pane fx:id="nestSpace">
-				</Pane>
+			    <Pane fx:id="nestSpace"/>
 			</HBox>
 		</center>
 		<bottom>

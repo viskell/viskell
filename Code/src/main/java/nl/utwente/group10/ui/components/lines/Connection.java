@@ -188,9 +188,9 @@ public class Connection extends ConnectionLine implements
 
         if (isConnected()) {
             // The ConnectionState changed.
-            ConnectionCreationManager.nextConnectionState();
-            startAnchor.get().getBlock().setConnectionState(ConnectionCreationManager.getConnectionState());
-            endAnchor.get().getBlock().setConnectionState(ConnectionCreationManager.getConnectionState());
+            int state = ConnectionCreationManager.nextConnectionState();
+            startAnchor.get().getBlock().setConnectionState(state);
+            endAnchor.get().getBlock().setConnectionState(state);
         }
         invalidateAnchorPositions();
     }
@@ -282,13 +282,13 @@ public class Connection extends ConnectionLine implements
             anchor.disconnectConnection(this);
             
             if (wasConnected) {
-                ConnectionCreationManager.nextConnectionState();
+                int state = ConnectionCreationManager.nextConnectionState();
     
                 //Let the now disconnected anchor update its visuals.
-                anchor.getBlock().setConnectionState(ConnectionCreationManager.getConnectionState());
+                anchor.getBlock().setConnectionState(state);
                 //Let the remaining connected anchors update their visuals.
-                startAnchor.ifPresent(a -> a.getBlock().setConnectionState(ConnectionCreationManager.getConnectionState()));
-                endAnchor.ifPresent(a -> a.getBlock().setConnectionState(ConnectionCreationManager.getConnectionState()));
+                startAnchor.ifPresent(a -> a.getBlock().setConnectionState(state));
+                endAnchor.ifPresent(a -> a.getBlock().setConnectionState(state));
                 this.setErrorState(false);
             }
         }

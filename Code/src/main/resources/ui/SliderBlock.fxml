@@ -1,16 +1,11 @@
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.Pane?>
-<?import nl.utwente.group10.ui.components.blocks.output.SliderBlock?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.HBox?>
-<fx:root type="nl.utwente.group10.ui.components.blocks.output.SliderBlock"
-	xmlns:fx="http://javafx.com/fxml/">
+
+<fx:root type="nl.utwente.group10.ui.components.blocks.output.SliderBlock" xmlns:fx="http://javafx.com/fxml/">
 	<BorderPane>
 		<center>
-			<BorderPane styleClass="value, block" minHeight="75"
-				maxHeight="75" minWidth="150" maxWidth="150">
+			<BorderPane styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150" maxWidth="150">
 				<center>
 					<Slider min="0.0" max="1.0" fx:id="slider"></Slider>
 				</center>

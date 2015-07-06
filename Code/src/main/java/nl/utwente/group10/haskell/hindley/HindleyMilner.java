@@ -27,7 +27,8 @@ public final class HindleyMilner {
     static int tvOffset = 0;
 
     static {
-        HindleyMilner.logger.setLevel(Level.OFF);
+        HindleyMilner.logger.setLevel(Level.WARNING);
+        // Changing this to Level.INFO will show debug messages.
     }
     
     /**

@@ -26,19 +26,19 @@ import java.util.NoSuchElementException;
  */
 public class RGBBlock extends DisplayBlock {
     /** The InputAnchor to which the Red value should be connected. **/
-    private InputAnchor r;
+    private final InputAnchor r;
     
     /** The InputAnchor to which the Green value should be connected. **/
-    private InputAnchor g;
+    private final InputAnchor g;
     
     /** The InputAnchor to which the Blue value should be connected. **/
-    private InputAnchor b;
+    private final InputAnchor b;
 
     /** The Pane to paint with the currently inputed color. **/
     @FXML private Pane well;
     
     /** Default Background to use when no values are inputed. **/
-    private Background defaultBackground;
+    private final Background defaultBackground;
 
     public RGBBlock(CustomUIPane pane) {
         super(pane, "RGBBlock");

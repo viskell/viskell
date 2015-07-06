@@ -236,6 +236,11 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                     // Analyze the entire tree.
                     this.getExpr().analyze(getPane().getEnvInstance());
                     getPane().setErrorOccurred(false);
+                    // TODO: This will set the errorOccurred for the entire
+                    // program, not just the invalidated tree. This means that
+                    // when having multiple small program trees, errors get
+                    // reset to quickly.
+                    
                     // No type mismatches.
                 } catch (HaskellTypeError e) {
                     // A Type mismatch occurred.

@@ -5,6 +5,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TreeView?>
+
 <fx:root type="nl.utwente.group10.ui.InspectorWindow" xmlns:fx="http://javafx.com/fxml/">
     <center>
         <TabPane>

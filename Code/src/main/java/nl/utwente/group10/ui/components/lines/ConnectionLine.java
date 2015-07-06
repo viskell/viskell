@@ -28,7 +28,7 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
     public static final double BEZIER_CONTROL_OFFSET_MAXIMUM = 200f;
 
     /**
-     * Constructs a new ConnectionLine.
+     * Constructs a new ConnectionLine from FXML.
      */
     public ConnectionLine() {
         this.loadFXML("ConnectionLine");

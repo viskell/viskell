@@ -110,14 +110,14 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         this.knot.layoutYProperty().bind(this.heightProperty().divide(2));
 
         //Mouse listeners
-        this.knot.setOnMousePressed(event -> {knotPressed(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
-        this.knot.setOnMouseDragged(event -> {knotMoved(event); event.consume();});
-        this.knot.setOnMouseReleased(event -> {knotReleased(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
+        this.knot.setOnMousePressed(event -> {onKnotPressed(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
+        this.knot.setOnMouseDragged(event -> {onKnotMoved(event); event.consume();});
+        this.knot.setOnMouseReleased(event -> {onKnotReleased(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
         
         //Touch listeners
-        this.knot.setOnTouchPressed(event -> {knotPressed(event.getTouchPoint().getId()); event.consume();});
-        this.knot.setOnTouchMoved(event -> {knotMoved(event); event.consume();});
-        this.knot.setOnTouchReleased(event -> {knotReleased(event.getTouchPoint().getId()); event.consume();});
+        this.knot.setOnTouchPressed(event -> {onKnotPressed(event.getTouchPoint().getId()); event.consume();});
+        this.knot.setOnTouchMoved(event -> {onKnotMoved(event); event.consume();});
+        this.knot.setOnTouchReleased(event -> {onKnotReleased(event.getTouchPoint().getId()); event.consume();});
         
         //Update the size of this Pane
         this.setPrefHeight(HEIGHT);
@@ -144,7 +144,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * Binds a region's layoutY property to always be vertically centered in the ArgumentSpace. 
      * @param region
      */
-    public void centerLayoutVertical(Region region) {
+    private void centerLayoutVertical(Region region) {
         region.layoutYProperty().bind(this.heightProperty().divide(2).subtract(region.heightProperty().divide(2)));
     }    
 
@@ -157,9 +157,11 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
     
     /**
      * To be called when the knot gets pressed.
+     * Sets up a new drag action by storing the inputID.
+     * 
      * @param inputID InputID of the input that pressed the knot.
      */
-    private void knotPressed(int inputID) {
+    private void onKnotPressed(int inputID) {
         knot.layoutXProperty().unbind();
         if(this.inputID == ConnectionCreationManager.INPUT_ID_NONE) {
             this.inputID = inputID;
@@ -172,7 +174,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * To be called when the knot gets released
      * @param inputID InputID of the input that released the knot.
      */
-    private void knotReleased(int inputID) {
+    private void onKnotReleased(int inputID) {
         if(this.inputID == inputID) {
             this.inputID = ConnectionCreationManager.INPUT_ID_NONE;
             snapToKnotIndex();
@@ -190,7 +192,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      *            getting the X and Y coordinate is necessary, and this
      *            requires separate actions for Mouse and Touch events.
      */
-    private void knotMoved(InputEvent event) {
+    private void onKnotMoved(InputEvent event) {
         if (event instanceof MouseEvent) {
             MouseEvent mEvent = (MouseEvent) event;
             knotMoved(ConnectionCreationManager.INPUT_ID_MOUSE, mEvent.getSceneX());
@@ -306,9 +308,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      */
     public void invalidateOutputContent() {
         Optional<String> text = block.getOutputAnchor().getStringType();
-        if (text.isPresent()) {
-            rightArgument.setText(text.get());
-        }
+        text.ifPresent(a -> rightArgument.setText(a));
     }
     
     /**
