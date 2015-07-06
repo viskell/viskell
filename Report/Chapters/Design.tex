@@ -30,6 +30,9 @@ A useful example for this is the \code{map} function.
 
 Each kind of block has a different colour to make them easily recognizable.
 
+\subsection{Previous function block concepts}
+%TODO
+
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/blocks-inputs}
@@ -63,17 +66,15 @@ Each kind of block has a different colour to make them easily recognizable.
 \subsubsection{Errors}
 
 An important part of Viskell is representing programming errors.
-Instead of requiring users to compile a complete program, type errors are displayed as soon as a user connects two blocks.
-An error is represented as a colored line and colored type in the target block.
-An icon is displayed as well to help color blind users.
+Instead of requiring users to stop editing and compile a complete program, Viskell re-compiles whenever a change in the program is made. Due to this, type errors can be displayed as soon as a user connects two blocks. These errors are represented as a coloured, red, line and coloured, red, type in the target block's input arguments. An icon is displayed inside the incorrectly connected anchor as well to help colour blind users.
 
 \subsubsection{Menus}
 
 During the design process many ideas for the menus came up.
 One of the first ideas was to have a circular menu. \label{circular_menu} \index{circle menu}
-The advantages of the circle menu would be that the orientation of the device would not have any influence on the usability of the menu.
-This makes using the program on a large multi-touch table easier.
-However, the implementation of the menu would take too much time and the idea was therefore dismissed.
+The advantages of the circular menu would be that the orientation of the device would not have any influence on the usability of the menu.
+This would makes using the program on a large multi-touch table with multiple users easier.
+However, the implementation of the menu would take too much time and on top of that the client preferred something more like his initial sketches. The idea of a circular menu was therefore dropped.
 
 \begin{figure}[p]
 	\centering
@@ -88,14 +89,13 @@ However, the implementation of the menu would take too much time and the idea wa
 	\caption{Circular menu diagram}
 \end{figure}
 
-The final design has two separate menus, one for adding new blocks and one for options on existing blocks.
+The final menu design has two separate menus, one for adding new blocks and one for contextual options on existing blocks.
 
 The primary menu (or `function menu') uses `drawers' for the categories of the functions. \index{primary menu} \index{function menu}
 This way it is easy to find functions even without an extensive knowledge of Haskell.
 In- and output blocks and the function definition block can be created using buttons at the bottom of the menu.
 This location is chosen to make them quickly available.
-The primary menu can be opened multiple times at once and moved around the screen so multiple users can work on a single program.
-% And not limited by the size of the screen.
+The primary menu can be opened multiple times at once and moved around the screen so multiple users can work on a single program. An additional benefit of having a floating menu is that screen size never impacts reachability of the menu, as opposed to having a menu stuck to one of the sides.
 
 \begin{figure}[p]
 	\centering
@@ -105,7 +105,7 @@ The primary menu can be opened multiple times at once and moved around the scree
 \end{figure}
 
 The context menu is compact so is does not take up too much space. \index{context menu}
-It contains clear icons which represent different actions for that single block, like delete.
+It contains clear icons which represent different actions for the single selected block, like delete.
 The icons are large enough to touch, even for people with large fingers.
 
 \begin{figure}[p]
