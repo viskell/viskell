@@ -32,20 +32,19 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
     /** A block for attaching the argument (top) anchors to. */
     private class ArgumentBlock extends Block implements OutputBlock {
         private Type type;
-        private Function.FunctionArgument arg;
         private OutputAnchor anchor;
 
         public ArgumentBlock(DefinitionBlock parent, Type type) {
             super(parent.getPane());
             this.type = type;
-            this.arg = new Function.FunctionArgument(type);
+            this.expr = new Function.FunctionArgument(type);
 
             anchor = new OutputAnchor(this);
         }
 
         /** Returns the FunctionArgument expression we built. */
         public Function.FunctionArgument getArgument() {
-            return arg;
+            return (Function.FunctionArgument) getExpr();
         }
 
         @Override
@@ -111,5 +110,11 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
     private List<Function.FunctionArgument> getArguments() {
         return this.args.stream().map(ArgumentBlock::getArgument).collect(Collectors.toList());
+    }
+    
+    @Override
+    public final void updateExpr() {
+        expr = new Function(res.getExpr(), getArguments());
+        super.updateExpr();
     }
 }
