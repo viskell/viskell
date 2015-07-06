@@ -47,6 +47,9 @@ public class CustomUIPane extends TactilePane {
 
     private Point2D dragStart;
     private Point2D offset;
+    
+    /** Boolean to indicate that a drag (pan) action has started, yet not finished. */
+    private boolean dragging;
 
     private HaskellCatalog catalog;
     private Env envInstance;
@@ -78,6 +81,7 @@ public class CustomUIPane extends TactilePane {
 
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
+        this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleRelease);
         this.addEventHandler(ScrollEvent.SCROLL, this::handleScroll);
 
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
@@ -119,9 +123,12 @@ public class CustomUIPane extends TactilePane {
     }
 
     private void handlePress(MouseEvent e) {
+        System.out.println("MouseEvent Press!");
         if (e.isPrimaryButtonDown()) {
             offset = new Point2D(this.getTranslateX(), this.getTranslateY());
             dragStart = new Point2D(e.getScreenX(), e.getScreenY());
+            dragging = true;
+            System.out.println("DragStart: " + dragStart);
         } else if (e.isSecondaryButtonDown()) {
             FunctionMenu menu = new FunctionMenu(catalog, this);
             menu.relocate(e.getX(), e.getY());
@@ -131,12 +138,21 @@ public class CustomUIPane extends TactilePane {
 
     private void handleDrag(MouseEvent e) {
         if (!e.isSecondaryButtonDown()) {
-            Point2D dragCurrent = new Point2D(e.getScreenX(), e.getScreenY());
-            Point2D delta = dragStart.subtract(dragCurrent);
-
-            this.setTranslateX(offset.getX() - delta.getX());
-            this.setTranslateY(offset.getY() - delta.getY());
+            if (dragging) {
+                Point2D dragCurrent = new Point2D(e.getScreenX(), e.getScreenY());
+                Point2D delta = dragStart.subtract(dragCurrent);
+    
+                this.setTranslateX(offset.getX() - delta.getX());
+                this.setTranslateY(offset.getY() - delta.getY());
+            } else {
+                dragStart = new Point2D(e.getScreenX(), e.getScreenY());
+                dragging = true;
+            }
         }
+    }
+    
+    private void handleRelease(MouseEvent e) {
+        dragging = false;
     }
 
     private void setScale(double scale) {
