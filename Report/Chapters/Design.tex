@@ -99,13 +99,11 @@ This separation is made to make development and debugging for the part that gene
 It also makes using the user interface for a different purpose a bit easier, although the user interface has been designed specifically for our use case.
 
 \section{Front end architecture}
-We designed Viskell with multi-touch interfaces in mind. \code{\gls{TactileAPI}}, a public library, was made available to us to assist with multi-touch interfacing. In order to add onto the existing functionality of TactileAPI and to implement our own new functionality we used JavaFX.
-The implementation of our own extra functionality came in the form of \code{CustomUIPane}, an extension of \code{TactilePane}.
-\code{CustomUIPane} has many of the same responsibilities of a main \code{Window} and stores most of the program state.
+We designed Viskell with multi-touch interfaces in mind. \code{\gls{TactileAPI}}, a public library, was made available to us to assist with multi-touch interfacing. Since TactileAPI is based on javaFX, Viskell is also based on javaFX. \code{CustomUIPane}, our extension of \code{TactilePane}, has many of the same responsibilities of a main \code{Window} and stores most of the program state.
 Listeners are attached to \code{CustomUIPane} to monitor \code{Mouse-} and \code{TouchEvents} that are directly responsible for the interaction with Menus.
 
-While the general listeners where controlled from the \code{CustomUIPane}, components often have specific listeners attached to them.
-This was done so that the gestures could easily change the state of the component it belonged to. Wherever possible, complex handlers were given their own class, such as \code{AnchorHandler}. Since the project was aimed at providing support for multi-touch we needed additional functionality to accommodate this. A solution that was often chosen was the mapping of an input identifier to performed actions.
+While the general listeners are controlled from the \code{CustomUIPane}, components often have specific listeners attached to them.
+This is done so that the gestures could easily change the state of the component it belonged to. Wherever possible, complex handlers were given their own class such as \code{AnchorHandler}. Since the project is aimed at providing support for multi-touch we needed additional functionality to accommodate this. A solution that is often chosen is the mapping of an input identifier to performed actions.
 
 Placed on \code{CustomUIPane} are components, detailed further on. For all of the Components we made use of the FXML language available in javaFX.
 
@@ -113,19 +111,18 @@ Placed on \code{CustomUIPane} are components, detailed further on. For all of th
 Basically everything visible on the \code{CustomUIPane} are components of some kind (menus fall in somewhere in-between component and non-component).
 Each component is made by extending an existing javaFX \code{Node}, this is done in order to be able to directly link interactivity to the objects that are visible on the screen.
 Putting each object in a separate component also added modularity and made it more easily extendible.
-To further support extendibility, all the components are written in such a way that it should not be hard to make a new component with slightly different needs.
 
-We decided to have 3 kinds of components, blocks, anchors and lines, since most components could be categorized in one of these 3 classes.
+Most components can be categorized in 3 classes: blocks, anchors and lines.
+\code{Blocks} can be further categorized into \code{FunctionBlocks}, \code{InputBlocks} and \code{OutputBlocks}.
 
-\code{Blocks} were further categorized into \code{FunctionBlocks}, \code{InputBlocks} and \code{OutputBlocks}.
-\code{InputBlocks} are blocks that can receive input, these were all grouped together in a single two method interface.
-\code{OutputBlocks} are blocks that provide output, these were also grouped together in a single one method interface
-\code{FunctionBlocks} implement both interfaces.
+\code{InputBlocks}, blocks that can receive input, and \code{OutputBlocks}, blocks that provide output, each have their own interface that a \code{Block} can implement. \code{DisplayBlock} is an example of such an \code{InputBlock}, \code{ValueBlock} is an example of an \code{OutputBlock}, \code{FunctionBlocks} implement both interfaces.
+
+%TODO menus
 
 \subsection{FXML \& CSS}
-FXML was used in an attempt to separate structure from behaviour, this turned out to be very hard to stick to. The end result is that FXML is used to construct most components where the code added or changed the component loaded from FXML. We did use FXML to set most of the (often arbitrary) UI settings like height, width and other attributes.
+FXML is used in an attempt to separate structure from behaviour, this separation turned out to be very hard to keep. The end result is that FXML is used to construct most components were the code adds or changes the component after being loaded from FXML. We did use FXML to set most of the (often arbitrary) UI settings like height, width and other attributes.
 
-CSS was used to seperate style from structure, this turned out to be more easy to stick to. Style classes were added mostly in FXML, some (like a changing 'error' style class) in Java. A single CSS style file was used for the entire UI, this contained fx styling for all the components we used.
+CSS is used to separate style from structure, this separation turned out to be easier to keep. We defined the visual look (such as colours) of the entire UI in style classes in a single CSS file. Fitting style classes are applied to each component, mostly using FXML. Some style classes are updated dynamically (such as the error style class), this is done in Java.
 
 \section{Back end architecture}
 
