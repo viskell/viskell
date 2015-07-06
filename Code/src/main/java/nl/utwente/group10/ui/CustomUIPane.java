@@ -123,12 +123,10 @@ public class CustomUIPane extends TactilePane {
     }
 
     private void handlePress(MouseEvent e) {
-        System.out.println("MouseEvent Press!");
         if (e.isPrimaryButtonDown()) {
             offset = new Point2D(this.getTranslateX(), this.getTranslateY());
             dragStart = new Point2D(e.getScreenX(), e.getScreenY());
             dragging = true;
-            System.out.println("DragStart: " + dragStart);
         } else if (e.isSecondaryButtonDown()) {
             FunctionMenu menu = new FunctionMenu(catalog, this);
             menu.relocate(e.getX(), e.getY());
