@@ -102,7 +102,7 @@ It also makes using the user interface for a different purpose a bit easier, alt
 We designed Viskell with multi-touch interfaces in mind. \code{\gls{TactileAPI}}, a public library, was made available to us to assist with multi-touch interfacing. In order to add onto the existing functionality of TactileAPI and to implement our own new functionality we used JavaFX.
 The implementation of our own extra functionality came in the form of \code{CustomUIPane}, an extension of \code{TactilePane}.
 \code{CustomUIPane} has many of the same responsibilities of a main \code{Window} and stores most of the program state.
-Listeners are attached to \code{CustomUIPane} to monitor \code{Mouse- and \code{TouchEvents} that are directly responsible for the interaction with Menus.
+Listeners are attached to \code{CustomUIPane} to monitor \code{Mouse-} and \code{TouchEvents} that are directly responsible for the interaction with Menus.
 
 While the general listeners where controlled from the \code{CustomUIPane}, components often have specific listeners attached to them.
 This was done so that the gestures could easily change the state of the component it belonged to. Wherever possible, complex handlers were given their own class, such as \code{AnchorHandler}. Since the project was aimed at providing support for multi-touch we needed additional functionality to accommodate this. A solution that was often chosen was the mapping of an input identifier to performed actions.
