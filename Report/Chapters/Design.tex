@@ -32,29 +32,28 @@ During the project, many different ideas where pitched for blocks. Eventually we
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/blocks-inputs}
-	\label{fig:blocks-inputs}
 	\caption{Different input blocks}
+	\label{fig:blocks-inputs}
 \end{figure}
 
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/blocks-bowties}
-	\label{fig:blocks-bowties}
 	\caption{Partial application of functions}
+	\label{fig:blocks-bowties}
 \end{figure}
 
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/blocks-outputs}
 	\label{fig:blocks-outputs}
-	\caption{Different output blocks}
 \end{figure}
 
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/blocks-example}
-	\label{fig:blocks-example}
 	\caption{Different kinds of blocks}
+	\label{fig:blocks-example}
 \end{figure}
 
 \subsubsection{Errors}
@@ -73,14 +72,14 @@ However, the implementation of the menu would take too much time and on top of t
 \begin{figure}[p]
 	\centering
 	\includegraphics[width=\textwidth]{Images/circlary}
-	\label{fig:circlary}
 	\caption{Concept of circular menu}
+	\label{fig:circlary}
 \end{figure}
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/diagram-circlary}
-	\label{fig:diagram-circlary}
 	\caption{Circular menu diagram}
+	\label{fig:diagram-circlary}
 \end{figure}
 
 The final menu design has two separate menus, one for adding new blocks and one for contextual options on existing blocks.
@@ -94,8 +93,8 @@ The primary menu can be opened multiple times at once and moved around the scree
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/menu}
-	\label{fig:ui-menu}
 	\caption{Primary menu}
+	\label{fig:ui-menu}
 \end{figure}
 
 The context menu is compact so is does not take up too much space. \index{context menu}
@@ -105,8 +104,8 @@ The icons are large enough to touch, even for people with large fingers.
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/blocks-menu}
-	\label{fig:blocks-menu}
 	\caption{Context menu}
+	\label{fig:blocks-menu}
 \end{figure}
 
 \subsubsection{Colour scheme}
@@ -126,13 +125,13 @@ A very clear rule in that philosophy is to always have to perform as little acti
 
 To make sure that the user has a good overview of what he is doing we focussed on good, instantaneous feedback. This can be seen in the way a type mismatch is displayed. Besides this users should also be able to correct the error quickly, for example with an undo button or the ease with which a connection is changed.
 
-An activity diagram of the interaction a user can have with Viskell is shown in Figure \ref{fig:activitydiagram} on page \pageref{fig:activitydiagram}. As can be seen in the figure, the number of actions a user can perform is not very large. This confirms the short learning curve we wanted to achieve. Although the number of actions is not very large, the number of possibilities in the program at a given point is quite extensive. This is visualised by the many lines in the activity diagram.
+An activity diagram of the interaction a user can have with Viskell is shown in figure \ref{fig:activitydiagram} on page \pageref{fig:activitydiagram}. As can be seen in the figure, the number of actions a user can perform is not very large. This confirms the short learning curve we wanted to achieve. Although the number of actions is not very large, the number of possibilities in the program at a given point is quite extensive. This is visualised by the many lines in the activity diagram.
 
 \begin{figure}[p]
 	\centering
 	\includegraphics[width=\textwidth]{Images/activitydiagram}
-	\label{fig:activitydiagram}
 	\caption{Activity diagram}
+	\label{fig:activitydiagram}
 \end{figure}
 
 The fact that it is possible to almost do anything from any state of the program is probably a (positive) side effect of our goals regarding multi-touch support. While the client's suggestions on the matter were a bit vague, we eventually settled on the requirement that all single user actions needed to be able to be concurrently performed by multiple users. This resulted in almost all actions being able to happen concurrently. Despite our attempts, some actions still do not support multi-touch, for example opening a function menu, yet this should be relatively easy to solve in the future.
