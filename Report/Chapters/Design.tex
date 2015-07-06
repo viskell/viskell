@@ -5,23 +5,30 @@ The specific implementation details are discussed in chapter \ref{chap:implement
 
 \section{User interface}
 
-The user interface basically consists of two parts, namely the menus for the different options a user can select and the part where the user can manipulate functions and create their own (the \gls{canvas}). \index{canvas}
+The entire user interface consists of components floating around on a drag and drop canvas, the \code{CustomUIPane}. Menus can be opened on empty \gls{canvas} and from their different blocks can be created and interacted with.
 
 \subsection{Graphical design}
 
 \subsubsection{Blocks and lines}
+Among the other components floating around in the canvas, blocks and the way they are connected make up the Haskell program. We chose blocks since this is a logical element for users, they can be seen as small calculators that perform a specific action.
 
-We chose to represent Haskell functions by function blocks since this is a logical element for users, a combination of blocks forms a program.
-Each block consists of a function name and its associated arguments. With each argument comes an anchor node to which other block can be connected through lines.
+Blocks have input and output anchors that can be used to create connections from one block to another, essentially representing the Haskell program flow. Input anchors are positioned on the top of a block, the output anchor on the bottom side. The inside of a block is defined by the block itself, for functions this is a name and the types of the arguments it expects.
 
-In Haskell, values are passed to functions without being saved as variables.
-The lines between blocks represent this flow.
-Thus, a program can be built like an electronic circuit.
+We chose to make a distinction between three kinds of blocks, each having their own colour to make them easily recognizable.
+The first kind is an output block, which represents a constant value. \index{value block} \index{output block}
+This input block can be connected to other blocks which can use its outputted value as input.
+Besides the most basic output block, the value block which takes a string as input for creation and then automatically detects the type, there is also a slider available. \index{slider block}
 
-We chose to make a distinction between three kinds of blocks.
-The first kind in an input block, which represents a constant value. \index{value block} \index{input block}
-This input block can be connected to other blocks to use the value as an input.
-Besides the most basic input block, the value block which takes a string as input and automatically detects the type, there is also a slider available. \index{slider block}
+The second kind of block displays the program's output (yet is called an input block, since it receives input).  \index{input block}
+There are multiple versions, ranging from a simple block that displays the string representation of its input to a graph block which can show a function. \index{graph block}
+
+The third kind of block is a function block. This block has a number of inputs, a single output, and a knot defining the number of inputs that need to be connected. \index{function block}
+
+The number of inputs can be changed by moving the knot left or right, over the function's arguments.
+This allows for passing (partially applied) functions as input for other functions. \index{partial application}
+A useful example for this is the \code{map} function.
+
+During the project, many different ideas where pitched for blocks, eventually we went with something a bit different from the client's initial idea. Some more information about this can be found in \ref{chap:Evaluation}.
 
 \begin{figure}[p]
 	\centering
@@ -30,20 +37,12 @@ Besides the most basic input block, the value block which takes a string as inpu
 	\caption{Different input blocks}
 \end{figure}
 
-The second kind of block is a function block. This block has a number of inputs and a single output, and defines the number of inputs that are going to be used. \index{function block}
-The number of inputs can be changed by moving a knot over the function arguments.
-This allows for passing (partially applied) functions as input for other functions. \index{partial application}
-A useful example for this is the \code{map} function.
-
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/blocks-bowties}
 	\label{fig:blocks-bowties}
 	\caption{Partial application of functions}
 \end{figure}
-
-The third kind of block displays an output.  \index{output block}
-There are multiple versions, ranging from a simple block that displays the string representation to a graph block which can show a function. \index{graph block}
 
 \begin{figure}[p]
 	\centering
@@ -52,9 +51,6 @@ There are multiple versions, ranging from a simple block that displays the strin
 	\caption{Different output blocks}
 \end{figure}
 
-Each kind of block has a different color to make them easily recognizable.
-% Not entirely correct
-
 \begin{figure}[p]
 	\centering
 	\includegraphics[scale=0.5]{Images/blocks-example}
@@ -62,20 +58,20 @@ Each kind of block has a different color to make them easily recognizable.
 	\caption{Different kinds of blocks}
 \end{figure}
 
+%TODO position these images better
+
 \subsubsection{Errors}
 
 An important part of Viskell is representing programming errors.
-Instead of requiring users to compile a complete program, type errors are displayed as soon as a user connects two blocks.
-An error is represented as a colored line and colored type in the target block.
-An icon is displayed as well to help color blind users.
+Instead of requiring users to stop editing and compile a complete program, Viskell re-compiles whenever a change in the program is made. Due to this, type errors can be displayed as soon as a user connects two blocks. These errors are represented as a coloured, red, line and coloured, red, type in the target block's input arguments. An icon is displayed inside the incorrectly connected anchor as well to help colour blind users.
 
 \subsubsection{Menus}
 
 During the design process many ideas for the menus came up.
 One of the first ideas was to have a circular menu. \label{circular_menu} \index{circle menu}
-The advantages of the circle menu would be that the orientation of the device would not have any influence on the usability of the menu.
-This makes using the program on a large multi-touch table easier.
-However, the implementation of the menu would take too much time and the idea was therefore dismissed.
+The advantages of the circular menu would be that the orientation of the device would not have any influence on the usability of the menu.
+This would makes using the program on a large multi-touch table with multiple users easier.
+However, the implementation of the menu would take too much time and on top of that the client preferred something more like his initial sketches. The idea of a circular menu was therefore dropped.
 
 \begin{figure}[p]
 	\centering
@@ -90,14 +86,13 @@ However, the implementation of the menu would take too much time and the idea wa
 	\caption{Circular menu diagram}
 \end{figure}
 
-The final design has two separate menus, one for adding new blocks and one for options on existing blocks.
+The final menu design has two separate menus, one for adding new blocks and one for contextual options on existing blocks.
 
 The primary menu (or `function menu') uses `drawers' for the categories of the functions. \index{primary menu} \index{function menu}
 This way it is easy to find functions even without an extensive knowledge of Haskell.
 In- and output blocks and the function definition block can be created using buttons at the bottom of the menu.
 This location is chosen to make them quickly available.
-The primary menu can be opened multiple times at once and moved around the screen so multiple users can work on a single program.
-% And not limited by the size of the screen.
+The primary menu can be opened multiple times at once and moved around the screen so multiple users can work on a single program. An additional benefit of having a floating menu is that screen size never impacts reachability of the menu, as opposed to having a menu stuck to one of the sides.
 
 \begin{figure}[p]
 	\centering
@@ -107,7 +102,7 @@ The primary menu can be opened multiple times at once and moved around the scree
 \end{figure}
 
 The context menu is compact so is does not take up too much space. \index{context menu}
-It contains clear icons which represent different actions for that single block, like delete.
+It contains clear icons which represent different actions for the single selected block, like delete.
 The icons are large enough to touch, even for people with large fingers.
 
 \begin{figure}[p]
@@ -117,32 +112,26 @@ The icons are large enough to touch, even for people with large fingers.
 	\caption{Context menu}
 \end{figure}
 
-\subsubsection{Color scheme}
+\subsubsection{Colour scheme}
 
-The background color is a dark gray.
+The background colour of the canvas is a type of dark grey.
 This is chosen because it is less tiring for the eyes than white and allows for a high contrast.
 The background also incorporates a grid pattern so users can align elements on the screen if they like to.
 
-All other components feature a cheerful color scheme.
-This color scheme provides good contrast with the background and good recognizability for the different kinds of blocks.
+All other components feature a cheerful colour scheme.
+This colour scheme provides good contrast with the background and solid recognizability for the different kinds of blocks.
 
 \subsection{Behaviour and interaction design}
 
-Interaction with the user interface is possible through touch gestures on the touch screen and on mouse actions on the computer.
-We wanted the application to be very easy to use.
-Since JavaFX only supports three different touch events, we decided to only use the matching gestures drag, tap and tap-hold (or right click on a computer).
-With these three gestures everything is accessible in the program.
-More complicated gestures were considered, but implementation proved to be difficult, especially with multiple users in mind.
+Our goal was to provide an easy to use and intuitive (multi) touch interface, with a very easy learning curve. To achieve this we looked at the way smart phones provided touch interaction and tried to stick to their philosophy on the matter.
 
-We also wanted the user to have to perform as little unnecessary actions to complete an action.
-An example is that a user does not have to disconnect a line first but can connect a new line to a connected anchor, which will automatically disconnect the old line.
-Also, users are able to restore opening the context-menu by just clicking somewhere else.
+A very clear rule in that philosophy is to always have to perform as little actions as possible to do what you want to do, we strived to achieve this with Viskell. An example of this is the ability to edit a connection. Instead of having to delete one first and then create a new one, we added the ability to edit a connection, combining what would otherwise be 2 actions into a single action. Our menus were also constructed with the same goal in mind.
 
-Providing the possibility to easily spot the result of an action and undo wrong actions helps to keep the learning curve of the program flat and the behavior of the program predictable.
+To make sure that the user has a good overview of what he is doing we focussed on as much and as direct live feedback as possible. This can be seen in the way a type mismatch is displayed. The idea was to also be able to quickly undo incorrect actions, by using an undo button, which should also keep the learning curve low.
 
-In the figure \ref{fig:activitydiagram} on page \pageref{fig:activitydiagram} it is shown that the number of actions a user can perform is not very large. This results in a short learning curve, as mentioned before. Although the number of actions is not very large, the number of possibilities in the program at a given point is quite extensive. This is visualised by the many lines in the activity diagram.
+An activity diagram of the interaction a user can have with Viskell is shown in Figure \ref{fig:activitydiagram} on page \pageref{fig:activitydiagram}. As can be seen in the figure, the number of actions a user can perform is not very large (amount of blocks in the 'User' column). This confirms the short learning curve we wanted to achieve. Although the number of actions is not very large, the number of possibilities in the program at a given point is quite extensive. This is visualised by the many lines in the activity diagram. This means that you can almost do anything from any state in the program.
 
-We also kept in mind that the program might have to be usable for multiple users at the same time in the future; we made it possible to open multiple menus at the same time. Different users can also perform the same or different gestures at the same time.
+The fact that it is almost possible to do anything from anywhere is probably a (positive) side effect of our goals regarding multi touch. While the client's wants on the matter were a bit vague, we eventually settled on the requirement that all single user actions needed to be able to be concurrently performed in the case of multiple users. This resulted in almost all actions being able to happen concurrently. Despite our attempts, some actions still do not support multi touch (for example opening a function menu), yet this should be relatively easy to solve in the future.
 
 \begin{figure}[p]
 	\centering
@@ -153,9 +142,7 @@ We also kept in mind that the program might have to be usable for multiple users
 
 \section{Languages and libraries}
 Viskell is written in Java 8, which comes bundled with JavaFX. \index{JavaFX}
-Java 8 is chosen because it, unlike Java 7, still receives public updates at the moment of writing.
-Language level 8 is chosen to make use of some of the new features in this version.
-% redundant
+Java 8 is chosen because it, unlike Java 7, still receives public updates at the moment of writing and allows us to make use of some of the new features in this version.
 
 Viskell uses TactileFX, a JavaFX touch screen library developed at the University of Twente.
 The client wanted the program to use this library, which also means that Viskell had to use Java and JavaFX.
@@ -184,17 +171,19 @@ This is done so that the gestures could easily change the state of the component
 
 Placed on \code{CustomUIPane} are components, detailed further on. For all of the Components we made use of the FXML language available in javaFX.
 
+\subsection{Gestures}
+Interaction with the user interface is possible through touch gestures on the touch screen or by using a mouse. Since JavaFX only supports three different multi-touch events: pressed, moved and released, we had no choice but to base as much as possible of the interaction on these 3 events. Equivalent mouse events are used to preserve symmetry and ease of development. Some more advanced mouse gestures are used (for example when opening menus), these can be accessed with touch from synthesized touch events. These more advanced gestures do not however work correctly with multi-touch.
+%Not 100 % sure this belongs here.
+
 \subsection{Components}
-Basically everything visible on the \code{CustomUIPane} are components of some kind (menus fall in somewhere in-between component and non-component).
+everything visible on the \code{CustomUIPane} are components of some kind.
 Each component is made by extending an existing javaFX \code{Node}, this is done in order to be able to directly link interactivity to the objects that are visible on the screen.
 Putting each object in a separate component also added modularity and made it more easily extendible.
 
-Most components can be categorized in 3 classes: blocks, anchors and lines.
+Components can be categorized in 4 classes: blocks, anchors, lines and menus.
 \code{Blocks} can be further categorized into \code{FunctionBlocks}, \code{InputBlocks} and \code{OutputBlocks}.
 
-\code{InputBlocks}, blocks that can receive input, and \code{OutputBlocks}, blocks that provide output, each have their own interface that a \code{Block} can implement. \code{DisplayBlock} is an example of such an \code{InputBlock}, \code{ValueBlock} is an example of an \code{OutputBlock}, \code{FunctionBlocks} implement both interfaces.
-
-%TODO menus
+\code{InputBlocks}, blocks that can receive input, and \code{OutputBlocks}, blocks that provide output, each have their own interface that a \code{Block} can implement. \code{DisplayBlock} is an example of such an \code{InputBlock}, \code{ValueBlock} is an example of an \code{OutputBlock}, \code{FunctionBlocks} implement both interfaces and are loaded from the back end catalog, specified in an XML file.
 
 \subsection{FXML \& CSS}
 FXML is used in an attempt to separate structure from behaviour, this separation turned out to be very hard to keep. The end result is that FXML is used to construct most components were the code adds or changes the component after being loaded from FXML. We did use FXML to set most of the (often arbitrary) UI settings like height, width and other attributes.
