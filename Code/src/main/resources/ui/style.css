@@ -181,12 +181,20 @@ CustomUIPane {
     -fx-font-weight: bold;
 }
 
-.zoomButtons Button {
+.overlayButtons Button {
     -fx-font-family: monospace;
-    -fx-font-size: 16px;
+    -fx-font-size: 14px;
     -fx-text-fill: white;
-    -fx-font-weight: bold;
     -fx-background-color: rgba(0, 0, 0, 0.3);
+}
+
+.context-menu {
+    -fx-background-color: #777;
+}
+
+.context-menu .menu-item .label {
+    -fx-text-fill: white;
+    -fx-font-family: Titillium;
 }
 
 ImageView.hoverMenu {
