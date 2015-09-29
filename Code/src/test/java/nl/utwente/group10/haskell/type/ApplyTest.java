@@ -15,8 +15,6 @@ import nl.utwente.group10.haskell.hindley.HindleyMilner;
 
 import org.junit.Test;
 
-import java.util.HashSet;
-
 public class ApplyTest {
     @Test
     public void testApplyPlus() throws CatalogException, HaskellException {

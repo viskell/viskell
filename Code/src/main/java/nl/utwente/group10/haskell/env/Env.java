@@ -3,8 +3,6 @@ package nl.utwente.group10.haskell.env;
 import java.util.*;
 
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
