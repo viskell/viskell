@@ -46,7 +46,7 @@ public class BubbleTest {
 
         Apply apply = new Apply(
                 new Apply(
-                        new Value(new FuncT(floatT, new FuncT(floatT, floatT)), "(+)"),
+                        new Value(new FuncT(floatT, new FuncT(floatT, floatT)), "+"),
                         new Apply(
                                 new Value(new FuncT(a, a), "id"),
                                 new Value(b, "undefined")
@@ -55,7 +55,7 @@ public class BubbleTest {
                 new Value(c, "undefined")
         );
 
-        assertEquals("(((+) (id undefined)) undefined)", apply.toHaskell());
+        assertEquals("(((+) ((id) (undefined))) (undefined))", apply.toHaskell());
 
         Type t = apply.analyze(new Env());
 
@@ -74,13 +74,13 @@ public class BubbleTest {
 
         Apply apply = new Apply(
                 new Apply(
-                        new Value(new FuncT(a, new FuncT(a, a)), "(==)"),
+                        new Value(new FuncT(a, new FuncT(a, a)), "=="),
                         new Value(Float, "5.0")
                 ),
                 new Value(b, "undefined")
         );
 
-        assertEquals("(((==) 5.0) undefined)", apply.toHaskell());
+        assertEquals("(((==) (5.0)) (undefined))", apply.toHaskell());
 
         Type t = apply.analyze(new Env());
 
