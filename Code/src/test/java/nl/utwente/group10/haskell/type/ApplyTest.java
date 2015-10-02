@@ -21,7 +21,7 @@ public class ApplyTest {
         
         Expr e0 = new Ident("(+)");
         Type t0 = e0.analyze(env).prune();
-        assertEquals("((Num a) -> ((Num a) -> (Num a)))", t0.toHaskellType());
+        assertEquals("(Num a) -> (Num a) -> (Num a)", t0.toHaskellType());
         
         Expr e1 = new Value(new ConstT("Float"), "5.0");
         Type t1 = e1.analyze(env).prune();
@@ -29,7 +29,7 @@ public class ApplyTest {
         
         Expr e2 = new Apply(e0, e1);
         Type t2 = e2.analyze(env).prune();
-        assertEquals("(Float -> Float)", t2.toHaskellType());
+        assertEquals("Float -> Float", t2.toHaskellType());
         
         Expr e3 = new Value(new ConstT("Float"), "5.0");
         Type t3 = e3.analyze(env).prune();
@@ -46,7 +46,7 @@ public class ApplyTest {
         
         Expr e0 = new Ident("(+)");
         Type t0 = e0.analyze(env).prune();
-        assertEquals("((Num a) -> ((Num a) -> (Num a)))", t0.toHaskellType());
+        assertEquals("(Num a) -> (Num a) -> (Num a)", t0.toHaskellType());
         
         Expr e1 = new Ident("undefined");
         Type t1 = e1.analyze(env).prune();

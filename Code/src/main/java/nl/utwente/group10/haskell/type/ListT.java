@@ -13,8 +13,8 @@ public class ListT extends ConstT {
     }
 
     @Override
-    public final String toHaskellType() {
-        return "[" + this.getArgs()[0].toHaskellType() + "]";
+    public final String toHaskellType(final int fixity) {
+        return "[" + this.getArgs()[0].toHaskellType(0) + "]";
     }
 
     @Override

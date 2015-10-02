@@ -30,7 +30,15 @@ public abstract class Type extends HaskellObject implements Comparable<Type> {
     /**
      * @return The Haskell (type) representation of this type.
      */
-    public abstract String toHaskellType();
+    public String toHaskellType() {
+    	return this.toHaskellType(0);
+    }
+
+    /**
+     * @param The fixity of the context the type is shown in.
+     * @return The Haskell (type) representation of this type.
+     */
+    public abstract String toHaskellType(final int fixity);
 
     /**
      * @return An exactly alike deep copy of this type.

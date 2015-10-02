@@ -45,7 +45,7 @@ public class ExprTest {
 
     @Test
     public final void testAnalyze() throws HaskellException {
-        assertEquals("[(Int -> Int)]", this.expr.analyze(this.env).prune().toHaskellType());
+        assertEquals("[Int -> Int]", this.expr.analyze(this.env).prune().toHaskellType());
     }
 
     @Test

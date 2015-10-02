@@ -9,7 +9,7 @@ import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Expr;
 
 /**
- * Implementation of the Hindley-Milner type system for Haskell types and expressions.
+ * Implementation of a typechecker for a simplified variant of Haskell.
  */
 public final class TypeChecker {
     /**

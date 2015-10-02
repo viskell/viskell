@@ -20,11 +20,11 @@ public class UnificationTest {
 
         Expr e0 = new Ident("const");
         Type t0 = e0.analyze(env).prune();
-        assertEquals("(a -> (b -> a))", t0.toHaskellType());
+        assertEquals("a -> b -> a", t0.toHaskellType());
 
         Expr e1 = new Apply(e0, new Ident("undefined"));
         Type t1 = e1.analyze(env).prune();
-        assertEquals("(b -> a)", t1.toHaskellType());
+        assertEquals("b -> a", t1.toHaskellType());
 
         Expr e2 = new Apply(e1, new Ident("undefined"));
         Type t2 = e2.analyze(env).prune();
@@ -39,11 +39,11 @@ public class UnificationTest {
         
         Expr e0 = new Ident("const");
         Type t0 = e0.analyze(env).prune();
-        assertEquals("(a -> (b -> a))", t0.toHaskellType());
+        assertEquals("a -> b -> a", t0.toHaskellType());
 
         Expr e1 = new Apply(e0, new Value(new ConstT("Float"), "5.0"));
         Type t1 = e1.analyze(env).prune();
-        assertEquals("(b -> Float)", t1.toHaskellType());
+        assertEquals("b -> Float", t1.toHaskellType());
 
         Expr e2 = new Apply(e1, new Value(new ConstT("Float"), "5.0"));
         Type t2 = e2.analyze(env).prune();

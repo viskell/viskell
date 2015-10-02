@@ -9,6 +9,6 @@ public class FuncTTest {
     public final void toHaskellTypeTest() {
         final ConstT integer = new ConstT("Integer");
         final FuncT function = new FuncT(integer, integer);
-        assertEquals("(Integer -> Integer)", function.toHaskellType());
+        assertEquals("Integer -> Integer", function.toHaskellType());
     }
 }

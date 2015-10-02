@@ -54,15 +54,18 @@ public class ConstT extends Type {
     }
 
     @Override
-    public String toHaskellType() {
+    public String toHaskellType(final int fixity) {
         StringBuilder out = new StringBuilder();
         out.append(this.constructor);
 
         for (Type arg : this.args) {
             out.append(" ");
-            out.append(arg.toHaskellType());
+            out.append(arg.toHaskellType(10));
         }
 
+        if (fixity > 9 && this.args.length > 0)
+        	return "(" + out.toString() + ")";
+        			
         return out.toString();
     }
 

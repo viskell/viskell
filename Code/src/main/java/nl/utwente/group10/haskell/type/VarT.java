@@ -100,7 +100,7 @@ public class VarT extends Type {
     }
 
     @Override
-    public final String toHaskellType() {
+    public final String toHaskellType(final int fixity) {
         final StringBuilder out = new StringBuilder();
 
         if (this.constraints.isEmpty()) {
