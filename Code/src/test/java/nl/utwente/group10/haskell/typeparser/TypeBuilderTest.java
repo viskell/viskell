@@ -1,9 +1,7 @@
 package nl.utwente.group10.haskell.typeparser;
 
 import nl.utwente.group10.haskell.type.ConstT;
-import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
-import nl.utwente.group10.haskell.type.VarT;
 import org.junit.Assert;
 import org.junit.Test;
 

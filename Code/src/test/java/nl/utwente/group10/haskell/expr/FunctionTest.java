@@ -5,7 +5,6 @@ import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.ConstT;
-import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.VarT;
 import org.junit.Before;
 import org.junit.Test;

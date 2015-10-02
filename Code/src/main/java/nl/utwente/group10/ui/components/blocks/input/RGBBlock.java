@@ -16,7 +16,6 @@ import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 

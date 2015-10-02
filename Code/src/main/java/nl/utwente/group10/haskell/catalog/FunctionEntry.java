@@ -1,10 +1,7 @@
 package nl.utwente.group10.haskell.catalog;
 
-import nl.utwente.group10.haskell.HaskellObject;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
-
-import java.util.Map;
 
 /**
  * A function entry in the Haskell catalog.

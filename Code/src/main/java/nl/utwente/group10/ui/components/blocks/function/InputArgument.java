@@ -1,6 +1,5 @@
 package nl.utwente.group10.ui.components.blocks.function;
 
-import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;

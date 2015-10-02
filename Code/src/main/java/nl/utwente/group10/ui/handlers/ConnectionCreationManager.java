@@ -2,7 +2,6 @@ package nl.utwente.group10.ui.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import javafx.geometry.Point2D;
 

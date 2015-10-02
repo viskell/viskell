@@ -6,8 +6,6 @@ import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
-import java.io.IOException;
-
 /**
  * An extension of ValueBlock.
  * The value of this Block can be changed by dragging a slider.
