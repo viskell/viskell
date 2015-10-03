@@ -66,7 +66,7 @@ public final class TypeChecker {
                     vb.shareInstanceOf(va);
                 }
             } else if (b instanceof FunType) {
-            	// unifying a type variable with a function succeeds if it has no constraints.
+            	// unifying a type variable with a function succeeds if it has no constraints, because function instances are not supported (yet?).
             	FunType fb = (FunType) b;
             	if (va.hasConstraints()) {
                     TypeChecker.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
@@ -74,6 +74,16 @@ public final class TypeChecker {
             	} else {
             		va.setConcreteInstance(fb);
             	}
+            } else if (b instanceof TypeApp) {
+                // unifying a type variable with a type application succeeds (for now until nested type instance are added) if it has no constraints.
+                TypeApp tb = (TypeApp) b;
+                if (va.hasConstraints()) {
+                    TypeChecker.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
+                    throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context, a, b);
+                } else {
+                    va.setConcreteInstance(tb);
+                }
+                
             } else {
             	ConstT tb = (ConstT) b;
                 // Example: we have to unify (for example) α and Int.
@@ -85,7 +95,7 @@ public final class TypeChecker {
                     throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context, a, b);
                 }
             }
-        } else if (a instanceof ConcreteType && b instanceof TypeVar) {
+        } else if (b instanceof TypeVar && a instanceof ConcreteType) {
             // Example: we have to unify Int and α.
             // Same as above, but mirrored.
             TypeChecker.unify(context, b, a);
@@ -114,10 +124,21 @@ public final class TypeChecker {
                 TypeChecker.unify(context, ao.getArgs()[i], bo.getArgs()[i]);
             }
         } else if (a instanceof FunType && b instanceof FunType) {
+            // Unifying function types is pairwise unification of its argument and result. 
         	FunType fa = (FunType) a;
         	FunType fb = (FunType) b;
             TypeChecker.unify(context, fa.getArgument(), fb.getArgument());
             TypeChecker.unify(context, fa.getResult(), fb.getResult());
+        } else if (a instanceof TypeApp && b instanceof TypeApp) {
+            // Unifying type applications is pairwise unification of its typeFun and typeArg. 
+            TypeApp ta = (TypeApp) a;
+            TypeApp tb = (TypeApp) b;
+            TypeChecker.unify(context, ta.getTypeFun(), tb.getTypeFun());
+            TypeChecker.unify(context, ta.getTypeArg(), tb.getTypeArg());
+        } else {
+            // Running out of things that can be unified, so bail out with a type error.
+            TypeChecker.logger.info(String.format("Given up to unify types %s and %s for context %s", a, b, context));
+            throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context, a, b);
         }
     }
 
