@@ -12,17 +12,12 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ExprTest {
-    private final Type alpha = new VarT("a");
-    private final Type beta = new VarT("b");
-    private final Type alphaList = new ListT(this.alpha);
-    private final Type betaList = new ListT(this.beta);
     private final ConstT integer = new ConstT("Int");
     private final ConstT floating = new ConstT("Float");
     private final ConstT doubl = new ConstT("Double");
     private final ConstT string = new ConstT("String");
 
     private final TypeClass num = new TypeClass("Num", integer, floating, doubl);
-    private final Type numT = new VarT("n", num);
 
     private Expr expr;
     private Env env;
@@ -79,7 +74,14 @@ public class ExprTest {
     }
 
     @Test
+    public final void testValueToHaskell() throws HaskellException {
+        final Expr v = new Value(this.integer, "10");
+        assertEquals(this.integer.toHaskellType(), v.analyze(new Env(), new GenSet()).prune().toHaskellType());
+        assertEquals("(10)", v.toHaskell());
+    }
+
+    @Test
     public final void testToHaskell() {
-        assertEquals("((map (*)) [1, 2, 3, 5, 7])", this.expr.toHaskell());
+        assertEquals("((map (*)) ([1, 2, 3, 5, 7]))", this.expr.toHaskell());
     }
 }

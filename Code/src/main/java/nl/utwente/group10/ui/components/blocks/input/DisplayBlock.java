@@ -86,14 +86,18 @@ public class DisplayBlock extends Block implements InputBlock {
     @Override
     public void invalidateVisualState() {
         super.invalidateVisualState();
-        try {
-            Optional<GhciSession> ghci = getPane().getGhciSession();
+        if (inputAnchor.hasConnection()) {
+            try {
+                Optional<GhciSession> ghci = getPane().getGhciSession();
 
-            if (ghci.isPresent()) {
-                setOutput(ghci.get().pull(inputAnchor.getExpr()));
-            }
-        } catch (GhciException e) {
-            setOutput("???");
+                if (ghci.isPresent()) {
+                    setOutput(ghci.get().pull(inputAnchor.getExpr()));
+                }
+            } catch (GhciException e) {
+                setOutput("?!?!?!");
+            } 
+        } else {
+            setOutput("??");
         }
     }
     
