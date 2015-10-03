@@ -21,6 +21,7 @@ public abstract class Type extends HaskellObject {
 
     /**
      * @param The fixity of the context the type is shown in.
+     * The fixity is small positive number derived from operator precedence (see also Section 4.4.2 of the Haskell language report)
      * @return The Haskell (type) representation of this type.
      */
     public abstract String toHaskellType(final int fixity);

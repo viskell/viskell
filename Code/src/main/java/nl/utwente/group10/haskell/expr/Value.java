@@ -51,7 +51,7 @@ public class Value extends Expr {
 
     @Override
     public final String toHaskell() {
-        return this.value;
+        return "(" + this.value + ")";
     }
 
     @Override

@@ -15,6 +15,6 @@ public class ValueTest {
     public final void testToHaskell() throws HaskellException {
         final Expr v = new Value(this.integer, "10");
         assertEquals(this.integer.toHaskellType(), v.analyze(new Env()).toHaskellType());
-        assertEquals("10", v.toHaskell());
+        assertEquals("(10)", v.toHaskell());
     }
 }

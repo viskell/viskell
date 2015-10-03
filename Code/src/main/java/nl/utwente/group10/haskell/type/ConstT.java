@@ -22,9 +22,9 @@ public class ConstT extends ConcreteType implements Comparable<ConstT>{
 
     /**
      * @param constructor The constructor for this constant type.
-     * @param args The types of the arguments that this type accepts.
+     * @param args        The types of the arguments that this type accepts.
      */
-    public ConstT(final String constructor, final Type ... args) {
+    public ConstT(final String constructor, final Type... args) {
         this.constructor = constructor;
         this.args = args;
     }
@@ -53,9 +53,10 @@ public class ConstT extends ConcreteType implements Comparable<ConstT>{
             out.append(arg.toHaskellType(10));
         }
 
-        if (fixity > 9 && this.args.length > 0)
-        	return "(" + out.toString() + ")";
-        			
+        if (fixity > 9 && this.args.length > 0) {
+            return "(" + out.toString() + ")";
+        }
+
         return out.toString();
     }
 
@@ -63,6 +64,7 @@ public class ConstT extends ConcreteType implements Comparable<ConstT>{
     protected ConstT getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
     	return new ConstT(this.constructor, this.getFreshArgs(staleToFresh));
     }
+
 
 	@Override
 	public boolean containsOccurenceOf(TypeVar tvar) {

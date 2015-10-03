@@ -29,7 +29,7 @@ public class GhciSessionTest {
     @Test
     public void constFunPush() throws Exception {
         this.ghci.push("my_pi", this.pi);
-        Assert.assertEquals("3.14", this.pi.toHaskell());
+        Assert.assertEquals("(3.14)", this.pi.toHaskell());
     }
 
     @Test
