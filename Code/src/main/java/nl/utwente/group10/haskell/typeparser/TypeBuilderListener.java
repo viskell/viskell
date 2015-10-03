@@ -14,7 +14,7 @@ class TypeBuilderListener extends TypeBaseListener {
     private final Stack<List<Type>> stack = new Stack<>();
 
     /** Temporary reference store for variable types. */
-    private final HashMap<String, VarT> vars = new HashMap<>();
+    private final HashMap<String, TypeVar> vars = new HashMap<>();
 
     /** Temporary reference store for type classes. */
     private final Multimap<String, TypeClass> constraints = HashMultimap.create();
@@ -42,7 +42,7 @@ class TypeBuilderListener extends TypeBaseListener {
     @Override
     public void exitTypeClasses(TypeParser.TypeClassesContext ctx) {
         for (String varName : this.constraints.keySet()) {
-            vars.put(varName, new VarT(varName, 0, (Set<TypeClass>) this.constraints.get(varName), null));
+            vars.put(varName, new TypeVar(varName, 0, (Set<TypeClass>) this.constraints.get(varName), null));
         }
     }
 
@@ -70,7 +70,7 @@ class TypeBuilderListener extends TypeBaseListener {
         if (this.vars.containsKey(varName)) {
             this.addParam(this.vars.get(varName));
         } else {
-            VarT var = new VarT(varName);
+            TypeVar var = new TypeVar(varName);
             this.vars.put(varName, var);
             this.addParam(var);
         }

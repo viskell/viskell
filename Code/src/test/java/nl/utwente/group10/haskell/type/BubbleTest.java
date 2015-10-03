@@ -11,8 +11,8 @@ import static org.junit.Assert.assertEquals;
 public class BubbleTest {
     @Test
     public void testBubbleUnit() throws Exception {
-        VarT a = new VarT("a");
-        VarT z = new VarT("z");
+        TypeVar a = new TypeVar("a");
+        TypeVar z = new TypeVar("z");
         ConstT u = new ConstT("Unit");
 
         FuncT aFunc = new FuncT(a, a);
@@ -25,23 +25,23 @@ public class BubbleTest {
         Type t = apply.analyze(new Env());
 
         // Inferred type of the whole expression is 'Unit'.
-        assertEquals("Unit", t.prune().toHaskellType());
+        assertEquals("Unit", t.toHaskellType());
 
         // Inferred type of "(unit (id undefined))" is 'Unit'.
-        assertEquals("Unit", u.prune().toHaskellType());
+        assertEquals("Unit", u.toHaskellType());
 
         // Inferred type of "(id undefined)" is 'Unit'.
-        assertEquals("Unit", a.prune().toHaskellType());
+        assertEquals("Unit", a.toHaskellType());
 
         // Inferred type of (this instance of the 'value') "undefined" is 'Unit'.
-        assertEquals("Unit", z.prune().toHaskellType());
+        assertEquals("Unit", z.toHaskellType());
     }
 
     @Test
     public void testBubbleAddition() throws Exception {
-        VarT a = TypeChecker.makeVariable("a");
-        VarT b = TypeChecker.makeVariable("b");
-        VarT c = TypeChecker.makeVariable("c");
+        TypeVar a = TypeChecker.makeVariable("a");
+        TypeVar b = TypeChecker.makeVariable("b");
+        TypeVar c = TypeChecker.makeVariable("c");
         ConstT floatT = new ConstT("Float");
 
         Apply apply = new Apply(
@@ -59,18 +59,18 @@ public class BubbleTest {
 
         Type t = apply.analyze(new Env());
 
-        assertEquals("Float", t.prune().toHaskellType());
-        assertEquals("Float", a.prune().toHaskellType());
-        assertEquals("Float", b.prune().toHaskellType());
-        assertEquals("Float", c.prune().toHaskellType());
+        assertEquals("Float", t.toHaskellType());
+        assertEquals("Float", a.toHaskellType());
+        assertEquals("Float", b.toHaskellType());
+        assertEquals("Float", c.toHaskellType());
     }
 
     @Test
     public void testBubbleEquals() throws Exception {
         ConstT Float = new ConstT("Float");
         TypeClass Num = new TypeClass("Num", Float);
-        VarT a = new VarT("a", Num);
-        VarT b = new VarT("b");
+        TypeVar a = new TypeVar("a", Num);
+        TypeVar b = new TypeVar("b");
 
         Apply apply = new Apply(
                 new Apply(
@@ -84,8 +84,8 @@ public class BubbleTest {
 
         Type t = apply.analyze(new Env());
 
-        assertEquals("Float", t.prune().toHaskellType());
-        assertEquals("Float", a.prune().toHaskellType());
-        assertEquals("Float", b.prune().toHaskellType());
+        assertEquals("Float", t.toHaskellType());
+        assertEquals("Float", a.toHaskellType());
+        assertEquals("Float", b.toHaskellType());
     }
 }

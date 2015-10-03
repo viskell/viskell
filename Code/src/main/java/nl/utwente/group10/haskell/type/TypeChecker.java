@@ -37,55 +37,40 @@ public final class TypeChecker {
         unify(null, t1, t2);
     }
 
-    public static void unify(final Expr context, final Type t1, final Type t2) throws HaskellTypeError {
-        final Type a = t1.prune();
-        final Type b = t2.prune();
+    public static void unify(final Expr context, final Type a, final Type b) throws HaskellTypeError {
         
-        TypeChecker.logger.info(String.format("Unifying types %s and %s for context %s", t1, t2, context));
+        TypeChecker.logger.info(String.format("Unifying types %s and %s for context %s", a, b, context));
 
-        if (a instanceof VarT && !a.equals(b)) {
+        if (a.equals(b)) {
+        	// for identical types unifying is trivial
+        } else  if (a instanceof TypeVar) {
+            TypeVar va = (TypeVar) a;
+
             // First, prevent ourselves from going into an infinite loop
-            if (TypeChecker.occursInType(a, b)) {
+            if (b.containsOccurenceOf(va)) {
                 TypeChecker.logger.info(String.format("Recursion in types %s and %s for context %s", a, b, context));
                 throw new HaskellTypeError(String.format("%s ∈ %s", a, b), context, a, b);
             }
 
-            if (b instanceof VarT) {
-                // Example: we have to unify (for example) α and β
-
-                VarT va = ((VarT) a);
-                VarT vb = ((VarT) b);
-
-                if (va.hasConstraints() && vb.hasConstraints()) {
-                    // Both a and b have constraints (type classes). Whatever type both of those are going to be must
-                    // therefore lie inside the union of those type classes: if a must be in Num and Show, and b must be
-                    // in Num and Read, then whatever the resulting type will be must be in Num, Show and Read.
-
-                    VarT t = TypeChecker.makeVariable(va.getPrefix(), VarT.union(va, vb));
-
-                    va.setInstance(t);
-                    vb.setInstance(t);
-                } else if (vb.hasConstraints()) {
-                    // If a doesn't have constraints but b does, just use b's.
-                    va.setInstance(vb);
-                } else if (va.hasConstraints()) {
-                    // If b doesn't have constraints but a does, just use a's.
-                    vb.setInstance(va);
-                } else {
-                    // Neither a nor b has constraints, set a's instance to b.
-                    va.setInstance(vb);
-                }
+            if (va.hasInstance()) {
+            	// if a type variable has been instantiated already then we can just unify b with a concrete type of a
+            	TypeChecker.unify(context, va.getInstantiatedType(), b);
+            } else if (b instanceof TypeVar) {
+                TypeVar vb = (TypeVar) b;
+                // two type variable are unified by sharing the internal reference of (future) type instance   
+                vb.shareInstanceOf(va);
             } else {
+            	ConcreteType tb = (ConcreteType) b;
                 // Example: we have to unify (for example) α and Int.
                 // Do so by stating that α must be Int, provided Int fits in α's typeclasses
-                if (((VarT) a).hasConstraint(b)) {
-                    ((VarT) a).setInstance(b);
+                if (va.hasConstraint(tb)) {
+                    va.setConcreteInstance(tb);
                 } else {
                     TypeChecker.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
                     throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context, a, b);
                 }
             }
-        } else if (a instanceof ConstT && b instanceof VarT) {
+        } else if (a instanceof ConstT && b instanceof TypeVar) {
             // Example: we have to unify Int and α.
             // Same as above, but mirrored.
             TypeChecker.unify(context, b, a);
@@ -117,45 +102,21 @@ public final class TypeChecker {
     }
 
     /**
-     * Checks whether a given type exists within another type. This method is used to prevent loops.
-     * @param a The first type.
-     * @param b The second type.
-     * @return Whether the first type occurs within the second type.
-     */
-    public static boolean occursInType(final Type a, final Type b) {
-        final Type pruned = b.prune();
-        boolean occurs = false;
-
-        if (pruned.equals(a)) {
-            occurs = true;
-        } else if (pruned instanceof ConstT) {
-            for (Type t : ((ConstT) pruned).getArgs()) {
-                if (occursInType(a, t)) {
-                    occurs = true;
-                    break;
-                }
-            }
-        }
-
-        return occurs;
-    }
-
-    /**
      * Creates and returns a new {@code VarT} instance with a unique identifier.
      * @param prefix The base name of the type variable.
      * @param constraints Constraints for the new VarT.
      * @return A new variable type.
      */
-    public static VarT makeVariable(final String prefix, final Set<TypeClass> constraints) {
+    public static TypeVar makeVariable(final String prefix, final Set<TypeClass> constraints) {
         TypeChecker.tvOffset += 1;
-        return new VarT(prefix, TypeChecker.tvOffset, constraints, null);
+        return new TypeVar(prefix, TypeChecker.tvOffset, constraints, null);
     }
 
     /**
      * Creates and returns a new {@code VarT} instance with a unique identifier.
      * @return A new variable type.
      */
-    public static VarT makeVariable(final String prefix) {
+    public static TypeVar makeVariable(final String prefix) {
         return makeVariable(prefix, new HashSet<TypeClass>());
     }
 }

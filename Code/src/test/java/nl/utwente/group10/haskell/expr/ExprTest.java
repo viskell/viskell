@@ -11,8 +11,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ExprTest {
-    private final Type alpha = new VarT("a");
-    private final Type beta = new VarT("b");
+    private final Type alpha = new TypeVar("a");
+    private final Type beta = new TypeVar("b");
     private final ConstT integer = new ConstT("Int");
     private final ConstT floating = new ConstT("Float");
     private final ConstT doubl = new ConstT("Double");
@@ -45,7 +45,7 @@ public class ExprTest {
 
     @Test
     public final void testAnalyze() throws HaskellException {
-        assertEquals("[Int -> Int]", this.expr.analyze(this.env).prune().toHaskellType());
+        assertEquals("[Int -> Int]", this.expr.analyze(this.env).toHaskellType());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class ExprTest {
                         "[\"a\", \"b\", \"c\"]"
                 )
         );
-        assertNotEquals("[(String -> String)]", expr.analyze(this.env).prune().toHaskellType());
+        assertNotEquals("[(String -> String)]", expr.analyze(this.env).toHaskellType());
     }
 
     @Test

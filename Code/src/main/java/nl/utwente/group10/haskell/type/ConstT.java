@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Constant, concrete type. However, it may consist of variable types.
  */
-public class ConstT extends Type {
+public class ConstT extends ConcreteType {
     /**
      * The constructor for this type.
      */
@@ -45,15 +45,6 @@ public class ConstT extends Type {
     }
 
     @Override
-    public final Type prune() {
-        for (int i = 0; i < this.args.length; i++) {
-            this.args[i] = this.args[i].prune();
-        }
-
-        return this;
-    }
-
-    @Override
     public String toHaskellType(final int fixity) {
         StringBuilder out = new StringBuilder();
         out.append(this.constructor);
@@ -74,7 +65,17 @@ public class ConstT extends Type {
         return new ConstT(this.constructor, this.getFreshArgs());
     }
 
-    /**
+	@Override
+	public boolean containsOccurenceOf(TypeVar tvar) {
+		for (Type t : this.args) {
+			if (t.containsOccurenceOf(tvar))
+				return true;
+		}
+			
+		return false;
+	}
+
+	/**
      * Returns an array of fresh arguments. Selectively calls {@code getFresh} on each argument. When the same Type
      * instance appears multiple times in the arguments no new type is instantiated. Instead, the fresh type is reused.
      * @return An array of fresh arguments.

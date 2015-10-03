@@ -74,7 +74,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         ArrayList<String> args = new ArrayList<>();
         Type t = null;
         try {
-            t = signature.getType(pane.getEnvInstance()).prune();
+            t = signature.getType(pane.getEnvInstance());
         } catch (HaskellException e1) {
             throw new FunctionDefinitionException();
         }

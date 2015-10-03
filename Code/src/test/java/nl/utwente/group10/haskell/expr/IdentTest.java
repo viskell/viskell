@@ -5,13 +5,13 @@ import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.haskell.type.VarT;
+import nl.utwente.group10.haskell.type.TypeVar;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class IdentTest {
-    private final Type alpha = new VarT("a");
+    private final Type alpha = new TypeVar("a");
 
     private Env env;
 

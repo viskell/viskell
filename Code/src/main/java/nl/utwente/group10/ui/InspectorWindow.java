@@ -79,7 +79,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
         String type;
 
         try {
-            type = expr.getType(pane.getEnvInstance()).prune().toHaskellType();
+            type = expr.getType(pane.getEnvInstance()).toHaskellType();
         } catch (HaskellException e) {
             type = "?";
         }

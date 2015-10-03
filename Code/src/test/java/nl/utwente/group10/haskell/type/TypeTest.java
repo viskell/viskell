@@ -10,10 +10,10 @@ public class TypeTest {
     public final void toHaskellTypeTest() {
         final Type t = new TupleT(
                 new ListT(
-                        new VarT("a")
+                        new TypeVar("a")
                 ),
                 new FuncT(
-                        new VarT("b"),
+                        new TypeVar("b"),
                         new ConstT("String")
                 )
         );
@@ -25,10 +25,10 @@ public class TypeTest {
     public final void getFreshTest() {
         final Type t = new TupleT(
                 new ListT(
-                        new VarT("a")
+                        new TypeVar("a")
                 ),
                 new FuncT(
-                        new VarT("b"),
+                        new TypeVar("b"),
                         new ConstT("String")
                 )
         );

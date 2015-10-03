@@ -81,7 +81,7 @@ public class Function extends Expr {
 
     @Override
     public Type analyze(Env env) throws HaskellException {
-        Type type = this.expr.analyze(env).prune().getFresh();
+        Type type = this.expr.analyze(env).getFresh();
 
         for (int i = this.arguments.size(); i > 0; i--) {
             type = new FuncT(this.arguments.get(i - 1).analyze(env).getFresh(), type);

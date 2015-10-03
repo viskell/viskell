@@ -20,23 +20,23 @@ public class ApplyTest {
         Env env = new HaskellCatalog().asEnvironment();
         
         Expr e0 = new Ident("(+)");
-        Type t0 = e0.analyze(env).prune();
+        Type t0 = e0.analyze(env);
         assertEquals("(Num a) -> (Num a) -> (Num a)", t0.toHaskellType());
         
         Expr e1 = new Value(new ConstT("Float"), "5.0");
-        Type t1 = e1.analyze(env).prune();
+        Type t1 = e1.analyze(env);
         assertEquals("Float", t1.toHaskellType());
         
         Expr e2 = new Apply(e0, e1);
-        Type t2 = e2.analyze(env).prune();
+        Type t2 = e2.analyze(env);
         assertEquals("Float -> Float", t2.toHaskellType());
         
         Expr e3 = new Value(new ConstT("Float"), "5.0");
-        Type t3 = e3.analyze(env).prune();
+        Type t3 = e3.analyze(env);
         assertEquals("Float", t3.toHaskellType());
         
         Expr e4 = new Apply(e2, e3);
-        Type t4 = e4.analyze(env).prune();
+        Type t4 = e4.analyze(env);
         assertEquals("Float", t4.toHaskellType());
     }
     
@@ -45,23 +45,23 @@ public class ApplyTest {
         Env env = new HaskellCatalog().asEnvironment();
         
         Expr e0 = new Ident("(+)");
-        Type t0 = e0.analyze(env).prune();
+        Type t0 = e0.analyze(env);
         assertEquals("(Num a) -> (Num a) -> (Num a)", t0.toHaskellType());
         
         Expr e1 = new Ident("undefined");
-        Type t1 = e1.analyze(env).prune();
+        Type t1 = e1.analyze(env);
         TypeChecker.unify(t1, new ConstT("Float"));
         // t1 Should unfiy with everything (the type of t1 should be 'a').
         // No exception thrown -> Types are the same, as expected. The test will
         // fail if an Exception is thrown.
         
         Expr e2 = new Apply(e0, e1);
-        Type t2 = e2.analyze(env).prune();
+        Type t2 = e2.analyze(env);
         Type num = TypeChecker.makeVariable("n", ImmutableSet.of(env.getTypeClasses().get("Num")));
         TypeChecker.unify(t2, new FuncT(num, num));
         
         Expr e3 = new Apply(e2, new Ident("undefined"));
-        Type t3 = e3.analyze(env).prune();
+        Type t3 = e3.analyze(env);
         TypeChecker.unify(t3, new ConstT("Float"));
         // t3 Should unfiy with everything (the type of t3 should be 'a').
         // No exception thrown -> Types are the same, as expected. The test will

@@ -18,15 +18,6 @@ public class ConstTTest {
     }
 
     @Test
-    public final void testPrune() {
-        final ConstT integer = new ConstT("Integer");
-        final VarT a = new VarT("a", 0, new HashSet<>(), integer);
-
-        assertNotEquals(integer, a);
-        assertEquals(integer, a.prune());
-    }
-
-    @Test
     public final void testCompareTo() {
         final ConstT integer = new ConstT("Integer");
         final ConstT weird = new ConstT("Weird", new ConstT("Integer"));
@@ -42,7 +33,7 @@ public class ConstTTest {
 
     @Test
     public final void testFreshArgs() {
-        final VarT staleVar = new VarT("a");
+        final TypeVar staleVar = new TypeVar("a");
         final ConstT staleInt = new ConstT("Int");
         final ConstT stale = new ConstT("Type", staleInt, staleVar, staleVar);
 

@@ -19,15 +19,15 @@ public class UnificationTest {
         Env env = new HaskellCatalog().asEnvironment();
 
         Expr e0 = new Ident("const");
-        Type t0 = e0.analyze(env).prune();
+        Type t0 = e0.analyze(env);
         assertEquals("a -> b -> a", t0.toHaskellType());
 
         Expr e1 = new Apply(e0, new Ident("undefined"));
-        Type t1 = e1.analyze(env).prune();
+        Type t1 = e1.analyze(env);
         assertEquals("b -> a", t1.toHaskellType());
 
         Expr e2 = new Apply(e1, new Ident("undefined"));
-        Type t2 = e2.analyze(env).prune();
+        Type t2 = e2.analyze(env);
 
         TypeChecker.unify(t2, new Ident("undefined").analyze(env));
         //No exception thrown -> Types are the same, as expected. The test will fail if an Exception is thrown.
@@ -38,15 +38,15 @@ public class UnificationTest {
         Env env = new HaskellCatalog().asEnvironment();
         
         Expr e0 = new Ident("const");
-        Type t0 = e0.analyze(env).prune();
+        Type t0 = e0.analyze(env);
         assertEquals("a -> b -> a", t0.toHaskellType());
 
         Expr e1 = new Apply(e0, new Value(new ConstT("Float"), "5.0"));
-        Type t1 = e1.analyze(env).prune();
+        Type t1 = e1.analyze(env);
         assertEquals("b -> Float", t1.toHaskellType());
 
         Expr e2 = new Apply(e1, new Value(new ConstT("Float"), "5.0"));
-        Type t2 = e2.analyze(env).prune();
+        Type t2 = e2.analyze(env);
         assertEquals("Float", t2.toHaskellType());
     }
     
@@ -55,13 +55,13 @@ public class UnificationTest {
         Env env = new HaskellCatalog().asEnvironment();
 
         Expr e0 = new Ident("const");
-        Type t0 = e0.analyze(env).prune();
+        Type t0 = e0.analyze(env);
 
         Expr e1 = new Apply(e0, new Ident("undefined"));
-        Type t1 = e1.analyze(env).prune();
+        Type t1 = e1.analyze(env);
 
         Expr e2 = new Apply(e1, new Ident("undefined"));
-        Type t2 = e2.analyze(env).prune();
+        Type t2 = e2.analyze(env);
         
         Type t3 = TypeChecker.makeVariable("t");
         Type t4 = new ConstT("Bool");
@@ -79,8 +79,8 @@ public class UnificationTest {
         TypeClass show = env.getTypeClasses().get("Read");
 
         Type ct = new ConstT("Float");
-        Type t0 = new VarT("a", num, read);
-        Type t1 = new VarT("b", num, show);
+        Type t0 = new TypeVar("a", num, read);
+        Type t1 = new TypeVar("b", num, show);
 
         Expr e0 = new Value(t0, "?");
         Expr e1 = new Value(t1, "?");
