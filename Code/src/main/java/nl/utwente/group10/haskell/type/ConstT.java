@@ -63,8 +63,9 @@ public class ConstT extends Type {
             out.append(arg.toHaskellType(10));
         }
 
-        if (fixity > 9 && this.args.length > 0)
+        if (fixity > 9 && this.args.length > 0) {
         	return "(" + out.toString() + ")";
+        }
         			
         return out.toString();
     }
