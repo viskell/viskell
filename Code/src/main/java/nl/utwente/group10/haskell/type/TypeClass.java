@@ -18,7 +18,7 @@ public class TypeClass extends HaskellObject {
     /**
      * The types that are a member of this type class.
      */
-    private Set<Type> types;
+    private Set<ConstT> types;
 
     /**
      * @param name The name of this type class.
@@ -39,7 +39,7 @@ public class TypeClass extends HaskellObject {
     /**
      * @return The types in this type class.
      */
-    public final Set<Type> getTypes() {
+    public final Set<ConstT> getTypes() {
         return this.types;
     }
 
@@ -47,7 +47,7 @@ public class TypeClass extends HaskellObject {
      * @param type The type to check.
      * @return Whether the given type is in this type class.
      */
-    public final boolean hasType(Type type) {
+    public final boolean hasType(ConstT type) {
         return this.types.stream().anyMatch(t -> t.compareTo(type) == 0);
     }
 

@@ -2,7 +2,7 @@ package nl.utwente.group10.haskell.expr;
 
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.type.FuncT;
+import nl.utwente.group10.haskell.type.FunType;
 import nl.utwente.group10.haskell.type.Type;
 
 import java.util.*;
@@ -81,10 +81,10 @@ public class Function extends Expr {
 
     @Override
     public Type analyze(Env env) throws HaskellException {
-        Type type = this.expr.analyze(env).prune().getFresh();
+        Type type = this.expr.analyze(env).getFresh();
 
         for (int i = this.arguments.size(); i > 0; i--) {
-            type = new FuncT(this.arguments.get(i - 1).analyze(env).getFresh(), type);
+            type = new FunType(this.arguments.get(i - 1).analyze(env).getFresh(), type);
         }
 
         this.setCachedType(type);

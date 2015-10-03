@@ -3,7 +3,6 @@ package nl.utwente.group10.haskell.type;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.HashSet;
 
 import static org.junit.Assert.*;
 
@@ -15,15 +14,6 @@ public class ConstTTest {
 
         assertEquals("Integer", integer.toHaskellType());
         assertEquals("Integer Integer", integerWithArg.toHaskellType());
-    }
-
-    @Test
-    public final void testPrune() {
-        final ConstT integer = new ConstT("Integer");
-        final VarT a = new VarT("a", 0, new HashSet<>(), integer);
-
-        assertNotEquals(integer, a);
-        assertEquals(integer, a.prune());
     }
 
     @Test
@@ -42,11 +32,11 @@ public class ConstTTest {
 
     @Test
     public final void testFreshArgs() {
-        final VarT staleVar = new VarT("a");
+        final TypeVar staleVar = new TypeVar("a");
         final ConstT staleInt = new ConstT("Int");
         final ConstT stale = new ConstT("Type", staleInt, staleVar, staleVar);
 
-        Type[] freshArgs = stale.getFreshArgs();
+        Type[] freshArgs = ((ConstT) stale.getFresh()).getArgs();
 
         assertEquals("[Int, a, a]", Arrays.toString(freshArgs));
         assertFalse(staleInt == freshArgs[0]);

@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import nl.utwente.group10.haskell.expr.*;
-import nl.utwente.group10.haskell.type.FuncT;
+import nl.utwente.group10.haskell.type.FunType;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
@@ -85,10 +85,10 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
         // Collect argument types and result type
         Type t = type;
-        while (t instanceof FuncT) {
-            FuncT ft = (FuncT) t;
-            args.add(new ArgumentBlock(this, ft.getArgs()[0]));
-            t = ft.getArgs()[1];
+        while (t instanceof FunType) {
+            FunType ft = (FunType) t;
+            args.add(new ArgumentBlock(this, ft.getArgument()));
+            t = ft.getResult();
         }
 
         this.type = type;

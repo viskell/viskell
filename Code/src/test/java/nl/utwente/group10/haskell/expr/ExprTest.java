@@ -43,7 +43,7 @@ public class ExprTest {
 
     @Test
     public final void testAnalyze() throws HaskellException {
-        assertEquals("[Int -> Int]", this.expr.analyze(this.env).prune().toHaskellType());
+        assertEquals("[Int -> Int]", this.expr.analyze(this.env).toHaskellType());
     }
 
     @Test
@@ -67,13 +67,13 @@ public class ExprTest {
                         "[\"a\", \"b\", \"c\"]"
                 )
         );
-        assertNotEquals("[(String -> String)]", expr.analyze(this.env).prune().toHaskellType());
+        assertNotEquals("[(String -> String)]", expr.analyze(this.env).toHaskellType());
     }
 
     @Test
     public final void testValueToHaskell() throws HaskellException {
         final Expr v = new Value(this.integer, "10");
-        assertEquals(this.integer.toHaskellType(), v.analyze(new Env()).prune().toHaskellType());
+        assertEquals(this.integer.toHaskellType(), v.analyze(new Env()).toHaskellType());
         assertEquals("(10)", v.toHaskell());
     }
 

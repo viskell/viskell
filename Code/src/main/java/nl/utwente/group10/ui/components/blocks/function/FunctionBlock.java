@@ -15,7 +15,7 @@ import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
-import nl.utwente.group10.haskell.type.FuncT;
+import nl.utwente.group10.haskell.type.FunType;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
@@ -74,15 +74,15 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         ArrayList<String> args = new ArrayList<>();
         Type t = null;
         try {
-            t = signature.getType(pane.getEnvInstance()).prune();
+            t = signature.getType(pane.getEnvInstance());
         } catch (HaskellException e1) {
             throw new FunctionDefinitionException();
         }
         int inputCount = 0;
-        while (t instanceof FuncT) {
-            FuncT ft = (FuncT) t;
-            args.add(ft.getArgs()[0].toHaskellType());
-            t = ft.getArgs()[1];
+        while (t instanceof FunType) {
+            FunType ft = (FunType) t;
+            args.add(ft.getArgument().toHaskellType());
+            t = ft.getResult();
             inputCount++;
         }
         

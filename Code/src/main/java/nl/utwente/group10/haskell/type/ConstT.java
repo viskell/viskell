@@ -2,15 +2,14 @@ package nl.utwente.group10.haskell.type;
 
 import com.google.common.base.Joiner;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Constant, concrete type. However, it may consist of variable types.
  */
-public class ConstT extends Type {
+public class ConstT extends ConcreteType implements Comparable<ConstT> {
     /**
      * The constructor for this type.
      */
@@ -22,8 +21,10 @@ public class ConstT extends Type {
     protected final Type[] args;
 
     /**
-     * @param constructor The constructor for this constant type.
-     * @param args        The types of the arguments that this type accepts.
+     * @param constructor
+     *            The constructor for this constant type.
+     * @param args
+     *            The types of the arguments that this type accepts.
      */
     public ConstT(final String constructor, final Type... args) {
         this.constructor = constructor;
@@ -45,15 +46,6 @@ public class ConstT extends Type {
     }
 
     @Override
-    public final Type prune() {
-        for (int i = 0; i < this.args.length; i++) {
-            this.args[i] = this.args[i].prune();
-        }
-
-        return this;
-    }
-
-    @Override
     public String toHaskellType(final int fixity) {
         StringBuilder out = new StringBuilder();
         out.append(this.constructor);
@@ -71,28 +63,29 @@ public class ConstT extends Type {
     }
 
     @Override
-    public ConstT getFresh() {
-        return new ConstT(this.constructor, this.getFreshArgs());
+    protected ConstT getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
+        return new ConstT(this.constructor, this.getFreshArgs(staleToFresh));
+    }
+
+    @Override
+    public boolean containsOccurenceOf(TypeVar tvar) {
+        for (Type t : this.args) {
+            if (t.containsOccurenceOf(tvar)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
-     * Returns an array of fresh arguments. Selectively calls {@code getFresh} on each argument. When the same Type
-     * instance appears multiple times in the arguments no new type is instantiated. Instead, the fresh type is reused.
-     *
      * @return An array of fresh arguments.
      */
-    protected Type[] getFreshArgs() {
+    protected Type[] getFreshArgs(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
         List<Type> fresh = new LinkedList<>();
-        Map<Type, Type> staleToFresh = new HashMap<>();
 
         for (Type arg : this.args) {
-            if (staleToFresh.containsKey(arg)) {
-                fresh.add(staleToFresh.get(arg));
-            } else {
-                Type freshArg = arg.getFresh();
-                staleToFresh.put(arg, freshArg);
-                fresh.add(freshArg);
-            }
+            fresh.add(arg.getFreshInstance(staleToFresh));
         }
 
         return fresh.toArray(new Type[fresh.size()]);
@@ -107,19 +100,13 @@ public class ConstT extends Type {
         }
     }
 
-    @Override
-    public int compareTo(final Type type) {
+    public int compareTo(final ConstT type) {
         if (type == null) {
             throw new NullPointerException();
         } else if (type instanceof ConstT) {
             final ConstT cType = (ConstT) type;
             if (this.constructor.equals(cType.constructor)) {
                 if (this.args.length == cType.args.length) {
-                    for (int i = 0; i < this.args.length; i++) {
-                        if (this.args[i].compareTo(cType.args[i]) != 0) {
-                            return -1;
-                        }
-                    }
                     return 0;
                 } else {
                     return -1;

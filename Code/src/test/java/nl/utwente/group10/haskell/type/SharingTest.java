@@ -7,8 +7,8 @@ import static org.junit.Assert.assertEquals;
 public class SharingTest {
     @Test
     public void testSharedSimple() throws Exception {
-        VarT x = new VarT("x");
-        VarT y = new VarT("y");
+        TypeVar x = new TypeVar("x");
+        TypeVar y = new TypeVar("y");
         ConstT u = new ConstT("Unit");
         ListT l = new ListT(x);
 
@@ -19,14 +19,14 @@ public class SharingTest {
 
         TypeChecker.unify(x, y);
 
-        assertEquals("x:y", x.toString());
-        assertEquals("y", y.toString());
-        assertEquals("([] x:y)", l.toString());
+        assertEquals("x", x.toString());
+        assertEquals("x", y.toString());
+        assertEquals("([] x)", l.toString());
 
         TypeChecker.unify(x, u);
 
-        assertEquals("Unit", x.prune().toHaskellType());
-        assertEquals("Unit", y.prune().toHaskellType());
-        assertEquals("[Unit]", l.prune().toHaskellType());
+        assertEquals("Unit", x.toHaskellType());
+        assertEquals("Unit", y.toHaskellType());
+        assertEquals("[Unit]", l.toHaskellType());
     }
 }
