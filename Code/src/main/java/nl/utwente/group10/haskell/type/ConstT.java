@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Constant, concrete type. However, it may consist of variable types.
  */
-public class ConstT extends ConcreteType implements Comparable<ConstT>{
+public class ConstT extends ConcreteType implements Comparable<ConstT> {
     /**
      * The constructor for this type.
      */
@@ -21,8 +21,10 @@ public class ConstT extends ConcreteType implements Comparable<ConstT>{
     protected final Type[] args;
 
     /**
-     * @param constructor The constructor for this constant type.
-     * @param args        The types of the arguments that this type accepts.
+     * @param constructor
+     *            The constructor for this constant type.
+     * @param args
+     *            The types of the arguments that this type accepts.
      */
     public ConstT(final String constructor, final Type... args) {
         this.constructor = constructor;
@@ -62,29 +64,28 @@ public class ConstT extends ConcreteType implements Comparable<ConstT>{
 
     @Override
     protected ConstT getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
-    	return new ConstT(this.constructor, this.getFreshArgs(staleToFresh));
+        return new ConstT(this.constructor, this.getFreshArgs(staleToFresh));
     }
 
+    @Override
+    public boolean containsOccurenceOf(TypeVar tvar) {
+        for (Type t : this.args) {
+            if (t.containsOccurenceOf(tvar)) {
+                return true;
+            }
+        }
 
-	@Override
-	public boolean containsOccurenceOf(TypeVar tvar) {
-		for (Type t : this.args) {
-			if (t.containsOccurenceOf(tvar)) {
-				return true;
-			}
-		}
-			
-		return false;
-	}
+        return false;
+    }
 
-	/**
+    /**
      * @return An array of fresh arguments.
      */
     protected Type[] getFreshArgs(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
         List<Type> fresh = new LinkedList<>();
 
         for (Type arg : this.args) {
-        	fresh.add(arg.getFreshInstance(staleToFresh));
+            fresh.add(arg.getFreshInstance(staleToFresh));
         }
 
         return fresh.toArray(new Type[fresh.size()]);

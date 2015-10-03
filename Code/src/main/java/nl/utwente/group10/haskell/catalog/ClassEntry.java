@@ -42,8 +42,9 @@ public class ClassEntry extends Entry {
 
         for (String instance : this.instances) {
         	Type t = builder.build(instance);
-        	if (t instanceof ConstT)
+        	if (t instanceof ConstT) {
         		tc.getTypes().add((ConstT) t);
+        	}
         }
 
         return tc;

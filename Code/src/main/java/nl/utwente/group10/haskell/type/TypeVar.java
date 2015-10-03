@@ -14,91 +14,93 @@ public class TypeVar extends Type {
     /**
      * An optional mutable reference to a concrete type.
      */
-	public static class TypeInstance {
-		/**
-	     * Base name of the type variable.
-	     */
-	    private final String prefix;
+    static class TypeInstance {
+        /**
+         * Base name of the type variable.
+         */
+        private final String prefix;
 
-	    /**
-	     * Number to make a name of the type variable unique.
-	     */
-	    private final int uid;
+        /**
+         * Number to make a name of the type variable unique.
+         */
+        private final int uid;
 
-	    /**
-	     * A concrete instantiated type or null.
-	     */
-		private ConcreteType type;
-		
-	    /**
-	     * The type constraints for this instance.
-	     */
-	    private Set<TypeClass> constraints;
-		
-		/**
-	     * @param The instance of this type.
+        /**
+         * A concrete instantiated type or null.
+         */
+        private ConcreteType type;
+
+        /**
+         * The type constraints for this instance.
+         */
+        private Set<TypeClass> constraints;
+
+        /**
+         * @param The instance of this type.
          * @param constraints The set of constraints for this type.
-	     */
-		TypeInstance(String prefix, int uid, ConcreteType type, final Set<TypeClass> constraints) {
-			this.prefix = prefix;
-			this.uid = uid;
-			this.type = type;
-			this.constraints = constraints;
-		}
+         */
+        TypeInstance(String prefix, int uid, ConcreteType type, final Set<TypeClass> constraints) {
+            this.prefix = prefix;
+            this.uid = uid;
+            this.type = type;
+            this.constraints = constraints;
+        }
 
-	    /**
-	     * @return Whether there is a concrete type.
-	     */
-		boolean isPresent() {
-			return this.type != null;
-		}
-		
-	    /**
-	     * @return The concrete type instance, throw exception if it has no instance.
-	     */
-		ConcreteType get() {
-			if (this.type == null)
-				throw new NullPointerException("Getting invalid type instance");
-			
-			return this.type;
-		}
-		
-		/**
-	     * @param The new instance of this type.
-	     */
-		void set(ConcreteType type) {
-			this.type = type;
-		}
-		
-	    /**
-	     * Share the constraints between both type instance, thus unifying the constraints.  
-	     * @param the other type instance.
-	     */
-		public final void shareConstraints(TypeInstance other) {
-			this.constraints = Sets.union(this.constraints, other.constraints);
-		}
+        /**
+         * @return Whether there is a concrete type.
+         */
+        boolean isPresent() {
+            return this.type != null;
+        }
 
-	    /**
-	     * @return The name of this variable type.
-	     */
-	    public final String getName() {
-	    	if (this.uid == 0) {
-	    		return this.prefix;
-	    	}
-	    	
-	        return this.prefix + Integer.toString(this.uid);
-	    }
-	}
-	
+        /**
+         * @throws NullPointerException when isPresent() is false
+         * @return The concrete type instance
+         */
+        ConcreteType get() {
+            if (this.type == null)
+                throw new NullPointerException("Getting invalid type instance");
+
+            return this.type;
+        }
+
+        /**
+         * @param The new instance of this type.
+         */
+        void set(ConcreteType type) {
+            this.type = type;
+        }
+
+        /**
+         * Share the constraints between both type instance, thus unifying the constraints.
+         * 
+         * @param the other type instance.
+         */
+        public final void shareConstraints(TypeInstance other) {
+            this.constraints = Sets.union(this.constraints, other.constraints);
+        }
+
+        /**
+         * @return The name of this variable type.
+         */
+        public final String getName() {
+            if (this.uid == 0) {
+                return this.prefix;
+            }
+
+            return this.prefix + Integer.toString(this.uid);
+        }
+    }
+
     /**
      * The reference to the potential concrete instance for this type.
      */
     private TypeInstance instance;
 
-
     /**
-     * @param name Identifier for this type. Identifiers are not used in the type checking progress, different
-     *             {@code TypeVar} instances with the same name are not equal.
+     * @param name Identifier for this type.
+     * Identifiers are not used in the type checking progress, 
+     * different {@code TypeVar} instances with the same name are not equal.
      * @param constraints The set of constraints for this type.
      * @param instance The instance of this type.
      */
@@ -107,11 +109,12 @@ public class TypeVar extends Type {
     }
 
     /**
-     * @param name Identifier for this type. Identifiers are not used in the type checking progress, different
-     *             {@code VarT} instances with the same name are not equal.
+     * @param name Identifier for this type.
+     * Identifiers are not used in the type checking progress,
+     * different {@code TypeVar} instances with the same name are not equal.
      * @param typeclasses The type classes that are accepted by this type.
      */
-    public TypeVar(final String name, final TypeClass ... typeclasses) {
+    public TypeVar(final String name, final TypeClass... typeclasses) {
         this(name, 0, new HashSet<TypeClass>(Arrays.asList(typeclasses)), null);
     }
 
@@ -119,7 +122,7 @@ public class TypeVar extends Type {
      * @return The name of this variable type.
      */
     public final String getName() {
-    	return this.instance.getName();
+        return this.instance.getName();
     }
 
     /**
@@ -128,37 +131,40 @@ public class TypeVar extends Type {
     public final boolean hasInstance() {
         return this.instance.isPresent();
     }
-    
+
     /**
+     * @throws NullPointerException when hasInstance() is false
      * @return The concrete type this type variable has been instantiated with.
      */
     public final ConcreteType getInstantiatedType() {
-    	return this.instance.get();
+        return this.instance.get();
     }
 
     public final void setConcreteInstance(ConcreteType type) {
-    	this.instance.set(type);
+        this.instance.set(type);
     }
-    
+
     /**
      * Use the same type instance for both type variable, effectively unifying them.
+     * 
      * @param the other type variable.
      */
-	public final void shareInstanceOf(TypeVar other) {
-		other.instance.shareConstraints(this.instance);
-		this.instance = other.instance;
-	}
+    public final void shareInstanceOf(TypeVar other) {
+        other.instance.shareConstraints(this.instance);
+        this.instance = other.instance;
+    }
 
-	/*
-    * @return Whether this type variable is constrained.
-    */
+    /*
+     * @return Whether this type variable is constrained.
+     */
     public final boolean hasConstraints() {
-        return ! this.instance.constraints.isEmpty();
+        return !this.instance.constraints.isEmpty();
     }
 
     /**
-     * Checks whether the given type is within the constraints. If the set of constraints is empty, every type is within
-     * the constraints.
+     * Checks whether the given type is within the constraints. 
+     * If the set of constraints is empty, every type is within the constraints.
+     * 
      * @param type The type to check.
      * @return Whether the given type is within the constraints of this type.
      */
@@ -168,10 +174,10 @@ public class TypeVar extends Type {
 
     @Override
     public final String toHaskellType(final int fixity) {
-    	if (this.instance.isPresent()) {
-    		return this.instance.get().toHaskellType(fixity);
-    	}
-    	
+        if (this.instance.isPresent()) {
+            return this.instance.get().toHaskellType(fixity);
+        }
+
         final StringBuilder out = new StringBuilder();
 
         if (this.instance.constraints.isEmpty()) {
@@ -198,34 +204,34 @@ public class TypeVar extends Type {
     @Override
     protected Type getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
         if (this.instance.isPresent()) {
-        	return this.instance.get().getFresh();
+            return this.instance.get().getFresh();
         }
 
         if (staleToFresh.containsKey(this.instance)) {
-        	return staleToFresh.get(this.instance);
+            return staleToFresh.get(this.instance);
         }
 
-        TypeVar fresh = new TypeVar(this.instance.prefix, this.instance.uid, new HashSet<TypeClass>(this.instance.constraints), null);
+        TypeVar fresh = new TypeVar(this.instance.prefix, this.instance.uid,
+                new HashSet<TypeClass>(this.instance.constraints), null);
         staleToFresh.put(this.instance, fresh);
         return fresh;
     }
 
-        
     @Override
-	public boolean containsOccurenceOf(TypeVar tvar) {
-    	// If type variable share the same instance then they have been unified to a single one.
-    	if (this.instance == tvar.instance) {
-    		return true;
-    	}
-    	
-    	if (! this.instance.isPresent()) {
-    		return false;
-    	}
-    	
-    	return this.instance.get().containsOccurenceOf(tvar);
-	}
+    public boolean containsOccurenceOf(TypeVar tvar) {
+        // If type variable share the same instance then they have been unified to a single one.
+        if (this.instance == tvar.instance) {
+            return true;
+        }
 
-	@Override
+        if (!this.instance.isPresent()) {
+            return false;
+        }
+
+        return this.instance.get().containsOccurenceOf(tvar);
+    }
+
+    @Override
     public final String toString() {
         return this.instance.isPresent() ? String.format("%s:%s", this.getName(), this.instance.get()) : this.getName();
     }
@@ -238,15 +244,15 @@ public class TypeVar extends Type {
      *
      * @param obj The object to compare with.
      * @return Whether the given object is equal to this object.
-     */	
+     */
     @Override
     public boolean equals(Object obj) {
-    	if (! (obj instanceof TypeVar)) {
-    		return false;
-    	}
-    	
-    	TypeVar other = (TypeVar) obj;
-    	return this.instance == other.instance; 
+        if (!(obj instanceof TypeVar)) {
+            return false;
+        }
+
+        TypeVar other = (TypeVar) obj;
+        return this.instance == other.instance;
     }
 
 }

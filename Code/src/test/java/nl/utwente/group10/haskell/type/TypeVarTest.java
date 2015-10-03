@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
 
-public class VarTTest {
+public class TypeVarTest {
     @Test
     public final void toHaskellTypeTest() {
         final TypeVar v = new TypeVar("a");

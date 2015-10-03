@@ -32,7 +32,6 @@ public abstract class Type extends HaskellObject {
     public final Type getFresh() {
     	return this.getFreshInstance(new IdentityHashMap<TypeVar.TypeInstance, TypeVar>());
     }
-
     
     /**
      * @param A mapping from the old type variables (instances) to the new, the context wherein the fresh type is constructed.
@@ -41,7 +40,6 @@ public abstract class Type extends HaskellObject {
     protected abstract Type getFreshInstance(final IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh);
     
     /**
-     * @param The fixity of the context the type is shown in.
      * @return The presence of the argument type variable some in this type.
      */
     public abstract boolean containsOccurenceOf(TypeVar tvar);

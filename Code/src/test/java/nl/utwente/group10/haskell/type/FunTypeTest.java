@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-public class FuncTTest {
+public class FunTypeTest {
     @Test
     public final void toHaskellTypeTest() {
         final ConstT integer = new ConstT("Integer");
