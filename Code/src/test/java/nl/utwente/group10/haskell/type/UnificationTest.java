@@ -63,7 +63,7 @@ public class UnificationTest {
         Expr e2 = new Apply(e1, new Ident("undefined"));
         Type t2 = e2.analyze(env).prune();
         
-        Type t3 = TypeChecker.makeVariable();
+        Type t3 = TypeChecker.makeVariable("t");
         Type t4 = new ConstT("Bool");
         
         TypeChecker.unify(t3, t4);

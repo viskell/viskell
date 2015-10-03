@@ -20,7 +20,7 @@ public final class TypeChecker {
     /**
      * Offset for the creation of variable types.
      */
-    static int tvOffset = 0;
+    static int tvOffset = -1;
 
     static {
         TypeChecker.logger.setLevel(Level.WARNING);
@@ -61,7 +61,7 @@ public final class TypeChecker {
                     // therefore lie inside the union of those type classes: if a must be in Num and Show, and b must be
                     // in Num and Read, then whatever the resulting type will be must be in Num, Show and Read.
 
-                    VarT t = TypeChecker.makeVariable(VarT.union(va, vb));
+                    VarT t = TypeChecker.makeVariable(va.getPrefix(), VarT.union(va, vb));
 
                     va.setInstance(t);
                     vb.setInstance(t);
@@ -142,26 +142,20 @@ public final class TypeChecker {
 
     /**
      * Creates and returns a new {@code VarT} instance with a unique identifier.
+     * @param prefix The base name of the type variable.
      * @param constraints Constraints for the new VarT.
      * @return A new variable type.
      */
-    public static VarT makeVariable(final Set<TypeClass> constraints) {
-        final String name;
-
-        name = TypeChecker.tvOffset <= 25
-                ? String.valueOf((char) ('α' + TypeChecker.tvOffset))
-                : Integer.toString(TypeChecker.tvOffset);
-
+    public static VarT makeVariable(final String prefix, final Set<TypeClass> constraints) {
         TypeChecker.tvOffset += 1;
-
-        return new VarT(name, constraints, null);
+        return new VarT(prefix, TypeChecker.tvOffset, constraints, null);
     }
 
     /**
      * Creates and returns a new {@code VarT} instance with a unique identifier.
      * @return A new variable type.
      */
-    public static VarT makeVariable() {
-        return makeVariable(new HashSet<TypeClass>());
+    public static VarT makeVariable(final String prefix) {
+        return makeVariable(prefix, new HashSet<TypeClass>());
     }
 }

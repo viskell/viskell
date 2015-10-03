@@ -39,9 +39,9 @@ public class BubbleTest {
 
     @Test
     public void testBubbleAddition() throws Exception {
-        VarT a = TypeChecker.makeVariable();
-        VarT b = TypeChecker.makeVariable();
-        VarT c = TypeChecker.makeVariable();
+        VarT a = TypeChecker.makeVariable("a");
+        VarT b = TypeChecker.makeVariable("b");
+        VarT c = TypeChecker.makeVariable("c");
         ConstT floatT = new ConstT("Float");
 
         Apply apply = new Apply(
@@ -70,7 +70,7 @@ public class BubbleTest {
         ConstT Float = new ConstT("Float");
         TypeClass Num = new TypeClass("Num", Float);
         VarT a = new VarT("a", Num);
-        VarT b = TypeChecker.makeVariable();
+        VarT b = new VarT("b");
 
         Apply apply = new Apply(
                 new Apply(

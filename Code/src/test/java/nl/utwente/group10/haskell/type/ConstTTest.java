@@ -20,7 +20,7 @@ public class ConstTTest {
     @Test
     public final void testPrune() {
         final ConstT integer = new ConstT("Integer");
-        final VarT a = new VarT("a", new HashSet<>(), integer);
+        final VarT a = new VarT("a", 0, new HashSet<>(), integer);
 
         assertNotEquals(integer, a);
         assertEquals(integer, a.prune());

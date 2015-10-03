@@ -57,7 +57,7 @@ public class ApplyTest {
         
         Expr e2 = new Apply(e0, e1);
         Type t2 = e2.analyze(env).prune();
-        Type num = TypeChecker.makeVariable(ImmutableSet.of(env.getTypeClasses().get("Num")));
+        Type num = TypeChecker.makeVariable("n", ImmutableSet.of(env.getTypeClasses().get("Num")));
         TypeChecker.unify(t2, new FuncT(num, num));
         
         Expr e3 = new Apply(e2, new Ident("undefined"));

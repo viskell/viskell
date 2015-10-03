@@ -39,7 +39,7 @@ public class Apply extends Expr {
     public final Type analyze(final Env env) throws HaskellException {
         final Type funcType = func.analyze(env);
         final Type argType = arg.analyze(env);
-        final Type resType = TypeChecker.makeVariable();
+        final Type resType = TypeChecker.makeVariable("b");
 
 
         // Rule [App]:

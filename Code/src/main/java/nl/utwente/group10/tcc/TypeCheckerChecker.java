@@ -56,11 +56,11 @@ public class TypeCheckerChecker extends Application implements Initializable {
     public final void recalculate() {
         Type funT = tb.build(fun.getText());
         Type argT = tb.build(arg.getText());
-        Type resT = TypeChecker.makeVariable();
+        Type resT = TypeChecker.makeVariable("x");
 
         // First, check if funT is a function
         try {
-            TypeChecker.unify(funT, new FuncT(new VarT(""), new VarT("")));
+            TypeChecker.unify(funT, new FuncT(new VarT("a"), new VarT("b")));
         } catch (HaskellTypeError haskellTypeError) {
             res.setText("⊥ (Invalid function type.)");
             return;
