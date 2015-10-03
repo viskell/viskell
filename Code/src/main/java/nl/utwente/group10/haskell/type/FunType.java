@@ -61,6 +61,6 @@ public class FunType extends ConcreteType {
 
     @Override
     public String toString() {
-        return this.toHaskellType();
+        return String.format("%s -> %s", argument, result);
     }
 }

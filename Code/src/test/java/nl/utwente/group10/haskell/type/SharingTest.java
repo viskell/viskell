@@ -2,7 +2,7 @@ package nl.utwente.group10.haskell.type;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class SharingTest {
     @Test
@@ -12,16 +12,15 @@ public class SharingTest {
         ConstT u = new ConstT("Unit");
         ListT l = new ListT(x);
 
-        assertEquals("x", x.toString());
-        assertEquals("y", y.toString());
+        assertTrue(x.toString().startsWith("x"));
+        assertTrue(y.toString().startsWith("y"));
         assertEquals("Unit", u.toString());
-        assertEquals("([] x)", l.toString());
+        assertTrue(l.toString().startsWith("([] x"));
 
         TypeChecker.unify(x, y);
 
-        assertEquals("x", x.toString());
-        assertEquals("x", y.toString());
-        assertEquals("([] x)", l.toString());
+        assertEquals(x.toString(), y.toString());
+        assertTrue(l.toString().startsWith("([] x"));
 
         TypeChecker.unify(x, u);
 

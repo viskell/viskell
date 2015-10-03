@@ -38,7 +38,9 @@ public class ConstTTest {
 
         Type[] freshArgs = ((ConstT) stale.getFresh()).getArgs();
 
-        assertEquals("[Int, a, a]", Arrays.toString(freshArgs));
+        assertEquals("Int", freshArgs[0].toString());
+        assertTrue(freshArgs[1].toString().startsWith("a"));
+        assertTrue(freshArgs[2].toString().startsWith("a"));
         assertFalse(staleInt == freshArgs[0]);
         assertFalse(staleVar == freshArgs[1]);
         assertFalse(staleVar == freshArgs[2]);
