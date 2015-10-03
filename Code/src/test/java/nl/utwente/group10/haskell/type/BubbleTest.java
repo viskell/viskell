@@ -15,8 +15,8 @@ public class BubbleTest {
         TypeVar z = new TypeVar("z");
         ConstT u = new ConstT("Unit");
 
-        FuncT aFunc = new FuncT(a, a);
-        FuncT bFunc = new FuncT(u, u);
+        FunType aFunc = new FunType(a, a);
+        FunType bFunc = new FunType(u, u);
 
         // "(unit (id undefined))"
         Apply apply = new Apply(new Value(bFunc, "unit"), new Apply(new Value(aFunc, "id"), new Value(z, "undefined")));
@@ -46,9 +46,9 @@ public class BubbleTest {
 
         Apply apply = new Apply(
                 new Apply(
-                        new Value(new FuncT(floatT, new FuncT(floatT, floatT)), "(+)"),
+                        new Value(new FunType(floatT, new FunType(floatT, floatT)), "(+)"),
                         new Apply(
-                                new Value(new FuncT(a, a), "id"),
+                                new Value(new FunType(a, a), "id"),
                                 new Value(b, "undefined")
                         )
                 ),
@@ -74,7 +74,7 @@ public class BubbleTest {
 
         Apply apply = new Apply(
                 new Apply(
-                        new Value(new FuncT(a, new FuncT(a, a)), "(==)"),
+                        new Value(new FunType(a, new FunType(a, a)), "(==)"),
                         new Value(Float, "5.0")
                 ),
                 new Value(b, "undefined")

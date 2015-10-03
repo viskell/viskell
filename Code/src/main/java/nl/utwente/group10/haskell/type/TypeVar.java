@@ -148,13 +148,20 @@ public class TypeVar extends Type {
 		this.instance = other.instance;
 	}
 
+	/*
+    * @return Whether this type variable is constrained.
+    */
+    public final boolean hasConstraints() {
+        return ! this.instance.constraints.isEmpty();
+    }
+
     /**
      * Checks whether the given type is within the constraints. If the set of constraints is empty, every type is within
      * the constraints.
      * @param type The type to check.
      * @return Whether the given type is within the constraints of this type.
      */
-    public final boolean hasConstraint(ConcreteType type) {
+    public final boolean hasConstraint(ConstT type) {
         return this.instance.constraints.stream().allMatch(tc -> tc.hasType(type));
     }
 
@@ -233,11 +240,6 @@ public class TypeVar extends Type {
     	
     	TypeVar other = (TypeVar) obj;
     	return this.instance == other.instance; 
-    }
-
-    @Override
-    public int compareTo(final Type type) {
-        return this.equals(type) ? 0 : -1;
     }
 
 }

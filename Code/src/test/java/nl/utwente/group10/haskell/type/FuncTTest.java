@@ -8,7 +8,7 @@ public class FuncTTest {
     @Test
     public final void toHaskellTypeTest() {
         final ConstT integer = new ConstT("Integer");
-        final FuncT function = new FuncT(integer, integer);
+        final FunType function = new FunType(integer, integer);
         assertEquals("Integer -> Integer", function.toHaskellType());
     }
 }

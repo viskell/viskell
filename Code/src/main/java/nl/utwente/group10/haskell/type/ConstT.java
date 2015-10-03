@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Constant, concrete type. However, it may consist of variable types.
  */
-public class ConstT extends ConcreteType {
+public class ConstT extends ConcreteType implements Comparable<ConstT>{
     /**
      * The constructor for this type.
      */
@@ -96,19 +96,13 @@ public class ConstT extends ConcreteType {
         }
     }
 
-    @Override
-    public int compareTo(final Type type) {
+    public int compareTo(final ConstT type) {
         if (type == null) {
             throw new NullPointerException();
         } else if (type instanceof ConstT) {
             final ConstT cType = (ConstT) type;
             if (this.constructor.equals(cType.constructor)) {
                 if (this.args.length == cType.args.length) {
-                    for (int i = 0; i < this.args.length; i++) {
-                        if (this.args[i].compareTo(cType.args[i]) != 0) {
-                            return -1;
-                        }
-                    }
                     return 0;
                 } else {
                     return -1;

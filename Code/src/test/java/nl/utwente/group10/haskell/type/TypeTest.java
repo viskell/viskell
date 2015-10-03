@@ -14,7 +14,7 @@ public class TypeTest {
                 new ListT(
                         new TypeVar("a")
                 ),
-                new FuncT(
+                new FunType(
                         new TypeVar("b"),
                         new ConstT("String")
                 )
@@ -29,7 +29,7 @@ public class TypeTest {
                 new ListT(
                         new TypeVar("a")
                 ),
-                new FuncT(
+                new FunType(
                         new TypeVar("b"),
                         new ConstT("String")
                 )

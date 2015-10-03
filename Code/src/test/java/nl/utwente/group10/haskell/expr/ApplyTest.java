@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.ConstT;
-import nl.utwente.group10.haskell.type.FuncT;
+import nl.utwente.group10.haskell.type.FunType;
 import nl.utwente.group10.haskell.type.ListT;
 import nl.utwente.group10.haskell.type.TupleT;
 import nl.utwente.group10.haskell.type.Type;
@@ -51,7 +51,7 @@ public class ApplyTest {
         assertEquals("((+) 42)", apply1.toHaskell());
         assertEquals("(((+) 42) 42)", apply2.toHaskell());
 
-        assertEquals(new FuncT(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env).toHaskellType());
+        assertEquals(new FunType(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env).toHaskellType());
         assertEquals(this.integer.toHaskellType(), apply2.analyze(this.env).toHaskellType());
     }
 
@@ -64,7 +64,7 @@ public class ApplyTest {
         assertEquals("(map ((+) 42))", apply1.toHaskell());
         assertEquals("((map ((+) 42)) [1, 2, 3, 5, 7])", apply2.toHaskell());
 
-        assertEquals(new FuncT(this.integerList, this.integerList).toHaskellType(), apply1.analyze(this.env).toHaskellType());
+        assertEquals(new FunType(this.integerList, this.integerList).toHaskellType(), apply1.analyze(this.env).toHaskellType());
         assertEquals(this.integerList.toHaskellType(), apply2.analyze(this.env).toHaskellType());
     }
 
@@ -76,7 +76,7 @@ public class ApplyTest {
         assertEquals("(zip [1, 2, 3, 5, 7])", apply1.toHaskell());
         assertEquals("((zip [1, 2, 3, 5, 7]) [\"a\", \"b\", \"c\"])", apply2.toHaskell());
 
-        assertEquals(new FuncT(this.betaList, new ListT(new TupleT(this.integer, this.beta))).toHaskellType(), apply1.analyze(this.env).toHaskellType());
+        assertEquals(new FunType(this.betaList, new ListT(new TupleT(this.integer, this.beta))).toHaskellType(), apply1.analyze(this.env).toHaskellType());
         assertEquals(new ListT(new TupleT(this.integer, this.string)).toHaskellType(), apply2.analyze(this.env).toHaskellType());
     }
 
@@ -88,7 +88,7 @@ public class ApplyTest {
         assertEquals("(lcm 42)", apply1.toHaskell());
         assertEquals("((lcm 42) \"haskell\")", apply2.toHaskell());
 
-        assertEquals(new FuncT(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env).toHaskellType());
+        assertEquals(new FunType(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env).toHaskellType());
         assertNotEquals(this.string, apply2.analyze(this.env).toHaskellType());
         assertNotEquals(this.integer, apply2.analyze(this.env).toHaskellType());
     }

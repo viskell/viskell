@@ -17,11 +17,11 @@ public class VarTTest {
         final TypeVar a = new TypeVar("a");
         final TypeVar b = new TypeVar("b", new TypeClass("Test"));
 
-        assertEquals(0, a.compareTo(a));
-        assertEquals(0, b.compareTo(b));
+        assertEquals(a, a);
+        assertEquals(b, b);
 
-        assertNotEquals(0, a.compareTo(new TypeVar("a")));
-        assertNotEquals(0, b.compareTo(new TypeVar("b")));
-        assertNotEquals(0, b.compareTo(new TypeVar("b", new TypeClass("Test"))));
+        assertNotEquals(a, new TypeVar("a"));
+        assertNotEquals(b, new TypeVar("b"));
+        assertNotEquals(b, new TypeVar("b", new TypeClass("Test")));
     }
 }

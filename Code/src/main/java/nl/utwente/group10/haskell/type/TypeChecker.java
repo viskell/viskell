@@ -59,8 +59,17 @@ public final class TypeChecker {
                 TypeVar vb = (TypeVar) b;
                 // two type variable are unified by sharing the internal reference of (future) type instance   
                 vb.shareInstanceOf(va);
+            } else if (b instanceof FunType) {
+            	// unifying a type variable with a function succeeds if it has no constraints.
+            	FunType fb = (FunType) b;
+            	if (va.hasConstraints()) {
+                    TypeChecker.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
+                    throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context, a, b);
+            	} else {
+            		va.setConcreteInstance(fb);
+            	}
             } else {
-            	ConcreteType tb = (ConcreteType) b;
+            	ConstT tb = (ConstT) b;
                 // Example: we have to unify (for example) α and Int.
                 // Do so by stating that α must be Int, provided Int fits in α's typeclasses
                 if (va.hasConstraint(tb)) {
@@ -70,7 +79,7 @@ public final class TypeChecker {
                     throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context, a, b);
                 }
             }
-        } else if (a instanceof ConstT && b instanceof TypeVar) {
+        } else if (a instanceof ConcreteType && b instanceof TypeVar) {
             // Example: we have to unify Int and α.
             // Same as above, but mirrored.
             TypeChecker.unify(context, b, a);
@@ -98,6 +107,11 @@ public final class TypeChecker {
             for (int i = 0; i < ao.getArgs().length; i++) {
                 TypeChecker.unify(context, ao.getArgs()[i], bo.getArgs()[i]);
             }
+        } else if (a instanceof FunType && b instanceof FunType) {
+        	FunType fa = (FunType) a;
+        	FunType fb = (FunType) b;
+            TypeChecker.unify(context, fa.getArgument(), fb.getArgument());
+            TypeChecker.unify(context, fa.getResult(), fb.getResult());
         }
     }
 

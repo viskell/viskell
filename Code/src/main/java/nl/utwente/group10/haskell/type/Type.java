@@ -8,7 +8,7 @@ import nl.utwente.group10.haskell.HaskellObject;
 /**
  * Abstract class for Haskell types. Provides an interface for common methods.
  */
-public abstract class Type extends HaskellObject implements Comparable<Type> {
+public abstract class Type extends HaskellObject {
     /** Logger instance for types. */
     protected Logger logger = Logger.getLogger(Type.class.getName());
 

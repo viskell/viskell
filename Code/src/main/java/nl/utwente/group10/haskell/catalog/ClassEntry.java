@@ -1,5 +1,7 @@
 package nl.utwente.group10.haskell.catalog;
 
+import nl.utwente.group10.haskell.type.ConstT;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 
@@ -39,7 +41,9 @@ public class ClassEntry extends Entry {
         TypeClass tc = new TypeClass(this.getName());
 
         for (String instance : this.instances) {
-            tc.getTypes().add(builder.build(instance));
+        	Type t = builder.build(instance);
+        	if (t instanceof ConstT)
+        		tc.getTypes().add((ConstT) t);
         }
 
         return tc;
