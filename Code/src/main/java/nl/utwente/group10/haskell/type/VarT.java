@@ -12,9 +12,14 @@ import java.util.Set;
  */
 public class VarT extends Type {
     /**
-     * Identifier for type checking within {@code FuncT} and {@code TupleT} types.
+     * Base name of the type variable.
      */
-    private final String name;
+    private final String prefix;
+
+    /**
+     * Number to make a name of the type variable unique.
+     */
+    private final int uid;
 
     /**
      * The instance for this type.
@@ -32,8 +37,9 @@ public class VarT extends Type {
      * @param constraints The set of constraints for this type.
      * @param instance The instance of this type.
      */
-    public VarT(final String name, final Set<TypeClass> constraints, final Type instance) {
-        this.name = name.toLowerCase();
+    public VarT(final String prefix, final int uid, final Set<TypeClass> constraints, final Type instance) {
+        this.prefix = prefix.toLowerCase();
+        this.uid = uid;
         this.instance = Optional.ofNullable(instance);
         this.constraints = constraints;
     }
@@ -44,14 +50,25 @@ public class VarT extends Type {
      * @param typeclasses The type classes that are accepted by this type.
      */
     public VarT(final String name, final TypeClass ... typeclasses) {
-        this(name, new HashSet<TypeClass>(Arrays.asList(typeclasses)), null);
+        this(name, 0, new HashSet<TypeClass>(Arrays.asList(typeclasses)), null);
+    }
+
+    /**
+     * @return The name of this variable type.
+     */
+    public final String getPrefix() {
+        return this.prefix;
     }
 
     /**
      * @return The name of this variable type.
      */
     public final String getName() {
-        return this.name;
+        if (this.uid == 0) {
+            return this.prefix;
+        }
+
+        return this.prefix + Integer.toString(this.uid);
     }
 
     /**
@@ -100,18 +117,18 @@ public class VarT extends Type {
     }
 
     @Override
-    public final String toHaskellType() {
+    public final String toHaskellType(final int fixity) {
         final StringBuilder out = new StringBuilder();
 
         if (this.constraints.isEmpty()) {
-            out.append(this.name);
+            out.append(this.getName());
         } else {
             out.append("(");
 
             int i = 0;
 
             for (TypeClass tc : this.constraints) {
-                out.append(String.format("%s %s", tc.getName(), this.name));
+                out.append(String.format("%s %s", tc.getName(), this.getName()));
                 if (i + 1 < this.constraints.size()) {
                     out.append(", ");
                 }
@@ -132,12 +149,12 @@ public class VarT extends Type {
             instance = this.instance.get().getFresh();
         }
 
-        return new VarT(this.name, this.constraints, instance);
+        return new VarT(this.prefix, this.uid, this.constraints, instance);
     }
 
     @Override
     public final String toString() {
-        return this.instance.isPresent() ? String.format("%s:%s", this.name, this.instance.get()) : this.name;
+        return this.instance.isPresent() ? String.format("%s:%s", this.getName(), this.instance.get()) : this.getName();
     }
 
     /** Return the set of typeclasses that is the union of both arguments' constraints. */

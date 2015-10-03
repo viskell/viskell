@@ -3,7 +3,7 @@ package nl.utwente.group10.haskell.type;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Value;
-import nl.utwente.group10.haskell.hindley.HindleyMilner;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -39,9 +39,9 @@ public class BubbleTest {
 
     @Test
     public void testBubbleAddition() throws Exception {
-        VarT a = HindleyMilner.makeVariable();
-        VarT b = HindleyMilner.makeVariable();
-        VarT c = HindleyMilner.makeVariable();
+        VarT a = TypeChecker.makeVariable("a");
+        VarT b = TypeChecker.makeVariable("b");
+        VarT c = TypeChecker.makeVariable("c");
         ConstT floatT = new ConstT("Float");
 
         Apply apply = new Apply(
@@ -70,7 +70,7 @@ public class BubbleTest {
         ConstT Float = new ConstT("Float");
         TypeClass Num = new TypeClass("Num", Float);
         VarT a = new VarT("a", Num);
-        VarT b = HindleyMilner.makeVariable();
+        VarT b = new VarT("b");
 
         Apply apply = new Apply(
                 new Apply(

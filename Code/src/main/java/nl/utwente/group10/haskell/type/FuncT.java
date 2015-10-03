@@ -13,21 +13,22 @@ public class FuncT extends ConstT {
     }
 
     @Override
-    public final String toHaskellType() {
+    public final String toHaskellType(final int fixity) {
         final StringBuilder out = new StringBuilder();
         final Type[] args = this.getArgs();
 
-        out.append("(");
+        out.append(args[0].toHaskellType(1));
 
-        for (int i = 0; i < args.length; i++) {
-            out.append(args[i].toHaskellType());
-
-            if (i + 1 < args.length) {
-                out.append(" -> ");
-            }
+        for (int i = 1; i < args.length; i++) {
+            out.append(" -> ");
+            final int fix = i == args.length - 1 ? 0 : 1;
+            out.append(args[i].toHaskellType(fix));
         }
 
-        out.append(")");
+        if (fixity > 0) {
+            return "(" + out.toString() + ")";
+        }
+
         return out.toString();
     }
 

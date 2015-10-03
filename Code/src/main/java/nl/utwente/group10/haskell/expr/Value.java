@@ -2,7 +2,6 @@ package nl.utwente.group10.haskell.expr;
 
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
-import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.Type;
 
 /**
@@ -32,7 +31,7 @@ public class Value extends Expr {
     }
 
     @Override
-    public final Type analyze(final Env env, final GenSet genSet) throws HaskellTypeError {
+    public final Type analyze(final Env env) throws HaskellTypeError {
         return this.type;
     }
 

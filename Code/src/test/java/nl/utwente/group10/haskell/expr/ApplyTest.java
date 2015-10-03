@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
-import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.ListT;
@@ -25,12 +23,10 @@ public class ApplyTest {
     private final Type stringList = new ListT(this.string);
 
     private Env env;
-    private GenSet genSet;
 
     @Before
     public final void setUp() {
         this.env = new Env();
-        this.genSet = new GenSet();
 
         this.env.addExpr("id", "a -> a");
         this.env.addExpr("(+)", "Int -> Int -> Int");
@@ -44,7 +40,7 @@ public class ApplyTest {
         final Apply apply = new Apply(new Ident("id"), new Value(this.integer, "42"));
 
         assertEquals("(id (42))", apply.toHaskell());
-        assertEquals(this.integer.toHaskellType(), apply.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertEquals(this.integer.toHaskellType(), apply.analyze(this.env).prune().toHaskellType());
     }
 
     @Test
@@ -55,8 +51,8 @@ public class ApplyTest {
         assertEquals("((+) (42))", apply1.toHaskell());
         assertEquals("(((+) (42)) (42))", apply2.toHaskell());
 
-        assertEquals(new FuncT(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env, this.genSet).prune().toHaskellType());
-        assertEquals(this.integer.toHaskellType(), apply2.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertEquals(new FuncT(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env).prune().toHaskellType());
+        assertEquals(this.integer.toHaskellType(), apply2.analyze(this.env).prune().toHaskellType());
     }
 
     @Test
@@ -68,8 +64,8 @@ public class ApplyTest {
         assertEquals("(map ((+) (42)))", apply1.toHaskell());
         assertEquals("((map ((+) (42))) ([1, 2, 3, 5, 7]))", apply2.toHaskell());
 
-        assertEquals(new FuncT(this.integerList, this.integerList).toHaskellType(), apply1.analyze(this.env, this.genSet).prune().toHaskellType());
-        assertEquals(this.integerList.toHaskellType(), apply2.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertEquals(new FuncT(this.integerList, this.integerList).toHaskellType(), apply1.analyze(this.env).prune().toHaskellType());
+        assertEquals(this.integerList.toHaskellType(), apply2.analyze(this.env).prune().toHaskellType());
     }
 
     @Test
@@ -80,11 +76,11 @@ public class ApplyTest {
         assertEquals("(zip ([1, 2, 3, 5, 7]))", apply1.toHaskell());
         assertEquals("((zip ([1, 2, 3, 5, 7])) ([\"a\", \"b\", \"c\"]))", apply2.toHaskell());
 
-        assertEquals(new FuncT(this.betaList, new ListT(new TupleT(this.integer, this.beta))).toHaskellType(), apply1.analyze(this.env, this.genSet).prune().toHaskellType());
-        assertEquals(new ListT(new TupleT(this.integer, this.string)).toHaskellType(), apply2.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertEquals(new FuncT(this.betaList, new ListT(new TupleT(this.integer, this.beta))).toHaskellType(), apply1.analyze(this.env).prune().toHaskellType());
+        assertEquals(new ListT(new TupleT(this.integer, this.string)).toHaskellType(), apply2.analyze(this.env).prune().toHaskellType());
     }
 
-    @Test(expected=HaskellTypeError.class)
+    @Test(expected=HaskellException.class)
     public final void testIncorrectLcm() throws HaskellException {
         final Apply apply1 = new Apply(new Ident("lcm"), new Value(this.integer, "42"));
         final Apply apply2 = new Apply(apply1, new Value(this.string, "\"haskell\""));
@@ -92,8 +88,8 @@ public class ApplyTest {
         assertEquals("(lcm (42))", apply1.toHaskell());
         assertEquals("((lcm (42)) (\"haskell\"))", apply2.toHaskell());
 
-        assertEquals(new FuncT(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env, this.genSet).prune().toHaskellType());
-        assertNotEquals(this.string, apply2.analyze(this.env, this.genSet).prune().toHaskellType());
-        assertNotEquals(this.integer, apply2.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertEquals(new FuncT(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env).prune().toHaskellType());
+        assertNotEquals(this.string, apply2.analyze(this.env).prune().toHaskellType());
+        assertNotEquals(this.integer, apply2.analyze(this.env).prune().toHaskellType());
     }
 }

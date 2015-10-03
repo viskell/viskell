@@ -12,14 +12,14 @@ public class TupleT extends ConstT {
     }
 
     @Override
-    public final String toHaskellType() {
+    public final String toHaskellType(final int fixity) {
         StringBuilder out = new StringBuilder();
         Type[] args = this.getArgs();
 
         out.append("(");
 
         for (int i = 0; i < args.length; i++) {
-            out.append(args[i].toHaskellType());
+            out.append(args[i].toHaskellType(0));
 
             if (i + 1 < args.length) {
                 out.append(", ");

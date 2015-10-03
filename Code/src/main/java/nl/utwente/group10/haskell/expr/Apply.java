@@ -3,9 +3,8 @@ package nl.utwente.group10.haskell.expr;
 import com.google.common.collect.ImmutableList;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.hindley.GenSet;
-import nl.utwente.group10.haskell.hindley.HindleyMilner;
 import nl.utwente.group10.haskell.type.FuncT;
+import nl.utwente.group10.haskell.type.TypeChecker;
 import nl.utwente.group10.haskell.type.Type;
 
 import java.util.List;
@@ -37,16 +36,16 @@ public class Apply extends Expr {
     }
 
     @Override
-    public final Type analyze(final Env env, final GenSet genSet) throws HaskellException {
-        final Type funcType = func.analyze(env, genSet);
-        final Type argType = arg.analyze(env, genSet);
-        final Type resType = HindleyMilner.makeVariable();
+    public final Type analyze(final Env env) throws HaskellException {
+        final Type funcType = func.analyze(env);
+        final Type argType = arg.analyze(env);
+        final Type resType = TypeChecker.makeVariable("b");
 
 
         // Rule [App]:
         // IFF  the type of our function is a -> b and the type of our arg is a
         // THEN the type of our result is b
-        HindleyMilner.unify(this, funcType, new FuncT(argType, resType));
+        TypeChecker.unify(this, funcType, new FuncT(argType, resType));
 
         this.setCachedType(resType);
 

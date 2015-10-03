@@ -2,7 +2,6 @@ package nl.utwente.group10.haskell.expr;
 
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.FuncT;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -34,7 +33,7 @@ public class Function extends Expr {
         }
 
         @Override
-        public Type analyze(Env env, GenSet genSet) throws HaskellException {
+        public Type analyze(Env env) throws HaskellException {
             return this.type;
         }
 
@@ -81,7 +80,7 @@ public class Function extends Expr {
     }
 
     @Override
-    public Type analyze(Env env, GenSet genSet) throws HaskellException {
+    public Type analyze(Env env) throws HaskellException {
         Type type = this.expr.analyze(env).prune().getFresh();
 
         for (int i = this.arguments.size(); i > 0; i--) {

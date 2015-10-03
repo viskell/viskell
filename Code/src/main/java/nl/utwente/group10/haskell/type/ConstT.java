@@ -23,9 +23,9 @@ public class ConstT extends Type {
 
     /**
      * @param constructor The constructor for this constant type.
-     * @param args The types of the arguments that this type accepts.
+     * @param args        The types of the arguments that this type accepts.
      */
-    public ConstT(final String constructor, final Type ... args) {
+    public ConstT(final String constructor, final Type... args) {
         this.constructor = constructor;
         this.args = args;
     }
@@ -54,13 +54,17 @@ public class ConstT extends Type {
     }
 
     @Override
-    public String toHaskellType() {
+    public String toHaskellType(final int fixity) {
         StringBuilder out = new StringBuilder();
         out.append(this.constructor);
 
         for (Type arg : this.args) {
             out.append(" ");
-            out.append(arg.toHaskellType());
+            out.append(arg.toHaskellType(10));
+        }
+
+        if (fixity > 9 && this.args.length > 0) {
+            return "(" + out.toString() + ")";
         }
 
         return out.toString();
@@ -74,6 +78,7 @@ public class ConstT extends Type {
     /**
      * Returns an array of fresh arguments. Selectively calls {@code getFresh} on each argument. When the same Type
      * instance appears multiple times in the arguments no new type is instantiated. Instead, the fresh type is reused.
+     *
      * @return An array of fresh arguments.
      */
     protected Type[] getFreshArgs() {
