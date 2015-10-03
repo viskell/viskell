@@ -1,6 +1,8 @@
 package nl.utwente.group10.haskell.type;
 
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
+import java.util.ListIterator;
 import java.util.logging.Logger;
 
 import nl.utwente.group10.haskell.HaskellObject;
@@ -26,6 +28,27 @@ public abstract class Type extends HaskellObject {
      */
     public abstract String toHaskellType(final int fixity);
 
+    /**
+     * @param The fixity of the context the type is shown in.
+     * @param The list of types applied to this type.
+     * @return the Haskell (type) representation of this type a list of of types 
+     */
+    public String asTypeAppChain(final int fixity, final ArrayList<Type> args)
+    {
+        final StringBuilder out = new StringBuilder();
+        final ListIterator<Type> iter = args.listIterator(args.size());
+        while (iter.hasPrevious()) {
+            out.append(iter.previous().toHaskellType(10));
+            out.append(' ');
+        }
+        out.append(this.toHaskellType());
+        if (fixity > 0) {
+            return "(" + out.toString() + ")";
+        }
+        
+        return out.toString();    
+    }
+    
     /**
      * @return An equivalent deep copy of this type, using fresh type variables.
      */

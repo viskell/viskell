@@ -99,6 +99,15 @@ public final class TypeChecker {
             // Example: we have to unify Int and α.
             // Same as above, but mirrored.
             TypeChecker.unify(context, b, a);
+        } else if (a instanceof TypeCon && b instanceof TypeCon) {
+            final TypeCon ca = (TypeCon) a;
+            final TypeCon cb = (TypeCon) b;
+            // unification of type constructor is just name equality
+            if (! ca.getName().equals(cb.getName()))
+            {
+                TypeChecker.logger.info(String.format("Mismatching TypeCon %s and %s for context %s", a, b, context));
+                throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context, a, b);
+            }
         } else if (a instanceof ConstT && b instanceof ConstT) {
             // Example: we have to unify Int and Int.
 

@@ -1,5 +1,6 @@
 package nl.utwente.group10.haskell.type;
 
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
 
 import nl.utwente.group10.haskell.type.TypeVar.TypeInstance;
@@ -31,11 +32,9 @@ public class TypeApp extends ConcreteType {
 
     @Override
     public String toHaskellType(int fixity) {
-        final StringBuilder out = new StringBuilder();
-        out.append(this.typeFun.toHaskellType(10));
-        out.append(" ");
-        out.append(this.typeArg.toHaskellType(10));
-        return out.toString();
+        final ArrayList<Type> targs = new ArrayList<Type>();
+        targs.add(this.typeArg);
+        return (this.typeFun.asTypeAppChain(fixity, targs));
     }
 
     @Override
