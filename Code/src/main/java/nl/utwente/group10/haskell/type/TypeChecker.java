@@ -20,7 +20,7 @@ public final class TypeChecker {
     /**
      * Offset for the creation of variable types.
      */
-    static int tvOffset = -1;
+    static int tvOffset = 0;
 
     static {
         TypeChecker.logger.setLevel(Level.WARNING);
@@ -147,8 +147,7 @@ public final class TypeChecker {
      * @return A new variable type.
      */
     public static VarT makeVariable(final String prefix, final Set<TypeClass> constraints) {
-        TypeChecker.tvOffset += 1;
-        return new VarT(prefix, TypeChecker.tvOffset, constraints, null);
+        return new VarT(prefix, TypeChecker.tvOffset++, constraints, null);
     }
 
     /**
