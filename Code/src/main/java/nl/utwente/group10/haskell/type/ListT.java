@@ -1,5 +1,6 @@
 package nl.utwente.group10.haskell.type;
 
+import java.util.IdentityHashMap;
 
 /**
  * List type.
@@ -18,8 +19,8 @@ public class ListT extends ConstT {
     }
 
     @Override
-    public ListT getFresh() {
-        Type[] freshArgs = getFreshArgs();
+    public ListT getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
+        Type[] freshArgs = this.getFreshArgs(staleToFresh);
         return new ListT(freshArgs[0]);
     }
 }

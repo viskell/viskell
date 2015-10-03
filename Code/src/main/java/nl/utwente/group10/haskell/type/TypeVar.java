@@ -2,6 +2,7 @@ package nl.utwente.group10.haskell.type;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Set;
 import com.google.common.collect.Sets;
 
@@ -13,7 +14,7 @@ public class TypeVar extends Type {
     /**
      * An optional mutable reference to a concrete type.
      */
-	static class TypeInstance {
+	public static class TypeInstance {
 		/**
 	     * Base name of the type variable.
 	     */
@@ -186,11 +187,16 @@ public class TypeVar extends Type {
     }
 
     @Override
-    public Type getFresh() {
+    protected Type getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
         if (this.instance.isPresent())
-            return this.instance.get().getFresh();
+        	return this.instance.get().getFresh();
 
-        return new TypeVar(this.instance.prefix, this.instance.uid, new HashSet<TypeClass>(this.instance.constraints), null);
+        if (staleToFresh.containsKey(this.instance))
+        	return staleToFresh.get(this.instance);
+
+        TypeVar fresh = new TypeVar(this.instance.prefix, this.instance.uid, new HashSet<TypeClass>(this.instance.constraints), null);
+        staleToFresh.put(this.instance, fresh);
+        return fresh;
     }
 
         

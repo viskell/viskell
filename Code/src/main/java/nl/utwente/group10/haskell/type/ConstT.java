@@ -2,10 +2,9 @@ package nl.utwente.group10.haskell.type;
 
 import com.google.common.base.Joiner;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Constant, concrete type. However, it may consist of variable types.
@@ -61,8 +60,8 @@ public class ConstT extends ConcreteType {
     }
 
     @Override
-    public ConstT getFresh() {
-        return new ConstT(this.constructor, this.getFreshArgs());
+    protected ConstT getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
+    	return new ConstT(this.constructor, this.getFreshArgs(staleToFresh));
     }
 
 	@Override
@@ -76,22 +75,13 @@ public class ConstT extends ConcreteType {
 	}
 
 	/**
-     * Returns an array of fresh arguments. Selectively calls {@code getFresh} on each argument. When the same Type
-     * instance appears multiple times in the arguments no new type is instantiated. Instead, the fresh type is reused.
      * @return An array of fresh arguments.
      */
-    protected Type[] getFreshArgs() {
+    protected Type[] getFreshArgs(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
         List<Type> fresh = new LinkedList<>();
-        Map<Type, Type> staleToFresh = new HashMap<>();
 
         for (Type arg : this.args) {
-            if (staleToFresh.containsKey(arg)) {
-                fresh.add(staleToFresh.get(arg));
-            } else {
-                Type freshArg = arg.getFresh();
-                staleToFresh.put(arg, freshArg);
-                fresh.add(freshArg);
-            }
+        	fresh.add(arg.getFreshInstance(staleToFresh));
         }
 
         return fresh.toArray(new Type[fresh.size()]);

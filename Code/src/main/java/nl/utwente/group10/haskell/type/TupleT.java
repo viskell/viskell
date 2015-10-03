@@ -1,5 +1,7 @@
 package nl.utwente.group10.haskell.type;
 
+import java.util.IdentityHashMap;
+
 /**
  * Tuple type.
  */
@@ -31,7 +33,7 @@ public class TupleT extends ConstT {
     }
 
     @Override
-    public TupleT getFresh() {
-        return new TupleT(this.getFreshArgs());
+    protected TupleT getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
+        return new TupleT(this.getFreshArgs(staleToFresh));
     }
 }

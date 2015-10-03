@@ -3,7 +3,6 @@ package nl.utwente.group10.haskell.type;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.HashSet;
 
 import static org.junit.Assert.*;
 
@@ -37,7 +36,7 @@ public class ConstTTest {
         final ConstT staleInt = new ConstT("Int");
         final ConstT stale = new ConstT("Type", staleInt, staleVar, staleVar);
 
-        Type[] freshArgs = stale.getFreshArgs();
+        Type[] freshArgs = ((ConstT) stale.getFresh()).getArgs();
 
         assertEquals("[Int, a, a]", Arrays.toString(freshArgs));
         assertFalse(staleInt == freshArgs[0]);

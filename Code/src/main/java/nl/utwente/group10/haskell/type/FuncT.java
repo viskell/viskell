@@ -1,5 +1,7 @@
 package nl.utwente.group10.haskell.type;
 
+import java.util.IdentityHashMap;
+
 /**
  * Type of a Haskell function.
  */
@@ -32,8 +34,8 @@ public class FuncT extends ConstT {
     }
 
     @Override
-    public FuncT getFresh() {
-        Type[] args = getFreshArgs();
+    protected FuncT getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
+        Type[] args = getFreshArgs(staleToFresh);
         return new FuncT(args[0], args[1]);
     }
 }
