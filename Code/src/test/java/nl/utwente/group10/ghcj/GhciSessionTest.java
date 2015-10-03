@@ -4,7 +4,6 @@ import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.expr.Value;
-import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.ConstT;
 
 import org.junit.Assert;
@@ -15,14 +14,12 @@ public class GhciSessionTest {
     /** Our session with Ghci. */
     private GhciSession ghci = null;
     private Env env;
-    private GenSet genSet;
 
     private Expr pi;
 
     @Before
     public void setUp() throws GhciException {
         this.env = new Env();
-        this.genSet = new GenSet();
         this.ghci = new GhciSession();
 
         this.env.getExprTypes().put("my_pi", new ConstT("Float"));

@@ -2,7 +2,6 @@ package nl.utwente.group10.haskell.expr;
 
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.Type;
 
 import java.util.Optional;
@@ -26,7 +25,7 @@ public class Ident extends Expr {
     }
 
     @Override
-    public final Type analyze(final Env env, final GenSet genSet) throws HaskellException {
+    public final Type analyze(final Env env) throws HaskellException {
         // Rule [Var]:
         // IFF  we know (from the env) that the type of this expr is x
         // THEN the type of this expr is x.

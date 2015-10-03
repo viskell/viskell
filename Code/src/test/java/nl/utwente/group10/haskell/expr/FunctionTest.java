@@ -46,11 +46,11 @@ public class FunctionTest {
         Expr applies = new Apply(new Ident("(+)"), arg);
         Function f = new Function(applies, arg);
 
-        assertEquals("(Int -> (Int -> Int))", f.analyze(this.env).prune().toHaskellType());
+        assertEquals("Int -> Int -> Int", f.analyze(this.env).prune().toHaskellType());
 
         Function.FunctionArgument arg1 = new Function.FunctionArgument(new ConstT("Int"));
         Function add5 = new Function(new Apply(new Apply(f, new Value(new ConstT("Int"), "5")), arg1), arg1);
 
-        assertEquals("(Int -> Int)", add5.analyze(this.env).prune().toHaskellType());
+        assertEquals("Int -> Int", add5.analyze(this.env).prune().toHaskellType());
     }
 }

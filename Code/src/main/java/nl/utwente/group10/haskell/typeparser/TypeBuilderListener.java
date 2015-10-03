@@ -42,7 +42,7 @@ class TypeBuilderListener extends TypeBaseListener {
     @Override
     public void exitTypeClasses(TypeParser.TypeClassesContext ctx) {
         for (String varName : this.constraints.keySet()) {
-            vars.put(varName, new VarT(varName, (Set<TypeClass>) this.constraints.get(varName), null));
+            vars.put(varName, new VarT(varName, 0, (Set<TypeClass>) this.constraints.get(varName), null));
         }
     }
 

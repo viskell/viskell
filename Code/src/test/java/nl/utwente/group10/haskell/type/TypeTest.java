@@ -18,7 +18,7 @@ public class TypeTest {
                 )
         );
 
-        assertEquals("([a], (b -> String))", t.toHaskellType());
+        assertEquals("([a], b -> String)", t.toHaskellType());
     }
 
     @Test

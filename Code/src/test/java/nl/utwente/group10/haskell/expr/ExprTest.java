@@ -3,7 +3,6 @@ package nl.utwente.group10.haskell.expr;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
-import nl.utwente.group10.haskell.hindley.GenSet;
 import nl.utwente.group10.haskell.type.*;
 
 import org.junit.Before;
@@ -14,19 +13,15 @@ import static org.junit.Assert.*;
 public class ExprTest {
     private final Type alpha = new VarT("a");
     private final Type beta = new VarT("b");
-    private final Type alphaList = new ListT(this.alpha);
-    private final Type betaList = new ListT(this.beta);
     private final ConstT integer = new ConstT("Int");
     private final ConstT floating = new ConstT("Float");
     private final ConstT doubl = new ConstT("Double");
     private final ConstT string = new ConstT("String");
 
     private final TypeClass num = new TypeClass("Num", integer, floating, doubl);
-    private final Type numT = new VarT("n", num);
 
     private Expr expr;
     private Env env;
-    private GenSet genSet;
 
     @Before
     public final void setUp() {
@@ -42,7 +37,6 @@ public class ExprTest {
         );
 
         this.env = new Env();
-        this.genSet = new GenSet();
 
         this.env.addTypeClass(this.num);
         this.env.addExpr("(*)", "Num a => a -> a -> a");
@@ -51,7 +45,7 @@ public class ExprTest {
 
     @Test
     public final void testAnalyze() throws HaskellException {
-        assertEquals("[(Int -> Int)]", this.expr.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertEquals("[Int -> Int]", this.expr.analyze(this.env).prune().toHaskellType());
     }
 
     @Test
@@ -75,7 +69,7 @@ public class ExprTest {
                         "[\"a\", \"b\", \"c\"]"
                 )
         );
-        assertNotEquals("[(String -> String)]", expr.analyze(this.env, this.genSet).prune().toHaskellType());
+        assertNotEquals("[(String -> String)]", expr.analyze(this.env).prune().toHaskellType());
     }
 
     @Test
