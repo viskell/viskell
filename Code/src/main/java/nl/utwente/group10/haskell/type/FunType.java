@@ -42,8 +42,9 @@ public class FunType extends ConcreteType {
        	out.append(" -> ");
         out.append(this.result.toHaskellType(0));
 
-        if (fixity > 0)
+        if (fixity > 0) {
         	return "(" + out.toString() + ")";
+        }
         	
         return out.toString();
     }

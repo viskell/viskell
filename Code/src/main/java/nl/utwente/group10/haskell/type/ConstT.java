@@ -69,8 +69,9 @@ public class ConstT extends ConcreteType implements Comparable<ConstT>{
 	@Override
 	public boolean containsOccurenceOf(TypeVar tvar) {
 		for (Type t : this.args) {
-			if (t.containsOccurenceOf(tvar))
+			if (t.containsOccurenceOf(tvar)) {
 				return true;
+			}
 		}
 			
 		return false;

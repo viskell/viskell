@@ -82,8 +82,9 @@ public class TypeVar extends Type {
 	     * @return The name of this variable type.
 	     */
 	    public final String getName() {
-	    	if (this.uid == 0)
+	    	if (this.uid == 0) {
 	    		return this.prefix;
+	    	}
 	    	
 	        return this.prefix + Integer.toString(this.uid);
 	    }
@@ -167,8 +168,9 @@ public class TypeVar extends Type {
 
     @Override
     public final String toHaskellType(final int fixity) {
-    	if (this.instance.isPresent())
+    	if (this.instance.isPresent()) {
     		return this.instance.get().toHaskellType(fixity);
+    	}
     	
         final StringBuilder out = new StringBuilder();
 
@@ -195,11 +197,13 @@ public class TypeVar extends Type {
 
     @Override
     protected Type getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
-        if (this.instance.isPresent())
+        if (this.instance.isPresent()) {
         	return this.instance.get().getFresh();
+        }
 
-        if (staleToFresh.containsKey(this.instance))
+        if (staleToFresh.containsKey(this.instance)) {
         	return staleToFresh.get(this.instance);
+        }
 
         TypeVar fresh = new TypeVar(this.instance.prefix, this.instance.uid, new HashSet<TypeClass>(this.instance.constraints), null);
         staleToFresh.put(this.instance, fresh);
@@ -210,11 +214,13 @@ public class TypeVar extends Type {
     @Override
 	public boolean containsOccurenceOf(TypeVar tvar) {
     	// If type variable share the same instance then they have been unified to a single one.
-    	if (this.instance == tvar.instance)
+    	if (this.instance == tvar.instance) {
     		return true;
+    	}
     	
-    	if (! this.instance.isPresent())
+    	if (! this.instance.isPresent()) {
     		return false;
+    	}
     	
     	return this.instance.get().containsOccurenceOf(tvar);
 	}
@@ -235,8 +241,9 @@ public class TypeVar extends Type {
      */	
     @Override
     public boolean equals(Object obj) {
-    	if (! (obj instanceof TypeVar))
+    	if (! (obj instanceof TypeVar)) {
     		return false;
+    	}
     	
     	TypeVar other = (TypeVar) obj;
     	return this.instance == other.instance; 
