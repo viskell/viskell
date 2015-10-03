@@ -61,10 +61,6 @@ public class FunType extends ConcreteType {
 
     @Override
     public String toString() {
-        final StringBuilder out = new StringBuilder();
-        out.append(this.argument.toString());
-        out.append(" -> ");
-        out.append(this.result.toString());
-        return out.toString();
+        return String.format("%s -> %s", argument, result);
     }
 }
