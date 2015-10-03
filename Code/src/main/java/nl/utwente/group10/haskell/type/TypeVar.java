@@ -14,7 +14,7 @@ public class TypeVar extends Type {
     /**
      * An optional mutable reference to a concrete type.
      */
-    static class TypeInstance {
+    final static class TypeInstance {
         /**
          * Base name of the type variable.
          */
@@ -39,7 +39,7 @@ public class TypeVar extends Type {
          * @param The instance of this type.
          * @param constraints The set of constraints for this type.
          */
-        TypeInstance(String prefix, int uid, ConcreteType type, final Set<TypeClass> constraints) {
+        private TypeInstance(String prefix, int uid, ConcreteType type, final Set<TypeClass> constraints) {
             this.prefix = prefix;
             this.uid = uid;
             this.type = type;
@@ -49,7 +49,7 @@ public class TypeVar extends Type {
         /**
          * @return Whether there is a concrete type.
          */
-        boolean isPresent() {
+        private boolean isPresent() {
             return this.type != null;
         }
 
@@ -57,7 +57,7 @@ public class TypeVar extends Type {
          * @throws NullPointerException when isPresent() is false
          * @return The concrete type instance
          */
-        ConcreteType get() {
+        private ConcreteType get() {
             if (this.type == null)
                 throw new NullPointerException("Getting invalid type instance");
 
@@ -67,7 +67,7 @@ public class TypeVar extends Type {
         /**
          * @param The new instance of this type.
          */
-        void set(ConcreteType type) {
+        private void set(ConcreteType type) {
             this.type = type;
         }
 
@@ -76,14 +76,14 @@ public class TypeVar extends Type {
          * 
          * @param the other type instance.
          */
-        public final void shareConstraints(TypeInstance other) {
+        private void shareConstraints(TypeInstance other) {
             this.constraints = Sets.union(this.constraints, other.constraints);
         }
 
         /**
          * @return The name of this variable type.
          */
-        public final String getName() {
+        private String getName() {
             if (this.uid == 0) {
                 return this.prefix;
             }
