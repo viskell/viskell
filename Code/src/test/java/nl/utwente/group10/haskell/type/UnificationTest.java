@@ -91,4 +91,18 @@ public class UnificationTest {
         TypeChecker.unify(t0, ct);
         TypeChecker.unify(t1, ct);
     }
+    
+    @Test
+    public void testInstanceChaining() throws HaskellException {
+        Env env = new HaskellCatalog().asEnvironment();
+
+        // (id (id (1 :: Int)))
+        Expr e0 = new Apply(new Ident("id"),
+            new Apply(new Ident("id"),
+                new Value(new ConstT("Int"), "1")));
+
+        Type t0 = e0.analyze(env);
+
+        assertEquals(t0.toHaskellType(), "Int");
+    }
 }

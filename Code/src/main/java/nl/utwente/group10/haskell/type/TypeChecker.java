@@ -43,7 +43,7 @@ public final class TypeChecker {
 
         if (a.equals(b)) {
         	// for identical types unifying is trivial
-        } else  if (a instanceof TypeVar) {
+        } else if (a instanceof TypeVar) {
             TypeVar va = (TypeVar) a;
 
             // First, prevent ourselves from going into an infinite loop
@@ -57,8 +57,14 @@ public final class TypeChecker {
             	TypeChecker.unify(context, va.getInstantiatedType(), b);
             } else if (b instanceof TypeVar) {
                 TypeVar vb = (TypeVar) b;
-                // two type variable are unified by sharing the internal reference of (future) type instance   
-                vb.shareInstanceOf(va);
+                
+                if (vb.hasInstance()) {
+                    // with type variable b instantiated continue with unifying type variable a with the concrete type of b
+                    TypeChecker.unify(context, va, vb.getInstantiatedType());
+                } else {
+                    // two plain type variable are unified by sharing the internal reference of (future) type instance   
+                    vb.shareInstanceOf(va);
+                }
             } else if (b instanceof FunType) {
             	// unifying a type variable with a function succeeds if it has no constraints.
             	FunType fb = (FunType) b;

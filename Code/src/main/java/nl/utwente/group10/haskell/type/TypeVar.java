@@ -58,22 +58,27 @@ public class TypeVar extends Type {
          * @return The concrete type instance
          */
         private ConcreteType get() {
-            if (this.type == null)
+            if (this.type == null) {
                 throw new NullPointerException("Getting invalid type instance");
+            }
 
             return this.type;
         }
 
         /**
+         * @throws IllegalStateException when is isPresent() is true
          * @param The new instance of this type.
          */
         private void set(ConcreteType type) {
+            if (this.type != null) {
+                throw new IllegalStateException("Type instance already set");
+            }
+            
             this.type = type;
         }
 
         /**
          * Share the constraints between both type instance, thus unifying the constraints.
-         * 
          * @param the other type instance.
          */
         private void shareConstraints(TypeInstance other) {
@@ -140,6 +145,10 @@ public class TypeVar extends Type {
         return this.instance.get();
     }
 
+    /*
+    * @throws IllegalStateException when hasInstance() is true
+    * @param The concrete type this type variable is unified with
+    */
     public final void setConcreteInstance(ConcreteType type) {
         this.instance.set(type);
     }
@@ -233,7 +242,8 @@ public class TypeVar extends Type {
 
     @Override
     public final String toString() {
-        return this.instance.isPresent() ? String.format("%s:%s", this.getName(), this.instance.get()) : this.getName();
+        String tmp = String.format("%s(%s)", this.getName(), Integer.toHexString(this.instance.hashCode()));
+        return this.instance.isPresent() ? tmp + ":" + this.instance.get().toString() : tmp;
     }
 
     /**
