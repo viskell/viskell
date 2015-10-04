@@ -12,7 +12,7 @@ innerType : functionType | compoundType ; // function type
 functionType : compoundType '->' innerType ;
 compoundType : constantType | variableType | appliedType | tupleType | listType | parenType ;
 
-appliedType : variableType (innerType)* ;
+appliedType : variableType (innerType)+ ;
 tupleType : '(' innerType (',' innerType)+ ')' ; // tuple type, k>=2
 listType : '[' innerType ']' ;              // list type
 parenType : '(' innerType ')' ;             // type with parentheses
