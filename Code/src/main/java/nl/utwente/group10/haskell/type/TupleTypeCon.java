@@ -1,7 +1,11 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.ArrayList;
-import java.util.ListIterator;
+import java.util.List;
+import java.util.stream.Stream;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public class TupleTypeCon extends TypeCon {
 
@@ -17,28 +21,17 @@ public class TupleTypeCon extends TypeCon {
      * @return the name of a tuple constructor 
      */
     public final static String tupleName(final int arity) {
-        StringBuilder out = new StringBuilder();
-        out.append('(');
-        for (int n = 1; n < arity; n++) {
-            out.append(',');
-        }
-        out.append('(');
-        return out.toString();
+        return String.format("(%s)", Strings.repeat(",", arity));
     }
 
     @Override
-    public String asTypeAppChain(final int fixity, final ArrayList<Type> args)
-    {
-        final StringBuilder out = new StringBuilder();
-        out.append('(');
-        final int last = args.size()-1;
-        out.append(args.get(last).toHaskellType(0));
-        final ListIterator<Type> iter = args.listIterator(last);
-        while (iter.hasPrevious()) {
-            out.append(", ");
-            out.append(iter.previous().toHaskellType(0));
+    protected String asTypeAppChain(final int fixity, final List<Type> args) {
+        if (this.name.length() > args.size() + 2) {
+            // for the partial applied tuple constructor use the prefix notation
+            super.asTypeAppChain(fixity, args);
         }
-        out.append(')');
-        return out.toString();    
+        
+        Stream<String> parts = Lists.reverse(args).stream().map(e -> e.toHaskellType(0));
+        return "(" + Joiner.on(", ").join(parts.iterator()) + ")";
     }
 }
