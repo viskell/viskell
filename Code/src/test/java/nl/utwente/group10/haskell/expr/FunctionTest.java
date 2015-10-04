@@ -20,8 +20,8 @@ public class FunctionTest {
 
     @Test
     public void testArguments() {
-        Function.FunctionArgument arg0 = new Function.FunctionArgument(Type.var("a", env.getTypeClasses().get("Num")));
-        Function.FunctionArgument arg1 = new Function.FunctionArgument(Type.var("a", env.getTypeClasses().get("Num")));
+        Function.FunctionArgument arg0 = new Function.FunctionArgument(Type.var("a", env.lookupClass("Num")));
+        Function.FunctionArgument arg1 = new Function.FunctionArgument(Type.var("a", env.lookupClass("Num")));
 
         Function f = new Function(new Ident("pi"), arg0, arg1);
 
@@ -32,7 +32,7 @@ public class FunctionTest {
 
     @Test
     public void testToHaskell() {
-        Function.FunctionArgument arg = new Function.FunctionArgument(Type.var("a", env.getTypeClasses().get("Num")));
+        Function.FunctionArgument arg = new Function.FunctionArgument(Type.var("a", env.lookupClass("Num")));
         Expr applies = new Apply(new Ident("(+)"), arg);
         Function f = new Function(applies, arg);
 

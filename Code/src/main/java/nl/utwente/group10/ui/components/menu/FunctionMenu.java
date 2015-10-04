@@ -18,13 +18,11 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import nl.utwente.group10.haskell.catalog.Context;
 import nl.utwente.group10.haskell.catalog.FunctionEntry;
 import nl.utwente.group10.haskell.catalog.HaskellCatalog;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
@@ -147,7 +145,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         // TODO: Once the Env is available, the type should be pulled from the
         // Env here (don't just calculate it over and over). Or just pass the
         // signature String.
-        FunctionBlock fb = new FunctionBlock(entry.getName(), entry.asHaskellObject(new Context()), parent);
+        FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getSignature(), parent);
         fb.setConnectionState(ConnectionCreationManager.nextConnectionState());
         addBlock(fb);
     }
@@ -164,7 +162,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             parent.getGhciSession().ifPresent(ghci -> {
                 try {
                     String t = ghci.pull(new Ident(":t " + value)).split(" :: ")[1].trim();
-                    Type type = new TypeBuilder(parent.getEnvInstance().getTypeClasses()).build(t);
+                    Type type = parent.getEnvInstance().buildType(t);
 
                     ValueBlock val = new ValueBlock(this.parent, type, value);
                     addBlock(val);
@@ -189,7 +187,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             String name = parts.get(0);
             String hs = parts.get(1);
 
-            Type type = new TypeBuilder().build(hs);
+            Type type = parent.getEnvInstance().buildType(hs);
 
             DefinitionBlock def = new DefinitionBlock(this.parent, name, type);
             addBlock(def);

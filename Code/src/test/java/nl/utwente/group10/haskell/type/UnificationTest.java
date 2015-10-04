@@ -74,9 +74,9 @@ public class UnificationTest {
     @Test
     public void testTypeclassCopy() throws HaskellException {
         Env env = new HaskellCatalog().asEnvironment();
-        TypeClass num = env.getTypeClasses().get("Num");
-        TypeClass read = env.getTypeClasses().get("Show");
-        TypeClass show = env.getTypeClasses().get("Read");
+        TypeClass num = env.lookupClass("Num");
+        TypeClass read = env.lookupClass("Show");
+        TypeClass show = env.lookupClass("Read");
 
         Type ct = Type.con("Float");
         Type t0 = Type.var("a", num, read);

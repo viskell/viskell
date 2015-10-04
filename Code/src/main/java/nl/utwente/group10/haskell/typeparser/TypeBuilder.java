@@ -8,21 +8,25 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Turns a String into a Type.
  */
 public final class TypeBuilder {
     /** Map of available type classes. */
-    private Optional<Map<String, TypeClass>> typeClasses;
+    private Map<String, TypeClass> typeClasses;
 
     /**
      * @param typeClasses The available type classes.
      */
     public TypeBuilder(Map<String, TypeClass> typeClasses) {
-        this.typeClasses = Optional.ofNullable(typeClasses);
+        if (typeClasses == null) {
+            this.typeClasses = new HashMap<String, TypeClass>();
+        } else {
+            this.typeClasses = typeClasses;
+        }
     }
 
     public TypeBuilder() {
@@ -44,11 +48,7 @@ public final class TypeBuilder {
         ParseTreeWalker walker = new ParseTreeWalker();
         TypeBuilderListener extractor;
 
-        if (this.typeClasses.isPresent()) {
-            extractor = new TypeBuilderListener(this.typeClasses.get());
-        } else {
-            extractor = new TypeBuilderListener();
-        }
+        extractor = new TypeBuilderListener(this.typeClasses);
 
         walker.walk(extractor, tree);
 
