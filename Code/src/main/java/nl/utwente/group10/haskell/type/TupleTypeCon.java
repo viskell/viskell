@@ -21,7 +21,7 @@ public class TupleTypeCon extends TypeCon {
      * @return the name of a tuple constructor 
      */
     public final static String tupleName(final int arity) {
-        return String.format("(%s)", Strings.repeat(",", arity));
+        return String.format("(%s)", Strings.repeat(",", arity - 1));
     }
 
     @Override

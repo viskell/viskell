@@ -29,6 +29,10 @@ public class TypeBuilderTest {
     @Test public void testMaybeMaybe()  { this.roundtrip("Maybe (Maybe a)"); }
     @Test public void testMaybeSink()   { this.roundtrip("Maybe Int -> Maybe [a]"); }
     @Test public void testKitchenSink() { this.roundtrip("[a] -> [b] -> [(a, b)]"); }
+    @Test public void testPrefixUnit()  { this.roundtrip("()"); }
+    @Test public void testPrefixTuple() { this.roundtrip("(,) a"); }
+    @Test public void testPrefixTriple(){ this.roundtrip("(,,) a b"); }
+    @Test public void testPrefixList()  { this.roundtrip("[] a"); }
 
     @Test public void testTypeClass()   {
         Map<String, TypeClass> typeClasses = new HashMap<>();
