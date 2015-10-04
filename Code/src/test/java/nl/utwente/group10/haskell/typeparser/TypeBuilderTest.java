@@ -15,7 +15,14 @@ public class TypeBuilderTest {
      * gives the same result.
      */
     private void roundtrip(String hs) {
-        Assert.assertEquals(hs, new TypeBuilder().build(hs).toHaskellType());
+        convert(hs, hs);
+    }
+
+    /**
+     * Test helper that checks if parsing a String gives the expected result.
+     */
+    private void convert(String from, String to) {
+        Assert.assertEquals(to, new TypeBuilder().build(from).toHaskellType());
     }
 
     @Test public void testBuildConstT() { this.roundtrip("Int"); }
@@ -30,15 +37,22 @@ public class TypeBuilderTest {
     @Test public void testMaybeSink()   { this.roundtrip("Maybe Int -> Maybe [a]"); }
     @Test public void testKitchenSink() { this.roundtrip("[a] -> [b] -> [(a, b)]"); }
 
+    @Test public void testPrefixUnit()  { this.convert("()", "()"); }
+    @Test public void testPrefixTuple() { this.convert("(,) a b", "(a, b)"); }
+    @Test public void testPrefixTriple(){ this.convert("(,,) a b c", "(a, b, c)"); }
+    @Test public void testPrefixList()  { this.convert("[] a", "[a]"); }
+
     @Test public void testTypeClass()   {
         Map<String, TypeClass> typeClasses = new HashMap<>();
         typeClasses.put("Num", new TypeClass("Num", Type.con("Int"), Type.con("Float"), Type.con("Double")));
         typeClasses.put("Eq", new TypeClass("Eq", Type.con("Int"), Type.con("Float"), Type.con("Double"), Type.con("Char"), Type.con("Bool")));
+        typeClasses.put("Functor", new TypeClass("Functor"));
         TypeBuilder builder = new TypeBuilder(typeClasses);
 
         Assert.assertEquals("(Num a)", builder.build("Num a => a").toHaskellType());
         Assert.assertEquals("(Num a) -> (Num a)", builder.build("(Num a) => (a -> a)").toHaskellType());
         Assert.assertEquals("(Num a) -> b", builder.build("(Num a, Nonexistent b) => a -> b").toHaskellType());
         Assert.assertEquals("(Num a) -> (Eq b)", builder.build("(Num a, Eq b) => a -> b").toHaskellType());
+        Assert.assertEquals("(a -> b) -> (Functor f) a -> (Functor f) b", builder.build("Functor f => (a -> b) -> f a -> f b").toHaskellType());
     }
 }

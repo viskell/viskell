@@ -110,7 +110,17 @@ class TypeBuilderListener extends TypeBaseListener {
 
     @Override
     public final void exitTypeConstructor(TypeParser.TypeConstructorContext ctx) {
-        this.addParam(Type.con(ctx.getText()));
+        if (ctx.LIST_CT() != null) {
+            this.addParam(Type.listCon());
+        } else if (ctx.TUPLE_CT() != null) {
+            int arity = 1;
+            for (byte ch : ctx.getText().getBytes()) {
+                arity += (ch == ',') ? 1 : 0;
+            }
+            this.addParam(Type.tupleCon(arity));
+        } else {
+            this.addParam(Type.con(ctx.getText()));
+        }
     }
 
     @Override
@@ -121,8 +131,18 @@ class TypeBuilderListener extends TypeBaseListener {
     @Override
     public final void exitConstantType(TypeParser.ConstantTypeContext ctx) {
         Type[] types = this.popParams();
-        Type[] args = Arrays.copyOfRange(types, 1, types.length);
-        this.addParam(Type.con(types[0].toHaskellType(), args));
+        this.addParam(Type.app(types));
+    }
+
+    @Override
+    public void enterAppliedType(TypeParser.AppliedTypeContext ctx) {
+        this.enter();
+    }
+
+    @Override
+    public void exitAppliedType(TypeParser.AppliedTypeContext ctx) {
+        Type[] types = this.popParams();
+        this.addParam(Type.app(types));
     }
 
     /** Call this when entering a compound (function, list, tuple) type. */

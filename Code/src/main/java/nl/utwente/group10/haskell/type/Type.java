@@ -72,11 +72,6 @@ public abstract class Type extends HaskellObject {
     public abstract String toString();
 
     /**
-     * The list type constructor.
-     */
-    public final static TypeCon ListCon = new ListTypeCon();
-
-    /**
      * @return a new type variable constructed from a name and optionally a number of class constraint 
      * @param name Identifier for this type variable.
      * @param constraints The constraints for this type
@@ -100,6 +95,21 @@ public abstract class Type extends HaskellObject {
      */
     public final static TypeCon con(String name) {
         return new TypeCon(name);
+    }
+
+    /**
+     * @return a new tuple constructor
+     * @param The arity of the tuple.
+     */
+    public final static TupleTypeCon tupleCon(int arity) {
+        return new TupleTypeCon(arity);
+    }
+
+    /**
+     * @return a new list constructor
+     */
+    public final static ListTypeCon listCon() {
+        return new ListTypeCon();
     }
 
     /**
@@ -156,7 +166,7 @@ public abstract class Type extends HaskellObject {
      * @param the element type
      */
     public final static Type listOf(Type elem) {
-        return new TypeApp(ListCon, elem);
+        return new TypeApp(listCon(), elem);
     }
 
     /**
@@ -164,7 +174,7 @@ public abstract class Type extends HaskellObject {
      * @param the list of element types
      */
     public final static Type tupleOf(Type... elems) {
-        Type t = new TupleTypeCon(elems.length);
+        Type t = tupleCon(elems.length);
         for (Type e : elems) {
             t = new TypeApp(t, e);
         }

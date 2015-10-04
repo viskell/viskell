@@ -54,5 +54,4 @@ public class TypeTest {
     	TypeChecker.unify(t2, t3);
     	assertEquals("([Int], [Int])", t2.toHaskellType());
     }
-    
 }
