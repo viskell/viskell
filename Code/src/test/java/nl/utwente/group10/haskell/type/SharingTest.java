@@ -7,20 +7,20 @@ import static org.junit.Assert.*;
 public class SharingTest {
     @Test
     public void testSharedSimple() throws Exception {
-        TypeVar x = new TypeVar("x");
-        TypeVar y = new TypeVar("y");
-        ConstT u = new ConstT("Unit");
-        ListT l = new ListT(x);
+        Type x = Type.var("x");
+        Type y = Type.var("y");
+        Type u = Type.con("Unit");
+        Type l = Type.listOf(x);
 
         assertTrue(x.toString().startsWith("x"));
         assertTrue(y.toString().startsWith("y"));
         assertEquals("Unit", u.toString());
-        assertTrue(l.toString().startsWith("([] x"));
+        assertTrue(l.toString().startsWith("([] @ x"));
 
         TypeChecker.unify(x, y);
 
         assertEquals(x.toString(), y.toString());
-        assertTrue(l.toString().startsWith("([] x"));
+        assertTrue(l.toString().startsWith("([] @ x"));
 
         TypeChecker.unify(x, u);
 

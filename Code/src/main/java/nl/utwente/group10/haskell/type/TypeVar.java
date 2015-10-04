@@ -109,7 +109,7 @@ public class TypeVar extends Type {
      * @param constraints The set of constraints for this type.
      * @param instance The instance of this type.
      */
-    public TypeVar(final String prefix, final int uid, final Set<TypeClass> constraints, final ConcreteType type) {
+    TypeVar(final String prefix, final int uid, final Set<TypeClass> constraints, final ConcreteType type) {
         this.instance = new TypeInstance(prefix.toLowerCase(), uid, type, constraints);
     }
 
@@ -117,10 +117,10 @@ public class TypeVar extends Type {
      * @param name Identifier for this type.
      * Identifiers are not used in the type checking progress,
      * different {@code TypeVar} instances with the same name are not equal.
-     * @param typeclasses The type classes that are accepted by this type.
+     * @param constraints The set of constraints for this type
      */
-    public TypeVar(final String name, final TypeClass... typeclasses) {
-        this(name, 0, new HashSet<TypeClass>(Arrays.asList(typeclasses)), null);
+    TypeVar(final String name, final TypeClass... constraints) {
+        this(name, 0, new HashSet<TypeClass>(Arrays.asList(constraints)), null);
     }
 
     /**
@@ -177,7 +177,7 @@ public class TypeVar extends Type {
      * @param type The type to check.
      * @return Whether the given type is within the constraints of this type.
      */
-    public final boolean hasConstraint(ConstT type) {
+    public final boolean hasConstraint(TypeCon type) {
         return this.instance.constraints.stream().allMatch(tc -> tc.hasType(type));
     }
 

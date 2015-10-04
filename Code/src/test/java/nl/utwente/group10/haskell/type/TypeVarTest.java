@@ -8,20 +8,20 @@ import org.junit.Test;
 public class TypeVarTest {
     @Test
     public final void toHaskellTypeTest() {
-        final TypeVar v = new TypeVar("a");
+        final TypeVar v = Type.var("a");
         assertEquals("a", v.toHaskellType());
     }
 
     @Test
     public final void testCompareTo() {
-        final TypeVar a = new TypeVar("a");
-        final TypeVar b = new TypeVar("b", new TypeClass("Test"));
+        final TypeVar a = Type.var("a");
+        final TypeVar b = Type.var("b", new TypeClass("Test"));
 
         assertEquals(a, a);
         assertEquals(b, b);
 
-        assertNotEquals(a, new TypeVar("a"));
-        assertNotEquals(b, new TypeVar("b"));
-        assertNotEquals(b, new TypeVar("b", new TypeClass("Test")));
+        assertNotEquals(a, Type.var("a"));
+        assertNotEquals(b, Type.var("b"));
+        assertNotEquals(b, Type.var("b", new TypeClass("Test")));
     }
 }

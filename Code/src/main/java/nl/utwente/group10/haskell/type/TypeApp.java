@@ -17,7 +17,7 @@ public class TypeApp extends ConcreteType {
      */
     private final Type typeArg;
     
-    public TypeApp(Type typeFun, Type typearg) {
+    TypeApp(Type typeFun, Type typearg) {
         this.typeFun = typeFun;
         this.typeArg = typearg;
     }
@@ -38,6 +38,12 @@ public class TypeApp extends ConcreteType {
     }
 
     @Override
+    public String asTypeAppChain(final int fixity, final ArrayList<Type> args) {
+        args.add(this.typeArg);
+        return this.typeFun.asTypeAppChain(fixity, args);
+    }
+    
+    @Override
     protected TypeApp getFreshInstance(IdentityHashMap<TypeInstance, TypeVar> staleToFresh) {
         return new TypeApp(this.typeFun.getFreshInstance(staleToFresh), this.typeArg.getFreshInstance(staleToFresh));
     }
@@ -49,7 +55,7 @@ public class TypeApp extends ConcreteType {
 
     @Override
     public String toString() {
-        return String.format("(%s %s)", this.typeFun, this.typeArg);
+        return String.format("(%s @ %s)", this.typeFun, this.typeArg);
     }
 
 }

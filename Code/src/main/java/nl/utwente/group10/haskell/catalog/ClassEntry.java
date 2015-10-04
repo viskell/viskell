@@ -1,8 +1,8 @@
 package nl.utwente.group10.haskell.catalog;
 
-import nl.utwente.group10.haskell.type.ConstT;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
+import nl.utwente.group10.haskell.type.TypeCon;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 
 import java.util.Set;
@@ -42,8 +42,8 @@ public class ClassEntry extends Entry {
 
         for (String instance : this.instances) {
         	Type t = builder.build(instance);
-        	if (t instanceof ConstT) {
-        		tc.getTypes().add((ConstT) t);
+        	if (t instanceof TypeCon) {
+        		tc.getTypes().add((TypeCon) t);
         	}
         }
 

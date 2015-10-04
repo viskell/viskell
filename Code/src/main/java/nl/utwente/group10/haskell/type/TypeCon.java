@@ -10,7 +10,7 @@ public class TypeCon extends ConcreteType implements Comparable<TypeCon>{
      */
     protected final String name;
 
-    public TypeCon(String name) {
+    TypeCon(String name) {
         this.name = name;
     }
 
@@ -27,7 +27,7 @@ public class TypeCon extends ConcreteType implements Comparable<TypeCon>{
     }
 
     @Override
-    protected Type getFreshInstance(IdentityHashMap<TypeInstance, TypeVar> staleToFresh) {
+    protected TypeCon getFreshInstance(IdentityHashMap<TypeInstance, TypeVar> staleToFresh) {
         return this;
     }
 

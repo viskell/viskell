@@ -1,9 +1,7 @@
 package nl.utwente.group10.ui.components.blocks.function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import nl.utwente.group10.haskell.type.ConstT;
-import nl.utwente.group10.haskell.type.FunType;
+import static org.junit.Assert.*;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.blocks.ComponentTest;
 
 import org.junit.Before;
@@ -20,7 +18,7 @@ public class FunctionBlockTest extends ComponentTest {
     @Before
     public void setUp() throws Exception {
         //TODO: not entirely correct.
-        FunType func = new FunType(new ConstT("Int"), new FunType(new ConstT("Int"), new ConstT("Int")));
+        Type func = Type.fun(Type.con("Int"), Type.con("Int"), Type.con("Int"));
 
         functionBlock = new FunctionBlock("(+)", func, getPane());
     }

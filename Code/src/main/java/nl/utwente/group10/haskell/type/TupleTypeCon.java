@@ -8,7 +8,7 @@ public class TupleTypeCon extends TypeCon {
     /*
      * @param arity the number of arguments (>= 2) in the type
      */
-    public TupleTypeCon(int arity) {
+    TupleTypeCon(int arity) {
         super(tupleName(arity));
     }
     
@@ -31,10 +31,12 @@ public class TupleTypeCon extends TypeCon {
     {
         final StringBuilder out = new StringBuilder();
         out.append('(');
-        final ListIterator<Type> iter = args.listIterator(args.size());
+        final int last = args.size()-1;
+        out.append(args.get(last).toHaskellType(0));
+        final ListIterator<Type> iter = args.listIterator(last);
         while (iter.hasPrevious()) {
-            out.append(iter.previous().toHaskellType(0));
             out.append(", ");
+            out.append(iter.previous().toHaskellType(0));
         }
         out.append(')');
         return out.toString();    

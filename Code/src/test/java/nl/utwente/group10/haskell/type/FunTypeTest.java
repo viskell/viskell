@@ -7,8 +7,8 @@ import org.junit.Test;
 public class FunTypeTest {
     @Test
     public final void toHaskellTypeTest() {
-        final ConstT integer = new ConstT("Integer");
-        final FunType function = new FunType(integer, integer);
+        final Type integer = Type.con("Integer");
+        final Type function = Type.fun(integer, integer);
         assertEquals("Integer -> Integer", function.toHaskellType());
     }
 }

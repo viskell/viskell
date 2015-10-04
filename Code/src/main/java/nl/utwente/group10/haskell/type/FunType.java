@@ -21,7 +21,7 @@ public class FunType extends ConcreteType {
      * @param arg The argument type that this function type accepts.
      * @param result The result type that this function type returns.
      */
-    public FunType(final Type arg, final Type res) {
+    FunType(final Type arg, final Type res) {
         this.argument = arg;
         this.result = res;
     }

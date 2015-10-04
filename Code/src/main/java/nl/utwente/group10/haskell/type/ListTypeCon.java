@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ListTypeCon extends TypeCon {
 
-    public ListTypeCon() {
+    ListTypeCon() {
         super("[]");
     }
 

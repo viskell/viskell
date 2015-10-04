@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.typeparser;
 
-import nl.utwente.group10.haskell.type.ConstT;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,8 +32,8 @@ public class TypeBuilderTest {
 
     @Test public void testTypeClass()   {
         Map<String, TypeClass> typeClasses = new HashMap<>();
-        typeClasses.put("Num", new TypeClass("Num", new ConstT("Int"), new ConstT("Float"), new ConstT("Double")));
-        typeClasses.put("Eq", new TypeClass("Eq", new ConstT("Int"), new ConstT("Float"), new ConstT("Double"), new ConstT("Char"), new ConstT("Bool")));
+        typeClasses.put("Num", new TypeClass("Num", Type.con("Int"), Type.con("Float"), Type.con("Double")));
+        typeClasses.put("Eq", new TypeClass("Eq", Type.con("Int"), Type.con("Float"), Type.con("Double"), Type.con("Char"), Type.con("Bool")));
         TypeBuilder builder = new TypeBuilder(typeClasses);
 
         Assert.assertEquals("(Num a)", builder.build("Num a => a").toHaskellType());

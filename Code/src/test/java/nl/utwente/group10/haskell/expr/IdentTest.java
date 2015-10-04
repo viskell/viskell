@@ -3,15 +3,13 @@ package nl.utwente.group10.haskell.expr;
 import static org.junit.Assert.assertEquals;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.type.FunType;
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.haskell.type.TypeVar;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class IdentTest {
-    private final Type alpha = new TypeVar("a");
+    private final Type alpha = Type.var("a");
 
     private Env env;
 
@@ -24,7 +22,7 @@ public class IdentTest {
 
     @Test
     public final void testAnalyze() throws HaskellException {
-        assertEquals(new FunType(this.alpha, this.alpha).toHaskellType(), new Ident("id").analyze(this.env).toHaskellType());
+        assertEquals(Type.fun(this.alpha, this.alpha).toHaskellType(), new Ident("id").analyze(this.env).toHaskellType());
     }
 
     @Test

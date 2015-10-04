@@ -3,7 +3,6 @@ package nl.utwente.group10.haskell.expr;
 import com.google.common.collect.ImmutableList;
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.type.FunType;
 import nl.utwente.group10.haskell.type.TypeChecker;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -45,7 +44,7 @@ public class Apply extends Expr {
         // Rule [App]:
         // IFF  the type of our function is a -> b and the type of our arg is a
         // THEN the type of our result is b
-        TypeChecker.unify(this, funcType, new FunType(argType, resType));
+        TypeChecker.unify(this, funcType, Type.fun(argType, resType));
 
         this.setCachedType(resType);
 

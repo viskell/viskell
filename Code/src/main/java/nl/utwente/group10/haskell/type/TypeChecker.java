@@ -85,7 +85,7 @@ public final class TypeChecker {
                 }
                 
             } else {
-            	ConstT tb = (ConstT) b;
+            	TypeCon tb = (TypeCon) b;
                 // Example: we have to unify (for example) α and Int.
                 // Do so by stating that α must be Int, provided Int fits in α's typeclasses
                 if (va.hasConstraint(tb)) {
@@ -107,30 +107,6 @@ public final class TypeChecker {
             {
                 TypeChecker.logger.info(String.format("Mismatching TypeCon %s and %s for context %s", a, b, context));
                 throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context, a, b);
-            }
-        } else if (a instanceof ConstT && b instanceof ConstT) {
-            // Example: we have to unify Int and Int.
-
-            final ConstT ao = (ConstT) a;
-            final ConstT bo = (ConstT) b;
-
-            // If the constructor doesn't match, give up right away.
-            // Example: trying to unify String and Int.
-            if (!ao.getConstructor().equals(bo.getConstructor())) {
-                TypeChecker.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
-                throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context, a, b);
-            }
-
-            // If the two types have different amounts of arguments, bail.
-            // Example: trying to unify (,) Int Int and (,) Int Int Int
-            if (ao.getArgs().length != bo.getArgs().length) {
-                TypeChecker.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
-                throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context, a, b);
-            }
-
-            // Other than that, types can be unified if each of the arguments can be.
-            for (int i = 0; i < ao.getArgs().length; i++) {
-                TypeChecker.unify(context, ao.getArgs()[i], bo.getArgs()[i]);
             }
         } else if (a instanceof FunType && b instanceof FunType) {
             // Unifying function types is pairwise unification of its argument and result. 
