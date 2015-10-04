@@ -11,6 +11,7 @@
             <instance name="Bool"/>
         </class>
         <class name="Ord">
+        	<superClass name="Eq"/>
         	<instance name="Ordering"/>
         	<instance name="Bool"/>
         	<instance name="Char"/>
@@ -25,23 +26,32 @@
             <instance name="Double"/>
         </class>
         <class name="Fractional">
+        	<superClass name="Num"/>
             <instance name="Float"/>
             <instance name="Double"/>
         </class>
         <class name="Floating">
+        	<superClass name="Fractional"/>
             <instance name="Float"/>
             <instance name="Double"/>
         </class>
         <class name="Integral">
+        	<superClass name="Enum"/>
+        	<superClass name="Real"/>
             <instance name="Int"/>
+            <instance name="Integer"/>
         </class>
         <class name="Real">
+        	<superClass name="Num"/>
+        	<superClass name="Ord"/>
         	<instance name="Int"/>
         	<instance name="Integer"/>
         	<instance name="Float"/>
         	<instance name="Double"/>
         </class>
         <class name="RealFrac">
+        	<superClass name="Fractional"/>
+        	<superClass name="Real"/>
             <instance name="Float"/>
             <instance name="Double"/>
         </class>
@@ -55,6 +65,8 @@
             <instance name="Double"/>
         </class>
         <class name="RealFloat">
+        	<superClass name="Floating"/>
+        	<superClass name="RealFrac"/>
         	<instance name="Float"/>
         	<instance name="Double"/>
         </class>

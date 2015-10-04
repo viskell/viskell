@@ -23,6 +23,7 @@
   </xs:complexType>
   <xs:complexType name="classType">
     <xs:sequence>
+      <xs:element type="superClassType" name="superClass" maxOccurs="unbounded" minOccurs="0"/>
       <xs:element type="instanceType" name="instance" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:token" name="name" use="required"/>
@@ -45,6 +46,13 @@
       <xs:extension base="xs:token">
         <xs:attribute type="xs:token" name="name" use="required"/>
         <xs:attribute type="xs:token" name="signature" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="superClassType">
+    <xs:simpleContent>
+      <xs:extension base="xs:token">
+        <xs:attribute type="xs:token" name="name" use="required"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
