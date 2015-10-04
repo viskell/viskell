@@ -110,7 +110,17 @@ class TypeBuilderListener extends TypeBaseListener {
 
     @Override
     public final void exitTypeConstructor(TypeParser.TypeConstructorContext ctx) {
-        this.addParam(Type.con(ctx.getText()));
+        if (ctx.LIST_CT() != null) {
+            this.addParam(Type.listCon());
+        } else if (ctx.TUPLE_CT() != null) {
+            int arity = 0;
+            for (byte ch : ctx.getText().getBytes()) {
+                arity += (ch == ',') ? 1 : 0;
+            }
+            this.addParam(Type.tupleCon(arity));
+        } else {
+            this.addParam(Type.con(ctx.getText()));
+        }
     }
 
     @Override
