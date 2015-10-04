@@ -76,6 +76,11 @@
         	<instance name="Float"/>
         	<instance name="Double"/>
         </class>
+        <class name="Functor">
+        	<instance name="Maybe"/>
+        	<instance name="IO"/>
+        	<instance name="[]"/>
+        </class>
     </classes>
     
     
@@ -288,6 +293,9 @@
         	</function>
         </category>
         <category name="Folds and traversals">
+        	<function name="fmap" signature="Functor f => (a -> b) -> f a -> f b">
+        		Map over a functor.
+        	</function>
         	<function name="foldr" signature="(a -> b -> b) -> b -> [a] -> b">
         		Right-associative fold of a structure.
         	</function>
