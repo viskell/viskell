@@ -11,12 +11,12 @@ import static org.junit.Assert.assertEquals;
 public class BubbleTest {
     @Test
     public void testBubbleUnit() throws Exception {
-        TypeVar a = new TypeVar("a");
-        TypeVar z = new TypeVar("z");
-        ConstT u = new ConstT("Unit");
+        TypeVar a = Type.var("a");
+        TypeVar z = Type.var("z");
+        TypeCon u = Type.con("Unit");
 
-        FunType aFunc = new FunType(a, a);
-        FunType bFunc = new FunType(u, u);
+        Type aFunc = Type.fun(a, a);
+        Type bFunc = Type.fun(u, u);
 
         // "(unit (id undefined))"
         Apply apply = new Apply(new Value(bFunc, "unit"), new Apply(new Value(aFunc, "id"), new Value(z, "undefined")));
@@ -42,13 +42,13 @@ public class BubbleTest {
         TypeVar a = TypeChecker.makeVariable("a");
         TypeVar b = TypeChecker.makeVariable("b");
         TypeVar c = TypeChecker.makeVariable("c");
-        ConstT floatT = new ConstT("Float");
+        TypeCon floatT = Type.con("Float");
 
         Apply apply = new Apply(
                 new Apply(
-                        new Value(new FunType(floatT, new FunType(floatT, floatT)), "+"),
+                        new Value(Type.fun(floatT, floatT, floatT), "+"),
                         new Apply(
-                                new Value(new FunType(a, a), "id"),
+                                new Value(Type.fun(a, a), "id"),
                                 new Value(b, "undefined")
                         )
                 ),
@@ -67,14 +67,14 @@ public class BubbleTest {
 
     @Test
     public void testBubbleEquals() throws Exception {
-        ConstT Float = new ConstT("Float");
+        TypeCon Float = Type.con("Float");
         TypeClass Num = new TypeClass("Num", Float);
-        TypeVar a = new TypeVar("a", Num);
-        TypeVar b = new TypeVar("b");
+        TypeVar a = Type.var("a", Num);
+        TypeVar b = Type.var("b");
 
         Apply apply = new Apply(
                 new Apply(
-                        new Value(new FunType(a, new FunType(a, a)), "=="),
+                        new Value(Type.fun(a, a, a), "=="),
                         new Value(Float, "5.0")
                 ),
                 new Value(b, "undefined")

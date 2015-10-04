@@ -10,13 +10,11 @@ import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 public class TypeTest {
     @Test
     public final void toHaskellTypeTest() {
-        final Type t = new TupleT(
-                new ListT(
-                        new TypeVar("a")
-                ),
-                new FunType(
-                        new TypeVar("b"),
-                        new ConstT("String")
+        final Type t = Type.tupleOf(
+                Type.listOf(Type.var("a")),
+                Type.fun(
+                        Type.var("b"),
+                        Type.con("String")
                 )
         );
 
@@ -25,13 +23,11 @@ public class TypeTest {
 
     @Test
     public final void getFreshTest() {
-        final Type t = new TupleT(
-                new ListT(
-                        new TypeVar("a")
-                ),
-                new FunType(
-                        new TypeVar("b"),
-                        new ConstT("String")
+        final Type t = Type.tupleOf(
+                Type.listOf(Type.var("a")),
+                Type.fun(
+                        Type.var("b"),
+                        Type.con("String")
                 )
         );
 
@@ -41,16 +37,16 @@ public class TypeTest {
 
     @Test
     public final void nestedFreshTest() throws HaskellTypeError {
-    	final TypeVar a = new TypeVar("a");
-        final Type t = new TupleT(new ListT(a), new ListT(a));                     
+    	final TypeVar a = Type.var("a");
+        final Type t = Type.tupleOf(Type.listOf(a), Type.listOf(a));                     
         final Type t2 = t.getFresh();
         
         assertEquals("([a], [a])", t.toHaskellType());
         assertEquals(t.toHaskellType(), t2.toHaskellType());
 
-    	final TypeVar b = new TypeVar("b");
-    	final Type i = new ConstT("Int");
-    	final Type t3 = new TupleT(new ListT(i), new ListT(b));
+    	final TypeVar b = Type.var("b");
+    	final Type i = Type.con("Int");
+    	final Type t3 = Type.tupleOf(Type.listOf(i), Type.listOf(b));
 
     	TypeChecker.unify(t, t3);
     	assertEquals("([Int], [Int])", t.toHaskellType());

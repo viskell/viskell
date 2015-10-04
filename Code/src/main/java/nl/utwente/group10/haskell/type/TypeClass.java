@@ -16,17 +16,17 @@ public class TypeClass extends HaskellObject {
     private String name;
 
     /**
-     * The types that are a member of this type class.
+     * The constructors that are a member of this type class.
      */
-    private Set<ConstT> types;
+    private Set<TypeCon> cons;
 
     /**
      * @param name The name of this type class.
      * @param types The types that are a member of this type class.
      */
-    public TypeClass(String name, ConstT ... types) {
+    public TypeClass(String name, TypeCon ... cons) {
         this.name = name;
-        this.types = new HashSet<>(Arrays.asList(types));
+        this.cons = new HashSet<>(Arrays.asList(cons));
     }
 
     /**
@@ -39,19 +39,19 @@ public class TypeClass extends HaskellObject {
     /**
      * @return The types in this type class.
      */
-    public final Set<ConstT> getTypes() {
-        return this.types;
+    public final Set<TypeCon> getTypes() {
+        return this.cons;
     }
 
     /**
      * @param type The type to check.
      * @return Whether the given type is in this type class.
      */
-    public final boolean hasType(ConstT type) {
-        return this.types.stream().anyMatch(t -> t.compareTo(type) == 0);
+    public final boolean hasType(TypeCon type) {
+        return this.cons.stream().anyMatch(t -> t.compareTo(type) == 0);
     }
 
     public final String toString() {
-        return String.format("%s%s", this.name, this.types.toString());
+        return String.format("%s%s", this.name, this.cons.toString());
     }
 }

@@ -41,11 +41,11 @@ public class UnificationTest {
         Type t0 = e0.analyze(env);
         assertEquals("a -> b -> a", t0.toHaskellType());
 
-        Expr e1 = new Apply(e0, new Value(new ConstT("Float"), "5.0"));
+        Expr e1 = new Apply(e0, new Value(Type.con("Float"), "5.0"));
         Type t1 = e1.analyze(env);
         assertEquals("b -> Float", t1.toHaskellType());
 
-        Expr e2 = new Apply(e1, new Value(new ConstT("Float"), "5.0"));
+        Expr e2 = new Apply(e1, new Value(Type.con("Float"), "5.0"));
         Type t2 = e2.analyze(env);
         assertEquals("Float", t2.toHaskellType());
     }
@@ -64,7 +64,7 @@ public class UnificationTest {
         Type t2 = e2.analyze(env);
         
         Type t3 = TypeChecker.makeVariable("t");
-        Type t4 = new ConstT("Bool");
+        Type t4 = Type.con("Bool");
         
         TypeChecker.unify(t3, t4);
         
@@ -78,9 +78,9 @@ public class UnificationTest {
         TypeClass read = env.getTypeClasses().get("Show");
         TypeClass show = env.getTypeClasses().get("Read");
 
-        Type ct = new ConstT("Float");
-        Type t0 = new TypeVar("a", num, read);
-        Type t1 = new TypeVar("b", num, show);
+        Type ct = Type.con("Float");
+        Type t0 = Type.var("a", num, read);
+        Type t1 = Type.var("b", num, show);
 
         Expr e0 = new Value(t0, "?");
         Expr e1 = new Value(t1, "?");
@@ -99,7 +99,7 @@ public class UnificationTest {
         // (id (id (1 :: Int)))
         Expr e0 = new Apply(new Ident("id"),
             new Apply(new Ident("id"),
-                new Value(new ConstT("Int"), "1")));
+                new Value(Type.con("Int"), "1")));
 
         Type t0 = e0.analyze(env);
 

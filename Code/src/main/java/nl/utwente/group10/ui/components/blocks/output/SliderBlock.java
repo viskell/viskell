@@ -2,7 +2,7 @@ package nl.utwente.group10.ui.components.blocks.output;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
-import nl.utwente.group10.haskell.type.ConstT;
+import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
@@ -19,7 +19,7 @@ public class SliderBlock extends ValueBlock {
      * @param pane The parent pane this Block resides on.
      */
     public SliderBlock(CustomUIPane pane) {
-        super(pane, new ConstT("Float"), "0.0", "SliderBlock");
+        super(pane, Type.con("Float"), "0.0", "SliderBlock");
 
         slider.setValue(0.0);
         this.setValue("0.0");

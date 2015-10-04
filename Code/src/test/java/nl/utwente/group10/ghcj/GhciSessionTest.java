@@ -4,7 +4,7 @@ import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.expr.Expr;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.expr.Value;
-import nl.utwente.group10.haskell.type.ConstT;
+import nl.utwente.group10.haskell.type.Type;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,8 +22,8 @@ public class GhciSessionTest {
         this.env = new Env();
         this.ghci = new GhciSession();
 
-        this.env.getExprTypes().put("my_pi", new ConstT("Float"));
-        this.pi = new Value(new ConstT("Float"), "3.14");
+        this.env.getExprTypes().put("my_pi", Type.con("Float"));
+        this.pi = new Value(Type.con("Float"), "3.14");
     }
 
     @Test

@@ -13,10 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
-import nl.utwente.group10.haskell.type.FunType;
 import nl.utwente.group10.haskell.type.TypeChecker;
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.haskell.type.TypeVar;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 
 /**
@@ -60,7 +58,7 @@ public class TypeCheckerChecker extends Application implements Initializable {
 
         // First, check if funT is a function
         try {
-            TypeChecker.unify(funT, new FunType(new TypeVar("a"), new TypeVar("b")));
+            TypeChecker.unify(funT, Type.fun(Type.var("a"), Type.var("b")));
         } catch (HaskellTypeError haskellTypeError) {
             res.setText("⊥ (Invalid function type.)");
             return;
@@ -68,7 +66,7 @@ public class TypeCheckerChecker extends Application implements Initializable {
 
         // Then check if the argument is reasonable
         try {
-            TypeChecker.unify(funT, new FunType(argT, resT));
+            TypeChecker.unify(funT, Type.fun(argT, resT));
             res.setText(resT.toHaskellType());
         } catch (HaskellTypeError haskellTypeError) {
             res.setText("⊥ (Types do not unify.)");

@@ -11,10 +11,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ExprTest {
-    private final ConstT integer = new ConstT("Int");
-    private final ConstT floating = new ConstT("Float");
-    private final ConstT doubl = new ConstT("Double");
-    private final ConstT string = new ConstT("String");
+    private final TypeCon integer = Type.con("Int");
+    private final TypeCon floating = Type.con("Float");
+    private final TypeCon doubl = Type.con("Double");
+    private final TypeCon string = Type.con("String");
 
     private final TypeClass num = new TypeClass("Num", integer, floating, doubl);
 
@@ -29,7 +29,7 @@ public class ExprTest {
                         new Ident("(*)")
                 ),
                 new Value(
-                        new ListT(this.integer),
+                        Type.listOf(this.integer),
                         "[1, 2, 3, 5, 7]"
                 )
         );
@@ -63,7 +63,7 @@ public class ExprTest {
                         new Ident("(*)")
                 ),
                 new Value(
-                        new ListT(this.string),
+                        Type.listOf(this.string),
                         "[\"a\", \"b\", \"c\"]"
                 )
         );

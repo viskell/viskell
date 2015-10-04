@@ -42,7 +42,7 @@ class TypeBuilderListener extends TypeBaseListener {
     @Override
     public void exitTypeClasses(TypeParser.TypeClassesContext ctx) {
         for (String varName : this.constraints.keySet()) {
-            vars.put(varName, new TypeVar(varName, 0, (Set<TypeClass>) this.constraints.get(varName), null));
+            vars.put(varName, Type.var(varName, new HashSet<TypeClass>(this.constraints.get(varName))));
         }
     }
 
@@ -70,7 +70,7 @@ class TypeBuilderListener extends TypeBaseListener {
         if (this.vars.containsKey(varName)) {
             this.addParam(this.vars.get(varName));
         } else {
-            TypeVar var = new TypeVar(varName);
+            TypeVar var = Type.var(varName);
             this.vars.put(varName, var);
             this.addParam(var);
         }
@@ -84,7 +84,7 @@ class TypeBuilderListener extends TypeBaseListener {
     @Override
     public final void exitFunctionType(TypeParser.FunctionTypeContext ctx) {
         Type[] params = this.popParams();
-        this.addParam(new FunType(params[0], params[1])); // We can do this because the grammer makes sure that a function
+        this.addParam(Type.fun(params[0], params[1])); // We can do this because the grammer makes sure that a function
                                                         // always has two arguments.
     }
 
@@ -95,7 +95,7 @@ class TypeBuilderListener extends TypeBaseListener {
 
     @Override
     public final void exitTupleType(TypeParser.TupleTypeContext ctx) {
-        this.addParam(new TupleT(this.popParams()));
+        this.addParam(Type.tupleOf(this.popParams()));
     }
 
     @Override
@@ -105,12 +105,12 @@ class TypeBuilderListener extends TypeBaseListener {
 
     @Override
     public final void exitListType(TypeParser.ListTypeContext ctx) {
-        this.addParam(new ListT(this.popParams()[0]));
+        this.addParam(Type.listOf((this.popParams()[0])));
     }
 
     @Override
     public final void exitTypeConstructor(TypeParser.TypeConstructorContext ctx) {
-        this.addParam(new ConstT(ctx.getText()));
+        this.addParam(Type.con(ctx.getText()));
     }
 
     @Override
@@ -122,7 +122,7 @@ class TypeBuilderListener extends TypeBaseListener {
     public final void exitConstantType(TypeParser.ConstantTypeContext ctx) {
         Type[] types = this.popParams();
         Type[] args = Arrays.copyOfRange(types, 1, types.length);
-        this.addParam(new ConstT(types[0].toHaskellType(), args));
+        this.addParam(Type.con(types[0].toHaskellType(), args));
     }
 
     /** Call this when entering a compound (function, list, tuple) type. */
