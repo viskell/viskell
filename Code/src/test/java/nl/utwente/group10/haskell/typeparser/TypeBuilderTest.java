@@ -15,7 +15,14 @@ public class TypeBuilderTest {
      * gives the same result.
      */
     private void roundtrip(String hs) {
-        Assert.assertEquals(hs, new TypeBuilder().build(hs).toHaskellType());
+        convert(hs, hs);
+    }
+
+    /**
+     * Test helper that checks if parsing a String gives the expected result.
+     */
+    private void convert(String from, String to) {
+        Assert.assertEquals(to, new TypeBuilder().build(from).toHaskellType());
     }
 
     @Test public void testBuildConstT() { this.roundtrip("Int"); }
@@ -29,10 +36,11 @@ public class TypeBuilderTest {
     @Test public void testMaybeMaybe()  { this.roundtrip("Maybe (Maybe a)"); }
     @Test public void testMaybeSink()   { this.roundtrip("Maybe Int -> Maybe [a]"); }
     @Test public void testKitchenSink() { this.roundtrip("[a] -> [b] -> [(a, b)]"); }
-    @Test public void testPrefixUnit()  { this.roundtrip("()"); }
-    @Test public void testPrefixTuple() { this.roundtrip("(,) a"); }
-    @Test public void testPrefixTriple(){ this.roundtrip("(,,) a b"); }
-    @Test public void testPrefixList()  { this.roundtrip("[] a"); }
+
+    @Test public void testPrefixUnit()  { this.convert("()", "()"); }
+    @Test public void testPrefixTuple() { this.convert("(,) a b", "(a, b)"); }
+    @Test public void testPrefixTriple(){ this.convert("(,,) a b c", "(a, b, c)"); }
+    @Test public void testPrefixList()  { this.convert("[] a", "[a]"); }
 
     @Test public void testTypeClass()   {
         Map<String, TypeClass> typeClasses = new HashMap<>();

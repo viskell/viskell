@@ -131,8 +131,7 @@ class TypeBuilderListener extends TypeBaseListener {
     @Override
     public final void exitConstantType(TypeParser.ConstantTypeContext ctx) {
         Type[] types = this.popParams();
-        Type[] args = Arrays.copyOfRange(types, 1, types.length);
-        this.addParam(Type.con(types[0].toHaskellType(), args));
+        this.addParam(Type.app(types));
     }
 
     @Override
