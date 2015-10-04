@@ -5,7 +5,7 @@ VT : [a-z]+ ;
 WS : [ \t\r\n]+ -> skip ;
 
 LIST_CT : '[]';
-TUPLE_CT : '(,)';
+TUPLE_CT : '(' ','* ')';
 
 type : (typeClasses '=>')? innerType ;
 innerType : functionType | compoundType ; // function type
