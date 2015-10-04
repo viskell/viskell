@@ -125,6 +125,17 @@ class TypeBuilderListener extends TypeBaseListener {
         this.addParam(Type.con(types[0].toHaskellType(), args));
     }
 
+    @Override
+    public void enterAppliedType(TypeParser.AppliedTypeContext ctx) {
+        this.enter();
+    }
+
+    @Override
+    public void exitAppliedType(TypeParser.AppliedTypeContext ctx) {
+        Type[] types = this.popParams();
+        this.addParam(Type.app(types));
+    }
+
     /** Call this when entering a compound (function, list, tuple) type. */
     private void enter() {
         this.stack.push(new ArrayList<>());

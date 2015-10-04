@@ -7,8 +7,9 @@ WS : [ \t\r\n]+ -> skip ;
 type : (typeClasses '=>')? innerType ;
 innerType : functionType | compoundType ; // function type
 functionType : compoundType '->' innerType ;
-compoundType : constantType | variableType | tupleType | listType | parenType ;
+compoundType : constantType | variableType | appliedType | tupleType | listType | parenType ;
 
+appliedType : variableType (innerType)* ;
 tupleType : '(' innerType (',' innerType)+ ')' ; // tuple type, k>=2
 listType : '[' innerType ']' ;              // list type
 parenType : '(' innerType ')' ;             // type with parentheses
