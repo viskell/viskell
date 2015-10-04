@@ -113,7 +113,7 @@ class TypeBuilderListener extends TypeBaseListener {
         if (ctx.LIST_CT() != null) {
             this.addParam(Type.listCon());
         } else if (ctx.TUPLE_CT() != null) {
-            int arity = 0;
+            int arity = 1;
             for (byte ch : ctx.getText().getBytes()) {
                 arity += (ch == ',') ? 1 : 0;
             }
