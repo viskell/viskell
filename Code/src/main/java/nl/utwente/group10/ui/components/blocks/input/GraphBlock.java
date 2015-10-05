@@ -11,17 +11,14 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import nl.utwente.group10.ghcj.GhciSession;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.expr.Apply;
-import nl.utwente.group10.haskell.expr.Expr;
-import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.NoSuchElementException;
 
 /**
@@ -82,30 +79,11 @@ public class GraphBlock extends Block implements InputBlock {
         double min = x.getLowerBound();
         double max = x.getUpperBound();
 
-        // Haskell equivalent:
-        // putStrLn $ unwords $ map show $ map (id) [1.0,1.1..5.0]
-        Expr expr = new Apply(
-            new Ident("putStrLn"),
-            new Apply(
-                new Ident("unwords"),
-                new Apply(
-                    new Apply(
-                        new Ident("map"),
-                        new Ident("show")
-                    ),
-                    new Apply(
-                        new Apply(
-                            new Ident("map"),
-                            getExpr()
-                        ),
-                        new Ident(String.format(Locale.US, "[%f,%f..%f]", min, min+step, max))
-                    )
-                )
-            )
-        );
-        
         try {
-            String results = getPane().getGhciSession().get().pull(expr);
+            GhciSession ghciSession = getPane().getGhciSession().get();
+            String funName = "graph_fun_" + Integer.toHexString(this.hashCode());
+            ghciSession.push(funName, this.getExpr());
+            String results = ghciSession.pullRaw("putStrLn $ unwords $ map show $ map " + funName + " [1.0,1.1..5.0]");
 
             LineChart.Series<Double, Double> series = new LineChart.Series<>();
             ObservableList<XYChart.Data<Double, Double>> data = series.getData();

@@ -21,7 +21,6 @@ import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.env.FunctionEntry;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
@@ -161,12 +160,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         result.ifPresent(value -> {
             parent.getGhciSession().ifPresent(ghci -> {
                 try {
-                    String t = ghci.pull(new Ident(":t " + value)).split(" :: ")[1].trim();
-                    Type type = parent.getEnvInstance().buildType(t);
-
+                    Type type = ghci.pullType(value, parent.getEnvInstance());
                     ValueBlock val = new ValueBlock(this.parent, type, value);
                     addBlock(val);
-                } catch (HaskellException | ArrayIndexOutOfBoundsException e) {
+                } catch (HaskellException e) {
                     // Retry.
                     addValueBlock();
                 }

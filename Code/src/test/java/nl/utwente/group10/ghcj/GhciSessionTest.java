@@ -35,6 +35,6 @@ public class GhciSessionTest {
     @Test
     public void constFunPushPull() throws Exception {
         this.ghci.push("my_pi", this.pi);
-        Assert.assertEquals("3.14", this.ghci.pull(new Ident("my_pi")));
+        Assert.assertEquals("3.14", this.ghci.pullRaw("my_pi"));
     }
 }
