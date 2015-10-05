@@ -8,6 +8,7 @@ import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Hole;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.expr.Value;
 
@@ -23,14 +24,14 @@ public class UnificationTest {
         Type t0 = e0.analyze(env);
         assertEquals("a -> b -> a", t0.toHaskellType());
 
-        Expr e1 = new Apply(e0, new Ident("undefined"));
+        Expr e1 = new Apply(e0, new Hole());
         Type t1 = e1.analyze(env);
         assertEquals("b -> a", t1.toHaskellType());
 
-        Expr e2 = new Apply(e1, new Ident("undefined"));
+        Expr e2 = new Apply(e1, new Hole());
         Type t2 = e2.analyze(env);
 
-        TypeChecker.unify(t2, new Ident("undefined").analyze(env));
+        TypeChecker.unify(t2, new Hole().analyze(env));
         //No exception thrown -> Types are the same, as expected. The test will fail if an Exception is thrown.
     }
 
@@ -58,10 +59,10 @@ public class UnificationTest {
         Expr e0 = new Ident("const");
         Type t0 = e0.analyze(env);
 
-        Expr e1 = new Apply(e0, new Ident("undefined"));
+        Expr e1 = new Apply(e0, new Hole());
         Type t1 = e1.analyze(env);
 
-        Expr e2 = new Apply(e1, new Ident("undefined"));
+        Expr e2 = new Apply(e1, new Hole());
         Type t2 = e2.analyze(env);
         
         Type t3 = TypeChecker.makeVariable("t");

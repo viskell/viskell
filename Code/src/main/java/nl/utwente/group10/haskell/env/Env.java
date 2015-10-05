@@ -2,7 +2,6 @@ package nl.utwente.group10.haskell.env;
 
 import java.util.*;
 
-import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
@@ -65,13 +64,11 @@ public class Env {
      * Adds an expression to this environment.
      * @param name The name of the expression.
      * @param signature The signature of the expression.
-     * @return Expression to use in the future.
      */
-    public final Ident addExpr(String name, String signature) {
+    public final void addExpr(String name, String signature) {
         TypeBuilder builder = new TypeBuilder(this.typeClasses);
         Type type = builder.build(signature);
         this.exprTypes.put(name, type);
-        return new Ident(name);
     }
 
     /**

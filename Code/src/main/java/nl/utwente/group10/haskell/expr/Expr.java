@@ -47,17 +47,15 @@ public abstract class Expr extends HaskellObject {
     }
 
     /**
-     * Analyzes the type tree and resolves the type for this usage of this expression, using an empty GenSet. This
-     * method can be used to call when analyzing the root of the expression tree (the first step in the type inference
-     * of an expression).
+     * Analyzes the type tree and resolves the type for this usage of this expression
+     * This method can be used to call when analyzing the root of the expression tree
+     * (the first step in the type inference of an expression).
      *
      * @param env The current Haskell environment.
      * @return The type for this usage of this expression.
      * @throws HaskellException The type tree contains an application of an incompatible type.
      */
-    public Type analyze(final Env env) throws HaskellException {
-        return this.analyze(env);
-    }
+    public abstract Type analyze(final Env env) throws HaskellException; 
 
     /**
      * Returns the Haskell code for this expression.

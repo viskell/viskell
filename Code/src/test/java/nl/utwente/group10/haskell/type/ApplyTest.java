@@ -10,6 +10,7 @@ import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Hole;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.expr.Value;
 
@@ -49,7 +50,7 @@ public class ApplyTest {
         Type t0 = e0.analyze(env);
         assertEquals("(Num a) -> (Num a) -> (Num a)", t0.toHaskellType());
         
-        Expr e1 = new Ident("undefined");
+        Expr e1 = new Hole();
         Type t1 = e1.analyze(env);
         TypeChecker.unify(t1, Type.con("Float"));
         // t1 Should unfiy with everything (the type of t1 should be 'a').
@@ -61,7 +62,7 @@ public class ApplyTest {
         Type num = TypeChecker.makeVariable("n", ImmutableSet.of(env.lookupClass("Num")));
         TypeChecker.unify(t2, Type.fun(num, num));
         
-        Expr e3 = new Apply(e2, new Ident("undefined"));
+        Expr e3 = new Apply(e2, new Hole());
         Type t3 = e3.analyze(env);
         TypeChecker.unify(t3, Type.con("Float"));
         // t3 Should unfiy with everything (the type of t3 should be 'a').
