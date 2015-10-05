@@ -14,7 +14,7 @@ public class TypeVar extends Type {
     /**
      * An optional mutable reference to a concrete type.
      */
-    final static class TypeInstance {
+    public final static class TypeInstance {
         /**
          * Base name of the type variable.
          */
@@ -211,7 +211,7 @@ public class TypeVar extends Type {
     }
 
     @Override
-    protected Type getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
+    public Type getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
         if (this.instance.isPresent()) {
             return this.instance.get().getFresh();
         }

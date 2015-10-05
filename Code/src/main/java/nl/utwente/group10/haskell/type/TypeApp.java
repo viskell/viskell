@@ -46,7 +46,7 @@ public class TypeApp extends ConcreteType {
     }
     
     @Override
-    protected TypeApp getFreshInstance(IdentityHashMap<TypeInstance, TypeVar> staleToFresh) {
+    public TypeApp getFreshInstance(IdentityHashMap<TypeInstance, TypeVar> staleToFresh) {
         return new TypeApp(this.typeFun.getFreshInstance(staleToFresh), this.typeArg.getFreshInstance(staleToFresh));
     }
 

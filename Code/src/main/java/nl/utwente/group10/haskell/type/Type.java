@@ -61,7 +61,7 @@ public abstract class Type extends HaskellObject {
      * @param A mapping from the old type variables (instances) to the new, the context wherein the fresh type is constructed.
      * @return An equivalent deep copy of this type, using fresh type variables.
      */
-    protected abstract Type getFreshInstance(final IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh);
+    public abstract Type getFreshInstance(final IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh);
 
     /**
      * @return The presence of the argument type variable some in this type.

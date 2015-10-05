@@ -27,7 +27,7 @@ public class TypeCon extends ConcreteType implements Comparable<TypeCon> {
     }
 
     @Override
-    protected TypeCon getFreshInstance(IdentityHashMap<TypeInstance, TypeVar> staleToFresh) {
+    public TypeCon getFreshInstance(IdentityHashMap<TypeInstance, TypeVar> staleToFresh) {
         return this;
     }
 
