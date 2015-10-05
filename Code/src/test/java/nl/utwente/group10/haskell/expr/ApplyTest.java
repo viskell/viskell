@@ -35,7 +35,7 @@ public class ApplyTest {
         final Apply apply = new Apply(new Ident("id"), new Value(this.integer, "42"));
 
         assertEquals("(id (42))", apply.toHaskell());
-        assertEquals(this.integer.toHaskellType(), apply.analyze(this.env).toHaskellType());
+        assertEquals(this.integer.toHaskellType(), apply.findType(this.env).toHaskellType());
     }
 
     @Test
@@ -46,8 +46,8 @@ public class ApplyTest {
         assertEquals("((+) (42))", apply1.toHaskell());
         assertEquals("(((+) (42)) (42))", apply2.toHaskell());
 
-        assertEquals(Type.fun(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env).toHaskellType());
-        assertEquals(this.integer.toHaskellType(), apply2.analyze(this.env).toHaskellType());
+        assertEquals(Type.fun(this.integer, this.integer).toHaskellType(), apply1.findType(this.env).toHaskellType());
+        assertEquals(this.integer.toHaskellType(), apply2.findType(this.env).toHaskellType());
     }
 
     @Test
@@ -59,8 +59,8 @@ public class ApplyTest {
         assertEquals("(map ((+) (42)))", apply1.toHaskell());
         assertEquals("((map ((+) (42))) ([1, 2, 3, 5, 7]))", apply2.toHaskell());
 
-        assertEquals(Type.fun(this.integerList, this.integerList).toHaskellType(), apply1.analyze(this.env).toHaskellType());
-        assertEquals(this.integerList.toHaskellType(), apply2.analyze(this.env).toHaskellType());
+        assertEquals(Type.fun(this.integerList, this.integerList).toHaskellType(), apply1.findType(this.env).toHaskellType());
+        assertEquals(this.integerList.toHaskellType(), apply2.findType(this.env).toHaskellType());
     }
 
     @Test
@@ -71,8 +71,8 @@ public class ApplyTest {
         assertEquals("(zip ([1, 2, 3, 5, 7]))", apply1.toHaskell());
         assertEquals("((zip ([1, 2, 3, 5, 7])) ([\"a\", \"b\", \"c\"]))", apply2.toHaskell());
 
-        assertEquals(Type.fun(this.betaList, Type.listOf(Type.tupleOf(this.integer, this.beta))).toHaskellType(), apply1.analyze(this.env).toHaskellType());
-        assertEquals(Type.listOf(Type.tupleOf(this.integer, this.string)).toHaskellType(), apply2.analyze(this.env).toHaskellType());
+        assertEquals(Type.fun(this.betaList, Type.listOf(Type.tupleOf(this.integer, this.beta))).toHaskellType(), apply1.findType(this.env).toHaskellType());
+        assertEquals(Type.listOf(Type.tupleOf(this.integer, this.string)).toHaskellType(), apply2.findType(this.env).toHaskellType());
     }
 
     @Test(expected=HaskellException.class)
@@ -83,8 +83,8 @@ public class ApplyTest {
         assertEquals("(lcm (42))", apply1.toHaskell());
         assertEquals("((lcm (42)) (\"haskell\"))", apply2.toHaskell());
 
-        assertEquals(Type.fun(this.integer, this.integer).toHaskellType(), apply1.analyze(this.env).toHaskellType());
-        assertNotEquals(this.string, apply2.analyze(this.env).toHaskellType());
-        assertNotEquals(this.integer, apply2.analyze(this.env).toHaskellType());
+        assertEquals(Type.fun(this.integer, this.integer).toHaskellType(), apply1.findType(this.env).toHaskellType());
+        assertNotEquals(this.string, apply2.findType(this.env).toHaskellType());
+        assertNotEquals(this.integer, apply2.findType(this.env).toHaskellType());
     }
 }

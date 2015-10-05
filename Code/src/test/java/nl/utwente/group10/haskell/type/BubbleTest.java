@@ -22,7 +22,7 @@ public class BubbleTest {
         Apply apply = new Apply(new Value(bFunc, "unit"), new Apply(new Value(aFunc, "id"), new Value(z, "undefined")));
 
         // Do type inference.
-        Type t = apply.analyze(new Environment());
+        Type t = apply.findType(new Environment());
 
         // Inferred type of the whole expression is 'Unit'.
         assertEquals("Unit", t.toHaskellType());
@@ -57,7 +57,7 @@ public class BubbleTest {
 
         assertEquals("(((+) ((id) (undefined))) (undefined))", apply.toHaskell());
 
-        Type t = apply.analyze(new Environment());
+        Type t = apply.findType(new Environment());
 
         assertEquals("Float", t.toHaskellType());
         assertEquals("Float", a.toHaskellType());
@@ -82,7 +82,7 @@ public class BubbleTest {
 
         assertEquals("(((==) (5.0)) (undefined))", apply.toHaskell());
 
-        Type t = apply.analyze(new Environment());
+        Type t = apply.findType(new Environment());
 
         assertEquals("Float", t.toHaskellType());
         assertEquals("Float", a.toHaskellType());

@@ -234,7 +234,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                 // visual update should be propagated upwards.
                 try {
                     // Analyze the entire tree.
-                    this.getExpr().analyze(getPane().getEnvInstance());
+                    this.getExpr().recalculateType(getPane().getEnvInstance());
                     getPane().setErrorOccurred(false);
                     // TODO: This will set the errorOccurred for the entire
                     // program, not just the invalidated tree. This means that

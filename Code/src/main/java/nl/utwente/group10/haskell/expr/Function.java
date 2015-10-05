@@ -6,6 +6,8 @@ import nl.utwente.group10.haskell.type.Type;
 
 import java.util.*;
 
+import com.google.common.collect.Lists;
+
 /**
  * Represents a user-defined Haskell function. Holds arguments which can be used for building the function.
  */
@@ -16,10 +18,10 @@ public class Function extends Expression {
      */
     public static class FunctionArgument extends Expression {
         /** The type for this argument. */
-        private Type type;
+        private final Type type;
 
         /** The name of this argument. Will be randomly generated to a unique value. */
-        private String name;
+        private final String name;
 
         /**
          * Constructor for a FunctionArgument with an explicit type.
@@ -32,7 +34,7 @@ public class Function extends Expression {
         }
 
         @Override
-        public Type analyze(Environment env) throws HaskellException {
+        public Type inferType(Environment env) throws HaskellException {
             return this.type;
         }
 
@@ -79,16 +81,14 @@ public class Function extends Expression {
     }
 
     @Override
-    public Type analyze(Environment env) throws HaskellException {
-        Type type = this.expr.analyze(env).getFresh();
+    protected Type inferType(Environment env) throws HaskellException {
+        Type ftype = this.expr.inferType(env).getFresh();
 
-        for (int i = this.arguments.size(); i > 0; i--) {
-            type = Type.fun(this.arguments.get(i - 1).analyze(env).getFresh(), type);
+        for (Expression arg : Lists.reverse(this.arguments)) {
+            ftype = Type.fun(arg.inferType(env).getFresh(), ftype);
         }
 
-        this.setCachedType(type);
-
-        return type;
+        return ftype;
     }
 
     @Override

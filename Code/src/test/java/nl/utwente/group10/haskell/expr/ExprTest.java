@@ -43,16 +43,15 @@ public class ExprTest {
 
     @Test
     public final void testAnalyze() throws HaskellException {
-        assertEquals("[Int -> Int]", this.expr.analyze(this.env).toHaskellType());
+        assertEquals("[Int -> Int]", this.expr.findType(this.env).toHaskellType());
     }
 
     @Test
-    public final void testGetType() throws HaskellException {
-        Type type = this.expr.getType(this.env);
+    public final void testCacheType() throws HaskellException {
+        Type type = this.expr.findType(this.env);
 
-        // Test is object is equal after subsequent call and not equal to the result of analyze
-        assertTrue(type == this.expr.getType(env));
-        assertFalse(this.expr instanceof Value || type == this.expr.analyze(env)); // Only valid for non-Value exprs.
+        // Test is object is equal after subsequent call
+        assertTrue(type == this.expr.findType(env));
     }
 
     @Test(expected = HaskellTypeError.class)
@@ -67,13 +66,13 @@ public class ExprTest {
                         "[\"a\", \"b\", \"c\"]"
                 )
         );
-        assertNotEquals("[(String -> String)]", expr.analyze(this.env).toHaskellType());
+        assertNotEquals("[(String -> String)]", expr.findType(this.env).toHaskellType());
     }
 
     @Test
     public final void testValueToHaskell() throws HaskellException {
         final Expression v = new Value(this.integer, "10");
-        assertEquals(this.integer.toHaskellType(), v.analyze(new Environment()).toHaskellType());
+        assertEquals(this.integer.toHaskellType(), v.findType(new Environment()).toHaskellType());
         assertEquals("(10)", v.toHaskell());
     }
 

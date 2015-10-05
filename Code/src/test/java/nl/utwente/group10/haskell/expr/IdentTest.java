@@ -22,7 +22,7 @@ public class IdentTest {
 
     @Test
     public final void testAnalyze() throws HaskellException {
-        assertEquals(Type.fun(this.alpha, this.alpha).toHaskellType(), new Ident("id").analyze(this.env).toHaskellType());
+        assertEquals(Type.fun(this.alpha, this.alpha).toHaskellType(), new Ident("id").findType(this.env).toHaskellType());
     }
 
     @Test
@@ -32,6 +32,6 @@ public class IdentTest {
 
     @Test(expected=HaskellException.class)
     public final void testIncorrectName() throws HaskellException {
-        new Ident("id").analyze(new Environment());
+        new Ident("id").findType(new Environment());
     }
 }

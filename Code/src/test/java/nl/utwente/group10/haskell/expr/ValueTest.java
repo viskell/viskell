@@ -13,7 +13,7 @@ public class ValueTest {
     @Test
     public final void testToHaskell() throws HaskellException {
         final Expression v = new Value(this.integer, "10");
-        assertEquals(this.integer.toHaskellType(), v.analyze(new Environment()).toHaskellType());
+        assertEquals(this.integer.toHaskellType(), v.findType(new Environment()).toHaskellType());
         assertEquals("(10)", v.toHaskell());
     }
 }

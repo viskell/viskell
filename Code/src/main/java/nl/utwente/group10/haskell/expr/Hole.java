@@ -9,13 +9,13 @@ import nl.utwente.group10.haskell.type.Type;
  */
 public class Hole extends Expression {
 
-    // TODO maybe it is usefull to add some of (unique) id to each Hole
+    // TODO maybe it is useful to add some of (unique) id to each Hole
     
     public Hole() {
     }
 
     @Override
-    public Type analyze(Environment env) throws HaskellException {
+    protected Type inferType(Environment env) throws HaskellException {
         return Type.var("holey");
     }
 

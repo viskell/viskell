@@ -35,18 +35,15 @@ public class Apply extends Expression {
     }
 
     @Override
-    public final Type analyze(final Environment env) throws HaskellException {
-        final Type funcType = func.analyze(env);
-        final Type argType = arg.analyze(env);
+    protected final Type inferType(final Environment env) throws HaskellException {
+        final Type funcType = func.inferType(env);
+        final Type argType = arg.inferType(env);
         final Type resType = TypeChecker.makeVariable("b");
-
 
         // Rule [App]:
         // IFF  the type of our function is a -> b and the type of our arg is a
         // THEN the type of our result is b
         TypeChecker.unify(this, funcType, Type.fun(argType, resType));
-
-        this.setCachedType(resType);
 
         return resType;
     }

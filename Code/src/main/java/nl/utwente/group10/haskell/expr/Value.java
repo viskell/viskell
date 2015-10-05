@@ -17,7 +17,7 @@ public class Value extends Expression {
     /**
      * Haskell representation of the value.
      */
-    private String value;
+    private final String value;
 
     /**
      * @param type Type of this value.
@@ -27,11 +27,10 @@ public class Value extends Expression {
     public Value(final Type type, final String value) {
         this.type = type;
         this.value = value;
-        setCachedType(this.type);
     }
 
     @Override
-    public final Type analyze(final Environment env) throws HaskellTypeError {
+    protected final Type inferType(final Environment env) throws HaskellTypeError {
         return this.type;
     }
 
@@ -40,13 +39,6 @@ public class Value extends Expression {
      */
     public final String getValue() {
         return this.value;
-    }
-
-    /**
-     * @param value Haskell representation of the new value.
-     */
-    public final void setValue(final String value) {
-        this.value = value;
     }
 
     @Override

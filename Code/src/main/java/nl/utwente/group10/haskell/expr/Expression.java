@@ -21,16 +21,17 @@ public abstract class Expression extends HaskellObject {
     private Optional<Type> cachedType = Optional.empty();
 
     /**
-     * Returns the latest type for this expression. If {@code analayze()} has not been called yet, it will be called to
-     * retrieve a type.
+     * Returns the latest type for this expression. If yet unknown it will be inferred,
      *
      * @param env The current Haskell environment.
      * @return The type for this usage of this expression.
-     * @throws HaskellException The type tree contains an application of an incompatible type.
+     * @throws HaskellException if type inference fails in any way.
      */
-    public Type getType(Environment env) throws HaskellException {
+    public final Type findType(Environment env) throws HaskellException {
         if (!this.cachedType.isPresent()) {
-            return this.analyze(env);
+            Type type = this.inferType(env);
+            this.setCachedType(type);
+            return type;
         }
 
         return this.cachedType.get();
@@ -40,22 +41,24 @@ public abstract class Expression extends HaskellObject {
      * Sets the cached type for this expression.
      * @param type The type to cache.
      */
-    protected final void setCachedType(final Type type) {
+    private final void setCachedType(final Type type) {
         if (!this.cachedType.isPresent() || this.cachedType.get() != type) {
             this.cachedType = Optional.ofNullable(type);
         }
     }
 
+    public final void recalculateType(Environment env) throws HaskellException {
+        this.setCachedType(this.inferType(env));
+    }
+    
     /**
-     * Analyzes the type tree and resolves the type for this usage of this expression
-     * This method can be used to call when analyzing the root of the expression tree
-     * (the first step in the type inference of an expression).
+     * Analyzes the type tree and infers the type for this usage of this expression
      *
      * @param env The current Haskell environment.
      * @return The type for this usage of this expression.
      * @throws HaskellException The type tree contains an application of an incompatible type.
      */
-    public abstract Type analyze(final Environment env) throws HaskellException; 
+    protected abstract Type inferType(final Environment env) throws HaskellException; 
 
     /**
      * Returns the Haskell code for this expression.
