@@ -1,4 +1,4 @@
-package nl.utwente.group10.haskell.catalog;
+package nl.utwente.group10.haskell.env;
 
 import nl.utwente.group10.haskell.type.Type;
 

@@ -3,8 +3,9 @@ package nl.utwente.group10.haskell.type;
 import static org.junit.Assert.*;
 
 import com.google.common.collect.ImmutableSet;
-import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+
 import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;

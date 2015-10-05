@@ -2,8 +2,7 @@ package nl.utwente.group10.ui.components.blocks;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-
-import nl.utwente.group10.haskell.catalog.HaskellCatalog;
+import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.ui.CustomUIPane;
 import org.junit.BeforeClass;

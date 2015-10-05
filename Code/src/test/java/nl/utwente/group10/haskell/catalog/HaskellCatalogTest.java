@@ -1,6 +1,7 @@
 package nl.utwente.group10.haskell.catalog;
 
 import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 
 import static org.junit.Assert.*;

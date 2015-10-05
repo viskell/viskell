@@ -1,8 +1,8 @@
-package nl.utwente.group10.haskell.catalog;
+package nl.utwente.group10.haskell.env;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import nl.utwente.group10.haskell.env.Env;
+
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
