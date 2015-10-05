@@ -19,6 +19,7 @@ import nl.utwente.group10.ui.components.blocks.Block;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 /**
@@ -73,6 +74,10 @@ public class GraphBlock extends Block implements InputBlock {
     @Override
     public void invalidateVisualState() {
         super.invalidateVisualState();
+        if (! this.input.hasConnection()) {
+            return;
+        }
+        
         ObservableList<XYChart.Series<Double, Double>> lineChartData = FXCollections.observableArrayList();
 
         double step = 0.01;
@@ -83,7 +88,8 @@ public class GraphBlock extends Block implements InputBlock {
             GhciSession ghciSession = getPane().getGhciSession().get();
             String funName = "graph_fun_" + Integer.toHexString(this.hashCode());
             ghciSession.push(funName, this.getExpr());
-            String results = ghciSession.pullRaw("putStrLn $ unwords $ map show $ map " + funName + " [1.0,1.1..5.0]");
+            String range = String.format(Locale.US, " [%f,%f..%f]", min, min+step, max);
+            String results = ghciSession.pullRaw("putStrLn $ unwords $ map show $ map " + funName + range);
 
             LineChart.Series<Double, Double> series = new LineChart.Series<>();
             ObservableList<XYChart.Data<Double, Double>> data = series.getData();
