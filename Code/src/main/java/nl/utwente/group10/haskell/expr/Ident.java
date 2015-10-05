@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Expression contained in the environment.
  */
-public class Ident extends Expr {
+public class Ident extends Expression {
     /**
      * Name of this identifier.
      */
@@ -25,7 +25,7 @@ public class Ident extends Expr {
     }
 
     @Override
-    public final Type analyze(final Env env) throws HaskellException {
+    public final Type analyze(final Environment env) throws HaskellException {
         // Rule [Var]:
         // IFF  we know (from the env) that the type of this expr is x
         // THEN the type of this expr is x.
@@ -35,7 +35,7 @@ public class Ident extends Expr {
             return type.get();
         } else {
             this.setCachedType(null);
-            Expr.logger.warning(String.format("Expression %s is not in the environment, but it is assumed to be.", this));
+            Expression.logger.warning(String.format("Expression %s is not in the environment, but it is assumed to be.", this));
             throw new HaskellException("Expression not in environment", this);
         }
     }

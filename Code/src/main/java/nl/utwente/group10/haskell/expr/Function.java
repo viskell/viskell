@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -9,12 +9,12 @@ import java.util.*;
 /**
  * Represents a user-defined Haskell function. Holds arguments which can be used for building the function.
  */
-public class Function extends Expr {
+public class Function extends Expression {
 
     /**
      * An argument for a function. A FunctionArgument can be used as a variable in a function definition.
      */
-    public static class FunctionArgument extends Expr {
+    public static class FunctionArgument extends Expression {
         /** The type for this argument. */
         private Type type;
 
@@ -32,7 +32,7 @@ public class Function extends Expr {
         }
 
         @Override
-        public Type analyze(Env env) throws HaskellException {
+        public Type analyze(Environment env) throws HaskellException {
             return this.type;
         }
 
@@ -51,13 +51,13 @@ public class Function extends Expr {
     private List<FunctionArgument> arguments;
 
     /** The expression that forms the base of this function. */
-    private Expr expr;
+    private Expression expr;
 
     /**
      * @param expr The expression that forms the base of this function.
      * @param arguments Expressions that represent the function's arguments.
      */
-    public Function(Expr expr, FunctionArgument ... arguments) {
+    public Function(Expression expr, FunctionArgument ... arguments) {
         this(expr, Arrays.asList(arguments));
     }
 
@@ -65,7 +65,7 @@ public class Function extends Expr {
      * @param expr The expression that forms the base of this function.
      * @param arguments Expressions that represent the function's arguments.
      */
-    public Function(Expr expr, List<FunctionArgument> arguments) {
+    public Function(Expression expr, List<FunctionArgument> arguments) {
         this.expr = expr;
         this.arguments = arguments;
     }
@@ -79,7 +79,7 @@ public class Function extends Expr {
     }
 
     @Override
-    public Type analyze(Env env) throws HaskellException {
+    public Type analyze(Environment env) throws HaskellException {
         Type type = this.expr.analyze(env).getFresh();
 
         for (int i = this.arguments.size(); i > 0; i--) {

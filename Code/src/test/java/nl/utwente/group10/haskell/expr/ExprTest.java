@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.type.*;
@@ -18,8 +18,8 @@ public class ExprTest {
 
     private final TypeClass num = new TypeClass("Num", integer, floating, doubl);
 
-    private Expr expr;
-    private Env env;
+    private Expression expr;
+    private Environment env;
 
     @Before
     public final void setUp() {
@@ -34,7 +34,7 @@ public class ExprTest {
                 )
         );
 
-        this.env = new Env();
+        this.env = new Environment();
 
         this.env.addTypeClass(this.num);
         this.env.addExpr("(*)", "Num a => a -> a -> a");
@@ -72,8 +72,8 @@ public class ExprTest {
 
     @Test
     public final void testValueToHaskell() throws HaskellException {
-        final Expr v = new Value(this.integer, "10");
-        assertEquals(this.integer.toHaskellType(), v.analyze(new Env()).toHaskellType());
+        final Expression v = new Value(this.integer, "10");
+        assertEquals(this.integer.toHaskellType(), v.analyze(new Environment()).toHaskellType());
         assertEquals("(10)", v.toHaskell());
     }
 

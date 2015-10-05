@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Expression;
 
 /**
  * Implementation of a typechecker for a simplified variant of Haskell.
@@ -37,7 +37,7 @@ public final class TypeChecker {
         unify(null, t1, t2);
     }
 
-    public static void unify(final Expr context, final Type a, final Type b) throws HaskellTypeError {
+    public static void unify(final Expression context, final Type a, final Type b) throws HaskellTypeError {
         
         TypeChecker.logger.info(String.format("Unifying types %s and %s for context %s", a, b, context));
 

@@ -2,7 +2,7 @@ package nl.utwente.group10.haskell.expr;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -17,11 +17,11 @@ public class ApplyTest {
     private final Type string = Type.con("String");
     private final Type stringList = Type.listOf(this.string);
 
-    private Env env;
+    private Environment env;
 
     @Before
     public final void setUp() {
-        this.env = new Env();
+        this.env = new Environment();
 
         this.env.addExpr("id", "a -> a");
         this.env.addExpr("(+)", "Int -> Int -> Int");

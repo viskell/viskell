@@ -6,16 +6,16 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableList;
 import nl.utwente.group10.haskell.HaskellObject;
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.Type;
 
 /**
  * An expression in Haskell.
  */
-public abstract class Expr extends HaskellObject {
+public abstract class Expression extends HaskellObject {
     /** Logger for this class. **/
-    protected static final Logger logger = Logger.getLogger(Expr.class.getName());
+    protected static final Logger logger = Logger.getLogger(Expression.class.getName());
 
     /** The last known type for this expression. */
     private Optional<Type> cachedType = Optional.empty();
@@ -28,7 +28,7 @@ public abstract class Expr extends HaskellObject {
      * @return The type for this usage of this expression.
      * @throws HaskellException The type tree contains an application of an incompatible type.
      */
-    public Type getType(Env env) throws HaskellException {
+    public Type getType(Environment env) throws HaskellException {
         if (!this.cachedType.isPresent()) {
             return this.analyze(env);
         }
@@ -55,7 +55,7 @@ public abstract class Expr extends HaskellObject {
      * @return The type for this usage of this expression.
      * @throws HaskellException The type tree contains an application of an incompatible type.
      */
-    public abstract Type analyze(final Env env) throws HaskellException; 
+    public abstract Type analyze(final Environment env) throws HaskellException; 
 
     /**
      * Returns the Haskell code for this expression.
@@ -72,7 +72,7 @@ public abstract class Expr extends HaskellObject {
     /**
      * @return a list of subexpressions, if any, or else an empty list.
      */
-    public List<Expr> getChildren() {
+    public List<Expression> getChildren() {
         return ImmutableList.of();
     }
 }

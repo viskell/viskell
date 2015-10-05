@@ -1,7 +1,7 @@
 package nl.utwente.group10.haskell.expr;
 
 import static org.junit.Assert.assertEquals;
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -11,11 +11,11 @@ import org.junit.Test;
 public class IdentTest {
     private final Type alpha = Type.var("a");
 
-    private Env env;
+    private Environment env;
 
     @Before
     public final void setUp() {
-        this.env = new Env();
+        this.env = new Environment();
 
         this.env.addExpr("id", "a -> a");
     }
@@ -32,6 +32,6 @@ public class IdentTest {
 
     @Test(expected=HaskellException.class)
     public final void testIncorrectName() throws HaskellException {
-        new Ident("id").analyze(new Env());
+        new Ident("id").analyze(new Environment());
     }
 }

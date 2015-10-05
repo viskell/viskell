@@ -12,7 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
@@ -107,7 +107,7 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     @Override
-    public Expr getExpr() {
+    public Expression getExpr() {
         return inputAnchor.getExpr();
     }
     

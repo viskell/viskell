@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Test;
 
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
@@ -32,7 +32,7 @@ public class TypeVarTest {
     
     @Test
     public final void testSuperClasses() throws CatalogException, HaskellTypeError {
-        final Env env = new HaskellCatalog().asEnvironment();
+        final Environment env = new HaskellCatalog().asEnvironment();
         final TypeClass eq = env.lookupClass("Eq");
         final TypeClass ord = env.lookupClass("Ord");
         final TypeClass integral = env.lookupClass("Integral");

@@ -3,10 +3,10 @@ package nl.utwente.group10.ghcj;
 import java.io.Closeable;
 import java.io.IOException;
 
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellSyntaxError;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.type.Type;
 
 /**
@@ -32,7 +32,7 @@ public final class GhciSession implements Closeable {
      * @param func The actual function.
      * @throws HaskellException when the function is rejected by ghci.
      */
-    public void push(final String name, final Expr func) throws HaskellException {
+    public void push(final String name, final Expression func) throws HaskellException {
         try {
             this.ghci.eval(String.format("let %s = %s", name, func.toHaskell()));
         } catch (HaskellSyntaxError e) {
@@ -48,7 +48,7 @@ public final class GhciSession implements Closeable {
      * @return The result of the evaluation.
      * @throws HaskellException when ghci encountered an error.
      */
-    public String pull(final Expr expr) throws HaskellException {
+    public String pull(final Expression expr) throws HaskellException {
         try {
             return this.ghci.eval(expr.toHaskell()).trim();
         } catch (HaskellSyntaxError e) {
@@ -76,7 +76,7 @@ public final class GhciSession implements Closeable {
      * @return The parsed Haskell type
      * @throws HaskellException when  ghci encountered an error or the type could not be parsed.
      */
-    public Type pullType(final String expr, Env env) throws HaskellException {
+    public Type pullType(final String expr, Environment env) throws HaskellException {
         String[] parts = this.pullRaw(":t (" + expr + ")").split(" :: ");
         if (parts.length < 2) {
             throw new HaskellException("ghci could not determine the type of:/n" + expr);

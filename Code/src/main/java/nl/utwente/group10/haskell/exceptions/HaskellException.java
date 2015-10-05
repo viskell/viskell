@@ -2,7 +2,7 @@ package nl.utwente.group10.haskell.exceptions;
 
 import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.haskell.HaskellObject;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.type.Type;
 
 import com.google.common.base.Optional;
@@ -80,8 +80,8 @@ public class HaskellException extends GhciException {
         String out = "";
 
         if (this.obj.isPresent()) {
-            if (this.obj.get() instanceof Expr) {
-                out = ((Expr) this.obj.get()).toHaskell();
+            if (this.obj.get() instanceof Expression) {
+                out = ((Expression) this.obj.get()).toHaskell();
             } else if (this.obj.get() instanceof Type) {
                 out = ((Type) this.obj.get()).toHaskellType();
             }

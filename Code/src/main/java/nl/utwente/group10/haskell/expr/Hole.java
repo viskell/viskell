@@ -1,13 +1,13 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.Type;
 
 /*
  * A Hole represents an yet unknown gap in an Expression or an open input connection
  */
-public class Hole extends Expr {
+public class Hole extends Expression {
 
     // TODO maybe it is usefull to add some of (unique) id to each Hole
     
@@ -15,7 +15,7 @@ public class Hole extends Expr {
     }
 
     @Override
-    public Type analyze(Env env) throws HaskellException {
+    public Type analyze(Environment env) throws HaskellException {
         return Type.var("holey");
     }
 

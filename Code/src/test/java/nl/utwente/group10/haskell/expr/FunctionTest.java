@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
@@ -11,7 +11,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class FunctionTest {
-    private Env env;
+    private Environment env;
 
     @Before
     public void setUp() throws CatalogException {
@@ -33,7 +33,7 @@ public class FunctionTest {
     @Test
     public void testToHaskell() {
         Function.FunctionArgument arg = new Function.FunctionArgument(Type.var("a", env.lookupClass("Num")));
-        Expr applies = new Apply(new Ident("(+)"), arg);
+        Expression applies = new Apply(new Ident("(+)"), arg);
         Function f = new Function(applies, arg);
 
         assertEquals(String.format("(\\ %1$s -> ((+) %1$s))", arg.toHaskell()), f.toHaskell());
@@ -42,7 +42,7 @@ public class FunctionTest {
     @Test
     public void testAnalyze() throws HaskellException {
         Function.FunctionArgument arg = new Function.FunctionArgument(Type.con("Int"));
-        Expr applies = new Apply(new Ident("(+)"), arg);
+        Expression applies = new Apply(new Ident("(+)"), arg);
         Function f = new Function(applies, arg);
 
         assertEquals("Int -> Int -> Int", f.analyze(this.env).toHaskellType());

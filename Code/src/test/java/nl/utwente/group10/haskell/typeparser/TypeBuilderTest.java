@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.typeparser;
 
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
 import org.junit.Assert;
@@ -21,7 +21,7 @@ public class TypeBuilderTest {
      * Test helper that checks if parsing a String gives the expected result.
      */
     private void convert(String from, String to) {
-        Assert.assertEquals(to, new Env().buildType(from).toHaskellType());
+        Assert.assertEquals(to, new Environment().buildType(from).toHaskellType());
     }
 
     @Test public void testBuildConstT() { this.roundtrip("Int"); }
@@ -42,7 +42,7 @@ public class TypeBuilderTest {
     @Test public void testPrefixList()  { this.convert("[] a", "[a]"); }
 
     @Test public void testTypeClass()   {
-        Env env = new Env();
+        Environment env = new Environment();
         env.addTypeClass(new TypeClass("Num", Type.con("Int"), Type.con("Float"), Type.con("Double")));
         env.addTypeClass(new TypeClass("Eq", Type.con("Int"), Type.con("Float"), Type.con("Double"), Type.con("Char"), Type.con("Bool")));
         env.addTypeClass(new TypeClass("Functor"));

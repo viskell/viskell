@@ -9,7 +9,7 @@ import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 /**
  * Haskell Environment.
  */
-public class Env {
+public class Environment {
     /**
      * Map containing the types of expressions known to the environment.
      */
@@ -24,12 +24,12 @@ public class Env {
      * @param exprTypes Map of Expr types.
      * @param typeClasses Map of type classes.
      */
-    public Env(Map<String, Type> exprTypes, HashMap<String, TypeClass> typeClasses) {
+    public Environment(Map<String, Type> exprTypes, HashMap<String, TypeClass> typeClasses) {
         this.exprTypes = exprTypes;
         this.typeClasses = typeClasses;
     }
 
-    public Env() {
+    public Environment() {
         this(new HashMap<String, Type>(), new HashMap<String, TypeClass>());
     }
 

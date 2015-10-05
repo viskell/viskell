@@ -1,7 +1,7 @@
 package nl.utwente.group10.ghcj;
 
-import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.env.Environment;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.expr.Value;
 import nl.utwente.group10.haskell.type.Type;
@@ -13,13 +13,13 @@ import org.junit.Test;
 public class GhciSessionTest {
     /** Our session with Ghci. */
     private GhciSession ghci = null;
-    private Env env;
+    private Environment env;
 
-    private Expr pi;
+    private Expression pi;
 
     @Before
     public void setUp() throws GhciException {
-        this.env = new Env();
+        this.env = new Environment();
         this.ghci = new GhciSession();
 
         this.env.addExpr("my_pi", "Float");

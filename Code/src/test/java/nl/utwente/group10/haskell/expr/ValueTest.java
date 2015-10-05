@@ -1,7 +1,7 @@
 package nl.utwente.group10.haskell.expr;
 
 import static org.junit.Assert.assertEquals;
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -12,8 +12,8 @@ public class ValueTest {
 
     @Test
     public final void testToHaskell() throws HaskellException {
-        final Expr v = new Value(this.integer, "10");
-        assertEquals(this.integer.toHaskellType(), v.analyze(new Env()).toHaskellType());
+        final Expression v = new Value(this.integer, "10");
+        assertEquals(this.integer.toHaskellType(), v.analyze(new Environment()).toHaskellType());
         assertEquals("(10)", v.toHaskell());
     }
 }

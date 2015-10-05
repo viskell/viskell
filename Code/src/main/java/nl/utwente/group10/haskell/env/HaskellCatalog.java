@@ -90,7 +90,7 @@ public class HaskellCatalog {
     /**
      * @return A new environment based on the entries of this catalog.
      */
-    public final Env asEnvironment() {
+    public final Environment asEnvironment() {
         Map<String, Type> functions = new HashMap<>();
 
         // Build function type map
@@ -98,7 +98,7 @@ public class HaskellCatalog {
             functions.put(entry.getName(), entry.getSignature());
         }
 
-        return new Env(functions, new HashMap<String, TypeClass>(this.classes));
+        return new Environment(functions, new HashMap<String, TypeClass>(this.classes));
     }
 
     /**

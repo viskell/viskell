@@ -1,7 +1,7 @@
 package nl.utwente.group10.haskell.expr;
 
 import com.google.common.collect.ImmutableList;
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.TypeChecker;
 import nl.utwente.group10.haskell.type.Type;
@@ -11,16 +11,16 @@ import java.util.List;
 /**
  * Lazy application of an argument to a function.
  */
-public class Apply extends Expr {
+public class Apply extends Expression {
     /**
      * The expression to apply the argument to.
      */
-    private final Expr func;
+    private final Expression func;
 
     /**
      * The argument to apply.
      */
-    private final Expr arg;
+    private final Expression arg;
 
     /**
      * Applies an argument to a function to produce a new expression. The application is lazy, the type needs to be
@@ -29,13 +29,13 @@ public class Apply extends Expr {
      * @param func The expression to apply argument to.
      * @param arg The argument to apply.
      */
-    public Apply(final Expr func, final Expr arg) {
+    public Apply(final Expression func, final Expression arg) {
         this.func = func;
         this.arg = arg;
     }
 
     @Override
-    public final Type analyze(final Env env) throws HaskellException {
+    public final Type analyze(final Environment env) throws HaskellException {
         final Type funcType = func.analyze(env);
         final Type argType = arg.analyze(env);
         final Type resType = TypeChecker.makeVariable("b");
@@ -62,7 +62,7 @@ public class Apply extends Expr {
     }
 
     @Override
-    public final List<Expr> getChildren() {
+    public final List<Expression> getChildren() {
         return ImmutableList.of(func, arg);
     }
 }

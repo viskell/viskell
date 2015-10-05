@@ -13,7 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.FunType;
 import nl.utwente.group10.haskell.type.Type;
@@ -68,7 +68,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         this.name = new SimpleStringProperty(name);
 
         this.loadFXML("FunctionBlock");
-        Expr signature = new Ident(getName());
+        Expression signature = new Ident(getName());
 
         // Collect argument types
         ArrayList<String> args = new ArrayList<>();

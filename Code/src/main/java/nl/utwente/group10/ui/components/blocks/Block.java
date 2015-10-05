@@ -14,7 +14,7 @@ import javafx.scene.layout.StackPane;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Apply;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.ConnectionStateDependent;
@@ -52,7 +52,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     private CircleMenu circleMenu;
     
     /** The expression of this Block. */
-    protected Expr expr;
+    protected Expression expr;
     
     /** Property for the ConnectionState. */
     protected IntegerProperty connectionState;
@@ -126,7 +126,7 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
      * 
      * If the expression is not up-to-date it gets updated.
      */
-    public Expr getExpr() {
+    public Expression getExpr() {
         // Assure expr is up-to-date.
         if (getExprIsDirty()) {
             updateExpr();
@@ -246,8 +246,8 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                     // A Type mismatch occurred.
                     int index = -1;
                     // Determine the input index of the Type error.
-                    if (e.getHaskellObject() instanceof Expr) {
-                        Expr errorExpr = (Expr) e.getHaskellObject();
+                    if (e.getHaskellObject() instanceof Expression) {
+                        Expression errorExpr = (Expression) e.getHaskellObject();
                         while (errorExpr instanceof Apply) {
                             errorExpr = ((Apply) errorExpr).getChildren().get(0);
                             index++;

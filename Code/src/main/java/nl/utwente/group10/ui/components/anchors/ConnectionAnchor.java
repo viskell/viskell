@@ -12,7 +12,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
@@ -124,7 +124,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /**
      * @return The Expr this ConnectionAnchor represents (coming from a Block).
      */
-    public abstract Expr getExpr();
+    public abstract Expression getExpr();
     
     /**
      * @return Optional of the string representation of the in- or output type.

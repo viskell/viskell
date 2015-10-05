@@ -2,12 +2,12 @@ package nl.utwente.group10.haskell.type;
 
 import static org.junit.Assert.*;
 
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.expr.Hole;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.expr.Value;
@@ -18,17 +18,17 @@ public class UnificationTest {
 
     @Test
     public void testUnifyUndefined() throws CatalogException, HaskellException {
-        Env env = new HaskellCatalog().asEnvironment();
+        Environment env = new HaskellCatalog().asEnvironment();
 
-        Expr e0 = new Ident("const");
+        Expression e0 = new Ident("const");
         Type t0 = e0.analyze(env);
         assertEquals("a -> b -> a", t0.toHaskellType());
 
-        Expr e1 = new Apply(e0, new Hole());
+        Expression e1 = new Apply(e0, new Hole());
         Type t1 = e1.analyze(env);
         assertEquals("b -> a", t1.toHaskellType());
 
-        Expr e2 = new Apply(e1, new Hole());
+        Expression e2 = new Apply(e1, new Hole());
         Type t2 = e2.analyze(env);
 
         TypeChecker.unify(t2, new Hole().analyze(env));
@@ -37,32 +37,32 @@ public class UnificationTest {
 
     @Test
     public void testUnifyFloats() throws CatalogException, HaskellException {
-        Env env = new HaskellCatalog().asEnvironment();
+        Environment env = new HaskellCatalog().asEnvironment();
         
-        Expr e0 = new Ident("const");
+        Expression e0 = new Ident("const");
         Type t0 = e0.analyze(env);
         assertEquals("a -> b -> a", t0.toHaskellType());
 
-        Expr e1 = new Apply(e0, new Value(Type.con("Float"), "5.0"));
+        Expression e1 = new Apply(e0, new Value(Type.con("Float"), "5.0"));
         Type t1 = e1.analyze(env);
         assertEquals("b -> Float", t1.toHaskellType());
 
-        Expr e2 = new Apply(e1, new Value(Type.con("Float"), "5.0"));
+        Expression e2 = new Apply(e1, new Value(Type.con("Float"), "5.0"));
         Type t2 = e2.analyze(env);
         assertEquals("Float", t2.toHaskellType());
     }
     
     @Test
     public void testUnifyABool() throws HaskellException{
-        Env env = new HaskellCatalog().asEnvironment();
+        Environment env = new HaskellCatalog().asEnvironment();
 
-        Expr e0 = new Ident("const");
+        Expression e0 = new Ident("const");
         Type t0 = e0.analyze(env);
 
-        Expr e1 = new Apply(e0, new Hole());
+        Expression e1 = new Apply(e0, new Hole());
         Type t1 = e1.analyze(env);
 
-        Expr e2 = new Apply(e1, new Hole());
+        Expression e2 = new Apply(e1, new Hole());
         Type t2 = e2.analyze(env);
         
         Type t3 = TypeChecker.makeVariable("t");
@@ -75,7 +75,7 @@ public class UnificationTest {
 
     @Test
     public void testTypeclassCopy() throws HaskellException {
-        Env env = new HaskellCatalog().asEnvironment();
+        Environment env = new HaskellCatalog().asEnvironment();
         TypeClass num = env.lookupClass("Num");
         TypeClass read = env.lookupClass("Show");
         TypeClass show = env.lookupClass("Read");
@@ -84,9 +84,9 @@ public class UnificationTest {
         Type t0 = Type.var("a", num, read);
         Type t1 = Type.var("b", num, show);
 
-        Expr e0 = new Value(t0, "?");
-        Expr e1 = new Value(t1, "?");
-        Expr e2 = new Apply(new Apply(new Ident("(+)"), e0), e1);
+        Expression e0 = new Value(t0, "?");
+        Expression e1 = new Value(t1, "?");
+        Expression e2 = new Apply(new Apply(new Ident("(+)"), e0), e1);
 
         e2.analyze(env);
 
@@ -96,10 +96,10 @@ public class UnificationTest {
     
     @Test
     public void testInstanceChaining() throws HaskellException {
-        Env env = new HaskellCatalog().asEnvironment();
+        Environment env = new HaskellCatalog().asEnvironment();
 
         // (id (id (1 :: Int)))
-        Expr e0 = new Apply(new Ident("id"),
+        Expression e0 = new Apply(new Ident("id"),
             new Apply(new Ident("id"),
                 new Value(Type.con("Int"), "1")));
 

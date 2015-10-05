@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.catalog;
 
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
 
@@ -18,7 +18,7 @@ public class HaskellCatalogTest {
         assertTrue(c.getCategories().contains("Basic"));
 
         // asEnvironment
-        Env e = c.asEnvironment();
+        Environment e = c.asEnvironment();
         assertTrue(e.getFreshExprType("id").isPresent());
         assertNotNull(e.lookupClass("Num"));
         assertTrue(e.getFreshExprType("(+)").isPresent());

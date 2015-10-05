@@ -11,7 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
 
@@ -59,7 +59,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
 
     public void update() {
         this.block.get().ifPresent(block -> {
-            Expr expr = block.getExpr();
+            Expression expr = block.getExpr();
             String haskell = expr.toHaskell();
 
             String label = String.format("%s: %s", block.getClass().getSimpleName(), haskell);
@@ -75,7 +75,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
     /**
      * Walks the expr tree, walk recursively calls itself on its children.
      */
-    private void walk(TreeItem<String> treeItem, Expr expr) {
+    private void walk(TreeItem<String> treeItem, Expression expr) {
         String type;
 
         try {
@@ -87,7 +87,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
         TreeItem<String> subTree = new TreeItem<>(String.format("%s :: %s", expr, type));
         subTree.setExpanded(true);
 
-        for (Expr child : expr.getChildren()) {
+        for (Expression child : expr.getChildren()) {
             walk(subTree, child);
         }
 

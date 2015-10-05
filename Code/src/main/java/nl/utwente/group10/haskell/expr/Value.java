@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.env.Env;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -8,7 +8,7 @@ import nl.utwente.group10.haskell.type.Type;
  * Value in Haskell. Haskell values are always defined as String in Java. The responsibility of inputting a valid value,
  * e.g. wrapping a String in quotes, is the responsibility of the user.
  */
-public class Value extends Expr {
+public class Value extends Expression {
     /**
      * Type of this value.
      */
@@ -31,7 +31,7 @@ public class Value extends Expr {
     }
 
     @Override
-    public final Type analyze(final Env env) throws HaskellTypeError {
+    public final Type analyze(final Environment env) throws HaskellTypeError {
         return this.type;
     }
 
