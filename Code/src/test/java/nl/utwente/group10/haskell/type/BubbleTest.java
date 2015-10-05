@@ -1,6 +1,5 @@
 package nl.utwente.group10.haskell.type;
 
-import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Value;
 
@@ -22,7 +21,7 @@ public class BubbleTest {
         Apply apply = new Apply(new Value(bFunc, "unit"), new Apply(new Value(aFunc, "id"), new Value(z, "undefined")));
 
         // Do type inference.
-        Type t = apply.findType(new Environment());
+        Type t = apply.findType();
 
         // Inferred type of the whole expression is 'Unit'.
         assertEquals("Unit", t.toHaskellType());
@@ -57,7 +56,7 @@ public class BubbleTest {
 
         assertEquals("(((+) ((id) (undefined))) (undefined))", apply.toHaskell());
 
-        Type t = apply.findType(new Environment());
+        Type t = apply.findType();
 
         assertEquals("Float", t.toHaskellType());
         assertEquals("Float", a.toHaskellType());
@@ -82,7 +81,7 @@ public class BubbleTest {
 
         assertEquals("(((==) (5.0)) (undefined))", apply.toHaskell());
 
-        Type t = apply.findType(new Environment());
+        Type t = apply.findType();
 
         assertEquals("Float", t.toHaskellType());
         assertEquals("Float", a.toHaskellType());

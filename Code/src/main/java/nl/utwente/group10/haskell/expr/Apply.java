@@ -1,7 +1,6 @@
 package nl.utwente.group10.haskell.expr;
 
 import com.google.common.collect.ImmutableList;
-import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.TypeChecker;
 import nl.utwente.group10.haskell.type.Type;
@@ -35,9 +34,9 @@ public class Apply extends Expression {
     }
 
     @Override
-    protected final Type inferType(final Environment env) throws HaskellException {
-        final Type funcType = func.inferType(env);
-        final Type argType = arg.inferType(env);
+    protected final Type inferType() throws HaskellException {
+        final Type funcType = func.inferType();
+        final Type argType = arg.inferType();
         final Type resType = TypeChecker.makeVariable("b");
 
         // Rule [App]:

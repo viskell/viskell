@@ -21,23 +21,23 @@ public class ApplyTest {
         Environment env = new HaskellCatalog().asEnvironment();
         
         Expression e0 = env.useFun("(+)");
-        Type t0 = e0.findType(env);
+        Type t0 = e0.findType();
         assertEquals("(Num a) -> (Num a) -> (Num a)", t0.toHaskellType());
         
         Expression e1 = new Value(Type.con("Float"), "5.0");
-        Type t1 = e1.findType(env);
+        Type t1 = e1.findType();
         assertEquals("Float", t1.toHaskellType());
         
         Expression e2 = new Apply(e0, e1);
-        Type t2 = e2.findType(env);
+        Type t2 = e2.findType();
         assertEquals("Float -> Float", t2.toHaskellType());
         
         Expression e3 = new Value(Type.con("Float"), "5.0");
-        Type t3 = e3.findType(env);
+        Type t3 = e3.findType();
         assertEquals("Float", t3.toHaskellType());
         
         Expression e4 = new Apply(e2, e3);
-        Type t4 = e4.findType(env);
+        Type t4 = e4.findType();
         assertEquals("Float", t4.toHaskellType());
     }
     
@@ -46,11 +46,11 @@ public class ApplyTest {
         Environment env = new HaskellCatalog().asEnvironment();
         
         Expression e0 = env.useFun("(+)");
-        Type t0 = e0.findType(env);
+        Type t0 = e0.findType();
         assertEquals("(Num a) -> (Num a) -> (Num a)", t0.toHaskellType());
         
         Expression e1 = new Hole();
-        Type t1 = e1.findType(env);
+        Type t1 = e1.findType();
         TypeChecker.unify(t1, Type.con("Float"));
         // t1 Should unify with everything (the type of t1 should be 'a').
         // No exception thrown -> Types are the same, as expected. The test will
@@ -58,13 +58,13 @@ public class ApplyTest {
         assertEquals("Float", t1.toHaskellType());
         
         Expression e2 = new Apply(e0, e1);
-        Type t2 = e2.findType(env);
+        Type t2 = e2.findType();
         Type num = TypeChecker.makeVariable("n", ImmutableSet.of(env.lookupClass("Num")));
         TypeChecker.unify(t2, Type.fun(num, num));
         assertEquals("Float -> Float", t2.toHaskellType());
         
         Expression e3 = new Apply(e2, new Hole());
-        Type t3 = e3.findType(env);
+        Type t3 = e3.findType();
         TypeChecker.unify(t3, Type.con("Float"));
         // t3 Should unify with everything (the type of t3 should be 'a').
         // No exception thrown -> Types are the same, as expected. The test will

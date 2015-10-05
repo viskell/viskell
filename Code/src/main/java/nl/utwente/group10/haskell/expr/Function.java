@@ -1,6 +1,5 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -34,7 +33,7 @@ public class Function extends Expression {
         }
 
         @Override
-        public Type inferType(Environment env) throws HaskellException {
+        public Type inferType() throws HaskellException {
             return this.type;
         }
 
@@ -81,11 +80,11 @@ public class Function extends Expression {
     }
 
     @Override
-    protected Type inferType(Environment env) throws HaskellException {
-        Type ftype = this.expr.inferType(env).getFresh();
+    protected Type inferType() throws HaskellException {
+        Type ftype = this.expr.inferType().getFresh();
 
         for (Expression arg : Lists.reverse(this.arguments)) {
-            ftype = Type.fun(arg.inferType(env).getFresh(), ftype);
+            ftype = Type.fun(arg.inferType().getFresh(), ftype);
         }
 
         return ftype;

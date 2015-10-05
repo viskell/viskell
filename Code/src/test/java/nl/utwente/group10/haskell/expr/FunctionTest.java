@@ -45,11 +45,11 @@ public class FunctionTest {
         Expression applies = new Apply(this.env.useFun("(+)"), arg);
         Function f = new Function(applies, arg);
 
-        assertEquals("Int -> Int -> Int", f.findType(this.env).toHaskellType());
+        assertEquals("Int -> Int -> Int", f.findType().toHaskellType());
 
         Function.FunctionArgument arg1 = new Function.FunctionArgument(Type.con("Int"));
         Function add5 = new Function(new Apply(new Apply(f, new Value(Type.con("Int"), "5")), arg1), arg1);
 
-        assertEquals("Int -> Int", add5.findType(this.env).toHaskellType());
+        assertEquals("Int -> Int", add5.findType().toHaskellType());
     }
 }

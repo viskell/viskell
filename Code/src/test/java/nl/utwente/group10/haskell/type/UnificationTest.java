@@ -20,17 +20,17 @@ public class UnificationTest {
         Environment env = new HaskellCatalog().asEnvironment();
 
         Expression e0 = env.useFun("const");
-        Type t0 = e0.findType(env);
+        Type t0 = e0.findType();
         assertEquals("a -> b -> a", t0.toHaskellType());
 
         Expression e1 = new Apply(e0, new Hole());
-        Type t1 = e1.findType(env);
+        Type t1 = e1.findType();
         assertEquals("b -> a", t1.toHaskellType());
 
         Expression e2 = new Apply(e1, new Hole());
-        Type t2 = e2.findType(env);
+        Type t2 = e2.findType();
 
-        TypeChecker.unify(t2, new Hole().findType(env));
+        TypeChecker.unify(t2, new Hole().findType());
         //No exception thrown -> Types are the same, as expected. The test will fail if an Exception is thrown.
     }
 
@@ -39,15 +39,15 @@ public class UnificationTest {
         Environment env = new HaskellCatalog().asEnvironment();
         
         Expression e0 = env.useFun("const");
-        Type t0 = e0.findType(env);
+        Type t0 = e0.findType();
         assertEquals("a -> b -> a", t0.toHaskellType());
 
         Expression e1 = new Apply(e0, new Value(Type.con("Float"), "5.0"));
-        Type t1 = e1.findType(env);
+        Type t1 = e1.findType();
         assertEquals("b -> Float", t1.toHaskellType());
 
         Expression e2 = new Apply(e1, new Value(Type.con("Float"), "5.0"));
-        Type t2 = e2.findType(env);
+        Type t2 = e2.findType();
         assertEquals("Float", t2.toHaskellType());
     }
     
@@ -56,13 +56,13 @@ public class UnificationTest {
         Environment env = new HaskellCatalog().asEnvironment();
 
         Expression e0 = env.useFun("const");
-        Type t0 = e0.findType(env);
+        e0.findType();
 
         Expression e1 = new Apply(e0, new Hole());
-        Type t1 = e1.findType(env);
+        e1.findType();
 
         Expression e2 = new Apply(e1, new Hole());
-        Type t2 = e2.findType(env);
+        Type t2 = e2.findType();
         
         Type t3 = TypeChecker.makeVariable("t");
         Type t4 = Type.con("Bool");
@@ -87,7 +87,7 @@ public class UnificationTest {
         Expression e1 = new Value(t1, "?");
         Expression e2 = new Apply(new Apply(env.useFun("(+)"), e0), e1);
 
-        e2.findType(env);
+        e2.findType();
 
         TypeChecker.unify(t0, ct);
         TypeChecker.unify(t1, ct);
@@ -102,7 +102,7 @@ public class UnificationTest {
             new Apply(env.useFun("id"),
                 new Value(Type.con("Int"), "1")));
 
-        Type t0 = e0.findType(env);
+        Type t0 = e0.findType();
 
         assertEquals(t0.toHaskellType(), "Int");
     }

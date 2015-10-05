@@ -1,6 +1,5 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeVar;
@@ -17,7 +16,7 @@ public class Hole extends Expression {
     }
 
     @Override
-    protected Type inferType(Environment env) throws HaskellException {
+    protected Type inferType() throws HaskellException {
         return typevar;
     }
 

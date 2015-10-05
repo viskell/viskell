@@ -22,7 +22,7 @@ public class IdentTest {
 
     @Test
     public final void testAnalyze() throws HaskellException {
-        assertEquals(Type.fun(this.alpha, this.alpha).toHaskellType(), this.env.useFun("id").findType(this.env).toHaskellType());
+        assertEquals(Type.fun(this.alpha, this.alpha).toHaskellType(), this.env.useFun("id").findType().toHaskellType());
     }
 
     @Test

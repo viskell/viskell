@@ -1,6 +1,5 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -30,7 +29,7 @@ public class Value extends Expression {
     }
 
     @Override
-    protected final Type inferType(final Environment env) throws HaskellTypeError {
+    protected final Type inferType() throws HaskellTypeError {
         return this.type;
     }
 
