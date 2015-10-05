@@ -43,7 +43,7 @@ public class ApplyTest {
     }
     
     @Test
-    public void testApplyUndefined() throws CatalogException, HaskellException {
+    public void testApplyHoles() throws CatalogException, HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
         
         Expression e0 = new Ident("(+)");
@@ -53,19 +53,21 @@ public class ApplyTest {
         Expression e1 = new Hole();
         Type t1 = e1.findType(env);
         TypeChecker.unify(t1, Type.con("Float"));
-        // t1 Should unfiy with everything (the type of t1 should be 'a').
+        // t1 Should unify with everything (the type of t1 should be 'a').
         // No exception thrown -> Types are the same, as expected. The test will
         // fail if an Exception is thrown.
+        assertEquals("Float", t1.toHaskellType());
         
         Expression e2 = new Apply(e0, e1);
         Type t2 = e2.findType(env);
         Type num = TypeChecker.makeVariable("n", ImmutableSet.of(env.lookupClass("Num")));
         TypeChecker.unify(t2, Type.fun(num, num));
+        assertEquals("Float -> Float", t2.toHaskellType());
         
         Expression e3 = new Apply(e2, new Hole());
         Type t3 = e3.findType(env);
         TypeChecker.unify(t3, Type.con("Float"));
-        // t3 Should unfiy with everything (the type of t3 should be 'a').
+        // t3 Should unify with everything (the type of t3 should be 'a').
         // No exception thrown -> Types are the same, as expected. The test will
         // fail if an Exception is thrown.
     }
