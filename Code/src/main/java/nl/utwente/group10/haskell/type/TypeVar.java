@@ -82,7 +82,7 @@ public class TypeVar extends Type {
          * @param the other type instance.
          */
         private void shareConstraints(TypeInstance other) {
-            this.constraints = Sets.union(this.constraints, other.constraints);
+            this.constraints = TypeClass.simplifyConstraints(Sets.union(this.constraints, other.constraints));
         }
 
         /**

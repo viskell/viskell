@@ -105,8 +105,9 @@ public class HaskellCatalog {
      * Parses a list of class nodes into ClassEntry objects.
      * @param nodes The nodes to parse.
      * @return A set of ClassEntry objects for the given nodes.
+     * @throws CatalogException
      */
-    protected final Map<String, TypeClass> parseClasses(NodeList nodes) {
+    protected final Map<String, TypeClass> parseClasses(NodeList nodes) throws CatalogException {
         Map<String, TypeClass> entries = new HashMap<>();
 
         for (int i = 0; i < nodes.getLength(); i++) {
@@ -121,9 +122,18 @@ public class HaskellCatalog {
                 Node inode = inodes.item(j);
                 NamedNodeMap attrs = inode.getAttributes();
                 String inst = attrs.getNamedItem("name").getTextContent();
-                Type t = builder.build(inst);
-                if (t instanceof TypeCon) {
-                    tc.addType((TypeCon) t);
+                if ("instance".equals(inode.getNodeName())) {
+                    Type t = builder.build(inst);
+                    if (t instanceof TypeCon) {
+                        tc.addType((TypeCon) t);
+                    }
+                } else if ("superClass".equals(inode.getNodeName())) {
+                    TypeClass sc = entries.get(inst);
+                    if (sc == null) {
+                       throw new CatalogException("Can't resolve superclass " + inst + " of " + name);
+                    } else {
+                        tc.addSuperClass(sc);
+                    }
                 }
             }
             

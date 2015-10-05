@@ -19,6 +19,15 @@
         	<instance name="Float"/>
         	<instance name="Int"/>
         </class>   	
+        <class name="Enum">
+            <instance name="Ordering"/>
+            <instance name="Integer"/>
+            <instance name="Int"/>
+            <instance name="Char"/>
+            <instance name="Bool"/>
+            <instance name="Float"/>
+            <instance name="Double"/>
+        </class>
         <class name="Num">
             <instance name="Int"/>
             <instance name="Integer"/>
@@ -35,12 +44,6 @@
             <instance name="Float"/>
             <instance name="Double"/>
         </class>
-        <class name="Integral">
-        	<superClass name="Enum"/>
-        	<superClass name="Real"/>
-            <instance name="Int"/>
-            <instance name="Integer"/>
-        </class>
         <class name="Real">
         	<superClass name="Num"/>
         	<superClass name="Ord"/>
@@ -49,18 +52,15 @@
         	<instance name="Float"/>
         	<instance name="Double"/>
         </class>
+        <class name="Integral">
+        	<superClass name="Enum"/>
+        	<superClass name="Real"/>
+            <instance name="Int"/>
+            <instance name="Integer"/>
+        </class>
         <class name="RealFrac">
         	<superClass name="Fractional"/>
         	<superClass name="Real"/>
-            <instance name="Float"/>
-            <instance name="Double"/>
-        </class>
-        <class name="Enum">
-            <instance name="Ordering"/>
-            <instance name="Integer"/>
-            <instance name="Int"/>
-            <instance name="Char"/>
-            <instance name="Bool"/>
             <instance name="Float"/>
             <instance name="Double"/>
         </class>
