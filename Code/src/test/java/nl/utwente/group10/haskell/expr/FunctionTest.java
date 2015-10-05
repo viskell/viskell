@@ -19,11 +19,11 @@ public class FunctionTest {
     }
 
     @Test
-    public void testArguments() {
+    public void testArguments() throws HaskellException {
         Function.FunctionArgument arg0 = new Function.FunctionArgument(Type.var("a", env.lookupClass("Num")));
         Function.FunctionArgument arg1 = new Function.FunctionArgument(Type.var("a", env.lookupClass("Num")));
 
-        Function f = new Function(new Ident("pi"), arg0, arg1);
+        Function f = new Function(this.env.useFun("pi"), arg0, arg1);
 
         assertEquals(2, f.getArguments().length);
         assertEquals(arg0, f.getArguments()[0]);
@@ -31,9 +31,9 @@ public class FunctionTest {
     }
 
     @Test
-    public void testToHaskell() {
+    public void testToHaskell() throws HaskellException {
         Function.FunctionArgument arg = new Function.FunctionArgument(Type.var("a", env.lookupClass("Num")));
-        Expression applies = new Apply(new Ident("(+)"), arg);
+        Expression applies = new Apply(this.env.useFun("(+)"), arg);
         Function f = new Function(applies, arg);
 
         assertEquals(String.format("(\\ %1$s -> ((+) %1$s))", arg.toHaskell()), f.toHaskell());
@@ -42,7 +42,7 @@ public class FunctionTest {
     @Test
     public void testAnalyze() throws HaskellException {
         Function.FunctionArgument arg = new Function.FunctionArgument(Type.con("Int"));
-        Expression applies = new Apply(new Ident("(+)"), arg);
+        Expression applies = new Apply(this.env.useFun("(+)"), arg);
         Function f = new Function(applies, arg);
 
         assertEquals("Int -> Int -> Int", f.findType(this.env).toHaskellType());

@@ -32,7 +32,7 @@ public class ApplyTest {
 
     @Test
     public final void testId() throws HaskellException {
-        final Apply apply = new Apply(new Ident("id"), new Value(this.integer, "42"));
+        final Apply apply = new Apply(this.env.useFun("id"), new Value(this.integer, "42"));
 
         assertEquals("(id (42))", apply.toHaskell());
         assertEquals(this.integer.toHaskellType(), apply.findType(this.env).toHaskellType());
@@ -40,7 +40,7 @@ public class ApplyTest {
 
     @Test
     public final void testAdd() throws HaskellException {
-        final Apply apply1 = new Apply(new Ident("(+)"), new Value(this.integer, "42"));
+        final Apply apply1 = new Apply(this.env.useFun("(+)"), new Value(this.integer, "42"));
         final Apply apply2 = new Apply(apply1, new Value(this.integer, "42"));
 
         assertEquals("((+) (42))", apply1.toHaskell());
@@ -52,8 +52,8 @@ public class ApplyTest {
 
     @Test
     public final void testMap() throws HaskellException {
-        final Apply apply0 = new Apply(new Ident("(+)"), new Value(this.integer, "42"));
-        final Apply apply1 = new Apply(new Ident("map"), apply0);
+        final Apply apply0 = new Apply(this.env.useFun("(+)"), new Value(this.integer, "42"));
+        final Apply apply1 = new Apply(this.env.useFun("map"), apply0);
         final Apply apply2 = new Apply(apply1, new Value(this.integerList, "[1, 2, 3, 5, 7]"));
 
         assertEquals("(map ((+) (42)))", apply1.toHaskell());
@@ -65,7 +65,7 @@ public class ApplyTest {
 
     @Test
     public final void testZip() throws HaskellException {
-        final Apply apply1 = new Apply(new Ident("zip"), new Value(this.integerList, "[1, 2, 3, 5, 7]"));
+        final Apply apply1 = new Apply(this.env.useFun("zip"), new Value(this.integerList, "[1, 2, 3, 5, 7]"));
         final Apply apply2 = new Apply(apply1, new Value(this.stringList, "[\"a\", \"b\", \"c\"]"));
 
         assertEquals("(zip ([1, 2, 3, 5, 7]))", apply1.toHaskell());
@@ -77,7 +77,7 @@ public class ApplyTest {
 
     @Test(expected=HaskellException.class)
     public final void testIncorrectLcm() throws HaskellException {
-        final Apply apply1 = new Apply(new Ident("lcm"), new Value(this.integer, "42"));
+        final Apply apply1 = new Apply(this.env.useFun("lcm"), new Value(this.integer, "42"));
         final Apply apply2 = new Apply(apply1, new Value(this.string, "\"haskell\""));
 
         assertEquals("(lcm (42))", apply1.toHaskell());

@@ -2,7 +2,6 @@ package nl.utwente.group10.ghcj;
 
 import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.expr.Expression;
-import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.expr.Value;
 import nl.utwente.group10.haskell.type.Type;
 

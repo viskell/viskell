@@ -11,7 +11,6 @@ import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.expr.Hole;
-import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.expr.Value;
 
 import org.junit.Test;
@@ -21,7 +20,7 @@ public class ApplyTest {
     public void testApplyPlus() throws CatalogException, HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
         
-        Expression e0 = new Ident("(+)");
+        Expression e0 = env.useFun("(+)");
         Type t0 = e0.findType(env);
         assertEquals("(Num a) -> (Num a) -> (Num a)", t0.toHaskellType());
         
@@ -46,7 +45,7 @@ public class ApplyTest {
     public void testApplyHoles() throws CatalogException, HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
         
-        Expression e0 = new Ident("(+)");
+        Expression e0 = env.useFun("(+)");
         Type t0 = e0.findType(env);
         assertEquals("(Num a) -> (Num a) -> (Num a)", t0.toHaskellType());
         

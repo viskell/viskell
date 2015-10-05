@@ -2,6 +2,8 @@ package nl.utwente.group10.haskell.env;
 
 import java.util.*;
 
+import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.expr.FunVar;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
 import nl.utwente.group10.haskell.typeparser.TypeBuilder;
@@ -35,14 +37,23 @@ public class Environment {
 
     /**
      * @param name The name of the function.
-     * @return The fresh Type for the given function, or null if it doesn't exist.
+     * @return The FunInfo for the given function, or null if it doesn't exist.
      */
-    public final Type getFreshExprType(String name) {
+    public final FunctionInfo lookupFun(String name) {
+        return this.functions.get(name);
+    }
+
+    /**
+     * @param name The name of the function.
+     * @return The FunVar for the given function.
+     * @throws HaskellException if the function can not be found.
+     */
+    public final FunVar useFun(String name) throws HaskellException {
         if (this.functions.containsKey(name)) {
-            return this.functions.get(name).getFreshSignature();
-        } else {
-            return null;
+            return new FunVar(this.functions.get(name));
         }
+        
+        throw new HaskellException("Function " + name + " is not in scope");
     }
     
     /**

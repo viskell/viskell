@@ -16,17 +16,24 @@ public class ExprTest {
     private final TypeCon doubl = Type.con("Double");
     private final TypeCon string = Type.con("String");
 
-    private final TypeClass num = new TypeClass("Num", integer, floating, doubl);
+    private TypeClass num;
 
     private Expression expr;
     private Environment env;
 
     @Before
-    public final void setUp() {
+    public final void setUp() throws HaskellException {
+        this.env = new Environment();
+
+        this.num = new TypeClass("Num", integer, floating, doubl);
+        this.env.addTypeClass(this.num);
+        this.env.addTestSignature("(*)", "Num a => a -> a -> a");
+        this.env.addTestSignature("map", "(a -> b) -> [a] -> [b]");
+
         this.expr = new Apply(
                 new Apply(
-                        new Ident("map"),
-                        new Ident("(*)")
+                        this.env.useFun("map"),
+                        this.env.useFun("(*)")
                 ),
                 new Value(
                         Type.listOf(this.integer),
@@ -34,11 +41,6 @@ public class ExprTest {
                 )
         );
 
-        this.env = new Environment();
-
-        this.env.addTypeClass(this.num);
-        this.env.addTestSignature("(*)", "Num a => a -> a -> a");
-        this.env.addTestSignature("map", "(a -> b) -> [a] -> [b]");
     }
 
     @Test
@@ -58,8 +60,8 @@ public class ExprTest {
     public final void testTypeclassError() throws HaskellException {
         expr = new Apply(
                 new Apply(
-                        new Ident("map"),
-                        new Ident("(*)")
+                        this.env.useFun("map"),
+                        this.env.useFun("(*)")
                 ),
                 new Value(
                         Type.listOf(this.string),

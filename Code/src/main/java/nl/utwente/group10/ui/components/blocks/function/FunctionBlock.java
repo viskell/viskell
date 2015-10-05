@@ -11,10 +11,9 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.env.FunctionInfo;
 import nl.utwente.group10.haskell.expr.Apply;
-import nl.utwente.group10.haskell.expr.Expression;
-import nl.utwente.group10.haskell.expr.Ident;
+import nl.utwente.group10.haskell.expr.FunVar;
 import nl.utwente.group10.haskell.type.FunType;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
@@ -23,7 +22,6 @@ import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
-import nl.utwente.group10.ui.exceptions.FunctionDefinitionException;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 
 /**
@@ -36,6 +34,9 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
 
     /** The function name. */
     private StringProperty name;
+    
+    /** The information about the function. */
+    private FunctionInfo funInfo;
 
     /** The space containing the input anchor(s). */
     @FXML private Pane inputSpace;
@@ -56,28 +57,21 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
      * Method that creates a newInstance of this class along with it's visual
      * representation
      *
-     * @param name
-     *            The name of the function.
-     * @param type
-     *            The function's type (usually a FuncT).
+     * @param funInfo
+     *            The information about the function.
      * @param pane
      *            The parent pane in which this FunctionBlock exists.
      */
-    public FunctionBlock(String name, Type type, CustomUIPane pane) {
+    public FunctionBlock(FunctionInfo funInfo, CustomUIPane pane) {
         super(pane);
-        this.name = new SimpleStringProperty(name);
+        this.name = new SimpleStringProperty(funInfo.getName());
+        this.funInfo = funInfo;
 
         this.loadFXML("FunctionBlock");
-        Expression signature = new Ident(getName());
 
         // Collect argument types
         ArrayList<String> args = new ArrayList<>();
-        Type t = null;
-        try {
-            t = signature.findType(pane.getEnvInstance());
-        } catch (HaskellException e1) {
-            throw new FunctionDefinitionException();
-        }
+        Type t = funInfo.getFreshSignature();
         int inputCount = 0;
         while (t instanceof FunType) {
             FunType ft = (FunType) t;
@@ -162,7 +156,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public final void updateExpr() {
         getPane().removeExprToFunction(expr);
-        expr = new Ident(getName());
+        expr = new FunVar(this.funInfo);
         getPane().putExprToFunction(expr, this);
         
         for (InputAnchor in : getActiveInputs()) {

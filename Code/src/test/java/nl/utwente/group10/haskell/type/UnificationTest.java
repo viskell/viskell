@@ -9,7 +9,6 @@ import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.expr.Hole;
-import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.expr.Value;
 
 import org.junit.Test;
@@ -20,7 +19,7 @@ public class UnificationTest {
     public void testUnifyUndefined() throws CatalogException, HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
 
-        Expression e0 = new Ident("const");
+        Expression e0 = env.useFun("const");
         Type t0 = e0.findType(env);
         assertEquals("a -> b -> a", t0.toHaskellType());
 
@@ -39,7 +38,7 @@ public class UnificationTest {
     public void testUnifyFloats() throws CatalogException, HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
         
-        Expression e0 = new Ident("const");
+        Expression e0 = env.useFun("const");
         Type t0 = e0.findType(env);
         assertEquals("a -> b -> a", t0.toHaskellType());
 
@@ -56,7 +55,7 @@ public class UnificationTest {
     public void testUnifyABool() throws HaskellException{
         Environment env = new HaskellCatalog().asEnvironment();
 
-        Expression e0 = new Ident("const");
+        Expression e0 = env.useFun("const");
         Type t0 = e0.findType(env);
 
         Expression e1 = new Apply(e0, new Hole());
@@ -86,7 +85,7 @@ public class UnificationTest {
 
         Expression e0 = new Value(t0, "?");
         Expression e1 = new Value(t1, "?");
-        Expression e2 = new Apply(new Apply(new Ident("(+)"), e0), e1);
+        Expression e2 = new Apply(new Apply(env.useFun("(+)"), e0), e1);
 
         e2.findType(env);
 
@@ -99,8 +98,8 @@ public class UnificationTest {
         Environment env = new HaskellCatalog().asEnvironment();
 
         // (id (id (1 :: Int)))
-        Expression e0 = new Apply(new Ident("id"),
-            new Apply(new Ident("id"),
+        Expression e0 = new Apply(env.useFun("id"),
+            new Apply(env.useFun("id"),
                 new Value(Type.con("Int"), "1")));
 
         Type t0 = e0.findType(env);

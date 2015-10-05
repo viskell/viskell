@@ -142,7 +142,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     }
 
     private void addFunctionBlock(FunctionInfo entry) {
-        FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getFreshSignature(), parent);
+        FunctionBlock fb = new FunctionBlock(entry, parent);
         fb.setConnectionState(ConnectionCreationManager.nextConnectionState());
         addBlock(fb);
     }

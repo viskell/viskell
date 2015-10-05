@@ -22,16 +22,16 @@ public class IdentTest {
 
     @Test
     public final void testAnalyze() throws HaskellException {
-        assertEquals(Type.fun(this.alpha, this.alpha).toHaskellType(), new Ident("id").findType(this.env).toHaskellType());
+        assertEquals(Type.fun(this.alpha, this.alpha).toHaskellType(), this.env.useFun("id").findType(this.env).toHaskellType());
     }
 
     @Test
     public final void testToHaskell() throws HaskellException {
-        assertEquals("id", new Ident("id").toHaskell());
+        assertEquals("id", this.env.useFun("id").toHaskell());
     }
 
     @Test(expected=HaskellException.class)
     public final void testIncorrectName() throws HaskellException {
-        new Ident("id").findType(new Environment());
+        new Environment().useFun("id");
     }
 }
