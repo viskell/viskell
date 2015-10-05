@@ -1,12 +1,11 @@
 package nl.utwente.group10.haskell.typeparser;
 
+import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /** Tests the TypeBuilder */
 public class TypeBuilderTest {
@@ -22,7 +21,7 @@ public class TypeBuilderTest {
      * Test helper that checks if parsing a String gives the expected result.
      */
     private void convert(String from, String to) {
-        Assert.assertEquals(to, new TypeBuilder().build(from).toHaskellType());
+        Assert.assertEquals(to, new Env().buildType(from).toHaskellType());
     }
 
     @Test public void testBuildConstT() { this.roundtrip("Int"); }
@@ -43,16 +42,15 @@ public class TypeBuilderTest {
     @Test public void testPrefixList()  { this.convert("[] a", "[a]"); }
 
     @Test public void testTypeClass()   {
-        Map<String, TypeClass> typeClasses = new HashMap<>();
-        typeClasses.put("Num", new TypeClass("Num", Type.con("Int"), Type.con("Float"), Type.con("Double")));
-        typeClasses.put("Eq", new TypeClass("Eq", Type.con("Int"), Type.con("Float"), Type.con("Double"), Type.con("Char"), Type.con("Bool")));
-        typeClasses.put("Functor", new TypeClass("Functor"));
-        TypeBuilder builder = new TypeBuilder(typeClasses);
+        Env env = new Env();
+        env.addTypeClass(new TypeClass("Num", Type.con("Int"), Type.con("Float"), Type.con("Double")));
+        env.addTypeClass(new TypeClass("Eq", Type.con("Int"), Type.con("Float"), Type.con("Double"), Type.con("Char"), Type.con("Bool")));
+        env.addTypeClass(new TypeClass("Functor"));
 
-        Assert.assertEquals("(Num a)", builder.build("Num a => a").toHaskellType());
-        Assert.assertEquals("(Num a) -> (Num a)", builder.build("(Num a) => (a -> a)").toHaskellType());
-        Assert.assertEquals("(Num a) -> b", builder.build("(Num a, Nonexistent b) => a -> b").toHaskellType());
-        Assert.assertEquals("(Num a) -> (Eq b)", builder.build("(Num a, Eq b) => a -> b").toHaskellType());
-        Assert.assertEquals("(a -> b) -> (Functor f) a -> (Functor f) b", builder.build("Functor f => (a -> b) -> f a -> f b").toHaskellType());
+        Assert.assertEquals("(Num a)", env.buildType("Num a => a").toHaskellType());
+        Assert.assertEquals("(Num a) -> (Num a)", env.buildType("(Num a) => (a -> a)").toHaskellType());
+        Assert.assertEquals("(Num a) -> b", env.buildType("(Num a, Nonexistent b) => a -> b").toHaskellType());
+        Assert.assertEquals("(Num a) -> (Eq b)", env.buildType("(Num a, Eq b) => a -> b").toHaskellType());
+        Assert.assertEquals("(a -> b) -> (Functor f) a -> (Functor f) b", env.buildType("Functor f => (a -> b) -> f a -> f b").toHaskellType());
     }
 }

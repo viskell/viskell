@@ -2,7 +2,6 @@ package nl.utwente.group10.haskell.env;
 
 import java.util.*;
 
-import com.google.common.collect.HashMultimap;
 import nl.utwente.group10.haskell.expr.Ident;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
@@ -18,39 +17,21 @@ public class Env {
     private Map<String, Type> exprTypes;
 
     /**
-     * Map containing the string representation of the types of the expressions known to the environment.
+     * Map containing the type classes by name.
      */
-    private Map<String, String> exprStringTypes;
-
-    /**
-     * Map containing the types for each type class.
-     */
-    private HashMultimap<Type, TypeClass> typeClasses;
+    private HashMap<String, TypeClass> typeClasses;
 
     /**
      * @param exprTypes Map of Expr types.
-     * @param exprStringTypes Map of Expr types in original string representation.
-     * @param typeClasses Multimap of type classes.
+     * @param typeClasses Map of type classes.
      */
-    public Env(Map<String, Type> exprTypes, Map<String, String> exprStringTypes, HashMultimap<Type, TypeClass> typeClasses) {
+    public Env(Map<String, Type> exprTypes, HashMap<String, TypeClass> typeClasses) {
         this.exprTypes = exprTypes;
-        this.exprStringTypes = exprStringTypes;
         this.typeClasses = typeClasses;
     }
 
-    public Env(Map<String, Type> exprTypes, Map<String, String> exprStringTypes, Collection<TypeClass> typeClasses) {
-        this(exprTypes, exprStringTypes, Env.buildTypeClasses(typeClasses));
-    }
-
     public Env() {
-        this(new HashMap<String, Type>(), new HashMap<String, String>(), HashMultimap.create());
-    }
-
-    /**
-     * @return The map of known expression names and their types.
-     */
-    public final Map<String, Type> getExprTypes() {
-        return this.exprTypes;
+        this(new HashMap<String, Type>(), new HashMap<String, TypeClass>());
     }
 
     /**
@@ -58,14 +39,28 @@ public class Env {
      * @return An Optional containing the Type for the given expression, if any.
      */
     public final Optional<Type> getFreshExprType(String name) {
-        if (this.exprStringTypes.containsKey(name)) {
-            TypeBuilder builder = new TypeBuilder(this.getTypeClasses());
-            return Optional.ofNullable(builder.build(this.exprStringTypes.get(name)));
+        if (this.exprTypes.containsKey(name)) {
+            return Optional.ofNullable(this.exprTypes.get(name).getFresh());
         } else {
             return Optional.empty();
         }
     }
+    
+    /**
+     * @param type The String representation of the type signature
+     * @return Type built using the context of this environment
+     */
+    public final Type buildType(String type) {
+        return new TypeBuilder(this.typeClasses).build(type);
+    }
 
+    /**
+     * 
+     */
+    public final TypeClass lookupClass(String name) {
+        return this.typeClasses.get(name);
+    }
+    
     /**
      * Adds an expression to this environment.
      * @param name The name of the expression.
@@ -73,9 +68,8 @@ public class Env {
      * @return Expression to use in the future.
      */
     public final Ident addExpr(String name, String signature) {
-        TypeBuilder builder = new TypeBuilder(this.getTypeClasses());
+        TypeBuilder builder = new TypeBuilder(this.typeClasses);
         Type type = builder.build(signature);
-        this.exprStringTypes.put(name, signature);
         this.exprTypes.put(name, type);
         return new Ident(name);
     }
@@ -85,46 +79,7 @@ public class Env {
      * @param typeclass The type class to add.
      */
     public final void addTypeClass(TypeClass typeclass) {
-        for (Type type : typeclass.getTypes()) {
-            this.typeClasses.put(type, typeclass);
-        }
+        this.typeClasses.put(typeclass.getName(), typeclass);
     }
 
-    /**
-     * @param type The type to get the type classes for.
-     * @return The list of type classes for the given type.
-     */
-    public final Set<TypeClass> getTypeClasses(Type type) {
-        return this.typeClasses.get(type);
-    }
-
-    /**
-     * @return A mapping between the name of a type class and its object.
-     */
-    public final Map<String, TypeClass> getTypeClasses() {
-        Map<String, TypeClass> typeClasses = new HashMap<>();
-
-        for (TypeClass tc : this.typeClasses.values()) {
-            typeClasses.put(tc.getName(), tc);
-        }
-
-        return typeClasses;
-    }
-
-    /**
-     * Builds a Multimap from Type to TypeClass given a set of TypeClass objects.
-     * @param typeClasses The TypeClass objects to include.
-     * @return A Multimap containing the given TypeClass objects.
-     */
-    public static HashMultimap<Type, TypeClass> buildTypeClasses(final Collection<TypeClass> typeClasses) {
-        HashMultimap<Type, TypeClass> result = HashMultimap.create();
-
-        for (TypeClass typeClass : typeClasses) {
-            for (Type type : typeClass.getTypes()) {
-                result.put(type, typeClass);
-            }
-        }
-
-        return result;
-    }
 }

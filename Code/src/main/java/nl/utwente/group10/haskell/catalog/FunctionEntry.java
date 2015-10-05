@@ -1,17 +1,19 @@
 package nl.utwente.group10.haskell.catalog;
 
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.haskell.typeparser.TypeBuilder;
 
 /**
  * A function entry in the Haskell catalog.
  */
-public class FunctionEntry extends Entry {
+public class FunctionEntry  implements Comparable<FunctionEntry> {
+    /** The name of this entry. */
+    private String name;
+    
     /** The category this Entry belongs to. */
     private final String category;
 
-    /** The signature of this Entry. */
-    private final String signature;
+    /** The type signature of this Entry. */
+    private final Type signature;
 
     /** The documentation string for this Entry. */
     private final String documentation;
@@ -22,13 +24,20 @@ public class FunctionEntry extends Entry {
      * @param signature The signature of this Entry.
      * @param documentation The documentation for this Entry.
      */
-    FunctionEntry(final String name, final String category, final String signature, final String documentation) {
-        super(name);
+    FunctionEntry(final String name, final String category, final Type signature, final String documentation) {
+        this.name = name;
         this.category = category;
         this.signature = signature;
         this.documentation = documentation;
     }
 
+    /**
+     * @return The name of this function.
+     */
+    public final String getName() {
+        return this.name;
+    }
+    
     /**
      * @return The category of this function.
      */
@@ -37,10 +46,10 @@ public class FunctionEntry extends Entry {
     }
 
     /**
-     * @return The signature of this function.
+     * @return The a fresh copy of type signature of this function.
      */
-    public final String getSignature() {
-        return this.signature;
+    public final Type getSignature() {
+        return this.signature.getFresh();
     }
 
     /**
@@ -50,14 +59,9 @@ public class FunctionEntry extends Entry {
         return this.documentation;
     }
 
-    /**
-     * Parses, constructs and returns the type of this function.
-     * @param ctx The context to use.
-     * @return The type of this function.
-     */
     @Override
-    public Type asHaskellObject(Context ctx) {
-        TypeBuilder builder = new TypeBuilder(ctx.typeClasses);
-        return builder.build(this.getSignature());
+    public final int compareTo(final FunctionEntry entry) {
+        return this.getName().compareTo(entry.getName());
     }
+
 }

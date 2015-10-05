@@ -37,10 +37,10 @@ public class TypeClass extends HaskellObject {
     }
 
     /**
-     * @return The types in this type class.
+     * @param tc The type constructor to add to this class 
      */
-    public final Set<TypeCon> getTypes() {
-        return this.cons;
+    public final void addType(TypeCon tc) {
+        this.cons.add(tc);
     }
 
     /**

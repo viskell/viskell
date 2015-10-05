@@ -2,10 +2,10 @@ package nl.utwente.group10.haskell.catalog;
 
 import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.exceptions.CatalogException;
-import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 public class HaskellCatalogTest {
     @Test
@@ -18,10 +18,8 @@ public class HaskellCatalogTest {
 
         // asEnvironment
         Env e = c.asEnvironment();
-        assertFalse(e.getExprTypes().isEmpty());
-        assertFalse(e.getTypeClasses().isEmpty());
-        assertTrue(e.getExprTypes().containsKey("id"));
-        assertTrue(e.getTypeClasses().containsKey("Num"));
+        assertTrue(e.getFreshExprType("id").isPresent());
+        assertNotNull(e.lookupClass("Num"));
         assertTrue(e.getFreshExprType("(+)").isPresent());
     }
 }
