@@ -37,8 +37,8 @@ public class ExprTest {
         this.env = new Environment();
 
         this.env.addTypeClass(this.num);
-        this.env.addExpr("(*)", "Num a => a -> a -> a");
-        this.env.addExpr("map", "(a -> b) -> [a] -> [b]");
+        this.env.addTestSignature("(*)", "Num a => a -> a -> a");
+        this.env.addTestSignature("map", "(a -> b) -> [a] -> [b]");
     }
 
     @Test

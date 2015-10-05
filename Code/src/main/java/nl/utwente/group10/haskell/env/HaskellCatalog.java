@@ -30,9 +30,9 @@ import javax.xml.validation.SchemaFactory;
 public class HaskellCatalog {
     private Map<String, TypeClass> classes;
 
-    private Map<String, FunctionEntry> functions;
+    private Map<String, CatalogFunction> functions;
 
-    private Multimap<String, FunctionEntry> categories;
+    private Multimap<String, CatalogFunction> categories;
 
     /** Default path to the XML file. */
     public static final String XML_PATH = "/catalog/catalog.xml";
@@ -56,9 +56,9 @@ public class HaskellCatalog {
 
         this.classes = this.parseClasses(classNodes);
 
-        Set<FunctionEntry> entries = this.parseFunctions(functionNodes, this.classes);
+        Set<CatalogFunction> entries = this.parseFunctions(functionNodes, this.classes);
       
-        for (FunctionEntry entry : entries) {
+        for (CatalogFunction entry : entries) {
             this.functions.put(entry.getName(), entry);
             this.categories.put(entry.getCategory(), entry);
         }
@@ -83,7 +83,7 @@ public class HaskellCatalog {
      * @param key The name of the category.
      * @return A set of the entries in the given category.
      */
-    public final Collection<FunctionEntry> getCategory(final String key) {
+    public final Collection<CatalogFunction> getCategory(final String key) {
         return this.categories.get(key);
     }
 
@@ -91,14 +91,7 @@ public class HaskellCatalog {
      * @return A new environment based on the entries of this catalog.
      */
     public final Environment asEnvironment() {
-        Map<String, Type> functions = new HashMap<>();
-
-        // Build function type map
-        for (FunctionEntry entry : this.functions.values()) {
-            functions.put(entry.getName(), entry.getSignature());
-        }
-
-        return new Environment(functions, new HashMap<String, TypeClass>(this.classes));
+        return new Environment(new HashMap<String, FunctionInfo>(this.functions), new HashMap<String, TypeClass>(this.classes));
     }
 
     /**
@@ -148,8 +141,8 @@ public class HaskellCatalog {
      * @param nodes The nodes to parse.
      * @return A set of FunctionEntry objects for the given nodes.
      */
-    protected final Set<FunctionEntry> parseFunctions(NodeList nodes, Map<String, TypeClass> typeClasses) {
-        Set<FunctionEntry> entries = new HashSet<>();
+    protected final Set<CatalogFunction> parseFunctions(NodeList nodes, Map<String, TypeClass> typeClasses) {
+        Set<CatalogFunction> entries = new HashSet<>();
 
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
@@ -162,7 +155,7 @@ public class HaskellCatalog {
 
             TypeBuilder builder = new TypeBuilder(typeClasses);
             Type tsig = builder.build(signature);
-            entries.add(new FunctionEntry(name, category, tsig, documentation));
+            entries.add(new CatalogFunction(name, category, tsig, documentation));
         }
 
         return entries;

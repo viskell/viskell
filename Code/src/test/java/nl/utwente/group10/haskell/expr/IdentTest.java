@@ -17,7 +17,7 @@ public class IdentTest {
     public final void setUp() {
         this.env = new Environment();
 
-        this.env.addExpr("id", "a -> a");
+        this.env.addTestSignature("id", "a -> a");
     }
 
     @Test

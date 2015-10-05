@@ -19,8 +19,8 @@ public class HaskellCatalogTest {
 
         // asEnvironment
         Environment e = c.asEnvironment();
-        assertTrue(e.getFreshExprType("id").isPresent());
+        assertNotNull(e.getFreshExprType("id"));
         assertNotNull(e.lookupClass("Num"));
-        assertTrue(e.getFreshExprType("(+)").isPresent());
+        assertNotNull(e.getFreshExprType("(+)"));
     }
 }

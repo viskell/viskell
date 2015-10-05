@@ -23,11 +23,11 @@ public class ApplyTest {
     public final void setUp() {
         this.env = new Environment();
 
-        this.env.addExpr("id", "a -> a");
-        this.env.addExpr("(+)", "Int -> Int -> Int");
-        this.env.addExpr("map", "(a -> b) -> [a] -> [b]");
-        this.env.addExpr("zip", "[a] -> [b] -> [(a, b)]");
-        this.env.addExpr("lcm", "a -> a -> a");
+        this.env.addTestSignature("id", "a -> a");
+        this.env.addTestSignature("(+)", "Int -> Int -> Int");
+        this.env.addTestSignature("map", "(a -> b) -> [a] -> [b]");
+        this.env.addTestSignature("zip", "[a] -> [b] -> [(a, b)]");
+        this.env.addTestSignature("lcm", "a -> a -> a");
     }
 
     @Test

@@ -22,7 +22,7 @@ public class GhciSessionTest {
         this.env = new Environment();
         this.ghci = new GhciSession();
 
-        this.env.addExpr("my_pi", "Float");
+        this.env.addTestSignature("my_pi", "Float");
         this.pi = new Value(Type.con("Float"), "3.14");
     }
 

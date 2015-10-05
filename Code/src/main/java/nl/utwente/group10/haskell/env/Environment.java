@@ -11,9 +11,9 @@ import nl.utwente.group10.haskell.typeparser.TypeBuilder;
  */
 public class Environment {
     /**
-     * Map containing the types of expressions known to the environment.
+     * Map containing the types of function available in the environment.
      */
-    private Map<String, Type> exprTypes;
+    private Map<String, FunctionInfo> functions;
 
     /**
      * Map containing the type classes by name.
@@ -21,27 +21,27 @@ public class Environment {
     private HashMap<String, TypeClass> typeClasses;
 
     /**
-     * @param exprTypes Map of Expr types.
-     * @param typeClasses Map of type classes.
+     * @param functions Map of available functions.
+     * @param typeClasses Map of known type classes.
      */
-    public Environment(Map<String, Type> exprTypes, HashMap<String, TypeClass> typeClasses) {
-        this.exprTypes = exprTypes;
+    public Environment(Map<String, FunctionInfo> functions, HashMap<String, TypeClass> typeClasses) {
+        this.functions = functions;
         this.typeClasses = typeClasses;
     }
 
     public Environment() {
-        this(new HashMap<String, Type>(), new HashMap<String, TypeClass>());
+        this(new HashMap<>(), new HashMap<>());
     }
 
     /**
-     * @param name The name of the expression.
-     * @return An Optional containing the Type for the given expression, if any.
+     * @param name The name of the function.
+     * @return The fresh Type for the given function, or null if it doesn't exist.
      */
-    public final Optional<Type> getFreshExprType(String name) {
-        if (this.exprTypes.containsKey(name)) {
-            return Optional.ofNullable(this.exprTypes.get(name).getFresh());
+    public final Type getFreshExprType(String name) {
+        if (this.functions.containsKey(name)) {
+            return this.functions.get(name).getFreshSignature();
         } else {
-            return Optional.empty();
+            return null;
         }
     }
     
@@ -61,14 +61,14 @@ public class Environment {
     }
     
     /**
-     * Adds an expression to this environment.
+     * Adds an type signature for function (lacking implementation) to this environment.
      * @param name The name of the expression.
      * @param signature The signature of the expression.
      */
-    public final void addExpr(String name, String signature) {
+    public final void addTestSignature(String name, String signature) {
         TypeBuilder builder = new TypeBuilder(this.typeClasses);
         Type type = builder.build(signature);
-        this.exprTypes.put(name, type);
+        this.functions.put(name, new CatalogFunction(name, "!TEST!", type, ""));
     }
 
     /**
