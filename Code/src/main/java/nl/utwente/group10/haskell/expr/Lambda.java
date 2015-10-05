@@ -51,7 +51,7 @@ public class Lambda extends Expression {
         out.append("(\\");
 
         for (Binder x : this.binders) {
-            out.append(" ").append(x.toString());
+            out.append(" ").append(x.getUniqueName());
         }
 
         out.append(" -> ");
@@ -63,10 +63,10 @@ public class Lambda extends Expression {
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
-        out.append("λ");
+        out.append("\\");
 
         for (Binder x : this.binders) {
-            out.append(" ").append(x.toString());
+            out.append(" ").append(x.getBaseName());
         }
 
         out.append(" -> ");

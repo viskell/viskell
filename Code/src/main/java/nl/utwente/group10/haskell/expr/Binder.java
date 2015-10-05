@@ -46,6 +46,13 @@ public final class Binder {
     }
 
     /**
+     * @return The base name of this binder
+     */
+    public String getBaseName() {
+        return this.name;
+    }
+    
+    /**
      * @return the type annotation, might be null
      */
     public final Type getAnnotation() {
@@ -76,7 +83,7 @@ public final class Binder {
     
     @Override
     public final String toString() {
-        return this.getUniqueName();
+        return this.name;
     }
     
 }

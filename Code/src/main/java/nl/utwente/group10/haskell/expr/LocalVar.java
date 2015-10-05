@@ -25,8 +25,13 @@ public class LocalVar extends Variable {
     }
 
     @Override
-    public String toString() {
+    public String toHaskell() {
         return binder.getUniqueName();
+    }
+
+    @Override
+    public String toString() {
+        return binder.getBaseName();
     }
 
 }

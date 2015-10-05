@@ -18,7 +18,7 @@ public abstract class Variable extends Expression {
     }
 
     @Override
-    public final String toHaskell() {
+    public String toHaskell() {
         return this.name;
     }
 
