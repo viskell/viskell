@@ -1,7 +1,5 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.IdentityHashMap;
-
 /**
  * Type of a Haskell function.
  */
@@ -50,8 +48,8 @@ public class FunType extends ConcreteType {
     }
 
     @Override
-    public FunType getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
-        return new FunType(this.argument.getFreshInstance(staleToFresh), this.result.getFreshInstance(staleToFresh));
+    public FunType getFresh(TypeScope scope) {
+        return new FunType(this.argument.getFresh(scope), this.result.getFresh(scope));
     }
 
     @Override

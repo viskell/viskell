@@ -16,14 +16,9 @@ public class TypeVar extends Type {
      */
     public final static class TypeInstance {
         /**
-         * Base name of the type variable.
+         * The textual representation of the type variable.
          */
-        private final String prefix;
-
-        /**
-         * Number to make a name of the type variable unique.
-         */
-        private final int uid;
+        private final String name;
 
         /**
          * A concrete instantiated type or null.
@@ -36,12 +31,12 @@ public class TypeVar extends Type {
         private Set<TypeClass> constraints;
 
         /**
-         * @param The instance of this type.
+         * @param name The textual representation of the type variable.
+         * @param type The concrete instance of this type, might be null.
          * @param constraints The set of constraints for this type.
          */
-        private TypeInstance(String prefix, int uid, ConcreteType type, final Set<TypeClass> constraints) {
-            this.prefix = prefix;
-            this.uid = uid;
+        private TypeInstance(String name, ConcreteType type, final Set<TypeClass> constraints) {
+            this.name = name;
             this.type = type;
             this.constraints = constraints;
         }
@@ -86,14 +81,10 @@ public class TypeVar extends Type {
         }
 
         /**
-         * @return The name of this variable type.
+         * @return The textual representation of the type variable.
          */
         private String getName() {
-            if (this.uid == 0) {
-                return this.prefix;
-            }
-
-            return this.prefix + Integer.toString(this.uid);
+            return this.name;
         }
         
         /**
@@ -138,24 +129,24 @@ public class TypeVar extends Type {
     private TypeInstance instance;
 
     /**
-     * @param name Identifier for this type.
+     * @param name The textual representation of the type variable.
      * Identifiers are not used in the type checking progress, 
      * different {@code TypeVar} instances with the same name are not equal.
      * @param constraints The set of constraints for this type.
-     * @param instance The instance of this type.
+     * @param instance The concrete instance of this type, might be null.
      */
-    TypeVar(final String prefix, final int uid, final Set<TypeClass> constraints, final ConcreteType type) {
-        this.instance = new TypeInstance(prefix.toLowerCase(), uid, type, constraints);
+    TypeVar(final String name, final Set<TypeClass> constraints, final ConcreteType type) {
+        this.instance = new TypeInstance(name.toLowerCase(), type, constraints);
     }
 
     /**
-     * @param name Identifier for this type.
+     * @param name The textual representation of the type variable.
      * Identifiers are not used in the type checking progress,
      * different {@code TypeVar} instances with the same name are not equal.
      * @param constraints The set of constraints for this type
      */
     TypeVar(final String name, final TypeClass... constraints) {
-        this(name, 0, new HashSet<TypeClass>(Arrays.asList(constraints)), null);
+        this(name, new HashSet<TypeClass>(Arrays.asList(constraints)), null);
     }
 
     /**
@@ -198,7 +189,7 @@ public class TypeVar extends Type {
         this.instance = other.instance;
     }
 
-    /*
+    /**
      * @return Whether this type variable is constrained.
      */
     public final boolean hasConstraints() {
@@ -216,25 +207,42 @@ public class TypeVar extends Type {
         return this.instance.constraints.stream().allMatch(tc -> tc.hasType(type));
     }
 
+    /**
+     * Extends the constraint set with extra type class, warning: the type variable may not been used in typechecking yet.   
+     * @param typeClass to be added to this type variable
+     */
+    public void introduceConstraint(TypeClass typeClass) {
+        this.instance.constraints.add(typeClass);
+    }
+
     @Override
     public final String toHaskellType(final int fixity) {
         return this.instance.toHaskellType(fixity);
     }
 
     @Override
-    public Type getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
+    public Type getFresh(TypeScope scope) {
         if (this.instance.isPresent()) {
             return this.instance.get().getFresh();
         }
 
+        return scope.pickFreshTypeVar(this);
+    }
+    
+    /**
+     * This internal method should only be called from TypeScope
+     * @param staleToFresh The mapping between known type instances and their related fresh type variables.
+     * @return A refreshed type variable.
+     */
+    protected TypeVar pickFreshTypeVarInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
         if (staleToFresh.containsKey(this.instance)) {
             return staleToFresh.get(this.instance);
         }
 
-        TypeVar fresh = new TypeVar(this.instance.prefix, this.instance.uid,
-                new HashSet<TypeClass>(this.instance.constraints), null);
+        TypeVar fresh = new TypeVar(this.instance.name, new HashSet<>(this.instance.constraints), null);
         staleToFresh.put(this.instance, fresh);
         return fresh;
+       
     }
 
     @Override

@@ -1,11 +1,8 @@
 package nl.utwente.group10.haskell.expr;
 
-import java.util.IdentityHashMap;
-
 import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.haskell.type.TypeChecker;
-import nl.utwente.group10.haskell.type.TypeVar;
+import nl.utwente.group10.haskell.type.TypeScope;
 
 /**
  * A Binder is the definition side of a local variable, it is used link variable to their binding constructs, such as lambdas 
@@ -16,7 +13,7 @@ public final class Binder {
     private final String name;
     
     /** An internal type used in the type inference process */
-    private TypeVar inferenceType;
+    private Type inferenceType;
     
     /** An optional */
     private final Type annotation;
@@ -59,13 +56,16 @@ public final class Binder {
         return this.annotation;
     }
 
-    protected Type refreshBinderType(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh, Expression exp) throws HaskellTypeError {
-        this.inferenceType = Type.var(this.name);
+    /**
+     * Refreshes the internal type of the binder for type inference
+     * @param scope wherein the fresh type is constructed
+     */
+    protected void refreshBinderType(final TypeScope scope) {
         if (this.annotation != null) {
-            TypeChecker.unify(exp, this.annotation.getFreshInstance(staleToFresh), this.inferenceType);
-        } 
-        
-        return this.inferenceType;
+            this.inferenceType = this.annotation.getFresh(scope);
+        } else {
+            this.inferenceType = Type.var(this.name);
+        }
     }
 
     /**

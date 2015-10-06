@@ -3,6 +3,7 @@ package nl.utwente.group10.haskell.expr;
 import com.google.common.collect.ImmutableList;
 
 import nl.utwente.group10.haskell.type.TypeChecker;
+import nl.utwente.group10.haskell.type.TypeScope;
 import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -38,7 +39,7 @@ public class Apply extends Expression {
     protected final Type inferType() throws HaskellTypeError {
         final Type funcType = func.inferType();
         final Type argType = arg.inferType();
-        final Type resType = TypeChecker.makeVariable("b");
+        final Type resType = TypeScope.unique("b");
 
         // Rule [App]:
         // IFF  the type of our function is a -> b and the type of our arg is a

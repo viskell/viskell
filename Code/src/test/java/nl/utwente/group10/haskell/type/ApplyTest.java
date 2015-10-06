@@ -2,8 +2,6 @@ package nl.utwente.group10.haskell.type;
 
 import static org.junit.Assert.*;
 
-import com.google.common.collect.ImmutableSet;
-
 import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
@@ -58,7 +56,7 @@ public class ApplyTest {
         
         Expression e2 = new Apply(e0, e1);
         Type t2 = e2.findType();
-        Type num = TypeChecker.makeVariable("n", ImmutableSet.of(env.lookupClass("Num")));
+        Type num = env.buildType("Num n => n");
         TypeChecker.unify(e2, t2, Type.fun(num, num));
         assertEquals("Float -> Float", t2.toHaskellType());
         

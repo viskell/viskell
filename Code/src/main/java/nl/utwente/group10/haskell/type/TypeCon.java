@@ -1,9 +1,5 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.IdentityHashMap;
-
-import nl.utwente.group10.haskell.type.TypeVar.TypeInstance;
-
 public class TypeCon extends ConcreteType implements Comparable<TypeCon> {
     /**
      * The name of type constructor.
@@ -27,7 +23,7 @@ public class TypeCon extends ConcreteType implements Comparable<TypeCon> {
     }
 
     @Override
-    public TypeCon getFreshInstance(IdentityHashMap<TypeInstance, TypeVar> staleToFresh) {
+    public TypeCon getFresh(TypeScope scope) {
         return this;
     }
 

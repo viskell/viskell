@@ -38,9 +38,10 @@ public class BubbleTest {
 
     @Test
     public void testBubbleAddition() throws Exception {
-        TypeVar a = TypeChecker.makeVariable("a");
-        TypeVar b = TypeChecker.makeVariable("b");
-        TypeVar c = TypeChecker.makeVariable("c");
+        TypeScope scope = new TypeScope();
+        TypeVar a = scope.getVar("a");
+        TypeVar b = scope.getVar("b");
+        TypeVar c = scope.getVar("c");
         TypeCon floatT = Type.con("Float");
 
         Apply apply = new Apply(

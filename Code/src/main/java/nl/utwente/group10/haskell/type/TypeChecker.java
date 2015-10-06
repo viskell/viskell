@@ -1,7 +1,5 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,11 +13,6 @@ public final class TypeChecker {
      * Logger for this class.
      */
     private static final Logger logger = Logger.getLogger(TypeChecker.class.getName());
-
-    /**
-     * Offset for the creation of variable types.
-     */
-    static int tvOffset = 0;
 
     static {
         TypeChecker.logger.setLevel(Level.WARNING);
@@ -122,21 +115,4 @@ public final class TypeChecker {
         }
     }
 
-    /**
-     * Creates and returns a new {@code VarT} instance with a unique identifier.
-     * @param prefix The base name of the type variable.
-     * @param constraints Constraints for the new VarT.
-     * @return A new variable type.
-     */
-    public static TypeVar makeVariable(final String prefix, final Set<TypeClass> constraints) {
-        return new TypeVar(prefix, TypeChecker.tvOffset++, constraints, null);
-    }
-
-    /**
-     * Creates and returns a new {@code VarT} instance with a unique identifier.
-     * @return A new variable type.
-     */
-    public static TypeVar makeVariable(final String prefix) {
-        return makeVariable(prefix, new HashSet<TypeClass>());
-    }
 }

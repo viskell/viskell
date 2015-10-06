@@ -63,7 +63,7 @@ public class UnificationTest {
         Expression e2 = new Apply(e1, new Hole());
         Type t2 = e2.findType();
         
-        Type t3 = TypeChecker.makeVariable("t");
+        Type t3 = TypeScope.unique("t");
         Type t4 = Type.con("Bool");
         
         TypeChecker.unify(e1, t3, t4);

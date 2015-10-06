@@ -1,6 +1,5 @@
 package nl.utwente.group10.haskell.expr;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -8,7 +7,7 @@ import com.google.common.collect.Lists;
 import nl.utwente.group10.haskell.type.FunType;
 import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
-import nl.utwente.group10.haskell.type.TypeVar;
+import nl.utwente.group10.haskell.type.TypeScope;
 
 public class Lambda extends Expression {
 
@@ -29,11 +28,11 @@ public class Lambda extends Expression {
 
     @Override
     protected Type inferType() throws HaskellTypeError {
+        TypeScope scope = new TypeScope();
         // Rule [Abs]:
         // assign the binder fresh type variable (x)
-        IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh = new IdentityHashMap<>();
         for (Binder x : this.binders) {
-            x.refreshBinderType(staleToFresh, this);
+            x.refreshBinderType(scope);
         }
         // infer the type (y) for the body with the type variable in the context
         Type type = this.body.inferType();

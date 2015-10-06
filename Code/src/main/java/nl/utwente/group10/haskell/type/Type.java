@@ -1,6 +1,5 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -52,14 +51,14 @@ public abstract class Type {
      * @return An equivalent deep copy of this type, using fresh type variables.
      */
     public final Type getFresh() {
-        return this.getFreshInstance(new IdentityHashMap<TypeVar.TypeInstance, TypeVar>());
+        return this.getFresh(new TypeScope());
     }
 
     /**
-     * @param A mapping from the old type variables (instances) to the new, the context wherein the fresh type is constructed.
+     * @param scope The scope wherein related shared type variable are maintained
      * @return An equivalent deep copy of this type, using fresh type variables.
      */
-    public abstract Type getFreshInstance(final IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh);
+    public abstract Type getFresh(final TypeScope scope);
 
     /**
      * @return The presence of the argument type variable some in this type.
@@ -84,7 +83,7 @@ public abstract class Type {
      * @param constraints The set of constraints for this type
      */
     public final static TypeVar var(final String name, final Set<TypeClass> constraints) {
-        return new TypeVar(name, 0, constraints, null);
+        return new TypeVar(name, constraints, null);
     }
 
     /**
