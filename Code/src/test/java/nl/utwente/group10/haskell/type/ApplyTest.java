@@ -21,7 +21,7 @@ public class ApplyTest {
         
         Expression e0 = env.useFun("(+)");
         Type t0 = e0.findType();
-        assertEquals("(Num a) -> (Num a) -> (Num a)", t0.toHaskellType());
+        assertEquals("Num a -> Num a -> Num a", t0.toHaskellType());
         
         Expression e1 = new Value(Type.con("Float"), "5.0");
         Type t1 = e1.findType();
@@ -46,7 +46,7 @@ public class ApplyTest {
         
         Expression e0 = env.useFun("(+)");
         Type t0 = e0.findType();
-        assertEquals("(Num a) -> (Num a) -> (Num a)", t0.toHaskellType());
+        assertEquals("Num a -> Num a -> Num a", t0.toHaskellType());
         
         Expression e1 = new Hole();
         Type t1 = e1.findType();

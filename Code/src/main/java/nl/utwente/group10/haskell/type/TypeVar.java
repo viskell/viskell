@@ -95,6 +95,41 @@ public class TypeVar extends Type {
 
             return this.prefix + Integer.toString(this.uid);
         }
+        
+        /**
+         * @param The fixity of the context the type is shown in.
+         * @return The Haskell (type) representation of this type.
+         */
+        private final String toHaskellType(final int fixity) {
+            if (this.type != null) {
+                return this.type.toHaskellType(fixity);
+            }
+
+            final StringBuilder out = new StringBuilder();
+
+            if (this.constraints.isEmpty()) {
+                out.append(this.getName());
+            } else if (fixity < 9 && this.constraints.size() == 1) {
+                out.append(this.constraints.iterator().next().getName() + " " + this.getName());
+            } else {
+                out.append("(");
+
+                int i = 0;
+                for (TypeClass tc : this.constraints) {
+                    out.append(String.format("%s %s", tc.getName(), this.getName()));
+                    if (i + 1 < this.constraints.size()) {
+                        out.append(", ");
+                    }
+
+                    i++;
+                }
+
+                out.append(")");
+            }
+
+            return out.toString();
+        }
+        
     }
 
     /**
@@ -183,31 +218,7 @@ public class TypeVar extends Type {
 
     @Override
     public final String toHaskellType(final int fixity) {
-        if (this.instance.isPresent()) {
-            return this.instance.get().toHaskellType(fixity);
-        }
-
-        final StringBuilder out = new StringBuilder();
-
-        if (this.instance.constraints.isEmpty()) {
-            out.append(this.getName());
-        } else {
-            out.append("(");
-
-            int i = 0;
-
-            for (TypeClass tc : this.instance.constraints) {
-                out.append(String.format("%s %s", tc.getName(), this.getName()));
-                if (i + 1 < this.instance.constraints.size()) {
-                    out.append(", ");
-                }
-                i++;
-            }
-
-            out.append(")");
-        }
-
-        return out.toString();
+        return this.instance.toHaskellType(fixity);
     }
 
     @Override

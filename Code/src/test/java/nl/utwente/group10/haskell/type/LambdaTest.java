@@ -27,14 +27,14 @@ public class LambdaTest {
         Expression pxy = new Apply (new Apply(env.useFun("(+)"), new LocalVar(x)), new LocalVar(y));
         Expression add = new Lambda(Arrays.asList(x,y), pxy);
         Type tla = add.findType();
-        assertEquals("(Num a) -> (Num a) -> (Num a)", tla.toHaskellType());
+        assertEquals("Num a -> Num a -> Num a", tla.toHaskellType());
         
         // using the same binder twice
         Binder z = new Binder("z");
         Expression ezz = new Apply (new Apply(env.useFun("(^)"), new LocalVar(z)), new LocalVar(z));
         Expression exp = new Lambda(Arrays.asList(z), ezz);
         Type tle = exp.findType();
-        assertEquals("(Integral b) -> (Num a)", tle.toHaskellType());
+        assertEquals("Integral b -> Num a", tle.toHaskellType());
 
         Binder u = new Binder("u");
         Expression f5 = new Value(Type.con("Float"), "5.0");
@@ -59,7 +59,7 @@ public class LambdaTest {
         Expression ezz = new Apply (new Apply(env.useFun("(**)"), new LocalVar(z)), new LocalVar(z));
         Expression exp = new Lambda(Arrays.asList(z), ezz);
         Type tle = exp.findType();
-        assertEquals("(RealFloat a) -> (RealFloat a)", tle.toHaskellType());
+        assertEquals("RealFloat a -> RealFloat a", tle.toHaskellType());
 
         Binder u = new Binder("u", Type.listOf(Type.con("Int")));
         Expression f5 = new Value(Type.con("Float"), "5.0");

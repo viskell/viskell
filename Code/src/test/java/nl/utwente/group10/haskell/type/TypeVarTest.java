@@ -40,15 +40,15 @@ public class TypeVarTest {
         final TypeVar b = Type.var("b", ord);
         TypeChecker.unify(new Hole(), a, b);
         // the Eq constraint disappears because it is direct superclass of Ord 
-        assertEquals("(Ord a)", a.toHaskellType());
-        assertEquals("(Ord a)", b.toHaskellType());
+        assertEquals("Ord a", a.toHaskellType());
+        assertEquals("Ord a", b.toHaskellType());
         
         final TypeVar c = Type.var("c", integral);
         final TypeVar d = Type.var("d", ord);
         TypeChecker.unify(new Hole(), c, d);
         // indirectly through Real, Ord is also implied by Integral 
-        assertEquals("(Integral c)", c.toHaskellType());
-        assertEquals("(Integral c)", d.toHaskellType());
+        assertEquals("Integral c", c.toHaskellType());
+        assertEquals("Integral c", d.toHaskellType());
 
     }
 }
