@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.FunType;
+import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeVar;
 
@@ -28,18 +28,18 @@ public class Lambda extends Expression {
     }
 
     @Override
-    protected Type inferType() throws HaskellException {
+    protected Type inferType() throws HaskellTypeError {
         // Rule [Abs]:
         // assign the binder fresh type variable (x)
         IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh = new IdentityHashMap<>();
         for (Binder x : this.binders) {
-            x.refreshBinderType(staleToFresh);
+            x.refreshBinderType(staleToFresh, this);
         }
         // infer the type (y) for the body with the type variable in the context
         Type type = this.body.inferType();
         // then lambda has the function type (x -> y)
         for (Binder x : Lists.reverse(this.binders)) {
-            type = new FunType(x.getBoundType(), type);
+            type = new FunType(x.getBoundType(this), type);
         }
         
         return type;

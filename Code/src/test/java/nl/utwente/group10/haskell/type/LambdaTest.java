@@ -4,10 +4,9 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
-import nl.utwente.group10.haskell.exceptions.CatalogException;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Binder;
 import nl.utwente.group10.haskell.expr.Expression;
@@ -19,7 +18,7 @@ import org.junit.Test;
 
 public class LambdaTest {
     @Test
-    public void testLambdaWrapping() throws CatalogException, HaskellException {
+    public void testLambdaWrapping() throws HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
         
         // wrapping a simple function in a lambda
@@ -44,7 +43,7 @@ public class LambdaTest {
     }
     
     @Test
-    public void testLambdaAnnotated() throws CatalogException, HaskellException {
+    public void testLambdaAnnotated() throws HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
         
         // wrapping a simple function in a lambda

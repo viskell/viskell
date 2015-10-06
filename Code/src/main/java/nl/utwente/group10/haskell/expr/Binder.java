@@ -2,7 +2,7 @@ package nl.utwente.group10.haskell.expr;
 
 import java.util.IdentityHashMap;
 
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeChecker;
 import nl.utwente.group10.haskell.type.TypeVar;
@@ -59,10 +59,10 @@ public final class Binder {
         return this.annotation;
     }
 
-    protected Type refreshBinderType(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) throws HaskellTypeError {
+    protected Type refreshBinderType(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh, Expression exp) throws HaskellTypeError {
         this.inferenceType = Type.var(this.name);
         if (this.annotation != null) {
-            TypeChecker.unify(this.annotation.getFreshInstance(staleToFresh), this.inferenceType);
+            TypeChecker.unify(exp, this.annotation.getFreshInstance(staleToFresh), this.inferenceType);
         } 
         
         return this.inferenceType;
@@ -72,10 +72,10 @@ public final class Binder {
      * @return the type for the use site of this binder 
      * @throws HaskellTypeError if this function is called before refreshBinderType
      */
-    public final Type getBoundType() throws HaskellTypeError {
+    public final Type getBoundType(Expression exp) throws HaskellTypeError {
         if (this.inferenceType == null) {
             // technically it is an error in scoping but this will do for now
-            throw new HaskellTypeError("Using the type before it is bound, of binder: " + this.name);
+            throw new HaskellTypeError("Using the type before it is bound, of binder: " + this.name, exp);
         }
         
         return this.inferenceType;

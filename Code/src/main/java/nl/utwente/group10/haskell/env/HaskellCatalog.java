@@ -3,7 +3,6 @@ package nl.utwente.group10.haskell.env;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import nl.utwente.group10.haskell.exceptions.CatalogException;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
 import nl.utwente.group10.haskell.type.TypeCon;
@@ -43,9 +42,8 @@ public class HaskellCatalog {
     /**
      * Constructs a Haskell catalog using the given file location.
      * @param path The path to the catalog XML file.
-     * @throws CatalogException
      */
-    public HaskellCatalog(final String path) throws CatalogException {
+    public HaskellCatalog(final String path) {
         this.functions = new HashMap<>();
         this.categories = HashMultimap.create();
 
@@ -66,9 +64,8 @@ public class HaskellCatalog {
 
     /**
      * Constructs a Haskell catalog using the default file location.
-     * @throws CatalogException
      */
-    public HaskellCatalog() throws CatalogException {
+    public HaskellCatalog() {
         this(HaskellCatalog.XML_PATH);
     }
 
@@ -98,9 +95,8 @@ public class HaskellCatalog {
      * Parses a list of class nodes into ClassEntry objects.
      * @param nodes The nodes to parse.
      * @return A set of ClassEntry objects for the given nodes.
-     * @throws CatalogException
      */
-    protected final Map<String, TypeClass> parseClasses(NodeList nodes) throws CatalogException {
+    protected final Map<String, TypeClass> parseClasses(NodeList nodes) {
         Map<String, TypeClass> entries = new HashMap<>();
 
         for (int i = 0; i < nodes.getLength(); i++) {
@@ -123,7 +119,7 @@ public class HaskellCatalog {
                 } else if ("superClass".equals(inode.getNodeName())) {
                     TypeClass sc = entries.get(inst);
                     if (sc == null) {
-                       throw new CatalogException("Can't resolve superclass " + inst + " of " + name);
+                       throw new RuntimeException("Can't resolve superclass " + inst + " of " + name);
                     } else {
                         tc.addSuperClass(sc);
                     }
@@ -166,9 +162,8 @@ public class HaskellCatalog {
      * @param XMLPath The path to the XML file.
      * @param XSDPath The path to the XSD file.
      * @return The document for the XML file.
-     * @throws CatalogException
      */
-    protected static Document getDocument(final String XMLPath, final String XSDPath) throws CatalogException {
+    protected static Document getDocument(final String XMLPath, final String XSDPath) {
         URL xmlFile = HaskellCatalog.class.getResource(XMLPath);
         URL schemaFile = HaskellCatalog.class.getResource(XSDPath);
 
@@ -184,7 +179,7 @@ public class HaskellCatalog {
 
             return dBuilder.parse(xmlFile.openStream());
         } catch (IOException | ParserConfigurationException | SAXException e) {
-            throw new CatalogException(e);
+            throw new RuntimeException("could not read or parse catalog file", e);
         }
     }
     

@@ -8,9 +8,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.exceptions.HaskellSyntaxError;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
@@ -40,10 +37,10 @@ public class GhciEvaluator implements Closeable {
     private final String NL;
 
     /**
-     * @throws GhciException Error while trying to communicate with ghci. At this point this usually means that ghci is
-     *                       not installed.
+     * @throws HaskellException Error while trying to communicate with ghci.
+     *  At this point this usually means that ghci is not installed.
      */
-    public GhciEvaluator() throws GhciException {
+    public GhciEvaluator() throws HaskellException {
         try {
             this.ghci = new ProcessBuilder(GHCIPATH)
                     .redirectErrorStream(true)
@@ -52,7 +49,7 @@ public class GhciEvaluator implements Closeable {
             this.in = this.ghci.getInputStream();
             this.out = this.ghci.getOutputStream();
         } catch (IOException e) {
-            throw new GhciException(e);
+            throw new HaskellException(e);
         }
 
         this.NL = System.getProperty("line.separator");
@@ -75,8 +72,7 @@ public class GhciEvaluator implements Closeable {
      *
      * @param cmd The (complete) Haskell
      * @return the result, including newline, as a string.
-     * @throws HaskellException when ghci is not ready to evaluate the expression.
-     * @throws nl.utwente.group10.haskell.exceptions.HaskellException when the expression can not be computed.
+     * @throws HaskellException when ghci is not ready to evaluate, or expression can not be computed.
      */
     public final String eval(final String cmd) throws HaskellException {
         StringBuilder responseBuilder = new StringBuilder();
@@ -116,7 +112,7 @@ public class GhciEvaluator implements Closeable {
             if (line.startsWith(parseErrorHeader)) {
                 List<String> sublines = lines.subList(i, lines.size());
                 String msg = Joiner.on(this.NL).join(sublines);
-                throw new HaskellSyntaxError(msg);
+                throw new HaskellException(msg);
             }
         }
 

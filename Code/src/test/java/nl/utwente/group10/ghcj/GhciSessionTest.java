@@ -17,7 +17,7 @@ public class GhciSessionTest {
     private Expression pi;
 
     @Before
-    public void setUp() throws GhciException {
+    public void setUp() throws HaskellException {
         this.env = new Environment();
         this.ghci = new GhciSession();
 
@@ -26,13 +26,13 @@ public class GhciSessionTest {
     }
 
     @Test
-    public void constFunPush() throws Exception {
+    public void constFunPush() throws HaskellException {
         this.ghci.push("my_pi", this.pi);
         Assert.assertEquals("(3.14)", this.pi.toHaskell());
     }
 
     @Test
-    public void constFunPushPull() throws Exception {
+    public void constFunPushPull() throws HaskellException {
         this.ghci.push("my_pi", this.pi);
         Assert.assertEquals("3.14", this.ghci.pullRaw("my_pi"));
     }

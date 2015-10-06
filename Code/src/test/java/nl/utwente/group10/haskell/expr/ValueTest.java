@@ -1,7 +1,8 @@
 package nl.utwente.group10.haskell.expr;
 
 import static org.junit.Assert.assertEquals;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.type.Type;
 
 import org.junit.Test;

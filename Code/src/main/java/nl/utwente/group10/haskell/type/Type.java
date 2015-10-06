@@ -6,12 +6,10 @@ import java.util.ListIterator;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import nl.utwente.group10.haskell.HaskellObject;
-
 /**
  * Abstract class for Haskell types. Provides an interface for common methods.
  */
-public abstract class Type extends HaskellObject {
+public abstract class Type {
     /** Logger instance for types. */
     protected Logger logger = Logger.getLogger(Type.class.getName());
 

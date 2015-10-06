@@ -12,7 +12,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.group10.ghcj.GhciSession;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;

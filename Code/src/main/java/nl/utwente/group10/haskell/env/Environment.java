@@ -2,7 +2,7 @@ package nl.utwente.group10.haskell.env;
 
 import java.util.*;
 
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.expr.FunVar;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;

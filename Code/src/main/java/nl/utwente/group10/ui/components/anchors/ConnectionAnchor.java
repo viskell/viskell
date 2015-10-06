@@ -11,7 +11,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.ComponentLoader;

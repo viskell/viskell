@@ -2,8 +2,9 @@ package nl.utwente.group10.haskell.expr;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.env.Environment;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.type.Type;
 
 import org.junit.Before;

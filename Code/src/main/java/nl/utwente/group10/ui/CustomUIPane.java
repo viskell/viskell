@@ -17,8 +17,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
-import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.expr.Expression;
@@ -75,7 +75,7 @@ public class CustomUIPane extends TactilePane {
 
         try {
             this.ghci = Optional.of(new GhciSession());
-        } catch (GhciException e) {
+        } catch (HaskellException e) {
             this.ghci = Optional.empty();
         }
 

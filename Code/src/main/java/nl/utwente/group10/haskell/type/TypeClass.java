@@ -1,7 +1,5 @@
 package nl.utwente.group10.haskell.type;
 
-import nl.utwente.group10.haskell.HaskellObject;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,7 +9,7 @@ import com.google.common.collect.Sets;
 /**
  * Haskell TypeClass.
  */
-public class TypeClass extends HaskellObject {
+public class TypeClass {
     /**
      * The name of this type class.
      */

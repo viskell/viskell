@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
 
 /**
@@ -20,8 +20,8 @@ public class LocalVar extends Variable {
     }
 
     @Override
-    protected Type inferType() throws HaskellException {
-        return binder.getBoundType();
+    protected Type inferType() throws HaskellTypeError {
+        return binder.getBoundType(this);
     }
 
     @Override

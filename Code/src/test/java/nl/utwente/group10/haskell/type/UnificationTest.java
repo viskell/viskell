@@ -2,10 +2,9 @@ package nl.utwente.group10.haskell.type;
 
 import static org.junit.Assert.*;
 
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
-import nl.utwente.group10.haskell.exceptions.CatalogException;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.expr.Hole;
@@ -16,7 +15,7 @@ import org.junit.Test;
 public class UnificationTest {
 
     @Test
-    public void testUnifyUndefined() throws CatalogException, HaskellException {
+    public void testUnifyUndefined() throws HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
 
         Expression e0 = env.useFun("const");
@@ -30,12 +29,12 @@ public class UnificationTest {
         Expression e2 = new Apply(e1, new Hole());
         Type t2 = e2.findType();
 
-        TypeChecker.unify(t2, new Hole().findType());
+        TypeChecker.unify(e2, t2, new Hole().findType());
         //No exception thrown -> Types are the same, as expected. The test will fail if an Exception is thrown.
     }
 
     @Test
-    public void testUnifyFloats() throws CatalogException, HaskellException {
+    public void testUnifyFloats() throws HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
         
         Expression e0 = env.useFun("const");
@@ -52,7 +51,7 @@ public class UnificationTest {
     }
     
     @Test
-    public void testUnifyABool() throws HaskellException{
+    public void testUnifyABool() throws HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
 
         Expression e0 = env.useFun("const");
@@ -67,9 +66,9 @@ public class UnificationTest {
         Type t3 = TypeChecker.makeVariable("t");
         Type t4 = Type.con("Bool");
         
-        TypeChecker.unify(t3, t4);
+        TypeChecker.unify(e1, t3, t4);
         
-        TypeChecker.unify(t2, t4);
+        TypeChecker.unify(e2, t2, t4);
     }
 
     @Test
@@ -89,8 +88,8 @@ public class UnificationTest {
 
         e2.findType();
 
-        TypeChecker.unify(t0, ct);
-        TypeChecker.unify(t1, ct);
+        TypeChecker.unify(e0, t0, ct);
+        TypeChecker.unify(e1, t1, ct);
     }
     
     @Test

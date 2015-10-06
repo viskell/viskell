@@ -10,8 +10,8 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
@@ -93,7 +93,7 @@ public class DisplayBlock extends Block implements InputBlock {
                 if (ghci.isPresent()) {
                     setOutput(ghci.get().pull(inputAnchor.getExpr()));
                 }
-            } catch (GhciException e) {
+            } catch (HaskellException e) {
                 setOutput("?!?!?!");
             } 
         } else {

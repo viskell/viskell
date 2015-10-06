@@ -2,6 +2,8 @@ package nl.utwente.group10.haskell.type;
 
 import org.junit.Test;
 
+import nl.utwente.group10.haskell.expr.Hole;
+
 import static org.junit.Assert.*;
 
 public class SharingTest {
@@ -17,12 +19,12 @@ public class SharingTest {
         assertEquals("Unit", u.toString());
         assertTrue(l.toString().startsWith("([] @ x"));
 
-        TypeChecker.unify(x, y);
+        TypeChecker.unify(new Hole(), x, y);
 
         assertEquals(x.toString(), y.toString());
         assertTrue(l.toString().startsWith("([] @ x"));
 
-        TypeChecker.unify(x, u);
+        TypeChecker.unify(new Hole(), x, u);
 
         assertEquals("Unit", x.toHaskellType());
         assertEquals("Unit", y.toHaskellType());

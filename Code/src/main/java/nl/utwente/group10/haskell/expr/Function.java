@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
 
 import java.util.*;
@@ -33,7 +33,7 @@ public class Function extends Expression {
         }
 
         @Override
-        public Type inferType() throws HaskellException {
+        public Type inferType() {
             return this.type;
         }
 
@@ -80,7 +80,7 @@ public class Function extends Expression {
     }
 
     @Override
-    protected Type inferType() throws HaskellException {
+    protected Type inferType() throws HaskellTypeError {
         Type ftype = this.expr.inferType().getFresh();
 
         for (Expression arg : Lists.reverse(this.arguments)) {

@@ -7,8 +7,7 @@ import org.junit.Test;
 
 import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
-import nl.utwente.group10.haskell.exceptions.CatalogException;
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.expr.Hole;
 
 public class TypeVarTest {
     @Test
@@ -31,7 +30,7 @@ public class TypeVarTest {
     }
     
     @Test
-    public final void testSuperClasses() throws CatalogException, HaskellTypeError {
+    public final void testSuperClasses() throws HaskellTypeError {
         final Environment env = new HaskellCatalog().asEnvironment();
         final TypeClass eq = env.lookupClass("Eq");
         final TypeClass ord = env.lookupClass("Ord");
@@ -39,14 +38,14 @@ public class TypeVarTest {
 
         final TypeVar a = Type.var("a", eq);
         final TypeVar b = Type.var("b", ord);
-        TypeChecker.unify(a, b);
+        TypeChecker.unify(new Hole(), a, b);
         // the Eq constraint disappears because it is direct superclass of Ord 
         assertEquals("(Ord a)", a.toHaskellType());
         assertEquals("(Ord a)", b.toHaskellType());
         
         final TypeVar c = Type.var("c", integral);
         final TypeVar d = Type.var("d", ord);
-        TypeChecker.unify(c, d);
+        TypeChecker.unify(new Hole(), c, d);
         // indirectly through Real, Ord is also implied by Integral 
         assertEquals("(Integral c)", c.toHaskellType());
         assertEquals("(Integral c)", d.toHaskellType());

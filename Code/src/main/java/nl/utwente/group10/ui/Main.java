@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.group10.ghcj.GhciEvaluator;
-import nl.utwente.group10.ghcj.GhciException;
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.ui.components.CustomAlert;
 
@@ -48,7 +48,7 @@ public class Main extends Application {
         // Check if GHCI is available
         try {
             new GhciEvaluator().eval("");
-        } catch (GhciException e) {
+        } catch (HaskellException e) {
             String msg = "It seems the Glasgow Haskell Compiler, GHC, is not " +
                     "available. Executing programs will not be enabled. We " +
                     "strongly recommend you install GHC, for example by " +

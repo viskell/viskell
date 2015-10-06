@@ -11,10 +11,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expression;
+import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.ConnectionStateDependent;
@@ -24,7 +23,6 @@ import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
-import nl.utwente.group10.ui.exceptions.TypeUnavailableException;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import nl.utwente.group10.ui.components.menu.CircleMenu;
 
@@ -246,30 +244,16 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
                     // A Type mismatch occurred.
                     int index = -1;
                     // Determine the input index of the Type error.
-                    if (e.getHaskellObject() instanceof Expression) {
-                        Expression errorExpr = (Expression) e.getHaskellObject();
-                        while (errorExpr instanceof Apply) {
-                            errorExpr = ((Apply) errorExpr).getChildren().get(0);
-                            index++;
-                        }
-                        // Get the Block in which the type error occurred and
-                        // set the error state for the mismatched input to true.
-                        getPane().getExprToFunction(errorExpr).getInput(index).setErrorState(true);
-                        // Indicate that an error occurred in the latest analyze attempt.
-                        getPane().setErrorOccurred(true);
-                    } else {
-                        // Without an expression we do not really now where the
-                        // type error occurred, so ignore it and let GHCi handle
-                        // it.
-                        informUnkownHaskellException();
-                        throw new TypeUnavailableException();
+                    Expression errorExpr = e.getExpression();
+                    while (errorExpr instanceof Apply) {
+                        errorExpr = ((Apply) errorExpr).getChildren().get(0);
+                        index++;
                     }
-                } catch (HaskellException e) {
-                    // This should be impossible:
-                    // The possible exception would come from an Ident not found in the catalog,
-                    // A FunctionBlock without a valid Ident should never exist.
-                    informUnkownHaskellException();
-                    throw new TypeUnavailableException();
+                    // Get the Block in which the type error occurred and
+                    // set the error state for the mismatched input to true.
+                    getPane().getExprToFunction(errorExpr).getInput(index).setErrorState(true);
+                    // Indicate that an error occurred in the latest analyze attempt.
+                    getPane().setErrorOccurred(true);
                 }
                 
                 // Now that the expressions are updated, propagate a visual refresh upwards.

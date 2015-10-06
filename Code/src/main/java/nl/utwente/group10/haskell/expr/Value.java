@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
 
 /**

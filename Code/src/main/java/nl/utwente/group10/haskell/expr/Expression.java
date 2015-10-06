@@ -5,14 +5,15 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableList;
-import nl.utwente.group10.haskell.HaskellObject;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+
+import nl.utwente.group10.ghcj.HaskellException;
+import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
 
 /**
  * An expression in Haskell.
  */
-public abstract class Expression extends HaskellObject {
+public abstract class Expression {
     /** Logger for this class. **/
     protected static final Logger logger = Logger.getLogger(Expression.class.getName());
 
@@ -22,11 +23,10 @@ public abstract class Expression extends HaskellObject {
     /**
      * Returns the latest type for this expression. If yet unknown it will be inferred,
      *
-     * @param env The current Haskell environment.
      * @return The type for this usage of this expression.
-     * @throws HaskellException if type inference fails in any way.
+     * @throws HaskellTypeError if type inference fails in any way.
      */
-    public final Type findType() throws HaskellException {
+    public final Type findType() throws HaskellTypeError {
         if (!this.cachedType.isPresent()) {
             Type type = this.inferType();
             this.setCachedType(type);
@@ -49,11 +49,10 @@ public abstract class Expression extends HaskellObject {
     /**
      * Analyzes the type tree and infers the type for this usage of this expression
      *
-     * @param env The current Haskell environment.
      * @return The type for this usage of this expression.
      * @throws HaskellException The type tree contains an application of an incompatible type.
      */
-    protected abstract Type inferType() throws HaskellException; 
+    protected abstract Type inferType() throws HaskellTypeError; 
 
     /**
      * Returns the Haskell code for this expression.

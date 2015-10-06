@@ -4,10 +4,9 @@ import static org.junit.Assert.*;
 
 import com.google.common.collect.ImmutableSet;
 
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
-import nl.utwente.group10.haskell.exceptions.CatalogException;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.expr.Hole;
@@ -17,7 +16,7 @@ import org.junit.Test;
 
 public class ApplyTest {
     @Test
-    public void testApplyPlus() throws CatalogException, HaskellException {
+    public void testApplyPlus() throws HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
         
         Expression e0 = env.useFun("(+)");
@@ -42,7 +41,7 @@ public class ApplyTest {
     }
     
     @Test
-    public void testApplyHoles() throws CatalogException, HaskellException {
+    public void testApplyHoles() throws HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();
         
         Expression e0 = env.useFun("(+)");
@@ -51,7 +50,7 @@ public class ApplyTest {
         
         Expression e1 = new Hole();
         Type t1 = e1.findType();
-        TypeChecker.unify(t1, Type.con("Float"));
+        TypeChecker.unify(e1, t1, Type.con("Float"));
         // t1 Should unify with everything (the type of t1 should be 'a').
         // No exception thrown -> Types are the same, as expected. The test will
         // fail if an Exception is thrown.
@@ -60,12 +59,12 @@ public class ApplyTest {
         Expression e2 = new Apply(e0, e1);
         Type t2 = e2.findType();
         Type num = TypeChecker.makeVariable("n", ImmutableSet.of(env.lookupClass("Num")));
-        TypeChecker.unify(t2, Type.fun(num, num));
+        TypeChecker.unify(e2, t2, Type.fun(num, num));
         assertEquals("Float -> Float", t2.toHaskellType());
         
         Expression e3 = new Apply(e2, new Hole());
         Type t3 = e3.findType();
-        TypeChecker.unify(t3, Type.con("Float"));
+        TypeChecker.unify(e3, t3, Type.con("Float"));
         // t3 Should unify with everything (the type of t3 should be 'a').
         // No exception thrown -> Types are the same, as expected. The test will
         // fail if an Exception is thrown.

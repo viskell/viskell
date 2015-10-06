@@ -4,8 +4,6 @@ import java.io.Closeable;
 import java.io.IOException;
 
 import nl.utwente.group10.haskell.env.Environment;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.exceptions.HaskellSyntaxError;
 import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.type.Type;
 
@@ -19,10 +17,10 @@ public final class GhciSession implements Closeable {
     /**
      * Builds a new communication session with ghci.
      *
-     * @throws GhciException when ghci can not be found, can not be executed,
+     * @throws HaskellException when ghci can not be found, can not be executed,
      *         or does not understand our setup sequence.
      */
-    public GhciSession() throws GhciException {
+    public GhciSession() throws HaskellException {
         this.ghci = new GhciEvaluator();
     }
 
@@ -35,8 +33,6 @@ public final class GhciSession implements Closeable {
     public void push(final String name, final Expression func) throws HaskellException {
         try {
             this.ghci.eval(String.format("let %s = %s", name, func.toHaskell()));
-        } catch (HaskellSyntaxError e) {
-            throw new HaskellSyntaxError(e.getMessage(), func);
         } catch (HaskellException e) {
             throw new HaskellException(e.getMessage(), func);
         }
@@ -51,8 +47,6 @@ public final class GhciSession implements Closeable {
     public String pull(final Expression expr) throws HaskellException {
         try {
             return this.ghci.eval(expr.toHaskell()).trim();
-        } catch (HaskellSyntaxError e) {
-            throw new HaskellSyntaxError(e.getMessage(), expr);
         } catch (HaskellException e) {
             throw new HaskellException(e.getMessage(), expr);
         }
