@@ -51,7 +51,7 @@ public final class TypeChecker {
                     TypeChecker.unify(context, va, vb.getInstantiatedType());
                 } else {
                     // two plain type variable are unified by sharing the internal reference of (future) type instance   
-                    vb.shareInstanceOf(va);
+                    vb.unifyWith(va);
                 }
             } else if (b instanceof FunType) {
             	// unifying a type variable with a function succeeds if it has no constraints, because function instances are not supported (yet?).

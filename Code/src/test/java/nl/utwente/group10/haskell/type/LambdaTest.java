@@ -34,7 +34,7 @@ public class LambdaTest {
         Expression ezz = new Apply (new Apply(env.useFun("(^)"), new LocalVar(z)), new LocalVar(z));
         Expression exp = new Lambda(Arrays.asList(z), ezz);
         Type tle = exp.findType();
-        assertEquals("Integral b -> Integral a", tle.prettyPrint());
+        assertEquals("Integral b -> Integral b", tle.prettyPrint());
 
         Binder u = new Binder("u");
         Expression f5 = new Value(Type.con("Float"), "5.0");
@@ -79,5 +79,14 @@ public class LambdaTest {
         Expression app = new Apply(env.useFun("show"), new Apply(exp, new LocalVar(i)));
         Expression top = new Lambda(Arrays.asList(i), app);
         assertEquals("(Num a, Show a) -> [Char]", top.findType().prettyPrint());
+
+        // testing type of: \s -> (\y -> y `max` y) (read s)
+        Binder s = new Binder("s");
+        Binder y = new Binder("y");
+        Expression myy = new Apply (new Apply(env.useFun("max"), new LocalVar(y)), new LocalVar(y));
+        Expression lam = new Lambda(Arrays.asList(y), myy);
+        Expression bod = new Apply(lam,  new Apply(env.useFun("read"), new LocalVar(s)));
+        Expression res = new Lambda(Arrays.asList(s), bod);
+        assertEquals("[Char] -> (Ord a, Read a)", res.findType().prettyPrint());
     }
 }

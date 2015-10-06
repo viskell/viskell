@@ -1,9 +1,12 @@
 package nl.utwente.group10.haskell.type;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.IdentityHashMap;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.ListIterator;
+import java.util.TreeSet;
+
 import com.google.common.collect.Sets;
 
 /**
@@ -28,17 +31,26 @@ public class TypeVar extends Type {
         /**
          * The type constraints for this instance.
          */
-        private Set<TypeClass> constraints;
+        private TreeSet<TypeClass> constraints;
+        
+        /**
+         * Internal List of all type variables that refer to this instance.
+         * this list contains the creating type variable as well as the variables have unified with this.
+         * It is using WeakReference to avoid holding on to too much old type variables. 
+         */
+        private LinkedList<WeakReference<TypeVar>> unifiedVars;
 
         /**
          * @param name The textual representation of the type variable.
          * @param type The concrete instance of this type, might be null.
          * @param constraints The set of constraints for this type.
          */
-        private TypeInstance(String name, ConcreteType type, final Set<TypeClass> constraints) {
+        private TypeInstance(TypeVar creator, String name, ConcreteType type, final TreeSet<TypeClass> constraints) {
             this.name = name;
             this.type = type;
             this.constraints = constraints;
+            this.unifiedVars = new LinkedList<>();
+            this.unifiedVars.add(new WeakReference<>(creator));
         }
 
         /**
@@ -73,12 +85,21 @@ public class TypeVar extends Type {
         }
 
         /**
-         * Share the constraints between both type instance, thus unifying the constraints.
+         * Deeply unifying all aspects of type instances
          * @param the other type instance.
          */
-        private void shareConstraints(TypeInstance other) {
-            this.constraints = TypeClass.simplifyConstraints(Sets.union(this.constraints, other.constraints));
-            other.constraints = new HashSet<>(this.constraints);
+        private void unifyInstances(TypeInstance other) {
+            other.constraints = TypeClass.simplifyConstraints(new TreeSet<>(Sets.union(this.constraints, other.constraints)));
+            other.unifiedVars.addAll(this.unifiedVars);
+            // Go through all type variable associated with both type instances, to make sure all of them are unified to the same instance.
+            for (ListIterator<WeakReference<TypeVar>> iter = this.unifiedVars.listIterator(); iter.hasNext();) {
+                TypeVar referer = iter.next().get();
+                if (referer == null) {
+                    iter.remove();
+                } else {
+                    referer.instance = other;
+                }
+            }
         }
 
         /**
@@ -136,8 +157,8 @@ public class TypeVar extends Type {
      * @param constraints The set of constraints for this type.
      * @param instance The concrete instance of this type, might be null.
      */
-    TypeVar(final String name, final Set<TypeClass> constraints, final ConcreteType type) {
-        this.instance = new TypeInstance(name.toLowerCase(), type, constraints);
+    TypeVar(final String name, final TreeSet<TypeClass> constraints, final ConcreteType type) {
+        this.instance = new TypeInstance(this, name.toLowerCase(), type, constraints);
     }
 
     /**
@@ -147,7 +168,7 @@ public class TypeVar extends Type {
      * @param constraints The set of constraints for this type
      */
     TypeVar(final String name, final TypeClass... constraints) {
-        this(name, new HashSet<TypeClass>(Arrays.asList(constraints)), null);
+        this(name, new TreeSet<TypeClass>(Arrays.asList(constraints)), null);
     }
 
     /**
@@ -185,9 +206,8 @@ public class TypeVar extends Type {
      * 
      * @param the other type variable.
      */
-    public final void shareInstanceOf(TypeVar other) {
-        this.instance.shareConstraints(other.instance);
-        this.instance = other.instance;
+    public final void unifyWith(TypeVar other) {
+        this.instance.unifyInstances(other.instance);
     }
 
     /**
@@ -240,7 +260,7 @@ public class TypeVar extends Type {
             return staleToFresh.get(this.instance);
         }
 
-        TypeVar fresh = new TypeVar(this.instance.name, new HashSet<>(this.instance.constraints), null);
+        TypeVar fresh = new TypeVar(this.instance.name, new TreeSet<>(this.instance.constraints), null);
         staleToFresh.put(this.instance, fresh);
         return fresh;
        

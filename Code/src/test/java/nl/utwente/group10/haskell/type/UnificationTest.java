@@ -106,4 +106,19 @@ public class UnificationTest {
 
         assertEquals(t0.prettyPrint(), "Int");
     }
+    
+    @Test
+    public void testDeepUnification() throws HaskellException {
+        TypeScope scope = new TypeScope();
+        TypeVar a = scope.getVar("a");
+        TypeVar b = scope.getVar("b");
+        TypeVar x = scope.getVar("x");
+        TypeVar y = scope.getVar("y");
+        Expression dummy = new Hole();
+        TypeChecker.unify(dummy, a, b);
+        TypeChecker.unify(dummy, x, y);
+        TypeChecker.unify(dummy, a, x);
+        TypeChecker.unify(dummy, b, Type.con("Int"));
+        assertEquals("Int", y.prettyPrint());
+    }
 }

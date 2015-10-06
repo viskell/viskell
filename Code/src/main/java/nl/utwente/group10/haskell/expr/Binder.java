@@ -83,7 +83,11 @@ public final class Binder {
     
     @Override
     public final String toString() {
-        return this.name;
+        if (this.inferenceType == null) {
+            return this.name;
+        }
+        
+        return this.name + "::" + this.inferenceType.toString();
     }
     
 }
