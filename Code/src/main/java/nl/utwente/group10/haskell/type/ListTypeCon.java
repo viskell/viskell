@@ -16,6 +16,6 @@ public class ListTypeCon extends TypeCon {
             return super.asTypeAppChain(fixity, args);
         }
 
-        return "[" + args.get(0).toHaskellType(0) + "]";
+        return "[" + args.get(0).prettyPrint(0) + "]";
     }
 }

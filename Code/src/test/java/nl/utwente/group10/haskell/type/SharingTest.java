@@ -9,8 +9,9 @@ import static org.junit.Assert.*;
 public class SharingTest {
     @Test
     public void testSharedSimple() throws Exception {
-        Type x = Type.var("x");
-        Type y = Type.var("y");
+        TypeScope scope = new TypeScope();
+        Type x = scope.getVar("x");
+        Type y = scope.getVar("y");
         Type u = Type.con("Unit");
         Type l = Type.listOf(x);
 
@@ -26,8 +27,8 @@ public class SharingTest {
 
         TypeChecker.unify(new Hole(), x, u);
 
-        assertEquals("Unit", x.toHaskellType());
-        assertEquals("Unit", y.toHaskellType());
-        assertEquals("[Unit]", l.toHaskellType());
+        assertEquals("Unit", x.prettyPrint());
+        assertEquals("Unit", y.prettyPrint());
+        assertEquals("[Unit]", l.prettyPrint());
     }
 }

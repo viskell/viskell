@@ -81,7 +81,7 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
         this.args = new ArrayList<>();
 
-        signature.setText(name + " :: " + type.toHaskellType());
+        signature.setText(name + " :: " + type.prettyPrint());
 
         // Collect argument types and result type
         Type t = type;

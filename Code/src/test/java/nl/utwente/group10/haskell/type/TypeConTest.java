@@ -10,13 +10,13 @@ public class TypeConTest {
         final Type integer = Type.con("Integer");
         final Type integerWithArg = Type.con("Integer", integer);
 
-        assertEquals("Integer", integer.toHaskellType());
-        assertEquals("Integer Integer", integerWithArg.toHaskellType());
+        assertEquals("Integer", integer.prettyPrint());
+        assertEquals("Integer Integer", integerWithArg.prettyPrint());
     }
 
     @Test
     public final void testFreshArgs() {
-        final Type staleVar = Type.var("a");
+        final Type staleVar = TypeScope.unique("a");
         final Type staleInt = Type.con("Int");
         final Type stale = Type.con("Type", staleInt, staleVar, staleVar);
 
@@ -40,14 +40,14 @@ public class TypeConTest {
     @Test
     public final void toHaskellListTest() {
         final Type ilist = Type.listOf(Type.con("Integer"));
-        assertEquals("[Integer]", ilist.toHaskellType());
+        assertEquals("[Integer]", ilist.prettyPrint());
     }
 
     @Test
     public final void toHaskellTupleTest() {
         final Type integer = Type.con("Integer");
         final Type tuple = Type.tupleOf(integer, integer);
-        assertEquals("(Integer, Integer)", tuple.toHaskellType());
+        assertEquals("(Integer, Integer)", tuple.prettyPrint());
     }
 
 }

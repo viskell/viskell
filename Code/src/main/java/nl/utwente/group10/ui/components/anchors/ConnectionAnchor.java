@@ -132,7 +132,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public Optional<String> getStringType() {
         try {
             Type type = getExpr().findType();
-            return Optional.of(type.toHaskellType());
+            return Optional.of(type.prettyPrint());
         } catch (HaskellException e) {
             return Optional.empty();
         }

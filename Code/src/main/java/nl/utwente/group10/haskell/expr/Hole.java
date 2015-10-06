@@ -1,6 +1,7 @@
 package nl.utwente.group10.haskell.expr;
 
 import nl.utwente.group10.haskell.type.Type;
+import nl.utwente.group10.haskell.type.TypeScope;
 import nl.utwente.group10.haskell.type.TypeVar;
 
 /*
@@ -11,7 +12,7 @@ public class Hole extends Expression {
     private final TypeVar typevar;
     
     public Hole() {
-        this.typevar = Type.var("holey");
+        this.typevar = TypeScope.unique("holey");
     }
 
     @Override

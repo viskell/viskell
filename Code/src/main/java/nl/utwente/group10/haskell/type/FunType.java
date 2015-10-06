@@ -33,12 +33,12 @@ public class FunType extends ConcreteType {
     }
 
     @Override
-    public final String toHaskellType(final int fixity) {
+    public final String prettyPrint(final int fixity) {
         final StringBuilder out = new StringBuilder();
 
-        out.append(this.argument.toHaskellType(1));
+        out.append(this.argument.prettyPrint(1));
         out.append(" -> ");
-        out.append(this.result.toHaskellType(0));
+        out.append(this.result.prettyPrint(0));
 
         if (fixity > 0) {
             return "(" + out.toString() + ")";

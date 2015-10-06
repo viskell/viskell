@@ -20,11 +20,11 @@ public class UnificationTest {
 
         Expression e0 = env.useFun("const");
         Type t0 = e0.findType();
-        assertEquals("a -> b -> a", t0.toHaskellType());
+        assertEquals("a -> b -> a", t0.prettyPrint());
 
         Expression e1 = new Apply(e0, new Hole());
         Type t1 = e1.findType();
-        assertEquals("b -> a", t1.toHaskellType());
+        assertEquals("b -> a", t1.prettyPrint());
 
         Expression e2 = new Apply(e1, new Hole());
         Type t2 = e2.findType();
@@ -39,15 +39,15 @@ public class UnificationTest {
         
         Expression e0 = env.useFun("const");
         Type t0 = e0.findType();
-        assertEquals("a -> b -> a", t0.toHaskellType());
+        assertEquals("a -> b -> a", t0.prettyPrint());
 
         Expression e1 = new Apply(e0, new Value(Type.con("Float"), "5.0"));
         Type t1 = e1.findType();
-        assertEquals("b -> Float", t1.toHaskellType());
+        assertEquals("b -> Float", t1.prettyPrint());
 
         Expression e2 = new Apply(e1, new Value(Type.con("Float"), "5.0"));
         Type t2 = e2.findType();
-        assertEquals("Float", t2.toHaskellType());
+        assertEquals("Float", t2.prettyPrint());
     }
     
     @Test
@@ -78,9 +78,10 @@ public class UnificationTest {
         TypeClass read = env.lookupClass("Show");
         TypeClass show = env.lookupClass("Read");
 
+        TypeScope scope = new TypeScope();
         Type ct = Type.con("Float");
-        Type t0 = Type.var("a", num, read);
-        Type t1 = Type.var("b", num, show);
+        Type t0 = scope.getVarTC("a", num, read);
+        Type t1 = scope.getVarTC("b", num, show);
 
         Expression e0 = new Value(t0, "?");
         Expression e1 = new Value(t1, "?");
@@ -103,6 +104,6 @@ public class UnificationTest {
 
         Type t0 = e0.findType();
 
-        assertEquals(t0.toHaskellType(), "Int");
+        assertEquals(t0.prettyPrint(), "Int");
     }
 }

@@ -30,7 +30,7 @@ public class TypeApp extends ConcreteType {
     }
 
     @Override
-    public String toHaskellType(int fixity) {
+    public String prettyPrint(int fixity) {
         final ArrayList<Type> targs = new ArrayList<Type>();
         targs.add(this.typeArg);
         return (this.typeFun.asTypeAppChain(fixity, targs));

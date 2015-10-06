@@ -21,7 +21,7 @@ public class TypeBuilderTest {
      * Test helper that checks if parsing a String gives the expected result.
      */
     private void convert(String from, String to) {
-        Assert.assertEquals(to, new Environment().buildType(from).toHaskellType());
+        Assert.assertEquals(to, new Environment().buildType(from).prettyPrint());
     }
 
     @Test public void testBuildConstT() { this.roundtrip("Int"); }
@@ -47,10 +47,10 @@ public class TypeBuilderTest {
         env.addTypeClass(new TypeClass("Eq", Type.con("Int"), Type.con("Float"), Type.con("Double"), Type.con("Char"), Type.con("Bool")));
         env.addTypeClass(new TypeClass("Functor"));
 
-        Assert.assertEquals("Num a", env.buildType("Num a => a").toHaskellType());
-        Assert.assertEquals("Num a -> Num a", env.buildType("(Num a) => (a -> a)").toHaskellType());
-        Assert.assertEquals("Num a -> b", env.buildType("(Num a, Nonexistent b) => a -> b").toHaskellType());
-        Assert.assertEquals("Num a -> Eq b", env.buildType("(Num a, Eq b) => a -> b").toHaskellType());
-        Assert.assertEquals("(a -> b) -> (Functor f) a -> (Functor f) b", env.buildType("Functor f => (a -> b) -> f a -> f b").toHaskellType());
+        Assert.assertEquals("Num a", env.buildType("Num a => a").prettyPrint());
+        Assert.assertEquals("Num a -> Num a", env.buildType("(Num a) => (a -> a)").prettyPrint());
+        Assert.assertEquals("Num a -> b", env.buildType("(Num a, Nonexistent b) => a -> b").prettyPrint());
+        Assert.assertEquals("Num a -> Eq b", env.buildType("(Num a, Eq b) => a -> b").prettyPrint());
+        Assert.assertEquals("(a -> b) -> (Functor f) a -> (Functor f) b", env.buildType("Functor f => (a -> b) -> f a -> f b").prettyPrint());
     }
 }

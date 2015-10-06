@@ -75,7 +75,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         int inputCount = 0;
         while (t instanceof FunType) {
             FunType ft = (FunType) t;
-            args.add(ft.getArgument().toHaskellType());
+            args.add(ft.getArgument().prettyPrint());
             t = ft.getResult();
             inputCount++;
         }

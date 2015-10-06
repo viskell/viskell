@@ -89,11 +89,11 @@ public class TypeVar extends Type {
         
         /**
          * @param The fixity of the context the type is shown in.
-         * @return The Haskell (type) representation of this type.
+         * @return The readable representation of this type for in the UI.
          */
-        private final String toHaskellType(final int fixity) {
+        private final String prettyPrint(final int fixity) {
             if (this.type != null) {
-                return this.type.toHaskellType(fixity);
+                return this.type.prettyPrint(fixity);
             }
 
             final StringBuilder out = new StringBuilder();
@@ -216,8 +216,8 @@ public class TypeVar extends Type {
     }
 
     @Override
-    public final String toHaskellType(final int fixity) {
-        return this.instance.toHaskellType(fixity);
+    public final String prettyPrint(final int fixity) {
+        return this.instance.prettyPrint(fixity);
     }
 
     @Override

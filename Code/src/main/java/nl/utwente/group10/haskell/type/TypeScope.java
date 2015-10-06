@@ -40,6 +40,7 @@ public class TypeScope {
         return var;
     }
 
+  
     /**
      * Helper method that add an extra constraint to an type variable, for use in parsing types.
      * @param name The textual representation of the type variable.
@@ -48,6 +49,18 @@ public class TypeScope {
     public void introduceConstraint(String name, TypeClass typeClass) {
         TypeVar var = this.getVar(name);
         var.introduceConstraint(typeClass);
+    }
+    
+    /**
+     * Convenience helper method for testing, combining getVar and introduceConstraint.
+     */
+    public TypeVar getVarTC(String name, TypeClass... classes) {
+        TypeVar var = this.getVar(name);
+        for (TypeClass tc : classes) {
+            var.introduceConstraint(tc);
+        }
+
+        return var;
     }
     
     /**

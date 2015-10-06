@@ -64,7 +64,7 @@ public final class Binder {
         if (this.annotation != null) {
             this.inferenceType = this.annotation.getFresh(scope);
         } else {
-            this.inferenceType = Type.var(this.name);
+            this.inferenceType = scope.getVar(this.name);
         }
     }
 

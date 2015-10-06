@@ -18,7 +18,7 @@ public class TypeCon extends ConcreteType {
     }
 
     @Override
-    public String toHaskellType(int fixity) {
+    public String prettyPrint(int fixity) {
         return this.name;
     }
 
