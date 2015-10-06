@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.type;
 
-public class TypeCon extends ConcreteType implements Comparable<TypeCon> {
+public class TypeCon extends ConcreteType {
     /**
      * The name of type constructor.
      */
@@ -35,11 +35,6 @@ public class TypeCon extends ConcreteType implements Comparable<TypeCon> {
     @Override
     public String toString() {
         return this.name;
-    }
-
-    @Override
-    public int compareTo(TypeCon other) {
-        return this.name.compareTo(other.name);
     }
 
 }

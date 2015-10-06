@@ -112,9 +112,10 @@ public class HaskellCatalog {
                 NamedNodeMap attrs = inode.getAttributes();
                 String inst = attrs.getNamedItem("name").getTextContent();
                 if ("instance".equals(inode.getNodeName())) {
+                    String constrArgs = attrs.getNamedItem("constrainedArgs").getTextContent();
                     Type t = builder.build(inst);
                     if (t instanceof TypeCon) {
-                        tc.addType((TypeCon) t);
+                        tc.addInstance((TypeCon) t, Integer.parseInt(constrArgs));
                     }
                 } else if ("superClass".equals(inode.getNodeName())) {
                     TypeClass sc = entries.get(inst);

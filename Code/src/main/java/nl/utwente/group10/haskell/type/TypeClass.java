@@ -1,24 +1,58 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
 
 /**
- * Haskell TypeClass.
+ * Haskell TypeClass with its instances and superclasses.
  */
 public class TypeClass {
+    
+    /**
+     * An instance declaration 
+     */
+    final static class Instance implements Comparable<Instance> {
+
+        /**
+         * The type constructor that identifies this instance.
+         */
+        private final TypeCon typecon;
+        
+        /**
+         * The number of type arguments that needs to be constrained to make this instance valid
+         * For Example: Eq a => Eq (Maybe a) is the instance Maybe#1, and (Show l, Show r) => Show (Either l r) is Either#2
+         * Most Prelude instances are simple enough to not required sub-constraints, so this number will be often just 0.  
+         */
+        private final int constrainedArgs;
+
+        public Instance(TypeCon typecon, int constrainedArgs) {
+            super();
+            this.typecon = typecon;
+            this.constrainedArgs = constrainedArgs;
+        }
+
+        @Override
+        public String toString() {
+            return this.typecon.toString() + "#" + this.constrainedArgs;
+        }
+
+        @Override
+        public int compareTo(Instance other) {
+            return this.typecon.getName().compareTo(other.typecon.getName());
+        }
+
+    }
     /**
      * The name of this type class.
      */
     private String name;
 
     /**
-     * The constructors that are a member of this type class.
+     * The instances of this type class.
      */
-    private Set<TypeCon> cons;
+    private Set<Instance> instances;
 
     /**
      * The superclasses of this type class.
@@ -31,8 +65,11 @@ public class TypeClass {
      */
     public TypeClass(String name, TypeCon ... cons) {
         this.name = name;
-        this.cons = new HashSet<>(Arrays.asList(cons));
+        this.instances = new HashSet<>();
         this.supers = new HashSet<>();
+        for (TypeCon tc : cons) {
+            this.addInstance(tc, 0);
+        }
     }
 
     /**
@@ -43,10 +80,11 @@ public class TypeClass {
     }
 
     /**
-     * @param tc The type constructor to add to this class 
+     * @param tc The type constructor to add to this class
+     * @param constrainedArgs the number of type parameter that needs to be constrained to make the instance valid
      */
-    public final void addType(TypeCon tc) {
-        this.cons.add(tc);
+    public final void addInstance(TypeCon tc, int constrainedArgs) {
+            this.instances.add(new Instance(tc, constrainedArgs));
     }
 
     /**
@@ -59,11 +97,12 @@ public class TypeClass {
     }
     
     /**
-     * @param type The type to check.
-     * @return Whether the given type is in this type class.
+     * @param type The type constructor to check.
+     * @return Whether the given type constructor is in this type class.
      */
     public final boolean hasType(TypeCon type) {
-        return this.cons.stream().anyMatch(t -> t.compareTo(type) == 0);
+        Instance inst = new Instance(type, 0);
+        return this.instances.stream().anyMatch(i -> i.compareTo(inst) == 0);
     }
 
     /**
@@ -84,7 +123,7 @@ public class TypeClass {
     }
     
     public final String toString() {
-        return String.format("%s=>%s:%s", this.supers.stream().map(t ->t.getName()), this.name, this.cons.toString());
+        return String.format("%s=>%s:%s", this.supers.stream().map(t ->t.getName()), this.name, this.instances.toString());
     }
 
 }

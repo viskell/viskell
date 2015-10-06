@@ -38,6 +38,7 @@
     <xs:simpleContent>
       <xs:extension base="xs:token">
         <xs:attribute type="xs:token" name="name" use="required"/>
+        <xs:attribute type="xs:int" name="constrainedArgs" default="0"/>
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
