@@ -78,6 +78,7 @@ public class TypeVar extends Type {
          */
         private void shareConstraints(TypeInstance other) {
             this.constraints = TypeClass.simplifyConstraints(Sets.union(this.constraints, other.constraints));
+            other.constraints = new HashSet<>(this.constraints);
         }
 
         /**
@@ -185,7 +186,7 @@ public class TypeVar extends Type {
      * @param the other type variable.
      */
     public final void shareInstanceOf(TypeVar other) {
-        other.instance.shareConstraints(this.instance);
+        this.instance.shareConstraints(other.instance);
         this.instance = other.instance;
     }
 
@@ -261,7 +262,8 @@ public class TypeVar extends Type {
 
     @Override
     public final String toString() {
-        String tmp = String.format("%s(%s)", this.getName(), Integer.toHexString(this.instance.hashCode()));
+        String constr = Arrays.toString(this.instance.constraints.stream().map(c -> c.getName()).toArray());
+        String tmp = String.format("%s(%s)%s", this.getName(), Integer.toHexString(this.instance.hashCode()), constr);
         return this.instance.isPresent() ? tmp + ":" + this.instance.get().toString() : tmp;
     }
 

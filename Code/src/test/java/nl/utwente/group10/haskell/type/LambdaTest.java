@@ -34,7 +34,7 @@ public class LambdaTest {
         Expression ezz = new Apply (new Apply(env.useFun("(^)"), new LocalVar(z)), new LocalVar(z));
         Expression exp = new Lambda(Arrays.asList(z), ezz);
         Type tle = exp.findType();
-        assertEquals("Integral b -> Num a", tle.prettyPrint());
+        assertEquals("Integral b -> Integral a", tle.prettyPrint());
 
         Binder u = new Binder("u");
         Expression f5 = new Value(Type.con("Float"), "5.0");
@@ -67,4 +67,17 @@ public class LambdaTest {
         assertEquals("[Int] -> Float", l5.findType().prettyPrint());
     }
 
+    @Test
+    public void testPropagation() throws HaskellException {
+        Environment env = new HaskellCatalog().asEnvironment();
+        // testing type of: \i -> show ((\x -> x + x) i)
+        
+        Binder i = new Binder("i");
+        Binder x = new Binder("x");
+        Expression pxx = new Apply (new Apply(env.useFun("(+)"), new LocalVar(x)), new LocalVar(x));
+        Expression exp = new Lambda(Arrays.asList(x), pxx);
+        Expression app = new Apply(env.useFun("show"), new Apply(exp, new LocalVar(i)));
+        Expression top = new Lambda(Arrays.asList(i), app);
+        assertEquals("(Num a, Show a) -> [Char]", top.findType().prettyPrint());
+    }
 }
