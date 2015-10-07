@@ -117,7 +117,15 @@
     
     
     <functions>
-        <category name="Basic">
+        <category name="Comparison and logic">
+        	<function name="(==)" signature="Eq a => a -> a -> Bool"></function>
+        	<function name="(/=)" signature="Eq a => a -> a -> Bool"></function>
+        	<function name="(&lt;)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="(&lt;=)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="(&gt;)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="(&gt;=)" signature="Ord a => a -> a -> Bool"></function>
+        	<function name="max" signature="Ord a => a -> a -> a"></function>
+        	<function name="min" signature="Ord a => a -> a -> a"></function>
         	<function name="(&amp;&amp;)" signature="Bool -> Bool -> Bool">
 				and
             </function>
@@ -131,31 +139,14 @@
         		otherwise is defined as the value True. It helps to make guards more readable.
         	</function>
         </category>
-        <category name="Tuples">
-        	<function name="fst" signature="(a, b) -> a">
-        		Extract the first component of a pair.
+        <category name="Enum and Conversions">
+        	<function name="show" signature="Show a => a -> [Char]">
+        		a specialised variant of showsPrec, using precedence context zero, and
+        		returning an ordinary [Char].
         	</function>
-        	<function name="snd" signature="(a, b) -> b">
-        		Extract the second component of a pair
+        	<function name="read" signature="Read a => [Char] -> a">
+        		the read function reads input from a string, which must be completely consumed by the input process.
         	</function>
-        	<function name="curry" signature="((a, b) -> c) -> (a, b) -> c">
-        		curry converts an uncurried function to a curried function
-        	</function>
-        	<function name="uncurry" signature="(a -> b -> c) -> (a, b) -> c">
-        		uncurry converts a curried function to a function on pairs
-        	</function>
-        </category>
-        <category name="Equality">
-        	<function name="(==)" signature="Eq a => a -> a -> Bool"></function>
-        	<function name="(/=)" signature="Eq a => a -> a -> Bool"></function>
-        	<function name="(&lt;)" signature="Ord a => a -> a -> Bool"></function>
-        	<function name="(&lt;=)" signature="Ord a => a -> a -> Bool"></function>
-        	<function name="(&gt;)" signature="Ord a => a -> a -> Bool"></function>
-        	<function name="(&gt;=)" signature="Ord a => a -> a -> Bool"></function>
-        	<function name="max" signature="Ord a => a -> a -> a"></function>
-        	<function name="min" signature="Ord a => a -> a -> a"></function>
-        </category>
-        <category name="Enum functions">
         	<function name="succ" signature="Enum a => a -> a">
         		The successor of a value.
         	</function>
@@ -181,7 +172,7 @@
         		used in Haskell's translation of [n, n'..m].
         	</function>
         </category>
-        <category name="Numeric types">
+        <category name="Arithmetic">
 			<function name="(+)" signature="Num a => a -> a -> a">
 				Mathematical addition.
 			</function>
@@ -365,7 +356,7 @@
         		The product function computes the product of the numbers of a structure.
         	</function>
         </category>
-        <category name="Miscellaneous functions">
+        <category name="Utility functions">
         	<function name="id" signature="a -> a">
         		identity function.
         	</function>
@@ -402,6 +393,18 @@
         	<function name="($!)" signature="(a -> b) -> a -> b">
         		Strict (call-by-value) application operator. It takes a function and an argument, evaluates the 
         		argument to weak head normal form (WHNF), then calls the function with that value.
+        	</function>
+        	<function name="fst" signature="(a, b) -> a">
+        		Extract the first component of a pair.
+        	</function>
+        	<function name="snd" signature="(a, b) -> b">
+        		Extract the second component of a pair
+        	</function>
+        	<function name="curry" signature="((a, b) -> c) -> (a, b) -> c">
+        		curry converts an uncurried function to a curried function
+        	</function>
+        	<function name="uncurry" signature="(a -> b -> c) -> (a, b) -> c">
+        		uncurry converts a curried function to a function on pairs
         	</function>
         </category>
         <category name="List operations">
@@ -546,15 +549,6 @@
         	</function>
         	<function name="unwords" signature="[[Char]] -> [Char]">
         		unwords is an inverse operation to words. It joins words with separating spaces.
-        	</function>
-        </category>
-        <category name="Converting to and from String">
-        	<function name="show" signature="Show a => a -> [Char]">
-        		a specialised variant of showsPrec, using precedence context zero, and
-        		returning an ordinary [Char].
-        	</function>
-        	<function name="read" signature="Read a => [Char] -> a">
-        		the read function reads input from a string, which must be completely consumed by the input process.
         	</function>
         </category>
     </functions>
