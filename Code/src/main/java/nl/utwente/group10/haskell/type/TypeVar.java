@@ -24,6 +24,11 @@ public class TypeVar extends Type {
         private final String name;
 
         /**
+         * Whether this type variable was created internally in typechecking process, and preferably should not be shown to the user.
+         */
+        private final boolean internal;
+
+        /**
          * A concrete instantiated type or null.
          */
         private ConcreteType type;
@@ -32,7 +37,7 @@ public class TypeVar extends Type {
          * The type constraints for this instance.
          */
         private TreeSet<TypeClass> constraints;
-        
+
         /**
          * Internal List of all type variables that refer to this instance.
          * this list contains the creating type variable as well as the variables have unified with this.
@@ -42,11 +47,13 @@ public class TypeVar extends Type {
 
         /**
          * @param name The textual representation of the type variable.
+         * @param internal whether this an internally generated type variable
          * @param type The concrete instance of this type, might be null.
          * @param constraints The set of constraints for this type.
          */
-        private TypeInstance(TypeVar creator, String name, ConcreteType type, final TreeSet<TypeClass> constraints) {
+        private TypeInstance(TypeVar creator, String name, boolean internal, ConcreteType type, final TreeSet<TypeClass> constraints) {
             this.name = name;
+            this.internal = internal;
             this.type = type;
             this.constraints = constraints;
             this.unifiedVars = new LinkedList<>();
@@ -88,7 +95,7 @@ public class TypeVar extends Type {
          * Deeply unifying all aspects of type instances
          * @param the other type instance.
          */
-        private void unifyInstances(TypeInstance other) {
+        private void unifyWith(TypeInstance other) {
             other.constraints = TypeClass.simplifyConstraints(new TreeSet<>(Sets.union(this.constraints, other.constraints)));
             other.unifiedVars.addAll(this.unifiedVars);
             // Go through all type variable associated with both type instances, to make sure all of them are unified to the same instance.
@@ -154,21 +161,12 @@ public class TypeVar extends Type {
      * @param name The textual representation of the type variable.
      * Identifiers are not used in the type checking progress, 
      * different {@code TypeVar} instances with the same name are not equal.
+     * @param internal whether this an internally generated type variable
      * @param constraints The set of constraints for this type.
      * @param instance The concrete instance of this type, might be null.
      */
-    TypeVar(final String name, final TreeSet<TypeClass> constraints, final ConcreteType type) {
-        this.instance = new TypeInstance(this, name.toLowerCase(), type, constraints);
-    }
-
-    /**
-     * @param name The textual representation of the type variable.
-     * Identifiers are not used in the type checking progress,
-     * different {@code TypeVar} instances with the same name are not equal.
-     * @param constraints The set of constraints for this type
-     */
-    TypeVar(final String name, final TypeClass... constraints) {
-        this(name, new TreeSet<TypeClass>(Arrays.asList(constraints)), null);
+    TypeVar(final String name, final boolean internal, final TreeSet<TypeClass> constraints, final ConcreteType type) {
+        this.instance = new TypeInstance(this, name.toLowerCase(), internal, type, constraints);
     }
 
     /**
@@ -181,7 +179,7 @@ public class TypeVar extends Type {
     /**
      * @return Whether this type variable has been instantiated with a concrete type.
      */
-    public final boolean hasInstance() {
+    public final boolean hasConcreteInstance() {
         return this.instance.isPresent();
     }
 
@@ -207,7 +205,11 @@ public class TypeVar extends Type {
      * @param the other type variable.
      */
     public final void unifyWith(TypeVar other) {
-        this.instance.unifyInstances(other.instance);
+        if (this.instance.internal) {
+            this.instance.unifyWith(other.instance);
+        } else {
+            other.instance.unifyWith(this.instance);
+        }
     }
 
     /**
@@ -260,7 +262,7 @@ public class TypeVar extends Type {
             return staleToFresh.get(this.instance);
         }
 
-        TypeVar fresh = new TypeVar(this.instance.name, new TreeSet<>(this.instance.constraints), null);
+        TypeVar fresh = new TypeVar(this.instance.name, this.instance.internal, new TreeSet<>(this.instance.constraints), null);
         staleToFresh.put(this.instance, fresh);
         return fresh;
        

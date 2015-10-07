@@ -40,13 +40,13 @@ public final class TypeChecker {
                 throw new HaskellTypeError(String.format("%s ∈ %s", a, b), context);
             }
 
-            if (va.hasInstance()) {
+            if (va.hasConcreteInstance()) {
             	// if a type variable has been instantiated already then we can just unify b with a concrete type of a
             	TypeChecker.unify(context, va.getInstantiatedType(), b);
             } else if (b instanceof TypeVar) {
                 TypeVar vb = (TypeVar) b;
                 
-                if (vb.hasInstance()) {
+                if (vb.hasConcreteInstance()) {
                     // with type variable b instantiated continue with unifying type variable a with the concrete type of b
                     TypeChecker.unify(context, va, vb.getInstantiatedType());
                 } else {

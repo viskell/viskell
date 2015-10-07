@@ -27,14 +27,14 @@ public class LambdaTest {
         Expression pxy = new Apply (new Apply(env.useFun("(+)"), new LocalVar(x)), new LocalVar(y));
         Expression add = new Lambda(Arrays.asList(x,y), pxy);
         Type tla = add.findType();
-        assertEquals("Num a -> Num a -> Num a", tla.prettyPrint());
+        assertEquals("Num y -> Num y -> Num y", tla.prettyPrint());
         
         // using the same binder twice
         Binder z = new Binder("z");
         Expression ezz = new Apply (new Apply(env.useFun("(^)"), new LocalVar(z)), new LocalVar(z));
         Expression exp = new Lambda(Arrays.asList(z), ezz);
         Type tle = exp.findType();
-        assertEquals("Integral b -> Integral b", tle.prettyPrint());
+        assertEquals("Integral z -> Integral z", tle.prettyPrint());
 
         Binder u = new Binder("u");
         Expression f5 = new Value(Type.con("Float"), "5.0");
@@ -59,7 +59,7 @@ public class LambdaTest {
         Expression ezz = new Apply (new Apply(env.useFun("(**)"), new LocalVar(z)), new LocalVar(z));
         Expression exp = new Lambda(Arrays.asList(z), ezz);
         Type tle = exp.findType();
-        assertEquals("RealFloat a -> RealFloat a", tle.prettyPrint());
+        assertEquals("RealFloat r -> RealFloat r", tle.prettyPrint());
 
         Binder u = new Binder("u", Type.listOf(Type.con("Int")));
         Expression f5 = new Value(Type.con("Float"), "5.0");
@@ -78,7 +78,7 @@ public class LambdaTest {
         Expression exp = new Lambda(Arrays.asList(x), pxx);
         Expression app = new Apply(env.useFun("show"), new Apply(exp, new LocalVar(i)));
         Expression top = new Lambda(Arrays.asList(i), app);
-        assertEquals("(Num a, Show a) -> [Char]", top.findType().prettyPrint());
+        assertEquals("(Num i, Show i) -> [Char]", top.findType().prettyPrint());
 
         // testing type of: \s -> (\y -> y `max` y) (read s)
         Binder s = new Binder("s");
