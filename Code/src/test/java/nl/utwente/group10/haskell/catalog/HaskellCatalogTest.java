@@ -14,7 +14,7 @@ public class HaskellCatalogTest {
 
         // getCategories
         assertFalse(c.getCategories().isEmpty());
-        assertTrue(c.getCategories().contains("Basic"));
+        assertTrue(c.getCategories().contains("List operations"));
 
         // asEnvironment
         Environment e = c.asEnvironment();
