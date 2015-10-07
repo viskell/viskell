@@ -35,9 +35,9 @@ public class ClassesTest {
     @Test
     public final void testSuperClasses() throws HaskellTypeError {
         final Environment env = new HaskellCatalog().asEnvironment();
-        final TypeClass eq = env.lookupClass("Eq");
-        final TypeClass ord = env.lookupClass("Ord");
-        final TypeClass integral = env.lookupClass("Integral");
+        final TypeClass eq = env.testLookupClass("Eq");
+        final TypeClass ord = env.testLookupClass("Ord");
+        final TypeClass integral = env.testLookupClass("Integral");
 
         TypeScope scope = new TypeScope();
         final TypeVar a = scope.getVarTC("a", eq);

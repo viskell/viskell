@@ -20,13 +20,13 @@ public class Environment {
     /**
      * Map containing the type classes by name.
      */
-    private HashMap<String, TypeClass> typeClasses;
+    private Map<String, TypeClass> typeClasses;
 
     /**
      * @param functions Map of available functions.
      * @param typeClasses Map of known type classes.
      */
-    public Environment(Map<String, FunctionInfo> functions, HashMap<String, TypeClass> typeClasses) {
+    public Environment(Map<String, FunctionInfo> functions, Map<String, TypeClass> typeClasses) {
         this.functions = functions;
         this.typeClasses = typeClasses;
     }
@@ -65,9 +65,9 @@ public class Environment {
     }
 
     /**
-     * 
+     * Helper method for testing purposes, looking a the type class from a textual name, returns null if it can't be found
      */
-    public final TypeClass lookupClass(String name) {
+    public final TypeClass testLookupClass(String name) {
         return this.typeClasses.get(name);
     }
     

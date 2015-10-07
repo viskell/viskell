@@ -19,7 +19,7 @@ public class HaskellCatalogTest {
         // asEnvironment
         Environment e = c.asEnvironment();
         assertNotNull(e.lookupFun("id"));
-        assertNotNull(e.lookupClass("Num"));
+        assertNotNull(e.testLookupClass("Num"));
         assertNotNull(e.lookupFun("(+)"));
     }
 }

@@ -71,9 +71,9 @@ public final class GhciSession implements Closeable {
      * @throws HaskellException when  ghci encountered an error or the type could not be parsed.
      */
     public Type pullType(final String expr, Environment env) throws HaskellException {
-        String[] parts = this.pullRaw(":t (" + expr + ")").split(" :: ");
+        String[] parts = this.pullRaw(":t " + expr).split(" :: ");
         if (parts.length < 2) {
-            throw new HaskellException("ghci could not determine the type of:/n" + expr);
+            throw new HaskellException("ghci could not determine the type of:\n" + expr);
         }
             
         return env.buildType(parts[1].trim());

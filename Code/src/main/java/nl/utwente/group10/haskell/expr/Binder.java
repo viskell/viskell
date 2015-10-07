@@ -15,7 +15,7 @@ public final class Binder {
     /** An internal type used in the type inference process */
     private Type inferenceType;
     
-    /** An optional */
+    /** An optional type annotation to restrict the type of this binder */
     private final Type annotation;
     
     /** 

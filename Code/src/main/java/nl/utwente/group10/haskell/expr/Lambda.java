@@ -55,7 +55,7 @@ public class Lambda extends Expression {
 
         out.append(" -> ");
         out.append(this.body.toHaskell());
-        out.append("");
+        out.append(")");
         return out.toString();
     }
 

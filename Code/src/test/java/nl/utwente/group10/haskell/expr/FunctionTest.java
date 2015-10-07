@@ -23,8 +23,8 @@ public class FunctionTest {
 
     @Test
     public void testArguments() throws HaskellException {
-        Function.FunctionArgument arg0 = new Function.FunctionArgument(this.scope.getVarTC("a", env.lookupClass("Num")));
-        Function.FunctionArgument arg1 = new Function.FunctionArgument(this.scope.getVarTC("a", env.lookupClass("Num")));
+        Function.FunctionArgument arg0 = new Function.FunctionArgument(this.scope.getVarTC("a", env.testLookupClass("Num")));
+        Function.FunctionArgument arg1 = new Function.FunctionArgument(this.scope.getVarTC("a", env.testLookupClass("Num")));
 
         Function f = new Function(this.env.useFun("pi"), arg0, arg1);
 
@@ -35,7 +35,7 @@ public class FunctionTest {
 
     @Test
     public void testToHaskell() throws HaskellException {
-        Function.FunctionArgument arg = new Function.FunctionArgument(this.scope.getVarTC("a", env.lookupClass("Num")));
+        Function.FunctionArgument arg = new Function.FunctionArgument(this.scope.getVarTC("a", env.testLookupClass("Num")));
         Expression applies = new Apply(this.env.useFun("(+)"), arg);
         Function f = new Function(applies, arg);
 

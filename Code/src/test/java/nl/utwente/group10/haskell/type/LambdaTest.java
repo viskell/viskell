@@ -55,7 +55,7 @@ public class LambdaTest {
         assertEquals("Int -> Int -> Int", tla.prettyPrint());
         
         // using the same binder twice
-        Binder z = new Binder("z", new TypeScope().getVarTC("r", env.lookupClass("RealFloat")));
+        Binder z = new Binder("z", new TypeScope().getVarTC("r", env.testLookupClass("RealFloat")));
         Expression ezz = new Apply (new Apply(env.useFun("(**)"), new LocalVar(z)), new LocalVar(z));
         Expression exp = new Lambda(Arrays.asList(z), ezz);
         Type tle = exp.findType();

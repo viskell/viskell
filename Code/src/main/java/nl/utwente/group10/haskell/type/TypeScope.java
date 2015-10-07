@@ -6,7 +6,7 @@ import java.util.TreeSet;
 
 public class TypeScope {
     /**
-     * Offset for the creation of unique type variable names.
+     * Offset for the creation of globally unique type variable names.
      */
     static int tvOffset = 0;
     
