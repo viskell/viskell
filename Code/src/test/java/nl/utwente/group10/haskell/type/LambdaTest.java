@@ -7,6 +7,7 @@ import java.util.Arrays;
 import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
+import nl.utwente.group10.haskell.expr.Annotated;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Binder;
 import nl.utwente.group10.haskell.expr.Expression;
@@ -67,6 +68,31 @@ public class LambdaTest {
         assertEquals("[Int] -> Float", l5.findType().prettyPrint());
     }
 
+    @Test
+    public void testResultAnnotation() throws HaskellException {
+        Environment env = new HaskellCatalog().asEnvironment();
+        
+        // wrapping a simple function in a lambda
+        Binder x = new Binder("x");
+        Binder y = new Binder("y");
+        Expression pxy = new Apply (new Apply(env.useFun("(+)"), new LocalVar(x)), new LocalVar(y));
+        Expression add = new Lambda(Arrays.asList(x,y), new Annotated(pxy, Type.con("Int")));
+        Type tla = add.findType();
+        assertEquals("Int -> Int -> Int", tla.prettyPrint());
+        
+        // using the same binder twice
+        Binder z = new Binder("z");
+        Expression ezz = new Apply (new Apply(env.useFun("(^)"), new LocalVar(z)), new LocalVar(z));
+        Expression exp = new Lambda(Arrays.asList(z), new Annotated(ezz, Type.con("Integer")));
+        Type tle = exp.findType();
+        assertEquals("Integer -> Integer", tle.prettyPrint());
+
+        Binder u = new Binder("u");
+        Expression ru = new Apply(env.useFun("read"), new LocalVar(u));
+        Expression dr = new Lambda(Arrays.asList(u), new Annotated(ru, Type.con("Double")));
+        assertEquals("[Char] -> Double", dr.findType().prettyPrint());
+    }
+    
     @Test
     public void testPropagation() throws HaskellException {
         Environment env = new HaskellCatalog().asEnvironment();

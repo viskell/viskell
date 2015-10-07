@@ -50,13 +50,6 @@ public final class Binder {
     }
     
     /**
-     * @return the type annotation, might be null
-     */
-    public final Type getAnnotation() {
-        return this.annotation;
-    }
-
-    /**
      * Refreshes the internal type of the binder for type inference
      * @param scope wherein the fresh type is constructed
      */
