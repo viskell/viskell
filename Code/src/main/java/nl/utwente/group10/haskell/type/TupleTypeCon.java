@@ -31,7 +31,7 @@ public class TupleTypeCon extends TypeCon {
             super.asTypeAppChain(fixity, args);
         }
         
-        Stream<String> parts = Lists.reverse(args).stream().map(e -> e.toHaskellType(0));
+        Stream<String> parts = Lists.reverse(args).stream().map(e -> e.prettyPrint(0));
         return "(" + Joiner.on(", ").join(parts.iterator()) + ")";
     }
 }

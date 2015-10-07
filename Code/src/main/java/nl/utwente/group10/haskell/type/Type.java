@@ -1,46 +1,42 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Set;
 import java.util.logging.Logger;
-
-import nl.utwente.group10.haskell.HaskellObject;
 
 /**
  * Abstract class for Haskell types. Provides an interface for common methods.
  */
-public abstract class Type extends HaskellObject {
+public abstract class Type {
     /** Logger instance for types. */
     protected Logger logger = Logger.getLogger(Type.class.getName());
 
     /**
-     * @return The Haskell (type) representation of this type.
+     * @return The readable representation of this type for in the UI.
      */
-    public String toHaskellType() {
-        return this.toHaskellType(0);
+    public String prettyPrint() {
+        return this.prettyPrint(0);
     }
 
     /**
      * @param The fixity of the context the type is shown in.
      * The fixity is small positive number derived from operator precedence (see also Section 4.4.2 of the Haskell language report)
-     * @return The Haskell (type) representation of this type.
+     * @return The readable representation of this type for in the UI.
      */
-    public abstract String toHaskellType(final int fixity);
+    public abstract String prettyPrint(final int fixity);
 
     /**
      * @param The fixity of the context the type is shown in.
      * @param The list of types applied to this type.
-     * @return the Haskell (type) representation of this type a list of of types 
+     * @return the pretty representation of this type a list of of types 
      */
     protected String asTypeAppChain(final int fixity, final List<Type> args) {
         final StringBuilder out = new StringBuilder();
-        out.append(this.toHaskellType(10));
+        out.append(this.prettyPrint(10));
         final ListIterator<Type> iter = args.listIterator(args.size());
         while (iter.hasPrevious()) {
             out.append(' ');
-            out.append(iter.previous().toHaskellType(10));
+            out.append(iter.previous().prettyPrint(10));
         }
 
         if (fixity > 1) {
@@ -54,14 +50,14 @@ public abstract class Type extends HaskellObject {
      * @return An equivalent deep copy of this type, using fresh type variables.
      */
     public final Type getFresh() {
-        return this.getFreshInstance(new IdentityHashMap<TypeVar.TypeInstance, TypeVar>());
+        return this.getFresh(new TypeScope());
     }
 
     /**
-     * @param A mapping from the old type variables (instances) to the new, the context wherein the fresh type is constructed.
+     * @param scope The scope wherein related shared type variable are maintained
      * @return An equivalent deep copy of this type, using fresh type variables.
      */
-    protected abstract Type getFreshInstance(final IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh);
+    public abstract Type getFresh(final TypeScope scope);
 
     /**
      * @return The presence of the argument type variable some in this type.
@@ -71,23 +67,6 @@ public abstract class Type extends HaskellObject {
     @Override
     public abstract String toString();
 
-    /**
-     * @return a new type variable constructed from a name and optionally a number of class constraint 
-     * @param name Identifier for this type variable.
-     * @param constraints The constraints for this type
-     */
-    public final static TypeVar var(final String name, TypeClass... constraints) {
-        return new TypeVar(name, constraints);
-    }
-
-    /**
-     * @return a new type variable constructed from a name and a class constraint set. 
-     * @param name Identifier for this type variable.
-     * @param constraints The set of constraints for this type
-     */
-    public final static TypeVar var(final String name, final Set<TypeClass> constraints) {
-        return new TypeVar(name, 0, constraints, null);
-    }
 
     /**
      * @return a new type constructor

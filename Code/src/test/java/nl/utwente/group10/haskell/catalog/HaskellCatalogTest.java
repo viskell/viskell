@@ -1,7 +1,7 @@
 package nl.utwente.group10.haskell.catalog;
 
-import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.CatalogException;
+import nl.utwente.group10.haskell.env.Environment;
+import nl.utwente.group10.haskell.env.HaskellCatalog;
 
 import static org.junit.Assert.*;
 
@@ -9,7 +9,7 @@ import org.junit.Test;
 
 public class HaskellCatalogTest {
     @Test
-    public void basicCatalogTest() throws CatalogException {
+    public void basicCatalogTest() {
         HaskellCatalog c = new HaskellCatalog();
 
         // getCategories
@@ -17,9 +17,9 @@ public class HaskellCatalogTest {
         assertTrue(c.getCategories().contains("Basic"));
 
         // asEnvironment
-        Env e = c.asEnvironment();
-        assertTrue(e.getFreshExprType("id").isPresent());
-        assertNotNull(e.lookupClass("Num"));
-        assertTrue(e.getFreshExprType("(+)").isPresent());
+        Environment e = c.asEnvironment();
+        assertNotNull(e.lookupFun("id"));
+        assertNotNull(e.testLookupClass("Num"));
+        assertNotNull(e.lookupFun("(+)"));
     }
 }

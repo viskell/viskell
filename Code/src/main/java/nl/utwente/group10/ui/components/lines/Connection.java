@@ -7,7 +7,6 @@ import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.exceptions.InvalidAnchorException;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -179,7 +178,7 @@ public class Connection extends ConnectionLine implements
             endAnchor.ifPresent(a -> disconnect(a));
             endAnchor = Optional.of((InputAnchor) newAnchor);
         } else {
-            throw new InvalidAnchorException();
+            throw new RuntimeException("InvalidAnchor");
         }
         
         // Add this to the anchor.

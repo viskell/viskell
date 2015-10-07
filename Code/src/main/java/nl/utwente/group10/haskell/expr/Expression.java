@@ -5,32 +5,32 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.google.common.collect.ImmutableList;
-import nl.utwente.group10.haskell.HaskellObject;
-import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+
+import nl.utwente.group10.ghcj.HaskellException;
+import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.haskell.type.Type;
 
 /**
  * An expression in Haskell.
  */
-public abstract class Expr extends HaskellObject {
+public abstract class Expression {
     /** Logger for this class. **/
-    protected static final Logger logger = Logger.getLogger(Expr.class.getName());
+    protected static final Logger logger = Logger.getLogger(Expression.class.getName());
 
     /** The last known type for this expression. */
     private Optional<Type> cachedType = Optional.empty();
 
     /**
-     * Returns the latest type for this expression. If {@code analayze()} has not been called yet, it will be called to
-     * retrieve a type.
+     * Returns the latest type for this expression. If yet unknown it will be inferred,
      *
-     * @param env The current Haskell environment.
      * @return The type for this usage of this expression.
-     * @throws HaskellException The type tree contains an application of an incompatible type.
+     * @throws HaskellTypeError if type inference fails in any way.
      */
-    public Type getType(Env env) throws HaskellException {
+    public final Type findType() throws HaskellTypeError {
         if (!this.cachedType.isPresent()) {
-            return this.analyze(env);
+            Type type = this.inferType();
+            this.setCachedType(type);
+            return type;
         }
 
         return this.cachedType.get();
@@ -40,24 +40,19 @@ public abstract class Expr extends HaskellObject {
      * Sets the cached type for this expression.
      * @param type The type to cache.
      */
-    protected final void setCachedType(final Type type) {
+    private final void setCachedType(final Type type) {
         if (!this.cachedType.isPresent() || this.cachedType.get() != type) {
             this.cachedType = Optional.ofNullable(type);
         }
     }
 
     /**
-     * Analyzes the type tree and resolves the type for this usage of this expression, using an empty GenSet. This
-     * method can be used to call when analyzing the root of the expression tree (the first step in the type inference
-     * of an expression).
+     * Analyzes the type tree and infers the type for this usage of this expression
      *
-     * @param env The current Haskell environment.
      * @return The type for this usage of this expression.
      * @throws HaskellException The type tree contains an application of an incompatible type.
      */
-    public Type analyze(final Env env) throws HaskellException {
-        return this.analyze(env);
-    }
+    protected abstract Type inferType() throws HaskellTypeError; 
 
     /**
      * Returns the Haskell code for this expression.
@@ -74,7 +69,7 @@ public abstract class Expr extends HaskellObject {
     /**
      * @return a list of subexpressions, if any, or else an empty list.
      */
-    public List<Expr> getChildren() {
+    public List<Expression> getChildren() {
         return ImmutableList.of();
     }
 }

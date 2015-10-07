@@ -10,7 +10,6 @@ import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.lines.Connection;
-import nl.utwente.group10.ui.exceptions.InvalidInputIdException;
 
 /**
  * A Manager class mainly used to keep track of multiple, possibly concurrent,
@@ -122,7 +121,7 @@ public class ConnectionCreationManager {
             connections.remove(id);
             return connection;
         }else{
-            throw new InvalidInputIdException();
+            throw new RuntimeException("InvalidInputId");
         }
     }
 

@@ -9,42 +9,26 @@
             <instance name="Double"/>
             <instance name="Char"/>
             <instance name="Bool"/>
+            <instance name="[]" constrainedArgs="1"/>
+            <instance name="Maybe" constrainedArgs="1"/>
+            <instance name="Either" constrainedArgs="2"/>
+            <instance name="(,)" constrainedArgs="2"/>
+            <instance name="(,,)" constrainedArgs="3"/>
         </class>
         <class name="Ord">
+        	<superClass name="Eq"/>
         	<instance name="Ordering"/>
         	<instance name="Bool"/>
         	<instance name="Char"/>
         	<instance name="Double"/>
         	<instance name="Float"/>
         	<instance name="Int"/>
+            <instance name="[]" constrainedArgs="1"/>
+            <instance name="Maybe" constrainedArgs="1"/>
+            <instance name="Either" constrainedArgs="2"/>
+            <instance name="(,)" constrainedArgs="2"/>
+            <instance name="(,,)" constrainedArgs="3"/>
         </class>   	
-        <class name="Num">
-            <instance name="Int"/>
-            <instance name="Integer"/>
-            <instance name="Float"/>
-            <instance name="Double"/>
-        </class>
-        <class name="Fractional">
-            <instance name="Float"/>
-            <instance name="Double"/>
-        </class>
-        <class name="Floating">
-            <instance name="Float"/>
-            <instance name="Double"/>
-        </class>
-        <class name="Integral">
-            <instance name="Int"/>
-        </class>
-        <class name="Real">
-        	<instance name="Int"/>
-        	<instance name="Integer"/>
-        	<instance name="Float"/>
-        	<instance name="Double"/>
-        </class>
-        <class name="RealFrac">
-            <instance name="Float"/>
-            <instance name="Double"/>
-        </class>
         <class name="Enum">
             <instance name="Ordering"/>
             <instance name="Integer"/>
@@ -54,7 +38,45 @@
             <instance name="Float"/>
             <instance name="Double"/>
         </class>
+        <class name="Num">
+            <instance name="Int"/>
+            <instance name="Integer"/>
+            <instance name="Float"/>
+            <instance name="Double"/>
+        </class>
+        <class name="Fractional">
+        	<superClass name="Num"/>
+            <instance name="Float"/>
+            <instance name="Double"/>
+        </class>
+        <class name="Floating">
+        	<superClass name="Fractional"/>
+            <instance name="Float"/>
+            <instance name="Double"/>
+        </class>
+        <class name="Real">
+        	<superClass name="Num"/>
+        	<superClass name="Ord"/>
+        	<instance name="Int"/>
+        	<instance name="Integer"/>
+        	<instance name="Float"/>
+        	<instance name="Double"/>
+        </class>
+        <class name="Integral">
+        	<superClass name="Enum"/>
+        	<superClass name="Real"/>
+            <instance name="Int"/>
+            <instance name="Integer"/>
+        </class>
+        <class name="RealFrac">
+        	<superClass name="Fractional"/>
+        	<superClass name="Real"/>
+            <instance name="Float"/>
+            <instance name="Double"/>
+        </class>
         <class name="RealFloat">
+        	<superClass name="Floating"/>
+        	<superClass name="RealFrac"/>
         	<instance name="Float"/>
         	<instance name="Double"/>
         </class>
@@ -66,6 +88,11 @@
         	<instance name="Bool"/>
         	<instance name="Float"/>
         	<instance name="Double"/>
+            <instance name="[]" constrainedArgs="1"/>
+            <instance name="Maybe" constrainedArgs="1"/>
+            <instance name="Either" constrainedArgs="2"/>
+            <instance name="(,)" constrainedArgs="2"/>
+            <instance name="(,,)" constrainedArgs="3"/>
         </class>
         <class name="Read">
         	<instance name="Ordering"/>
@@ -75,6 +102,11 @@
         	<instance name="Bool"/>
         	<instance name="Float"/>
         	<instance name="Double"/>
+            <instance name="[]" constrainedArgs="1"/>
+            <instance name="Maybe" constrainedArgs="1"/>
+            <instance name="Either" constrainedArgs="2"/>
+            <instance name="(,)" constrainedArgs="2"/>
+            <instance name="(,,)" constrainedArgs="3"/>
         </class>
         <class name="Functor">
         	<instance name="Maybe"/>

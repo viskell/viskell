@@ -1,12 +1,9 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Expression;
 
 /**
  * Implementation of a typechecker for a simplified variant of Haskell.
@@ -16,11 +13,6 @@ public final class TypeChecker {
      * Logger for this class.
      */
     private static final Logger logger = Logger.getLogger(TypeChecker.class.getName());
-
-    /**
-     * Offset for the creation of variable types.
-     */
-    static int tvOffset = 0;
 
     static {
         TypeChecker.logger.setLevel(Level.WARNING);
@@ -33,11 +25,7 @@ public final class TypeChecker {
     private TypeChecker() {
     }
 
-    public static void unify(final Type t1, final Type t2) throws HaskellTypeError {
-        unify(null, t1, t2);
-    }
-
-    public static void unify(final Expr context, final Type a, final Type b) throws HaskellTypeError {
+    public static void unify(final Expression context, final Type a, final Type b) throws HaskellTypeError {
         
         TypeChecker.logger.info(String.format("Unifying types %s and %s for context %s", a, b, context));
 
@@ -49,7 +37,7 @@ public final class TypeChecker {
             // First, prevent ourselves from going into an infinite loop
             if (b.containsOccurenceOf(va)) {
                 TypeChecker.logger.info(String.format("Recursion in types %s and %s for context %s", a, b, context));
-                throw new HaskellTypeError(String.format("%s ∈ %s", a, b), context, a, b);
+                throw new HaskellTypeError(String.format("%s ∈ %s", a, b), context);
             }
 
             if (va.hasInstance()) {
@@ -63,14 +51,14 @@ public final class TypeChecker {
                     TypeChecker.unify(context, va, vb.getInstantiatedType());
                 } else {
                     // two plain type variable are unified by sharing the internal reference of (future) type instance   
-                    vb.shareInstanceOf(va);
+                    vb.unifyWith(va);
                 }
             } else if (b instanceof FunType) {
             	// unifying a type variable with a function succeeds if it has no constraints, because function instances are not supported (yet?).
             	FunType fb = (FunType) b;
             	if (va.hasConstraints()) {
                     TypeChecker.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
-                    throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context, a, b);
+                    throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context);
             	} else {
             		va.setConcreteInstance(fb);
             	}
@@ -79,7 +67,7 @@ public final class TypeChecker {
                 TypeApp tb = (TypeApp) b;
                 if (va.hasConstraints()) {
                     TypeChecker.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
-                    throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context, a, b);
+                    throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context);
                 } else {
                     va.setConcreteInstance(tb);
                 }
@@ -92,7 +80,7 @@ public final class TypeChecker {
                     va.setConcreteInstance(tb);
                 } else {
                     TypeChecker.logger.info(String.format("Unable to unify types %s and %s for context %s", a, b, context));
-                    throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context, a, b);
+                    throw new HaskellTypeError(String.format("%s ∉ constraints of %s", b, a), context);
                 }
             }
         } else if (b instanceof TypeVar && a instanceof ConcreteType) {
@@ -106,7 +94,7 @@ public final class TypeChecker {
             if (! ca.getName().equals(cb.getName()))
             {
                 TypeChecker.logger.info(String.format("Mismatching TypeCon %s and %s for context %s", a, b, context));
-                throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context, a, b);
+                throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context);
             }
         } else if (a instanceof FunType && b instanceof FunType) {
             // Unifying function types is pairwise unification of its argument and result. 
@@ -123,25 +111,8 @@ public final class TypeChecker {
         } else {
             // Running out of things that can be unified, so bail out with a type error.
             TypeChecker.logger.info(String.format("Given up to unify types %s and %s for context %s", a, b, context));
-            throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context, a, b);
+            throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context);
         }
     }
 
-    /**
-     * Creates and returns a new {@code VarT} instance with a unique identifier.
-     * @param prefix The base name of the type variable.
-     * @param constraints Constraints for the new VarT.
-     * @return A new variable type.
-     */
-    public static TypeVar makeVariable(final String prefix, final Set<TypeClass> constraints) {
-        return new TypeVar(prefix, TypeChecker.tvOffset++, constraints, null);
-    }
-
-    /**
-     * Creates and returns a new {@code VarT} instance with a unique identifier.
-     * @return A new variable type.
-     */
-    public static TypeVar makeVariable(final String prefix) {
-        return makeVariable(prefix, new HashSet<TypeClass>());
-    }
 }

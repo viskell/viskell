@@ -1,13 +1,13 @@
 package nl.utwente.group10.haskell.type;
 
 import static org.junit.Assert.*;
-import nl.utwente.group10.haskell.catalog.HaskellCatalog;
-import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.CatalogException;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
+
+import nl.utwente.group10.ghcj.HaskellException;
+import nl.utwente.group10.haskell.env.Environment;
+import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.expr.Apply;
-import nl.utwente.group10.haskell.expr.Expr;
-import nl.utwente.group10.haskell.expr.Ident;
+import nl.utwente.group10.haskell.expr.Expression;
+import nl.utwente.group10.haskell.expr.Hole;
 import nl.utwente.group10.haskell.expr.Value;
 
 import org.junit.Test;
@@ -15,94 +15,110 @@ import org.junit.Test;
 public class UnificationTest {
 
     @Test
-    public void testUnifyUndefined() throws CatalogException, HaskellException {
-        Env env = new HaskellCatalog().asEnvironment();
+    public void testUnifyUndefined() throws HaskellException {
+        Environment env = new HaskellCatalog().asEnvironment();
 
-        Expr e0 = new Ident("const");
-        Type t0 = e0.analyze(env);
-        assertEquals("a -> b -> a", t0.toHaskellType());
+        Expression e0 = env.useFun("const");
+        Type t0 = e0.findType();
+        assertEquals("a -> b -> a", t0.prettyPrint());
 
-        Expr e1 = new Apply(e0, new Ident("undefined"));
-        Type t1 = e1.analyze(env);
-        assertEquals("b -> a", t1.toHaskellType());
+        Expression e1 = new Apply(e0, new Hole());
+        Type t1 = e1.findType();
+        assertEquals("b -> a", t1.prettyPrint());
 
-        Expr e2 = new Apply(e1, new Ident("undefined"));
-        Type t2 = e2.analyze(env);
+        Expression e2 = new Apply(e1, new Hole());
+        Type t2 = e2.findType();
 
-        TypeChecker.unify(t2, new Ident("undefined").analyze(env));
+        TypeChecker.unify(e2, t2, new Hole().findType());
         //No exception thrown -> Types are the same, as expected. The test will fail if an Exception is thrown.
     }
 
     @Test
-    public void testUnifyFloats() throws CatalogException, HaskellException {
-        Env env = new HaskellCatalog().asEnvironment();
+    public void testUnifyFloats() throws HaskellException {
+        Environment env = new HaskellCatalog().asEnvironment();
         
-        Expr e0 = new Ident("const");
-        Type t0 = e0.analyze(env);
-        assertEquals("a -> b -> a", t0.toHaskellType());
+        Expression e0 = env.useFun("const");
+        Type t0 = e0.findType();
+        assertEquals("a -> b -> a", t0.prettyPrint());
 
-        Expr e1 = new Apply(e0, new Value(Type.con("Float"), "5.0"));
-        Type t1 = e1.analyze(env);
-        assertEquals("b -> Float", t1.toHaskellType());
+        Expression e1 = new Apply(e0, new Value(Type.con("Float"), "5.0"));
+        Type t1 = e1.findType();
+        assertEquals("b -> Float", t1.prettyPrint());
 
-        Expr e2 = new Apply(e1, new Value(Type.con("Float"), "5.0"));
-        Type t2 = e2.analyze(env);
-        assertEquals("Float", t2.toHaskellType());
+        Expression e2 = new Apply(e1, new Value(Type.con("Float"), "5.0"));
+        Type t2 = e2.findType();
+        assertEquals("Float", t2.prettyPrint());
     }
     
     @Test
-    public void testUnifyABool() throws HaskellException{
-        Env env = new HaskellCatalog().asEnvironment();
+    public void testUnifyABool() throws HaskellException {
+        Environment env = new HaskellCatalog().asEnvironment();
 
-        Expr e0 = new Ident("const");
-        Type t0 = e0.analyze(env);
+        Expression e0 = env.useFun("const");
+        e0.findType();
 
-        Expr e1 = new Apply(e0, new Ident("undefined"));
-        Type t1 = e1.analyze(env);
+        Expression e1 = new Apply(e0, new Hole());
+        e1.findType();
 
-        Expr e2 = new Apply(e1, new Ident("undefined"));
-        Type t2 = e2.analyze(env);
+        Expression e2 = new Apply(e1, new Hole());
+        Type t2 = e2.findType();
         
-        Type t3 = TypeChecker.makeVariable("t");
+        Type t3 = TypeScope.unique("t");
         Type t4 = Type.con("Bool");
         
-        TypeChecker.unify(t3, t4);
+        TypeChecker.unify(e1, t3, t4);
         
-        TypeChecker.unify(t2, t4);
+        TypeChecker.unify(e2, t2, t4);
     }
 
     @Test
     public void testTypeclassCopy() throws HaskellException {
-        Env env = new HaskellCatalog().asEnvironment();
-        TypeClass num = env.lookupClass("Num");
-        TypeClass read = env.lookupClass("Show");
-        TypeClass show = env.lookupClass("Read");
+        Environment env = new HaskellCatalog().asEnvironment();
+        TypeClass num = env.testLookupClass("Num");
+        TypeClass read = env.testLookupClass("Show");
+        TypeClass show = env.testLookupClass("Read");
 
+        TypeScope scope = new TypeScope();
         Type ct = Type.con("Float");
-        Type t0 = Type.var("a", num, read);
-        Type t1 = Type.var("b", num, show);
+        Type t0 = scope.getVarTC("a", num, read);
+        Type t1 = scope.getVarTC("b", num, show);
 
-        Expr e0 = new Value(t0, "?");
-        Expr e1 = new Value(t1, "?");
-        Expr e2 = new Apply(new Apply(new Ident("(+)"), e0), e1);
+        Expression e0 = new Value(t0, "?");
+        Expression e1 = new Value(t1, "?");
+        Expression e2 = new Apply(new Apply(env.useFun("(+)"), e0), e1);
 
-        e2.analyze(env);
+        e2.findType();
 
-        TypeChecker.unify(t0, ct);
-        TypeChecker.unify(t1, ct);
+        TypeChecker.unify(e0, t0, ct);
+        TypeChecker.unify(e1, t1, ct);
     }
     
     @Test
     public void testInstanceChaining() throws HaskellException {
-        Env env = new HaskellCatalog().asEnvironment();
+        Environment env = new HaskellCatalog().asEnvironment();
 
         // (id (id (1 :: Int)))
-        Expr e0 = new Apply(new Ident("id"),
-            new Apply(new Ident("id"),
+        Expression e0 = new Apply(env.useFun("id"),
+            new Apply(env.useFun("id"),
                 new Value(Type.con("Int"), "1")));
 
-        Type t0 = e0.analyze(env);
+        Type t0 = e0.findType();
 
-        assertEquals(t0.toHaskellType(), "Int");
+        assertEquals(t0.prettyPrint(), "Int");
+    }
+    
+    @Test
+    public void testDeepUnification() throws HaskellException {
+        TypeScope scope = new TypeScope();
+        TypeVar a = scope.getVar("a");
+        TypeVar b = scope.getVar("b");
+        TypeVar x = scope.getVar("x");
+        TypeVar y = scope.getVar("y");
+        Expression dummy = new Hole();
+        TypeChecker.unify(dummy, a, b);
+        TypeChecker.unify(dummy, x, y);
+        TypeChecker.unify(dummy, a, x);
+        TypeChecker.unify(dummy, b, Type.con("Int"));
+        assertEquals("Int", y.prettyPrint());
     }
 }

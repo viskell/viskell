@@ -1,8 +1,7 @@
 package nl.utwente.group10.haskell.expr;
 
-import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.exceptions.HaskellTypeError;
+import nl.utwente.group10.ghcj.HaskellException;
+import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.type.*;
 
 import org.junit.Before;
@@ -16,17 +15,24 @@ public class ExprTest {
     private final TypeCon doubl = Type.con("Double");
     private final TypeCon string = Type.con("String");
 
-    private final TypeClass num = new TypeClass("Num", integer, floating, doubl);
+    private TypeClass num;
 
-    private Expr expr;
-    private Env env;
+    private Expression expr;
+    private Environment env;
 
     @Before
-    public final void setUp() {
+    public final void setUp() throws HaskellException {
+        this.env = new Environment();
+
+        this.num = new TypeClass("Num", integer, floating, doubl);
+        this.env.addTypeClass(this.num);
+        this.env.addTestSignature("(*)", "Num a => a -> a -> a");
+        this.env.addTestSignature("map", "(a -> b) -> [a] -> [b]");
+
         this.expr = new Apply(
                 new Apply(
-                        new Ident("map"),
-                        new Ident("(*)")
+                        this.env.useFun("map"),
+                        this.env.useFun("(*)")
                 ),
                 new Value(
                         Type.listOf(this.integer),
@@ -34,46 +40,40 @@ public class ExprTest {
                 )
         );
 
-        this.env = new Env();
-
-        this.env.addTypeClass(this.num);
-        this.env.addExpr("(*)", "Num a => a -> a -> a");
-        this.env.addExpr("map", "(a -> b) -> [a] -> [b]");
     }
 
     @Test
     public final void testAnalyze() throws HaskellException {
-        assertEquals("[Int -> Int]", this.expr.analyze(this.env).toHaskellType());
+        assertEquals("[Int -> Int]", this.expr.findType().prettyPrint());
     }
 
     @Test
-    public final void testGetType() throws HaskellException {
-        Type type = this.expr.getType(this.env);
+    public final void testCacheType() throws HaskellException {
+        Type type = this.expr.findType();
 
-        // Test is object is equal after subsequent call and not equal to the result of analyze
-        assertTrue(type == this.expr.getType(env));
-        assertFalse(this.expr instanceof Value || type == this.expr.analyze(env)); // Only valid for non-Value exprs.
+        // Test is object is equal after subsequent call
+        assertTrue(type == this.expr.findType());
     }
 
     @Test(expected = HaskellTypeError.class)
     public final void testTypeclassError() throws HaskellException {
         expr = new Apply(
                 new Apply(
-                        new Ident("map"),
-                        new Ident("(*)")
+                        this.env.useFun("map"),
+                        this.env.useFun("(*)")
                 ),
                 new Value(
                         Type.listOf(this.string),
                         "[\"a\", \"b\", \"c\"]"
                 )
         );
-        assertNotEquals("[(String -> String)]", expr.analyze(this.env).toHaskellType());
+        assertNotEquals("[(String -> String)]", expr.findType().prettyPrint());
     }
 
     @Test
     public final void testValueToHaskell() throws HaskellException {
-        final Expr v = new Value(this.integer, "10");
-        assertEquals(this.integer.toHaskellType(), v.analyze(new Env()).toHaskellType());
+        final Expression v = new Value(this.integer, "10");
+        assertEquals(this.integer.prettyPrint(), v.findType().prettyPrint());
         assertEquals("(10)", v.toHaskell());
     }
 

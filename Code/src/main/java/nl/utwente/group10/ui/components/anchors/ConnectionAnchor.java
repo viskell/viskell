@@ -11,8 +11,8 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.ghcj.HaskellException;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
@@ -124,15 +124,15 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /**
      * @return The Expr this ConnectionAnchor represents (coming from a Block).
      */
-    public abstract Expr getExpr();
+    public abstract Expression getExpr();
     
     /**
      * @return Optional of the string representation of the in- or output type.
      */
     public Optional<String> getStringType() {
         try {
-            Type type = getExpr().getType(getBlock().getPane().getEnvInstance());
-            return Optional.of(type.toHaskellType());
+            Type type = getExpr().findType();
+            return Optional.of(type.prettyPrint());
         } catch (HaskellException e) {
             return Optional.empty();
         }

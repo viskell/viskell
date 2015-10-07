@@ -17,11 +17,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
-import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
-import nl.utwente.group10.haskell.catalog.HaskellCatalog;
-import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.ghcj.HaskellException;
+import nl.utwente.group10.haskell.env.Environment;
+import nl.utwente.group10.haskell.env.HaskellCatalog;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
@@ -52,13 +52,13 @@ public class CustomUIPane extends TactilePane {
     private boolean dragging;
 
     private HaskellCatalog catalog;
-    private Env envInstance;
+    private Environment envInstance;
 
     /**
      * Maps expressions to function blocks for looking up the function block responsible for an expression in case of an
      * error.
      */
-    private Map<Expr, FunctionBlock> exprToFunction;
+    private Map<Expression, FunctionBlock> exprToFunction;
 
     /**
      * Constructs a new instance.
@@ -71,11 +71,11 @@ public class CustomUIPane extends TactilePane {
         this.offset = Point2D.ZERO;
         this.catalog = catalog;
         this.envInstance = catalog.asEnvironment();
-        this.exprToFunction = new HashMap<Expr, FunctionBlock>();
+        this.exprToFunction = new HashMap<Expression, FunctionBlock>();
 
         try {
             this.ghci = Optional.of(new GhciSession());
-        } catch (GhciException e) {
+        } catch (HaskellException e) {
             this.ghci = Optional.empty();
         }
 
@@ -172,7 +172,7 @@ public class CustomUIPane extends TactilePane {
     /**
      * @return The Env instance to be used within this CustomUIPane.
      */
-    public Env getEnvInstance() {
+    public Environment getEnvInstance() {
         return envInstance;
     }
 
@@ -274,7 +274,7 @@ public class CustomUIPane extends TactilePane {
      * tree.
      * @param expr The expression to remove.
      */
-    public void removeExprToFunction(Expr expr) {
+    public void removeExprToFunction(Expression expr) {
         exprToFunction.remove(expr);
     }
 
@@ -284,7 +284,7 @@ public class CustomUIPane extends TactilePane {
      * @param expr The expression to associate.
      * @param block The function block for the expression.
      */
-    public void putExprToFunction(Expr expr, FunctionBlock block) {
+    public void putExprToFunction(Expression expr, FunctionBlock block) {
         exprToFunction.put(expr,block);
     }
 
@@ -293,7 +293,7 @@ public class CustomUIPane extends TactilePane {
      * @param expr The expression to get the function block for.
      * @return The function block for the given expression.
      */
-    public FunctionBlock getExprToFunction(Expr expr) {
+    public FunctionBlock getExprToFunction(Expression expr) {
         return exprToFunction.get(expr);
     }
 }

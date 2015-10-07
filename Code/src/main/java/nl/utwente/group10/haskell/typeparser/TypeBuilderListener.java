@@ -2,8 +2,6 @@ package nl.utwente.group10.haskell.typeparser;
 
 import java.util.*;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import nl.utwente.group10.haskell.type.*;
 
 /**
@@ -13,17 +11,14 @@ class TypeBuilderListener extends TypeBaseListener {
     /** Temporary storage area for compound types. */
     private final Stack<List<Type>> stack = new Stack<>();
 
-    /** Temporary reference store for variable types. */
-    private final HashMap<String, TypeVar> vars = new HashMap<>();
-
-    /** Temporary reference store for type classes. */
-    private final Multimap<String, TypeClass> constraints = HashMultimap.create();
-
     /** Temporary store for the last type class. */
     private Optional<TypeClass> typeClass = Optional.empty();
 
     /** The available type classes. */
     private final Map<String, TypeClass> typeClasses;
+    
+    /** The type scope in which type variables are looked up and built. */
+    TypeScope scope = new TypeScope();
 
     /**
      * Build a TypeBuilderListener.
@@ -40,13 +35,6 @@ class TypeBuilderListener extends TypeBaseListener {
     }
 
     @Override
-    public void exitTypeClasses(TypeParser.TypeClassesContext ctx) {
-        for (String varName : this.constraints.keySet()) {
-            vars.put(varName, Type.var(varName, new HashSet<TypeClass>(this.constraints.get(varName))));
-        }
-    }
-
-    @Override
     public void enterTypeWithClass(TypeParser.TypeWithClassContext ctx) {
         this.typeClass = Optional.empty();
     }
@@ -54,26 +42,18 @@ class TypeBuilderListener extends TypeBaseListener {
     @Override
     public void exitClassedType(TypeParser.ClassedTypeContext ctx) {
         if (this.typeClass.isPresent()) {
-            this.constraints.put(ctx.getText(), this.typeClass.get());
+            this.scope.introduceConstraint(ctx.getText(), this.typeClass.get());
         }
     }
 
     @Override
     public void exitTypeClass(TypeParser.TypeClassContext ctx) {
-        this.typeClass = Optional.ofNullable(this.typeClasses.getOrDefault(ctx.getText(), null));
+        this.typeClass = Optional.ofNullable(this.typeClasses.get(ctx.getText()));
     }
 
     @Override
     public final void exitVariableType(TypeParser.VariableTypeContext ctx) {
-        String varName = ctx.getText();
-
-        if (this.vars.containsKey(varName)) {
-            this.addParam(this.vars.get(varName));
-        } else {
-            TypeVar var = Type.var(varName);
-            this.vars.put(varName, var);
-            this.addParam(var);
-        }
+        this.addParam(this.scope.getVar(ctx.getText()));
     }
 
     @Override

@@ -1,9 +1,8 @@
-package nl.utwente.group10.haskell.catalog;
+package nl.utwente.group10.haskell.env;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import nl.utwente.group10.haskell.env.Env;
-import nl.utwente.group10.haskell.exceptions.CatalogException;
+
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.haskell.type.TypeClass;
 import nl.utwente.group10.haskell.type.TypeCon;
@@ -30,9 +29,9 @@ import javax.xml.validation.SchemaFactory;
 public class HaskellCatalog {
     private Map<String, TypeClass> classes;
 
-    private Map<String, FunctionEntry> functions;
+    private Map<String, CatalogFunction> functions;
 
-    private Multimap<String, FunctionEntry> categories;
+    private Multimap<String, CatalogFunction> categories;
 
     /** Default path to the XML file. */
     public static final String XML_PATH = "/catalog/catalog.xml";
@@ -43,9 +42,8 @@ public class HaskellCatalog {
     /**
      * Constructs a Haskell catalog using the given file location.
      * @param path The path to the catalog XML file.
-     * @throws CatalogException
      */
-    public HaskellCatalog(final String path) throws CatalogException {
+    public HaskellCatalog(final String path) {
         this.functions = new HashMap<>();
         this.categories = HashMultimap.create();
 
@@ -56,9 +54,9 @@ public class HaskellCatalog {
 
         this.classes = this.parseClasses(classNodes);
 
-        Set<FunctionEntry> entries = this.parseFunctions(functionNodes, this.classes);
+        Set<CatalogFunction> entries = this.parseFunctions(functionNodes, this.classes);
       
-        for (FunctionEntry entry : entries) {
+        for (CatalogFunction entry : entries) {
             this.functions.put(entry.getName(), entry);
             this.categories.put(entry.getCategory(), entry);
         }
@@ -66,9 +64,8 @@ public class HaskellCatalog {
 
     /**
      * Constructs a Haskell catalog using the default file location.
-     * @throws CatalogException
      */
-    public HaskellCatalog() throws CatalogException {
+    public HaskellCatalog() {
         this(HaskellCatalog.XML_PATH);
     }
 
@@ -83,22 +80,15 @@ public class HaskellCatalog {
      * @param key The name of the category.
      * @return A set of the entries in the given category.
      */
-    public final Collection<FunctionEntry> getCategory(final String key) {
+    public final Collection<CatalogFunction> getCategory(final String key) {
         return this.categories.get(key);
     }
 
     /**
      * @return A new environment based on the entries of this catalog.
      */
-    public final Env asEnvironment() {
-        Map<String, Type> functions = new HashMap<>();
-
-        // Build function type map
-        for (FunctionEntry entry : this.functions.values()) {
-            functions.put(entry.getName(), entry.getSignature());
-        }
-
-        return new Env(functions, new HashMap<String, TypeClass>(this.classes));
+    public final Environment asEnvironment() {
+        return new Environment(new HashMap<String, FunctionInfo>(this.functions), new HashMap<String, TypeClass>(this.classes));
     }
 
     /**
@@ -121,9 +111,19 @@ public class HaskellCatalog {
                 Node inode = inodes.item(j);
                 NamedNodeMap attrs = inode.getAttributes();
                 String inst = attrs.getNamedItem("name").getTextContent();
-                Type t = builder.build(inst);
-                if (t instanceof TypeCon) {
-                    tc.addType((TypeCon) t);
+                if ("instance".equals(inode.getNodeName())) {
+                    String constrArgs = attrs.getNamedItem("constrainedArgs").getTextContent();
+                    Type t = builder.build(inst);
+                    if (t instanceof TypeCon) {
+                        tc.addInstance((TypeCon) t, Integer.parseInt(constrArgs));
+                    }
+                } else if ("superClass".equals(inode.getNodeName())) {
+                    TypeClass sc = entries.get(inst);
+                    if (sc == null) {
+                       throw new RuntimeException("Can't resolve superclass " + inst + " of " + name);
+                    } else {
+                        tc.addSuperClass(sc);
+                    }
                 }
             }
             
@@ -138,8 +138,8 @@ public class HaskellCatalog {
      * @param nodes The nodes to parse.
      * @return A set of FunctionEntry objects for the given nodes.
      */
-    protected final Set<FunctionEntry> parseFunctions(NodeList nodes, Map<String, TypeClass> typeClasses) {
-        Set<FunctionEntry> entries = new HashSet<>();
+    protected final Set<CatalogFunction> parseFunctions(NodeList nodes, Map<String, TypeClass> typeClasses) {
+        Set<CatalogFunction> entries = new HashSet<>();
 
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
@@ -152,7 +152,7 @@ public class HaskellCatalog {
 
             TypeBuilder builder = new TypeBuilder(typeClasses);
             Type tsig = builder.build(signature);
-            entries.add(new FunctionEntry(name, category, tsig, documentation));
+            entries.add(new CatalogFunction(name, category, tsig, documentation));
         }
 
         return entries;
@@ -163,9 +163,8 @@ public class HaskellCatalog {
      * @param XMLPath The path to the XML file.
      * @param XSDPath The path to the XSD file.
      * @return The document for the XML file.
-     * @throws CatalogException
      */
-    protected static Document getDocument(final String XMLPath, final String XSDPath) throws CatalogException {
+    protected static Document getDocument(final String XMLPath, final String XSDPath) {
         URL xmlFile = HaskellCatalog.class.getResource(XMLPath);
         URL schemaFile = HaskellCatalog.class.getResource(XSDPath);
 
@@ -181,7 +180,7 @@ public class HaskellCatalog {
 
             return dBuilder.parse(xmlFile.openStream());
         } catch (IOException | ParserConfigurationException | SAXException e) {
-            throw new CatalogException(e);
+            throw new RuntimeException("could not read or parse catalog file", e);
         }
     }
     

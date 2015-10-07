@@ -11,8 +11,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-import nl.utwente.group10.ghcj.GhciException;
 import nl.utwente.group10.ghcj.GhciSession;
+import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 
@@ -76,7 +76,7 @@ public class RGBBlock extends DisplayBlock {
 
             double v = Math.max(0.0, Math.min(1.0, Double.valueOf(result)));
             return (int) Math.round(v * 255);
-        } catch (NumberFormatException | GhciException | NoSuchElementException e) {
+        } catch (NumberFormatException | HaskellException | NoSuchElementException e) {
             return 0;
         }
     }

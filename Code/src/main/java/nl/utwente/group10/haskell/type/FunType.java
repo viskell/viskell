@@ -1,7 +1,5 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.IdentityHashMap;
-
 /**
  * Type of a Haskell function.
  */
@@ -21,7 +19,7 @@ public class FunType extends ConcreteType {
      * @param arg The argument type that this function type accepts.
      * @param result The result type that this function type returns.
      */
-    FunType(final Type arg, final Type res) {
+    public FunType(final Type arg, final Type res) {
         this.argument = arg;
         this.result = res;
     }
@@ -35,12 +33,12 @@ public class FunType extends ConcreteType {
     }
 
     @Override
-    public final String toHaskellType(final int fixity) {
+    public final String prettyPrint(final int fixity) {
         final StringBuilder out = new StringBuilder();
 
-        out.append(this.argument.toHaskellType(1));
+        out.append(this.argument.prettyPrint(1));
         out.append(" -> ");
-        out.append(this.result.toHaskellType(0));
+        out.append(this.result.prettyPrint(0));
 
         if (fixity > 0) {
             return "(" + out.toString() + ")";
@@ -50,8 +48,8 @@ public class FunType extends ConcreteType {
     }
 
     @Override
-    protected FunType getFreshInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
-        return new FunType(this.argument.getFreshInstance(staleToFresh), this.result.getFreshInstance(staleToFresh));
+    public FunType getFresh(TypeScope scope) {
+        return new FunType(this.argument.getFresh(scope), this.result.getFresh(scope));
     }
 
     @Override

@@ -9,6 +9,6 @@ public class FunTypeTest {
     public final void toHaskellTypeTest() {
         final Type integer = Type.con("Integer");
         final Type function = Type.fun(integer, integer);
-        assertEquals("Integer -> Integer", function.toHaskellType());
+        assertEquals("Integer -> Integer", function.prettyPrint());
     }
 }

@@ -1,7 +1,9 @@
 package nl.utwente.group10.ui.components.blocks.function;
 
 import static org.junit.Assert.*;
-import nl.utwente.group10.haskell.type.Type;
+
+import nl.utwente.group10.haskell.env.Environment;
+import nl.utwente.group10.haskell.env.FunctionInfo;
 import nl.utwente.group10.ui.components.blocks.ComponentTest;
 
 import org.junit.Before;
@@ -17,10 +19,10 @@ public class FunctionBlockTest extends ComponentTest {
      */
     @Before
     public void setUp() throws Exception {
-        //TODO: not entirely correct.
-        Type func = Type.fun(Type.con("Int"), Type.con("Int"), Type.con("Int"));
+        Environment env = getPane().getEnvInstance();
+        FunctionInfo add = env.lookupFun("(+)");
 
-        functionBlock = new FunctionBlock("(+)", func, getPane());
+        functionBlock = new FunctionBlock(add, getPane());
     }
 
     /**

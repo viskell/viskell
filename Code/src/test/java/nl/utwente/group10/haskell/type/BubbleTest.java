@@ -1,6 +1,5 @@
 package nl.utwente.group10.haskell.type;
 
-import nl.utwente.group10.haskell.env.Env;
 import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Value;
 
@@ -11,8 +10,10 @@ import static org.junit.Assert.assertEquals;
 public class BubbleTest {
     @Test
     public void testBubbleUnit() throws Exception {
-        TypeVar a = Type.var("a");
-        TypeVar z = Type.var("z");
+        TypeScope scope = new TypeScope();
+
+        TypeVar a = scope.getVar("a");
+        TypeVar z = scope.getVar("z");
         TypeCon u = Type.con("Unit");
 
         Type aFunc = Type.fun(a, a);
@@ -22,26 +23,27 @@ public class BubbleTest {
         Apply apply = new Apply(new Value(bFunc, "unit"), new Apply(new Value(aFunc, "id"), new Value(z, "undefined")));
 
         // Do type inference.
-        Type t = apply.analyze(new Env());
+        Type t = apply.findType();
 
         // Inferred type of the whole expression is 'Unit'.
-        assertEquals("Unit", t.toHaskellType());
+        assertEquals("Unit", t.prettyPrint());
 
         // Inferred type of "(unit (id undefined))" is 'Unit'.
-        assertEquals("Unit", u.toHaskellType());
+        assertEquals("Unit", u.prettyPrint());
 
         // Inferred type of "(id undefined)" is 'Unit'.
-        assertEquals("Unit", a.toHaskellType());
+        assertEquals("Unit", a.prettyPrint());
 
         // Inferred type of (this instance of the 'value') "undefined" is 'Unit'.
-        assertEquals("Unit", z.toHaskellType());
+        assertEquals("Unit", z.prettyPrint());
     }
 
     @Test
     public void testBubbleAddition() throws Exception {
-        TypeVar a = TypeChecker.makeVariable("a");
-        TypeVar b = TypeChecker.makeVariable("b");
-        TypeVar c = TypeChecker.makeVariable("c");
+        TypeScope scope = new TypeScope();
+        TypeVar a = scope.getVar("a");
+        TypeVar b = scope.getVar("b");
+        TypeVar c = scope.getVar("c");
         TypeCon floatT = Type.con("Float");
 
         Apply apply = new Apply(
@@ -57,20 +59,21 @@ public class BubbleTest {
 
         assertEquals("(((+) ((id) (undefined))) (undefined))", apply.toHaskell());
 
-        Type t = apply.analyze(new Env());
+        Type t = apply.findType();
 
-        assertEquals("Float", t.toHaskellType());
-        assertEquals("Float", a.toHaskellType());
-        assertEquals("Float", b.toHaskellType());
-        assertEquals("Float", c.toHaskellType());
+        assertEquals("Float", t.prettyPrint());
+        assertEquals("Float", a.prettyPrint());
+        assertEquals("Float", b.prettyPrint());
+        assertEquals("Float", c.prettyPrint());
     }
 
     @Test
     public void testBubbleEquals() throws Exception {
+        TypeScope scope = new TypeScope();
         TypeCon Float = Type.con("Float");
         TypeClass Num = new TypeClass("Num", Float);
-        TypeVar a = Type.var("a", Num);
-        TypeVar b = Type.var("b");
+        TypeVar a = scope.getVarTC("a", Num);
+        TypeVar b = scope.getVar("b");
 
         Apply apply = new Apply(
                 new Apply(
@@ -82,10 +85,10 @@ public class BubbleTest {
 
         assertEquals("(((==) (5.0)) (undefined))", apply.toHaskell());
 
-        Type t = apply.analyze(new Env());
+        Type t = apply.findType();
 
-        assertEquals("Float", t.toHaskellType());
-        assertEquals("Float", a.toHaskellType());
-        assertEquals("Float", b.toHaskellType());
+        assertEquals("Float", t.prettyPrint());
+        assertEquals("Float", a.prettyPrint());
+        assertEquals("Float", b.prettyPrint());
     }
 }

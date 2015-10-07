@@ -1,6 +1,6 @@
 package nl.utwente.group10.ui.components.anchors;
 
-import nl.utwente.group10.haskell.expr.Expr;
+import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.handlers.AnchorHandler;
 
@@ -31,7 +31,7 @@ public class OutputAnchor extends ConnectionAnchor {
      * @return The expression carried by the block to which this anchor belongs.
      */
     @Override
-    public Expr getExpr() {
+    public Expression getExpr() {
         return getBlock().getExpr();
     }
 }

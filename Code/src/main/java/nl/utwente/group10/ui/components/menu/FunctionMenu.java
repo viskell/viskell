@@ -18,10 +18,10 @@ import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import nl.utwente.group10.haskell.catalog.FunctionEntry;
-import nl.utwente.group10.haskell.catalog.HaskellCatalog;
-import nl.utwente.group10.haskell.exceptions.HaskellException;
-import nl.utwente.group10.haskell.expr.Ident;
+import nl.utwente.group10.ghcj.HaskellException;
+import nl.utwente.group10.haskell.env.CatalogFunction;
+import nl.utwente.group10.haskell.env.FunctionInfo;
+import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.type.Type;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.ComponentLoader;
@@ -78,16 +78,16 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         Collections.sort(categories);
 
         for (String category : categories) {
-            ObservableList<FunctionEntry> items = FXCollections.observableArrayList();
+            ObservableList<CatalogFunction> items = FXCollections.observableArrayList();
 
-            ArrayList<FunctionEntry> entries = new ArrayList<>(catalog.getCategory(category));
+            ArrayList<CatalogFunction> entries = new ArrayList<>(catalog.getCategory(category));
             Collections.sort(entries);
             items.addAll(entries);
 
-            ListView<FunctionEntry> listView = new ListView<>(items);
+            ListView<CatalogFunction> listView = new ListView<>(items);
 
             listView.setCellFactory((list) -> {
-                return new ListCell<FunctionEntry>() {
+                return new ListCell<CatalogFunction>() {
                     {
                         this.setOnMouseReleased(e -> {
                             addFunctionBlock(this.getItem());
@@ -95,7 +95,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                     }
 
                     @Override
-                    protected void updateItem(FunctionEntry item, boolean empty) {
+                    protected void updateItem(CatalogFunction item, boolean empty) {
                         super.updateItem(item, empty);
 
                         if (item == null || empty) {
@@ -141,11 +141,8 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
     }
 
-    private void addFunctionBlock(FunctionEntry entry) {
-        // TODO: Once the Env is available, the type should be pulled from the
-        // Env here (don't just calculate it over and over). Or just pass the
-        // signature String.
-        FunctionBlock fb = new FunctionBlock(entry.getName(), entry.getSignature(), parent);
+    private void addFunctionBlock(FunctionInfo entry) {
+        FunctionBlock fb = new FunctionBlock(entry, parent);
         fb.setConnectionState(ConnectionCreationManager.nextConnectionState());
         addBlock(fb);
     }
@@ -161,12 +158,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         result.ifPresent(value -> {
             parent.getGhciSession().ifPresent(ghci -> {
                 try {
-                    String t = ghci.pull(new Ident(":t " + value)).split(" :: ")[1].trim();
-                    Type type = parent.getEnvInstance().buildType(t);
-
+                    Type type = ghci.pullType(value, parent.getEnvInstance());
                     ValueBlock val = new ValueBlock(this.parent, type, value);
                     addBlock(val);
-                } catch (HaskellException | ArrayIndexOutOfBoundsException e) {
+                } catch (HaskellException e) {
                     // Retry.
                     addValueBlock();
                 }
