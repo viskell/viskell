@@ -8,7 +8,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,15 +21,7 @@ public final class TypeBuilder {
      * @param typeClasses The available type classes.
      */
     public TypeBuilder(Map<String, TypeClass> typeClasses) {
-        if (typeClasses == null) {
-            this.typeClasses = new HashMap<String, TypeClass>();
-        } else {
-            this.typeClasses = typeClasses;
-        }
-    }
-
-    public TypeBuilder() {
-        this(null);
+        this.typeClasses = typeClasses;
     }
 
     /**

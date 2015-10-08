@@ -29,21 +29,11 @@ public abstract class Expression {
     public final Type findType() throws HaskellTypeError {
         if (!this.cachedType.isPresent()) {
             Type type = this.inferType();
-            this.setCachedType(type);
+            this.cachedType = Optional.of(type);
             return type;
         }
 
         return this.cachedType.get();
-    }
-
-    /**
-     * Sets the cached type for this expression.
-     * @param type The type to cache.
-     */
-    private final void setCachedType(final Type type) {
-        if (!this.cachedType.isPresent() || this.cachedType.get() != type) {
-            this.cachedType = Optional.ofNullable(type);
-        }
     }
 
     /**

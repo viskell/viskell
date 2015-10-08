@@ -2,7 +2,6 @@ package nl.utwente.group10.haskell.type;
 
 import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.TreeSet;
 
 public class TypeScope {
     /**
@@ -35,7 +34,7 @@ public class TypeScope {
             return this.vars.get(name);
         }
         
-        TypeVar var = new TypeVar(name, false, new TreeSet<>(), null);
+        TypeVar var = new TypeVar(name, false);
         this.vars.put(name, var);
         return var;
     }
@@ -76,7 +75,7 @@ public class TypeScope {
      * @return The new type variable
      */
     public static TypeVar unique(String prefix) {
-        return new TypeVar(prefix + "___" + Integer.toHexString(tvOffset++), true, new TreeSet<>(), null);
+        return new TypeVar(prefix + "___" + Integer.toHexString(tvOffset++), true);
     }
 
     

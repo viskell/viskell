@@ -2,9 +2,6 @@ package nl.utwente.group10.haskell.type;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
-
-import com.google.common.collect.Sets;
 
 /**
  * Haskell TypeClass with its instances and superclasses.
@@ -89,6 +86,13 @@ public class TypeClass implements Comparable<TypeClass> {
     }
 
     /**
+     * @return the super classes of this type class
+     */
+    public Set<TypeClass> getSupers() {
+        return supers;
+    }
+    
+    /**
      * @param tc The super class that this class requires 
      */
     public final void addSuperClass(TypeClass tc) {
@@ -106,23 +110,6 @@ public class TypeClass implements Comparable<TypeClass> {
         return this.instances.stream().anyMatch(i -> i.compareTo(inst) == 0);
     }
 
-    /**
-     * @param classes A set of class constraints to be simplified
-     * @return A set of class constraints with all implied super classes removed
-     */
-    public static TreeSet<TypeClass> simplifyConstraints(TreeSet<TypeClass> classes) {
-        if (classes.size() <= 1) {
-            return classes;
-        }
-        
-        Set<TypeClass> allSupers = new HashSet<>();
-        for (TypeClass tc : classes) {
-            allSupers.addAll(tc.supers);
-        }
-
-        return new TreeSet<>(Sets.difference(classes, allSupers));
-    }
-    
     public final String toString() {
         return String.format("%s=>%s:%s", this.supers.stream().map(t ->t.getName()), this.name, this.instances.toString());
     }
