@@ -160,7 +160,7 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         getPane().putExprToFunction(expr, this);
         
         for (InputAnchor in : getActiveInputs()) {
-            expr = new Apply(expr, in.getExpr());
+            expr = new Apply(expr, in.getUpdatedExpr());
         }
         super.updateExpr();
     }
