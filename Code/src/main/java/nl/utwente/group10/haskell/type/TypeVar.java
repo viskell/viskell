@@ -211,6 +211,14 @@ public class TypeVar extends Type {
         this.instance.constraints.addExtraConstraint(typeClass);
     }
 
+    /**
+     * Extends the constraint set with extra type class.   
+     * @param constraints set to be added to this type variable
+     */
+    protected void introduceConstrainst(ConstraintSet constraints) {
+        this.instance.constraints.addExtraConstraint(constraints);
+    }
+    
     @Override
     public final String prettyPrint(final int fixity) {
         return this.instance.prettyPrint(fixity);

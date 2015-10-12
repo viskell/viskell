@@ -1,6 +1,6 @@
 package nl.utwente.group10.haskell.type;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -31,16 +31,22 @@ public class TypeApp extends ConcreteType {
 
     @Override
     public String prettyPrint(int fixity) {
-        final ArrayList<Type> targs = new ArrayList<Type>();
-        targs.add(this.typeArg);
-        return (this.typeFun.asTypeAppChain(fixity, targs));
+        List<Type> chain = this.asFlattenedAppChain();
+        Type ftype = chain.remove(0);
+        return ftype.prettyPrintAppChain(fixity, chain);
     }
 
-    @Override
-    protected String asTypeAppChain(final int fixity, final List<Type> args) {
-        final ArrayList<Type> targs = new ArrayList<Type>(args);
-        targs.add(this.typeArg);
-        return this.typeFun.asTypeAppChain(fixity, targs);
+    protected final List<Type> asFlattenedAppChain(){
+        final LinkedList<Type> chain = new LinkedList<>();
+        Type type = this;
+        while (type instanceof TypeApp) {
+            TypeApp ta = (TypeApp) type;
+            chain.addFirst(ta.typeArg);
+            type = ta.typeFun;
+        }
+
+        chain.addFirst(type);
+        return chain;
     }
     
     @Override

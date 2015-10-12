@@ -55,4 +55,35 @@ public class ClassesTest {
         assertEquals("Integral d", d.prettyPrint());
 
     }
+    
+    @Test
+    public final void testNestedTypes() throws HaskellTypeError {
+        final Environment env = new HaskellCatalog().asEnvironment();
+        final TypeClass eq = env.testLookupClass("Eq");
+        final TypeClass ord = env.testLookupClass("Ord");
+        final TypeClass show = env.testLookupClass("Show");
+        final TypeClass num = env.testLookupClass("Num");
+        
+        TypeScope scope = new TypeScope();
+        final TypeVar a = scope.getVar("a");
+        final TypeVar b = scope.getVar("b");
+        final Type tab = Type.tupleOf(a, b ,a);
+        final TypeVar x = scope.getVarTC("x", eq);
+        TypeChecker.unify(new Hole(), tab, x);
+        assertEquals("Eq a", a.prettyPrint());
+        assertEquals("Eq b", b.prettyPrint());
+        assertEquals("(Eq a, Eq b, Eq a)", x.prettyPrint());
+
+       final TypeVar c = scope.getVarTC("c", num);
+       final Type mc = Type.con("Maybe", c);
+       final TypeVar y = scope.getVarTC("y", ord);
+       TypeChecker.unify(new Hole(), y, mc);
+       assertEquals("(Num c, Ord c)", c.prettyPrint());
+       assertEquals("Maybe (Num c, Ord c)", y.prettyPrint());
+       
+       final Type str = Type.listOf(Type.con("Char"));
+       final TypeVar z = scope.getVarTC("z", show);
+       TypeChecker.unify(new Hole(), str, z);
+       assertEquals("[Char]", z.prettyPrint());
+    }
 }

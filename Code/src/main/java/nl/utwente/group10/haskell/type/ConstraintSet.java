@@ -1,12 +1,14 @@
 package nl.utwente.group10.haskell.type;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import com.google.common.collect.Sets;
 
-public class ConstraintSet {
+public final class ConstraintSet {
 
     /**
      * A set of type class constraints belonging to a single type object.
@@ -28,6 +30,9 @@ public class ConstraintSet {
         return ! this.constraints.isEmpty();
     }
     
+    /**
+     * @param tc the type class to extend this constraint set with
+     */
     public void addExtraConstraint(TypeClass tc)
     {
         this.constraints.add(tc);
@@ -35,16 +40,45 @@ public class ConstraintSet {
     }
 
     /**
+     * @param extras additional constraint set to extend this constraint set with
+     */
+    public void addExtraConstraint(ConstraintSet extras) {
+        this.constraints.addAll(extras.constraints);
+        this.simplifyConstraints();
+    }
+    
+    /**
      * Checks whether the given type is within the constraints. 
      * If the set of constraints is empty, every type is within the constraints.
      * 
      * @param type The type to check.
      * @return Whether the given type is within the constraints of this type.
      */
-    public boolean allConstraintsMatch(TypeCon con) {
+    protected boolean allConstraintsMatch(TypeCon con) {
         return this.constraints.stream().allMatch(c -> c.hasType(con));
     }
 
+    /**
+     * @param con the type constructor to check.
+     * @param arity number of arguments to get the constraints for.
+     * @return A arity long list of constraints set that are required by instances that match the type constructor.
+     */
+    protected List<ConstraintSet> getImpliedArgConstraints(TypeCon con, int arity) {
+        List<ConstraintSet> results = new ArrayList<>(arity);
+        for (int i = 0; i < arity; i++) {
+            results.add(new ConstraintSet());
+        }
+        
+        for (TypeClass typeClass : this.constraints) {
+            int n = typeClass.lookupConstrainedArgs(con);
+            for (int i = 0; i < n; i++) {
+                results.get(i).addExtraConstraint(typeClass);
+            }
+        }
+        
+        return results;
+    }
+    
     /**
      * simplify the constraint set by removing super class implications
      */

@@ -110,6 +110,20 @@ public class TypeClass implements Comparable<TypeClass> {
         return this.instances.stream().anyMatch(i -> i.compareTo(inst) == 0);
     }
 
+    /**
+     * @param type The type constructor to check.
+     * @return The number of constrained arguments the instance of this typecon in this class has, or -1 if not found.
+     */
+    public int lookupConstrainedArgs(TypeCon con) {
+        for (Instance inst : this.instances) {
+            if (inst.typecon.equals(con)) {
+                return inst.constrainedArgs;
+            }
+        }
+        
+        return -1;
+    }
+
     public final String toString() {
         return String.format("%s=>%s:%s", this.supers.stream().map(t ->t.getName()), this.name, this.instances.toString());
     }

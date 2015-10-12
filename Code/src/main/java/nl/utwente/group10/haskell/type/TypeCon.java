@@ -33,6 +33,11 @@ public class TypeCon extends ConcreteType {
     }
 
     @Override
+    public boolean equals(Object other) {
+        return other instanceof TypeCon && this.name.equals(((TypeCon)other).getName());
+    }
+
+    @Override
     public String toString() {
         return this.name;
     }

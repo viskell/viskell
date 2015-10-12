@@ -1,11 +1,9 @@
 package nl.utwente.group10.haskell.type;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 
 public class TupleTypeCon extends TypeCon {
 
@@ -25,13 +23,12 @@ public class TupleTypeCon extends TypeCon {
     }
 
     @Override
-    protected String asTypeAppChain(final int fixity, final List<Type> args) {
+    protected String prettyPrintAppChain(final int fixity, final List<Type> args) {
         if (this.name.length() > args.size() + 2) {
             // for the partial applied tuple constructor use the prefix notation
-            super.asTypeAppChain(fixity, args);
+            super.prettyPrintAppChain(fixity, args);
         }
         
-        Stream<String> parts = Lists.reverse(args).stream().map(e -> e.prettyPrint(0));
-        return "(" + Joiner.on(", ").join(parts.iterator()) + ")";
+        return "(" + Joiner.on(", ").join(args.stream().map(a -> a.prettyPrint(0)).iterator()) + ")";
     }
 }

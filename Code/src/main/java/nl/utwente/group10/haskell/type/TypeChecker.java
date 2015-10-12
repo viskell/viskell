@@ -1,5 +1,6 @@
 package nl.utwente.group10.haskell.type;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -100,21 +101,52 @@ public final class TypeChecker {
      * @param context the expression to use as context in errors. 
      * @throws HaskellTypeError if the constraints can no be satisfied by this type.
      */
-    private static void satisfyConstraints(ConcreteType type, ConstraintSet constraints, Expression context) throws HaskellTypeError {
-        if (type instanceof TypeCon) {
-            TypeCon tc = (TypeCon)type;
-            
-            if (! constraints.allConstraintsMatch(tc)) {
-                TypeChecker.logger.info(String.format("Unable to unify types %s with constraints %s for context %s", type, constraints, context));
-                throw new HaskellTypeError(String.format("%s ∉ constraints of %s", type, constraints), context);
+    private static void satisfyConstraints(Type type, ConstraintSet constraints, Expression context) throws HaskellTypeError {
+        if (! constraints.hasConstraints()) {
+            // empty constraints are always satisfied.
+            return;
+        }
+        
+        if (type instanceof TypeVar) {
+            TypeVar tv = (TypeVar) type;
+            if (tv.hasConcreteInstance()) {
+                // just constrain the concrete instantiation
+                TypeChecker.satisfyConstraints(tv.getInstantiatedType(), constraints, context);
+                return;
+            } else {
+                // add extra constraint for this type variable
+                tv.introduceConstrainst(constraints);
+                return;
             }
-        } else {
-            // for now, other types unifying a type variable can only succeed if the constraints are empty.
-            if (constraints.hasConstraints()) {
-                TypeChecker.logger.info(String.format("Unable to unify types %s with constraints %s for context %s", type, constraints, context));
-                throw new HaskellTypeError(String.format("%s ∉ constraints of %s", type, constraints), context);
+        } else if (type instanceof TypeCon) {
+            TypeCon tc = (TypeCon)type;
+            // directly check if all constraints are satisfied 
+            if (constraints.allConstraintsMatch(tc)) {
+                return;
+            }
+        } else if (type instanceof TypeApp) {
+            TypeApp ta = (TypeApp)type;
+            List<Type> chain = ta.asFlattenedAppChain();
+            Type ctype = chain.remove(0);
+            // check if the head of a type application chain is a known type constructor 
+            if (ctype instanceof TypeCon) {
+                TypeCon tc = (TypeCon)ctype;
+                if (constraints.allConstraintsMatch(tc)) {
+                    // also for all type arguments add implied constraint as needed
+                    int arity = chain.size();
+                    List<ConstraintSet> argConstraints = constraints.getImpliedArgConstraints(tc, arity);
+                    for (int i = 0; i < arity; i++) {
+                        TypeChecker.satisfyConstraints(chain.get(i), argConstraints.get(i), context);
+                    }
+                    // all satisfied, done
+                    return;
+                }
             }
         }
+        
+        // for now, constraining other types will fail.
+        TypeChecker.logger.info(String.format("Unable to unify types %s with constraints %s for context %s", type, constraints, context));
+        throw new HaskellTypeError(String.format("%s ∉ constraints of %s", type, constraints), context);
     }
 
 }
