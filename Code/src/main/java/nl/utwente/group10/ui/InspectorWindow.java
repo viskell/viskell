@@ -15,7 +15,6 @@ import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.serialize.Exporter;
 
-import java.io.IOException;
 import java.util.Optional;
 
 /**

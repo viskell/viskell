@@ -13,6 +13,7 @@ import nl.utwente.group10.ui.serialize.Exporter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * A context menu with global actions (i.e. quit).
@@ -56,6 +57,13 @@ public class GlobalMenu extends ContextMenu {
     }
 
     private void onSave(ActionEvent actionEvent) {
+        Optional<File> file = pane.getCurrentFile();
+
+        if (file.isPresent()) {
+            saveTo(file.get());
+        } else {
+            onSaveAs(actionEvent);
+        }
     }
 
     private void onSaveAs(ActionEvent actionEvent) {
@@ -63,15 +71,18 @@ public class GlobalMenu extends ContextMenu {
         File file = new FileChooser().showSaveDialog(window);
 
         if (file != null) {
-            try {
-                FileOutputStream fos = new FileOutputStream(file);
-                fos.write(Exporter.export(pane).getBytes(Charsets.UTF_8));
-                fos.close();
-            } catch (IOException e) {
-                // TODO do something sensible here
-                e.printStackTrace();
-                onSaveAs(actionEvent);
-            }
+            saveTo(file);
+            pane.setCurrentFile(file);
+        }
+    }
+
+    private void saveTo(File file) {
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(Exporter.export(pane).getBytes(Charsets.UTF_8));
+            fos.close();
+        } catch (IOException e) {
+            // TODO do something sensible here
+            e.printStackTrace();
         }
     }
 
