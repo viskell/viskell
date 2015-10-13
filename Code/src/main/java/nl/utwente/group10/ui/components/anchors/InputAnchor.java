@@ -3,7 +3,6 @@ package nl.utwente.group10.ui.components.anchors;
 import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.expr.Hole;
 import nl.utwente.group10.ui.components.blocks.Block;
-import nl.utwente.group10.ui.components.lines.Connection;
 import nl.utwente.group10.ui.handlers.AnchorHandler;
 
 /**
@@ -24,8 +23,7 @@ public class InputAnchor extends ConnectionAnchor {
     }
 
     /**
-     * @return The expression carried by the connection connected to this
-     *         anchor.
+     * @return The expression carried by the connection connected to this anchor.
      */
     @Override
     public final Expression getExpr() {
@@ -36,10 +34,13 @@ public class InputAnchor extends ConnectionAnchor {
         }
     }
     
-    @Override
-    public void disconnectConnection(Connection connection) {
+    /**
+     * Gets the Expression that is connected to this, or when not connected create a fresh expression representing the open input.   
+     * @return The updated expression carried by the connection connected to this anchor.
+     */
+    public final Expression getUpdatedExpr() {
         connectionlessExpr = new Hole();
-        super.disconnectConnection(connection);
+        return getExpr();
     }
 
     @Override
