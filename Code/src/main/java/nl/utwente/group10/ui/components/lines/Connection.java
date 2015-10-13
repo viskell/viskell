@@ -1,12 +1,17 @@
 package nl.utwente.group10.ui.components.lines;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.collect.ImmutableMap;
 import nl.utwente.group10.ui.CustomUIPane;
 import nl.utwente.group10.ui.components.anchors.ConnectionAnchor;
 import nl.utwente.group10.ui.components.anchors.InputAnchor;
 import nl.utwente.group10.ui.components.anchors.OutputAnchor;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.components.blocks.input.InputBlock;
+import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -15,6 +20,7 @@ import javafx.scene.transform.Transform;
 import javafx.beans.value.ObservableValue;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
+import nl.utwente.group10.ui.serialize.Bundleable;
 
 
 /**
@@ -32,7 +38,7 @@ import javafx.geometry.Point2D;
  * update the Line's position when the anchor's positions change.
  */
 public class Connection extends ConnectionLine implements
-        ChangeListener<Transform> {
+        ChangeListener<Transform>, Bundleable {
     /** Starting point of this Line that can be Anchored onto other objects. */
     private Optional<OutputAnchor> startAnchor = Optional.empty();
     /** Ending point of this Line that can be Anchored onto other objects. */
@@ -344,5 +350,24 @@ public class Connection extends ConnectionLine implements
     public String toString() {
         return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  "
                 + endAnchor;
+    }
+
+    @Override
+    public Map<String, Object> toBundle() {
+        ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
+
+        startAnchor.ifPresent(start -> {
+            OutputBlock block = (OutputBlock) start.getBlock();
+            bundle.put("startBlock", block.hashCode());
+            bundle.put("startAnchor", 0);
+        });
+
+        endAnchor.ifPresent(end -> {
+            InputBlock block = (InputBlock) end.getBlock();
+            bundle.put("endBlock", block.hashCode());
+            bundle.put("endAnchor", block.getAllInputs().indexOf(end));
+        });
+
+        return bundle.build();
     }
 }

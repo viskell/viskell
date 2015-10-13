@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableMap;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -210,5 +211,10 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     @Override
     public String toString() {
         return this.getName();
+    }
+
+    @Override
+    protected ImmutableMap<String, Object> toBundleFragment() {
+        return ImmutableMap.of("name", getName(), "knotIndex", getKnotIndex());
     }
 }

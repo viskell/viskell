@@ -1,7 +1,9 @@
 package nl.utwente.group10.ui.components.blocks;
 
+import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.collect.ImmutableMap;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -25,6 +27,7 @@ import nl.utwente.group10.ui.components.blocks.input.InputBlock;
 import nl.utwente.group10.ui.components.blocks.output.OutputBlock;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import nl.utwente.group10.ui.components.menu.CircleMenu;
+import nl.utwente.group10.ui.serialize.Bundleable;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.
@@ -42,7 +45,7 @@ import nl.utwente.group10.ui.components.menu.CircleMenu;
  * Each block implementation should also feature it's own FXML implementation.
  * </p>
  */
-public abstract class Block extends StackPane implements ComponentLoader, ConnectionStateDependent, VisualStateDependent {
+public abstract class Block extends StackPane implements Bundleable, ComponentLoader, ConnectionStateDependent, VisualStateDependent {
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
     
@@ -283,6 +286,23 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         CustomAlert alert = new CustomAlert(getPane(), msg);
         getPane().getChildren().add(alert);
         alert.relocate(this.getLayoutX() + 100, this.getLayoutY() + 100);
+    }
 
+    /**
+     * @return class-specific properties of this Block.
+     */
+    protected ImmutableMap<String, Object> toBundleFragment() {
+        return ImmutableMap.of();
+    }
+
+    @Override
+    public Map<String, Object> toBundle() {
+        return ImmutableMap.of(
+            "kind", getClass().getSimpleName(),
+            "id", hashCode(),
+            "x", getLayoutX(),
+            "y", getLayoutY(),
+            "properties", toBundleFragment()
+        );
     }
 }

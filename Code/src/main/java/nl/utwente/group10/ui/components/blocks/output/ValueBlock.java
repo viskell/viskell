@@ -1,5 +1,6 @@
 package nl.utwente.group10.ui.components.blocks.output;
 
+import com.google.common.collect.ImmutableMap;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -88,5 +89,10 @@ public class ValueBlock extends Block implements OutputBlock {
     @Override
     public String toString() {
         return "ValueBlock[" + getValue() + "]";
+    }
+
+    @Override
+    protected ImmutableMap<String, Object> toBundleFragment() {
+        return ImmutableMap.of("value", value.getValue());
     }
 }
