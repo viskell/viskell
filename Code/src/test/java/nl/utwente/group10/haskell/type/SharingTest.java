@@ -23,7 +23,7 @@ public class SharingTest {
         TypeChecker.unify(new Hole(), x, y);
 
         assertEquals(x.toString(), y.toString());
-        assertTrue(l.toString().startsWith("([] @ x"));
+        assertTrue(l.toString().startsWith("([] @ y"));
 
         TypeChecker.unify(new Hole(), x, u);
 

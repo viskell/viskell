@@ -35,7 +35,7 @@ public class TypeScope {
             return this.vars.get(name);
         }
         
-        TypeVar var = new TypeVar(name, new TreeSet<>(), null);
+        TypeVar var = new TypeVar(name, false, new TreeSet<>(), null);
         this.vars.put(name, var);
         return var;
     }
@@ -76,7 +76,7 @@ public class TypeScope {
      * @return The new type variable
      */
     public static TypeVar unique(String prefix) {
-        return new TypeVar(prefix + "___" + Integer.toHexString(tvOffset++), new TreeSet<>(), null);
+        return new TypeVar(prefix + "___" + Integer.toHexString(tvOffset++), true, new TreeSet<>(), null);
     }
 
     

@@ -44,15 +44,15 @@ public class ClassesTest {
         final TypeVar b = scope.getVarTC("b", ord);
         TypeChecker.unify(new Hole(), a, b);
         // the Eq constraint disappears because it is direct superclass of Ord 
-        assertEquals("Ord a", a.prettyPrint());
-        assertEquals("Ord a", b.prettyPrint());
+        assertEquals("Ord b", a.prettyPrint());
+        assertEquals("Ord b", b.prettyPrint());
         
         final TypeVar c = scope.getVarTC("c", integral);
         final TypeVar d = scope.getVarTC("d", ord);
         TypeChecker.unify(new Hole(), c, d);
         // indirectly through Real, Ord is also implied by Integral 
-        assertEquals("Integral c", c.prettyPrint());
-        assertEquals("Integral c", d.prettyPrint());
+        assertEquals("Integral d", c.prettyPrint());
+        assertEquals("Integral d", d.prettyPrint());
 
     }
 }
