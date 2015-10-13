@@ -4,6 +4,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -11,6 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.expr.Expression;
+import nl.utwente.group10.ui.commands.Command;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
 
@@ -26,6 +28,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
     private CustomUIPane pane;
 
     @FXML private TreeView<String> tree;
+    @FXML private ListView<String> hist;
     @FXML private TextArea hs;
 
     public InspectorWindow(CustomUIPane parentPane) {
@@ -64,17 +67,22 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
             String label = String.format("%s: %s", block.getClass().getSimpleName(), haskell);
             TreeItem<String> root = new TreeItem<>(label);
             root.setExpanded(true);
-            walk(root, expr);
+            walkExpr(root, expr);
 
             tree.setRoot(root);
             hs.setText(haskell);
         });
+
+        hist.getItems().clear();
+        for (Command command : pane.getHistory()) {
+            hist.getItems().add(command.toString());
+        }
     }
 
     /**
-     * Walks the expr tree, walk recursively calls itself on its children.
+     * Walks the expr tree, walkExpr recursively calls itself on its children.
      */
-    private void walk(TreeItem<String> treeItem, Expression expr) {
+    private void walkExpr(TreeItem<String> treeItem, Expression expr) {
         String type;
 
         try {
@@ -87,7 +95,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
         subTree.setExpanded(true);
 
         for (Expression child : expr.getChildren()) {
-            walk(subTree, child);
+            walkExpr(subTree, child);
         }
 
         treeItem.getChildren().add(subTree);

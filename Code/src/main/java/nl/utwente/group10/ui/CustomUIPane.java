@@ -24,6 +24,7 @@ import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.env.Environment;
 import nl.utwente.group10.haskell.env.HaskellCatalog;
 import nl.utwente.group10.haskell.expr.Expression;
+import nl.utwente.group10.ui.commands.History;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
@@ -57,6 +58,8 @@ public class CustomUIPane extends TactilePane {
     private HaskellCatalog catalog;
     private Environment envInstance;
 
+    private History history;
+
     /**
      * Maps expressions to function blocks for looking up the function block responsible for an expression in case of an
      * error.
@@ -75,6 +78,7 @@ public class CustomUIPane extends TactilePane {
         this.catalog = catalog;
         this.envInstance = catalog.asEnvironment();
         this.exprToFunction = new HashMap<Expression, FunctionBlock>();
+        this.history = new History();
 
         try {
             this.ghci = Optional.of(new GhciSession());
@@ -298,5 +302,9 @@ public class CustomUIPane extends TactilePane {
      */
     public FunctionBlock getExprToFunction(Expression expr) {
         return exprToFunction.get(expr);
+    }
+
+    public History getHistory() {
+        return history;
     }
 }

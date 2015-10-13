@@ -8,6 +8,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -15,6 +16,7 @@ import nl.utwente.group10.haskell.expr.Apply;
 import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.haskell.type.HaskellTypeError;
 import nl.utwente.group10.ui.CustomUIPane;
+import nl.utwente.group10.ui.commands.MoveCommand;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.ConnectionStateDependent;
 import nl.utwente.group10.ui.components.CustomAlert;
@@ -61,6 +63,8 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
     /** Property for the expression freshness. */
     private BooleanProperty exprIsDirty;
 
+    private Point2D lastPosition;
+
     /**
      * @param pane
      *            The pane this block belongs to.
@@ -70,7 +74,8 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         connectionState = new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
         visualState = new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
         exprIsDirty = new SimpleBooleanProperty(true);
-        
+        lastPosition = getPosition();
+
         // Add listeners to the states.
         // Invalidate listeners give the Block a change to react on the state
         // change before it is cascaded.
@@ -112,6 +117,17 @@ public abstract class Block extends StackPane implements ComponentLoader, Connec
         if (t.getButton() == MouseButton.SECONDARY) {
             circleMenu.show(t);
         }
+
+        Point2D newPosition = this.getPosition();
+        if (! this.getPosition().equals(lastPosition)) {
+            // Add move command to undo history (after the fact!)
+            getPane().getHistory().add(new MoveCommand(parentPane, this, lastPosition, newPosition));
+        }
+        lastPosition = newPosition;
+    }
+
+    private Point2D getPosition() {
+        return new Point2D(getLayoutX(), getLayoutY());
     }
 
     /** @return the parent CustomUIPane of this component. */
