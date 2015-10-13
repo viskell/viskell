@@ -11,7 +11,9 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
+import javafx.geometry.Side;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -25,6 +27,7 @@ import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.ui.components.blocks.Block;
 import nl.utwente.group10.ui.components.blocks.function.FunctionBlock;
 import nl.utwente.group10.ui.components.lines.Connection;
+import nl.utwente.group10.ui.components.menu.GlobalMenu;
 import nl.utwente.group10.ui.handlers.ConnectionCreationManager;
 import nl.utwente.group10.ui.components.menu.FunctionMenu;
 

@@ -43,7 +43,7 @@ public class Main extends Application {
         debug.setOverlayVisible(false);
 
         // Init zoom overlay
-        ZoomOverlay zoomOverlay = new ZoomOverlay(debug, tactilePane);
+        ButtonOverlay buttonOverlay = new ButtonOverlay(debug, tactilePane);
 
         // Check if GHCI is available
         try {
@@ -61,7 +61,7 @@ public class Main extends Application {
         }
         
         // Init scene
-        Scene scene = new Scene(zoomOverlay);
+        Scene scene = new Scene(buttonOverlay);
         scene.getStylesheets().add("/ui/style.css");
 
         stage.setWidth(800);
