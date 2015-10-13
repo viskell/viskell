@@ -64,11 +64,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
             Expression expr = block.getExpr();
             String haskell = expr.toHaskell();
 
-            try {
-                json.setText(Exporter.export(pane));
-            } catch (IOException e) {
-                json.setText(e.toString());
-            }
+            json.setText(Exporter.export(pane));
 
             String label = String.format("%s: %s", block.getClass().getSimpleName(), haskell);
             TreeItem<String> root = new TreeItem<>(label);
