@@ -33,8 +33,7 @@ public final class ConstraintSet {
     /**
      * @param tc the type class to extend this constraint set with
      */
-    public void addExtraConstraint(TypeClass tc)
-    {
+    protected void addExtraConstraint(TypeClass tc) {
         this.constraints.add(tc);
         this.simplifyConstraints();
     }
@@ -42,7 +41,7 @@ public final class ConstraintSet {
     /**
      * @param extras additional constraint set to extend this constraint set with
      */
-    public void addExtraConstraint(ConstraintSet extras) {
+    protected void addExtraConstraint(ConstraintSet extras) {
         this.constraints.addAll(extras.constraints);
         this.simplifyConstraints();
     }
@@ -96,7 +95,7 @@ public final class ConstraintSet {
         return;
     }
     
-    public void mergeConstraintsWith(ConstraintSet other) {
+    protected void mergeConstraintsWith(ConstraintSet other) {
         this.constraints = new TreeSet<>(Sets.union(this.constraints, other.constraints));
         this.simplifyConstraints();
     }

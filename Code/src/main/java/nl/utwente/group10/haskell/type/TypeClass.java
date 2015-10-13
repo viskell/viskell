@@ -88,8 +88,8 @@ public class TypeClass implements Comparable<TypeClass> {
     /**
      * @return the super classes of this type class
      */
-    public Set<TypeClass> getSupers() {
-        return supers;
+    protected Set<TypeClass> getSupers() {
+        return this.supers;
     }
     
     /**
