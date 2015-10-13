@@ -9,11 +9,11 @@ public class ListTypeCon extends TypeCon {
     }
 
     @Override
-    protected String asTypeAppChain(final int fixity, final List<Type> args)
+    protected String prettyPrintAppChain(final int fixity, final List<Type> args)
     {
         if (args.size() != 1) {
             // for the not exact applied tuple constructor use the prefix notation
-            return super.asTypeAppChain(fixity, args);
+            return super.prettyPrintAppChain(fixity, args);
         }
 
         return "[" + args.get(0).prettyPrint(0) + "]";

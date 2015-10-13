@@ -1,13 +1,10 @@
 package nl.utwente.group10.haskell.type;
 
 import java.lang.ref.WeakReference;
-import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
-import java.util.TreeSet;
 
-import com.google.common.collect.Sets;
 
 /**
  * Variable type.
@@ -36,7 +33,7 @@ public class TypeVar extends Type {
         /**
          * The type constraints for this instance.
          */
-        private TreeSet<TypeClass> constraints;
+        private ConstraintSet constraints;
 
         /**
          * Internal List of all type variables that refer to this instance.
@@ -51,7 +48,7 @@ public class TypeVar extends Type {
          * @param type The concrete instance of this type, might be null.
          * @param constraints The set of constraints for this type.
          */
-        private TypeInstance(TypeVar creator, String name, boolean internal, ConcreteType type, final TreeSet<TypeClass> constraints) {
+        private TypeInstance(TypeVar creator, String name, boolean internal, ConcreteType type, final ConstraintSet constraints) {
             this.name = name;
             this.internal = internal;
             this.type = type;
@@ -96,7 +93,7 @@ public class TypeVar extends Type {
          * @param the other type instance.
          */
         private void unifyWith(TypeInstance other) {
-            other.constraints = TypeClass.simplifyConstraints(new TreeSet<>(Sets.union(this.constraints, other.constraints)));
+            other.constraints.mergeConstraintsWith(this.constraints);
             other.unifiedVars.addAll(this.unifiedVars);
             // Go through all type variable associated with both type instances, to make sure all of them are unified to the same instance.
             for (ListIterator<WeakReference<TypeVar>> iter = this.unifiedVars.listIterator(); iter.hasNext();) {
@@ -125,31 +122,8 @@ public class TypeVar extends Type {
                 return this.type.prettyPrint(fixity);
             }
 
-            final StringBuilder out = new StringBuilder();
-
-            if (this.constraints.isEmpty()) {
-                out.append(this.getName());
-            } else if (fixity < 9 && this.constraints.size() == 1) {
-                out.append(this.constraints.iterator().next().getName() + " " + this.getName());
-            } else {
-                out.append("(");
-
-                int i = 0;
-                for (TypeClass tc : this.constraints) {
-                    out.append(String.format("%s %s", tc.getName(), this.getName()));
-                    if (i + 1 < this.constraints.size()) {
-                        out.append(", ");
-                    }
-
-                    i++;
-                }
-
-                out.append(")");
-            }
-
-            return out.toString();
+            return this.constraints.prettyPrintWith(this.getName(), fixity);
         }
-        
     }
 
     /**
@@ -162,10 +136,20 @@ public class TypeVar extends Type {
      * Identifiers are not used in the type checking progress, 
      * different {@code TypeVar} instances with the same name are not equal.
      * @param internal whether this an internally generated type variable
+     */
+    public TypeVar(final String name, final boolean internal) {
+        this(name, internal, new ConstraintSet(), null);
+    }
+
+    /**
+     * @param name The textual representation of the type variable.
+     * Identifiers are not used in the type checking progress, 
+     * different {@code TypeVar} instances with the same name are not equal.
+     * @param internal whether this an internally generated type variable
      * @param constraints The set of constraints for this type.
      * @param instance The concrete instance of this type, might be null.
      */
-    TypeVar(final String name, final boolean internal, final TreeSet<TypeClass> constraints, final ConcreteType type) {
+    private TypeVar(final String name, final boolean internal, final ConstraintSet constraints, final ConcreteType type) {
         this.instance = new TypeInstance(this, name.toLowerCase(), internal, type, constraints);
     }
 
@@ -213,31 +197,28 @@ public class TypeVar extends Type {
     }
 
     /**
-     * @return Whether this type variable is constrained.
+     * @return The set of type class constraints associated with this type variable
      */
-    public final boolean hasConstraints() {
-        return !this.instance.constraints.isEmpty();
+    ConstraintSet getConstraints() {
+        return this.instance.constraints;
     }
 
     /**
-     * Checks whether the given type is within the constraints. 
-     * If the set of constraints is empty, every type is within the constraints.
-     * 
-     * @param type The type to check.
-     * @return Whether the given type is within the constraints of this type.
-     */
-    public final boolean hasConstraint(TypeCon type) {
-        return this.instance.constraints.stream().allMatch(tc -> tc.hasType(type));
-    }
-
-    /**
-     * Extends the constraint set with extra type class, warning: the type variable may not been used in typechecking yet.   
+     * Extends the constraint set with extra type class.   
      * @param typeClass to be added to this type variable
      */
-    public void introduceConstraint(TypeClass typeClass) {
-        this.instance.constraints.add(typeClass);
+    protected void introduceConstraint(TypeClass typeClass) {
+        this.instance.constraints.addExtraConstraint(typeClass);
     }
 
+    /**
+     * Extends the constraint set with extra type class.   
+     * @param constraints set to be added to this type variable
+     */
+    protected void introduceConstrainst(ConstraintSet constraints) {
+        this.instance.constraints.addExtraConstraint(constraints);
+    }
+    
     @Override
     public final String prettyPrint(final int fixity) {
         return this.instance.prettyPrint(fixity);
@@ -262,7 +243,7 @@ public class TypeVar extends Type {
             return staleToFresh.get(this.instance);
         }
 
-        TypeVar fresh = new TypeVar(this.instance.name, this.instance.internal, new TreeSet<>(this.instance.constraints), null);
+        TypeVar fresh = new TypeVar(this.instance.name, this.instance.internal, this.instance.constraints.clone(), null);
         staleToFresh.put(this.instance, fresh);
         return fresh;
        
@@ -284,7 +265,7 @@ public class TypeVar extends Type {
 
     @Override
     public final String toString() {
-        String constr = Arrays.toString(this.instance.constraints.stream().map(c -> c.getName()).toArray());
+        String constr = this.instance.constraints.toString();
         String tmp = String.format("%s(%s)%s", this.getName(), Integer.toHexString(this.instance.hashCode()), constr);
         return this.instance.isPresent() ? tmp + ":" + this.instance.get().toString() : tmp;
     }

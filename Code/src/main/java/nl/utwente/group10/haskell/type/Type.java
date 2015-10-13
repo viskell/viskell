@@ -1,8 +1,9 @@
 package nl.utwente.group10.haskell.type;
 
 import java.util.List;
-import java.util.ListIterator;
 import java.util.logging.Logger;
+
+import com.google.common.base.Joiner;
 
 /**
  * Abstract class for Haskell types. Provides an interface for common methods.
@@ -25,20 +26,18 @@ public abstract class Type {
      */
     public abstract String prettyPrint(final int fixity);
 
+    
     /**
      * @param The fixity of the context the type is shown in.
      * @param The list of types applied to this type.
      * @return the pretty representation of this type a list of of types 
      */
-    protected String asTypeAppChain(final int fixity, final List<Type> args) {
+    protected String prettyPrintAppChain(final int fixity, final List<Type> args) {
         final StringBuilder out = new StringBuilder();
         out.append(this.prettyPrint(10));
-        final ListIterator<Type> iter = args.listIterator(args.size());
-        while (iter.hasPrevious()) {
-            out.append(' ');
-            out.append(iter.previous().prettyPrint(10));
-        }
-
+        out.append(' ');
+        out.append(Joiner.on(' ').join(args.stream().map(a -> a.prettyPrint(10)).iterator()));
+        
         if (fixity > 1) {
             return "(" + out.toString() + ")";
         }
