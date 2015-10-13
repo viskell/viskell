@@ -13,6 +13,7 @@ import nl.utwente.group10.ghcj.HaskellException;
 import nl.utwente.group10.haskell.expr.Expression;
 import nl.utwente.group10.ui.components.ComponentLoader;
 import nl.utwente.group10.ui.components.blocks.Block;
+import nl.utwente.group10.ui.serialize.Exporter;
 
 import java.util.Optional;
 
@@ -27,6 +28,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
 
     @FXML private TreeView<String> tree;
     @FXML private TextArea hs;
+    @FXML private TextArea json;
 
     public InspectorWindow(CustomUIPane parentPane) {
         loadFXML("InspectorWindow");
@@ -60,6 +62,8 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
         this.block.get().ifPresent(block -> {
             Expression expr = block.getExpr();
             String haskell = expr.toHaskell();
+
+            json.setText(Exporter.export(pane));
 
             String label = String.format("%s: %s", block.getClass().getSimpleName(), haskell);
             TreeItem<String> root = new TreeItem<>(label);

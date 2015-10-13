@@ -23,14 +23,14 @@ public class ButtonOverlay extends StackPane {
     public ButtonOverlay(Node child, CustomUIPane pane) {
         super();
 
-        FlowPane toolBar = makeMenuBar();
+        FlowPane toolBar = makeMenuBar(pane);
         FlowPane buttons = makeZoomBar(pane);
 
         this.getChildren().setAll(child, buttons, toolBar);
     }
 
-    private FlowPane makeMenuBar() {
-        ContextMenu burgerMenu = new GlobalMenu();
+    private FlowPane makeMenuBar(CustomUIPane pane) {
+        ContextMenu burgerMenu = new GlobalMenu(pane);
 
         Button menu = new Button(MENU_LABEL);
         menu.setFocusTraversable(false);

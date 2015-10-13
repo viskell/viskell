@@ -1,5 +1,6 @@
 package nl.utwente.group10.ui;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +57,9 @@ public class CustomUIPane extends TactilePane {
 
     private HaskellCatalog catalog;
     private Environment envInstance;
+
+    /** The File we're currently working on, if any. */
+    private Optional<File> currentFile;
 
     /**
      * Maps expressions to function blocks for looking up the function block responsible for an expression in case of an
@@ -298,5 +302,18 @@ public class CustomUIPane extends TactilePane {
      */
     public FunctionBlock getExprToFunction(Expression expr) {
         return exprToFunction.get(expr);
+    }
+
+    /** Gets the file we're currently working on, if any. */
+    public Optional<File> getCurrentFile() {
+        return currentFile;
+    }
+
+    /**
+     * Sets the file we're currently working on. Probably called from a Save
+     * As/Open operation.
+     */
+    public void setCurrentFile(File currentFile) {
+        this.currentFile = Optional.of(currentFile);
     }
 }

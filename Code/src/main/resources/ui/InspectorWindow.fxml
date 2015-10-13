@@ -15,6 +15,9 @@
             <Tab closable="false" text="Haskell source">
                 <TextArea fx:id="hs" />
             </Tab>
+            <Tab closable="false" text="JSON serialization">
+                <TextArea fx:id="json" />
+            </Tab>
         </TabPane>
     </center>
     <bottom>
