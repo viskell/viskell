@@ -116,14 +116,16 @@ public final class ConstraintSet {
 
             int i = 0;
             for (TypeClass tc : this.constraints) {
-                out.append(String.format("%s %s", tc.getName(), typeText));
+                out.append(tc.getName());
                 if (i + 1 < this.constraints.size()) {
-                    out.append(", ");
+                    out.append("+");
                 }
 
                 i++;
             }
 
+            out.append(" ");
+            out.append(typeText);
             out.append(")");
             return out.toString();
         }

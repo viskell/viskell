@@ -78,8 +78,8 @@ public class ClassesTest {
        final Type mc = Type.con("Maybe", c);
        final TypeVar y = scope.getVarTC("y", ord);
        TypeChecker.unify(new Hole(), y, mc);
-       assertEquals("(Num c, Ord c)", c.prettyPrint());
-       assertEquals("Maybe (Num c, Ord c)", y.prettyPrint());
+       assertEquals("(Num+Ord c)", c.prettyPrint());
+       assertEquals("Maybe (Num+Ord c)", y.prettyPrint());
        
        final Type str = Type.listOf(Type.con("Char"));
        final TypeVar z = scope.getVarTC("z", show);
