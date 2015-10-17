@@ -104,7 +104,7 @@ public class LambdaTest {
         Expression exp = new Lambda(Arrays.asList(x), pxx);
         Expression app = new Apply(env.useFun("show"), new Apply(exp, new LocalVar(i)));
         Expression top = new Lambda(Arrays.asList(i), app);
-        assertEquals("(Num i, Show i) -> [Char]", top.findType().prettyPrint());
+        assertEquals("(Num+Show i) -> [Char]", top.findType().prettyPrint());
 
         // testing type of: \s -> (\y -> y `max` y) (read s)
         Binder s = new Binder("s");
@@ -113,6 +113,6 @@ public class LambdaTest {
         Expression lam = new Lambda(Arrays.asList(y), myy);
         Expression bod = new Apply(lam,  new Apply(env.useFun("read"), new LocalVar(s)));
         Expression res = new Lambda(Arrays.asList(s), bod);
-        assertEquals("[Char] -> (Ord a, Read a)", res.findType().prettyPrint());
+        assertEquals("[Char] -> (Ord+Read a)", res.findType().prettyPrint());
     }
 }
