@@ -3,5 +3,5 @@
 
 <fx:root type="nl.utwente.group10.ui.components.blocks.function.ArgumentSpace" xmlns:fx="http://javafx.com/fxml/1" styleClass="argumentSpace">
     <Circle fx:id="knot" radius="10"/>
-    <Label fx:id="rightArgument" styleClass="rightArgument"/>
+    <Label fx:id="rightArgument" minWidth="35" alignment="CENTER" styleClass="rightArgument"/>
 </fx:root>

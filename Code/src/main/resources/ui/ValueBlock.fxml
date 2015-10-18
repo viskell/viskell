@@ -4,7 +4,7 @@
 <fx:root type="nl.utwente.group10.ui.components.blocks.output.ValueBlock" xmlns:fx="http://javafx.com/fxml/">
 	<BorderPane>
 		<center>
-			<BorderPane fx:id="block" styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150">
+			<BorderPane fx:id="block" styleClass="value, block" minHeight="50" maxHeight="50" minWidth="75">
 				<center>
 					<Label text="${controller.value}" styleClass="content" />
 				</center>
