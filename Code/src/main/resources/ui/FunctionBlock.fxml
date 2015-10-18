@@ -1,10 +1,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.HBox?>
-
-<fx:root type="nl.utwente.group10.ui.components.blocks.function.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.layout.*?>
+<?import nl.utwente.viskell.ui.components.FunctionBlock?>
+<fx:root type="nl.utwente.viskell.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
 	<BorderPane>
 		<top>
 			<Pane fx:id="inputSpace" maxHeight="0"/>

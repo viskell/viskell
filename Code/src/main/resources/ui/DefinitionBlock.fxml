@@ -1,10 +1,8 @@
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.geometry.Insets?>
-<fx:root type="nl.utwente.group10.ui.components.blocks.function.DefinitionBlock" xmlns:fx="http://javafx.com/fxml/">
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import nl.utwente.viskell.ui.components.DefinitionBlock?>
+<fx:root type="nl.utwente.viskell.ui.components.DefinitionBlock" xmlns:fx="http://javafx.com/fxml/">
     <VBox>
         <Label fx:id="signature" styleClass="signature" />
         <BorderPane styleClass="def">

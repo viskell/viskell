@@ -1,8 +1,7 @@
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.geometry.Insets?>
-
-<fx:root type="nl.utwente.group10.ui.components.blocks.output.SliderBlock" xmlns:fx="http://javafx.com/fxml/">
+<?import javafx.scene.layout.BorderPane?>
+<?import nl.utwente.viskell.ui.components.SliderBlock?>
+<fx:root type="nl.utwente.viskell.ui.components.SliderBlock" xmlns:fx="http://javafx.com/fxml/">
 	<BorderPane>
 		<center>
 			<BorderPane styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150" maxWidth="150">

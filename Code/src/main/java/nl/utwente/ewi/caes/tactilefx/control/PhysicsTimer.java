@@ -1,16 +1,16 @@
 package nl.utwente.ewi.caes.tactilefx.control;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
 import javafx.animation.AnimationTimer;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import nl.utwente.ewi.caes.tactilefx.event.TactilePaneEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 class PhysicsTimer extends AnimationTimer {
     // Length of a time step
