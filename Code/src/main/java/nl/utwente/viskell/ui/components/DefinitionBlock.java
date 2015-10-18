@@ -30,6 +30,7 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
     /** A block for attaching the argument (top) anchors to. */
     private class ArgumentBlock extends Block implements OutputBlock {
+        /** The variable binder corresponding to this input argument */
         private Binder binder;
         private OutputAnchor anchor;
 
@@ -39,11 +40,6 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
             this.expr = new LocalVar(binder);
 
             anchor = new OutputAnchor(this);
-        }
-
-        /** Returns the FunctionArgument expression we built. */
-        protected Binder getBinder() {
-            return this.binder;
         }
 
         @Override
@@ -106,7 +102,7 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
     @Override
     public final void updateExpr() {
-        List<Binder> binders = this.args.stream().map(ArgumentBlock::getBinder).collect(Collectors.toList());
+        List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         Expression body = new Annotated(this.res.getExpr(), this.resType); 
         expr = new Lambda(binders, body);
         super.updateExpr();
