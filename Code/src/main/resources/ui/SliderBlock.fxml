@@ -5,7 +5,7 @@
 <fx:root type="nl.utwente.group10.ui.components.blocks.output.SliderBlock" xmlns:fx="http://javafx.com/fxml/">
 	<BorderPane>
 		<center>
-			<BorderPane styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150" maxWidth="150">
+			<BorderPane styleClass="value, block" minHeight="50" maxHeight="50" minWidth="150" maxWidth="150">
 				<center>
 					<Slider min="0.0" max="1.0" fx:id="slider"></Slider>
 				</center>

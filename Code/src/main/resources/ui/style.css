@@ -45,6 +45,8 @@ CustomUIPane {
 
 .function.block {
     -fx-background-color: #E97F02;
+    -fx-background-radius: 22px;
+    -fx-border-radius: 20px;
 }
 
 .selected .value.block {
@@ -52,8 +54,10 @@ CustomUIPane {
 }
 
 .value.block {
-    -fx-padding: 0 20 0 20;
+    -fx-padding: 0 10 0 10;
     -fx-background-color: #BD1550;
+    -fx-background-radius: 22px;
+    -fx-border-radius: 20px;
 }
 
 .selected .display.block {
@@ -73,13 +77,16 @@ CustomUIPane {
 .menu.block {
     -fx-font-size: 12px;
     -fx-background-color: #490A3D;
+    -fx-background-radius: 11px;
+    -fx-border-radius: 10px;
 }
 
 .menu.block .title {
-    -fx-font-size: 15px;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-font-color: #FCEBB6;
     -fx-background-color: #A4849E;
+    -fx-background-radius: 3px;
 }
 
 .menu.block .title:hover {
@@ -129,11 +136,13 @@ CustomUIPane {
     -fx-font-size: 14px;
     -fx-font-weight: normal;
     -fx-background-color: white;
+    -fx-background-radius: 5px;
 }
 
 .argumentSpace Label.rightArgument {
     -fx-text-fill: white;
     -fx-background-color: black;
+    -fx-background-radius: 5px;
 }
 
 .argumentSpace .error Label{
