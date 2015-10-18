@@ -1,9 +1,9 @@
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
-
-<fx:root type="nl.utwente.group10.ui.components.blocks.input.GraphBlock" xmlns:fx="http://javafx.com/fxml/">
+<?import nl.utwente.viskell.ui.components.GraphBlock?>
+<fx:root type="nl.utwente.viskell.ui.components.GraphBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane styleClass="graph, block">
         <top>
             <Pane fx:id="inputSpace" maxHeight="0"/>

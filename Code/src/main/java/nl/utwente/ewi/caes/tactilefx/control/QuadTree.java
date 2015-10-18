@@ -1,12 +1,5 @@
 package nl.utwente.ewi.caes.tactilefx.control;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -14,6 +7,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+
+import java.util.*;
 
 // TODO: uiteindelijk package-private, alleen voor debug
 public class QuadTree {

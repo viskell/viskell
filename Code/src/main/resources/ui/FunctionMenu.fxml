@@ -2,8 +2,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
-
-<fx:root type="nl.utwente.group10.ui.components.menu.FunctionMenu" xmlns:fx="http://javafx.com/fxml/1">
+<?import nl.utwente.viskell.ui.FunctionMenu?>
+<fx:root type="nl.utwente.viskell.ui.FunctionMenu" xmlns:fx="http://javafx.com/fxml/1">
     <BorderPane styleClass="menu, block">
     <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
         <top>
