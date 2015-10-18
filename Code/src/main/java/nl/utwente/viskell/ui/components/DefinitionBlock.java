@@ -4,7 +4,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
-import nl.utwente.viskell.haskell.expr.Function;
+import nl.utwente.viskell.haskell.expr.Annotated;
+import nl.utwente.viskell.haskell.expr.Binder;
+import nl.utwente.viskell.haskell.expr.Expression;
+import nl.utwente.viskell.haskell.expr.Lambda;
+import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.CustomUIPane;
@@ -26,20 +30,20 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
     /** A block for attaching the argument (top) anchors to. */
     private class ArgumentBlock extends Block implements OutputBlock {
-        private Type type;
+        private Binder binder;
         private OutputAnchor anchor;
 
-        public ArgumentBlock(DefinitionBlock parent, Type type) {
+        public ArgumentBlock(DefinitionBlock parent, Binder binder) {
             super(parent.getPane());
-            this.type = type;
-            this.expr = new Function.FunctionArgument(type);
+            this.binder = binder;
+            this.expr = new LocalVar(binder);
 
             anchor = new OutputAnchor(this);
         }
 
         /** Returns the FunctionArgument expression we built. */
-        public Function.FunctionArgument getArgument() {
-            return (Function.FunctionArgument) getExpr();
+        protected Binder getBinder() {
+            return this.binder;
         }
 
         @Override
@@ -62,12 +66,8 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
     /** The function anchor (second bottom anchor) */
     private OutputAnchor fun;
 
-    /** The complete type of the function (and the type of the function anchor). */
-    private Type type;
-
     /** The type of the result of the function (the last part of the signature). */
     private Type resType;
-
 
     public DefinitionBlock(CustomUIPane pane, String name, Type type) {
         super(pane);
@@ -79,13 +79,14 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
 
         // Collect argument types and result type
         Type t = type;
+        int i = 0;
         while (t instanceof FunType) {
             FunType ft = (FunType) t;
-            args.add(new ArgumentBlock(this, ft.getArgument()));
+            args.add(new ArgumentBlock(this, new Binder(name + "_x" + i, ft.getArgument())));
+            i++;
             t = ft.getResult();
         }
 
-        this.type = type;
         this.resType = t;
 
         argSpace.getChildren().addAll(getArgumentAnchors());
@@ -103,13 +104,11 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
         return this.args.stream().map(ArgumentBlock::getOutputAnchor).collect(Collectors.toList());
     }
 
-    private List<Function.FunctionArgument> getArguments() {
-        return this.args.stream().map(ArgumentBlock::getArgument).collect(Collectors.toList());
-    }
-    
     @Override
     public final void updateExpr() {
-        expr = new Function(res.getExpr(), getArguments());
+        List<Binder> binders = this.args.stream().map(ArgumentBlock::getBinder).collect(Collectors.toList());
+        Expression body = new Annotated(this.res.getExpr(), this.resType); 
+        expr = new Lambda(binders, body);
         super.updateExpr();
     }
 }
