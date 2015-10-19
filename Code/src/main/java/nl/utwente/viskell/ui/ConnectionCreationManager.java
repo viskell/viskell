@@ -111,7 +111,7 @@ public class ConnectionCreationManager {
             }
             
             if (!(anchor.canAddConnection() && connection.tryAddAnchor(anchor) 
-                    && connection.isConnected())) {
+                    && connection.isFullyConnected())) {
                 removeConnection(id);
                 return null;
             }

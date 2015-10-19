@@ -18,13 +18,14 @@ import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * Main building block for the visual interface, this class represents a Haskell
  * function together with it's arguments and visual representation.
  */
-public class FunctionBlock extends Block implements InputBlock, OutputBlock {
+public class FunctionBlock extends Block {
     /** The OutputAnchor of this FunctionBlock. */
     private OutputAnchor output;
 
@@ -141,13 +142,13 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
     }
 
     @Override
-    public OutputAnchor getOutputAnchor() {
-        return output;
+    public Optional<OutputAnchor> getOutputAnchor() {
+        return Optional.of(output);
     }
 
     /**
      * On top of updating the expression, this method also adds a record to the
-     * CustomUIPane that maps the expr to this block. Clears the dirty flag.
+     * CustomUIPane that maps the expr to this block.
      */
     @Override
     public final void updateExpr() {
@@ -158,7 +159,6 @@ public class FunctionBlock extends Block implements InputBlock, OutputBlock {
         for (InputAnchor in : getActiveInputs()) {
             expr = new Apply(expr, in.getUpdatedExpr());
         }
-        super.updateExpr();
     }
     
     @Override

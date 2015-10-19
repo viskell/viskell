@@ -8,7 +8,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
-import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.Optional;
  * value at all, the value can be altered at any time by providing a different
  * input source using a {@link Connection}.
  */
-public class DisplayBlock extends Block implements InputBlock {
+public class DisplayBlock extends Block {
     /** The output String that is displayed on a Label. */
     protected StringProperty output;
 
@@ -104,8 +103,8 @@ public class DisplayBlock extends Block implements InputBlock {
     }
 
     @Override
-    public Expression getExpr() {
-        return inputAnchor.getExpr();
+    public void updateExpr() {
+        this.expr = inputAnchor.getExpr();
     }
     
     @Override

@@ -305,7 +305,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * Method to indicate that the content in the output argument Label is possibly outdated.
      */
     public void invalidateOutputContent() {
-        Optional<String> text = block.getOutputAnchor().getStringType();
+        Optional<String> text = block.getOutputAnchor().flatMap(OutputAnchor::getStringType);
         text.ifPresent(a -> rightArgument.setText(a));
     }
 

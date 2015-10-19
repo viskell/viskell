@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
  * Block that accepts a (Float -> Float) function to be displayed on a linechart
  * inside the Block.
  */
-public class GraphBlock extends Block implements InputBlock {
+public class GraphBlock extends Block {
     /** The InputAnchor of this Block. */
     private InputAnchor input;
 
@@ -65,7 +65,6 @@ public class GraphBlock extends Block implements InputBlock {
     @Override
     public void updateExpr() {
         this.expr = input.getExpr();
-        super.updateExpr();
     }
 
     @Override

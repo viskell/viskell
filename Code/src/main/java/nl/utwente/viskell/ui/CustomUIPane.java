@@ -120,6 +120,8 @@ public class CustomUIPane extends TactilePane {
             case DELETE:
                 removeSelected();
                 break;
+            default:
+                break;
         }
     }
 
@@ -189,7 +191,9 @@ public class CustomUIPane extends TactilePane {
             }
         }
 
-        if (inspector != null) inspector.update();
+        if (inspector != null) {
+            inspector.update();
+        }
     }
 
     public Optional<Block> getSelectedBlock() {

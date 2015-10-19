@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -19,6 +20,7 @@ import nl.utwente.viskell.ui.CustomAlert;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,7 +40,7 @@ import java.util.Optional;
  * Each block implementation should also feature it's own FXML implementation.
  * </p>
  */
-public abstract class Block extends StackPane implements Bundleable, ComponentLoader, ConnectionStateDependent, VisualStateDependent {
+public abstract class Block extends StackPane implements Bundleable, ComponentLoader {
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
     
@@ -116,51 +118,72 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     }
 
     /**
+     * @return All InputAnchors of the block.
+     */
+    public List<InputAnchor> getAllInputs() {
+        return ImmutableList.of();
+    }
+
+    /**
+     * @return Only the active (as specified with by the knot index) inputs.
+     */
+    public List<InputAnchor> getActiveInputs() {
+        return getAllInputs();
+    }
+    
+    /**
+     * @return the optional output Anchor for this Block
+     * TODO generalize to List<OutputAnchor> getOutputAnchors()
+     */
+    public Optional<OutputAnchor> getOutputAnchor() {
+        return Optional.empty();
+    }
+    
+    /**
      * @return The expression this Block represents.
      * 
      * If the expression is not up-to-date it gets updated.
      */
-    public Expression getExpr() {
+    public final Expression getExpr() {
         // Assure expr is up-to-date.
         if (getExprIsDirty()) {
             updateExpr();
+            setExprIsDirty(false);
         }
         return expr;
     }
     
     /**
-     * Updates the expression, clearing the expression dirty flag.
+     * Updates the expression
      */
-    public void updateExpr() {
-        setExprIsDirty(false);
-    }
+    public abstract void updateExpr();
     
-    @Override
+    /** @return The VisualState the Object is in. */
     public final int getVisualState() {
         return visualState.get();
     }
 
-    @Override
+    /** Sets the VisualState. */
     public void setVisualState(int state) {
         this.visualState.set(state);
     }
     
-    @Override
+    /** @return the Property for the VisualState. */
     public final IntegerProperty visualStateProperty() {
         return visualState;
     }
     
-    @Override
+    /** @return The ConnectionState the Object is in. */
     public int getConnectionState() {
         return connectionState.get();
     }
 
-    @Override
+    /** Sets the ConnectionState. */
     public void setConnectionState(int state) {
         this.connectionState.set(state);
     }
     
-    @Override
+    /** @return the Property for the ConnectionState. */
     public final IntegerProperty connectionStateProperty() {
         return connectionState;
     }
@@ -211,9 +234,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         if (oldValue != newValue) {
             // Boolean to check if this was the last Block that changed.
             boolean cascadedFurther = false;
-            if (this instanceof OutputBlock) {
-                OutputBlock oblock = (OutputBlock) this;
-                for (Optional<? extends ConnectionAnchor> anchor : oblock.getOutputAnchor().getOppositeAnchors()) {
+            
+            if (this.getOutputAnchor().isPresent()) {
+                for (Optional<? extends ConnectionAnchor> anchor : this.getOutputAnchor().get().getOppositeAnchors()) {
                     if (anchor.isPresent()) {
                         // This Block is an OutputBlock, and that Output is connected to at least 1 Block.
                         anchor.get().getBlock().setConnectionState(newValue.intValue());
@@ -264,12 +287,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      * used as input for this Block.
      */
     public void cascadeVisualState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if (this instanceof InputBlock) {
-            InputBlock iblock = (InputBlock) this;
-            for (InputAnchor input : iblock.getActiveInputs()) {
-                if (input.isPrimaryConnected()) {
-                    input.getPrimaryOppositeAnchor().get().getBlock().setVisualState((int) newValue);
-                }
+        for (InputAnchor input : this.getActiveInputs()) {
+            if (input.isPrimaryConnected()) {
+                input.getPrimaryOppositeAnchor().get().getBlock().setVisualState((int) newValue);
             }
         }
     }

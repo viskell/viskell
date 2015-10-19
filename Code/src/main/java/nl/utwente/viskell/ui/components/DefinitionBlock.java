@@ -15,6 +15,7 @@ import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -22,14 +23,10 @@ import java.util.stream.Collectors;
  *
  * For now, it requires the complete type of the function to be known in advance.
  */
-public class DefinitionBlock extends Block implements InputBlock, OutputBlock, ComponentLoader {
-    @Override
-    public OutputAnchor getOutputAnchor() {
-        return fun;
-    }
+public class DefinitionBlock extends Block implements ComponentLoader {
 
     /** A block for attaching the argument (top) anchors to. */
-    private class ArgumentBlock extends Block implements OutputBlock {
+    private class ArgumentBlock extends Block {
         /** The variable binder corresponding to this input argument */
         private Binder binder;
         private OutputAnchor anchor;
@@ -43,8 +40,13 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
         }
 
         @Override
-        public OutputAnchor getOutputAnchor() {
-            return anchor;
+        public Optional<OutputAnchor> getOutputAnchor() {
+            return Optional.of(anchor);
+        }
+
+        @Override
+        public void updateExpr() {
+            this.expr = new LocalVar(this.binder);
         }
     }
 
@@ -96,15 +98,19 @@ public class DefinitionBlock extends Block implements InputBlock, OutputBlock, C
         TactilePane.setGoToForegroundOnContact(this, false);
     }
 
+    @Override
+    public Optional <OutputAnchor> getOutputAnchor() {
+        return Optional.of(fun);
+    }
+
     private List<OutputAnchor> getArgumentAnchors() {
-        return this.args.stream().map(ArgumentBlock::getOutputAnchor).collect(Collectors.toList());
+        return this.args.stream().map(arg -> arg.getOutputAnchor().get()).collect(Collectors.toList());
     }
 
     @Override
     public final void updateExpr() {
         List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         Expression body = new Annotated(this.res.getExpr(), this.resType); 
-        expr = new Lambda(binders, body);
-        super.updateExpr();
+        this.expr = new Lambda(binders, body);
     }
 }
