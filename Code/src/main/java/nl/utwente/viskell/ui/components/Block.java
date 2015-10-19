@@ -133,6 +133,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     
     /**
      * @return the optional output Anchor for this Block
+     * TODO generalize to List<OutputAnchor> getOutputAnchors()
      */
     public Optional<OutputAnchor> getOutputAnchor() {
         return Optional.empty();
@@ -157,26 +158,32 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      */
     public abstract void updateExpr();
     
+    /** @return The VisualState the Object is in. */
     public final int getVisualState() {
         return visualState.get();
     }
 
+    /** Sets the VisualState. */
     public void setVisualState(int state) {
         this.visualState.set(state);
     }
     
+    /** @return the Property for the VisualState. */
     public final IntegerProperty visualStateProperty() {
         return visualState;
     }
     
+    /** @return The ConnectionState the Object is in. */
     public int getConnectionState() {
         return connectionState.get();
     }
 
+    /** Sets the ConnectionState. */
     public void setConnectionState(int state) {
         this.connectionState.set(state);
     }
     
+    /** @return the Property for the ConnectionState. */
     public final IntegerProperty connectionStateProperty() {
         return connectionState;
     }

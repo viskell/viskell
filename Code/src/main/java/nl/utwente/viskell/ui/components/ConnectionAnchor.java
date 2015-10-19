@@ -35,6 +35,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /**
      * Handler class that reacts to user inputs on ConnectionAnchors to be able to
      * create, edit and drag Connections.
+     * TODO merge this inner class into ConnectionAnchor once ConnectionCreationManager is removed for a proper solution 
      */
     private class AnchorHandler implements EventHandler<InputEvent> {
         /** The ConnectionCreationManager to which this AnchorHandler belongs. */
