@@ -184,7 +184,7 @@ public class Connection extends ConnectionLine implements
         newAnchor.addConnection(this);
         addListeners(newAnchor);
 
-        if (isConnected()) {
+        if (isFullyConnected()) {
             // The ConnectionState changed.
             int state = ConnectionCreationManager.nextConnectionState();
             startAnchor.get().getBlock().setConnectionState(state);
@@ -226,7 +226,7 @@ public class Connection extends ConnectionLine implements
     /**
      * @return Whether or not both sides of this Connection are connected to an Anchor.
      */
-    public final boolean isConnected() {
+    public final boolean isFullyConnected() {
         return startAnchor.isPresent() && endAnchor.isPresent();
     }
 
@@ -264,7 +264,7 @@ public class Connection extends ConnectionLine implements
      */
     public final void disconnect(ConnectionAnchor anchor) {
         boolean disconnected = false;
-        boolean wasConnected = isConnected();
+        boolean wasConnected = isFullyConnected();
         // Find out what anchor to disconnect, and do so.
         if (startAnchor.isPresent() && startAnchor.get().equals(anchor)) {
             startAnchor = Optional.empty();
@@ -350,13 +350,13 @@ public class Connection extends ConnectionLine implements
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
 
         startAnchor.ifPresent(start -> {
-            OutputBlock block = (OutputBlock) start.getBlock();
+            Block block = start.getBlock();
             bundle.put("startBlock", block.hashCode());
             bundle.put("startAnchor", 0);
         });
 
         endAnchor.ifPresent(end -> {
-            InputBlock block = (InputBlock) end.getBlock();
+            Block block = end.getBlock();
             bundle.put("endBlock", block.hashCode());
             bundle.put("endAnchor", block.getAllInputs().indexOf(end));
         });

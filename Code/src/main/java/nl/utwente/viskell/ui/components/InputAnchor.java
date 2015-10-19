@@ -2,7 +2,6 @@ package nl.utwente.viskell.ui.components;
 
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Hole;
-import nl.utwente.viskell.ui.AnchorHandler;
 
 /**
  * ConnectionAnchor that specifically functions as an input.
@@ -17,7 +16,6 @@ public class InputAnchor extends ConnectionAnchor {
      */
     public InputAnchor(Block block) {
         super(block);
-        new AnchorHandler(super.getBlock().getPane().getConnectionCreationManager(), this);
         connectionlessExpr = new Hole();
     }
 

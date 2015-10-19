@@ -1,5 +1,7 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.Optional;
+
 import com.google.common.collect.ImmutableMap;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -18,7 +20,7 @@ import nl.utwente.viskell.ui.CustomUIPane;
  * Block should be extended instead.
  * </p>
  */
-public class ValueBlock extends Block implements OutputBlock {
+public class ValueBlock extends Block {
     /** The value of this ValueBlock. */
     private StringProperty value;
 
@@ -48,7 +50,7 @@ public class ValueBlock extends Block implements OutputBlock {
 
         this.loadFXML(fxml);
 
-        outputSpace.setCenter(this.getOutputAnchor());
+        outputSpace.setCenter(this.getOutputAnchor().get());
         outputSpace.toFront();
     }
 
@@ -75,12 +77,11 @@ public class ValueBlock extends Block implements OutputBlock {
     @Override
     public void updateExpr() {
         this.expr = new Value(type, getValue()); 
-        super.updateExpr();
     }
 
     @Override
-    public OutputAnchor getOutputAnchor() {
-        return output;
+    public Optional<OutputAnchor> getOutputAnchor() {
+        return Optional.of(output);
     }
     
     @Override

@@ -46,7 +46,9 @@ public class Main extends Application {
 
         // Check if GHCI is available
         try {
-            new GhciEvaluator().eval("");
+            GhciEvaluator testGhci = new GhciEvaluator(); 
+            testGhci.eval("");
+            testGhci.close();
         } catch (HaskellException e) {
             String msg = "It seems the Glasgow Haskell Compiler, GHC, is not " +
                     "available. Executing programs will not be enabled. We " +
