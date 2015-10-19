@@ -157,12 +157,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     private BooleanProperty errorState;
     
     /**
-     * Property storing the active state.
-     * When true, the ConnectionAnchor will react to user input.
-     */
-    private BooleanProperty activeState;
-
-    /**
      * @param block
      *            The block this ConnectionAnchor belongs to.
      */
@@ -171,42 +165,23 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         
         this.block = block;
         this.errorState = new SimpleBooleanProperty(false);
-        this.activeState = new SimpleBooleanProperty(true);
         this.connections = new ArrayList<Connection>();
         
-        this.activeState.addListener(a -> invalidateActive());
         this.errorState.addListener(this::checkError);
         this.new AnchorHandler(block.getPane().getConnectionCreationManager());
     }
     
-    /**
-     * @return Whether or not this ConnectionAnchor is in active mode.
-     */
-    public boolean getActiveState() {
-        return activeState.get();
-    }
-    
+ 
     /**
      * @param active The new active state for this ConnectionAnchor.
      */
     public void setActiveState(boolean active) {
-        this.activeState.set(active);
+        if (!active) {
+            this.removeConnections();
+        }
     }
     
-    /**
-     * @return The property describing the active state of this ConnectionAnchor.
-     */
-    public BooleanProperty activeStateProperty() {
-        return activeState;
-    }
-    
-    /**
-     * @return Whether or not this ConnectionAnchor is in an error state.
-     */
-    public boolean getErrorState() {
-        return errorState.get();
-    }
-    
+  
     /**
      * @param state The new error state for this ConnectionAnchor.
      */
@@ -415,15 +390,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         return new Point2D(0, 0);
     }
     
-    /**
-     * Reacts to a possible change in active state. Removes all connections if the state is not active.
-     */
-    public void invalidateActive() {
-        if (!activeState.get()) {
-            removeConnections();
-        }
-    }
-
     @Override
     public String toString() {
         return String.format("%s belonging to %s", this.getClass().getSimpleName(), getBlock());

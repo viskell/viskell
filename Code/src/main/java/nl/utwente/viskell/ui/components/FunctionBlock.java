@@ -13,7 +13,6 @@ import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.FunVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
-import nl.utwente.viskell.ui.ConnectionCreationManager;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.ArrayList;
@@ -200,7 +199,7 @@ public class FunctionBlock extends Block {
         }
         
         // Trigger invalidation for the now changed output type.
-        this.setConnectionState(ConnectionCreationManager.nextConnectionState());
+        this.updateConnectionState();
     }
     
     @Override

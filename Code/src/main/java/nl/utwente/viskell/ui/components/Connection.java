@@ -50,29 +50,19 @@ public class Connection extends ConnectionLine implements
     public Connection(CustomUIPane pane) {
         this.pane = pane;
         this.errorState = new SimpleBooleanProperty(false);
-        this.errorStateProperty().addListener(this::checkErrorListener);
+        this.errorState.addListener(this::checkErrorListener);
     }
 
     /** 
      * Construct a new Connection.
      * @param pane The Pane this Connection is on.
-     * @param from The OutputAnchor of this Connection.
+     * @param anchor A ConnectionAnchor of this Connection.
      */
-    public Connection(CustomUIPane pane, OutputAnchor from) {
+    public Connection(CustomUIPane pane, ConnectionAnchor anchor) {
         this(pane);
-        tryAddAnchor(from);
-        setEndPositionParent(getAnchorPositionInPane(from));
-    }
-
-    /** 
-     * Construct a new Connection.
-     * @param pane The Pane this Connection is on.
-     * @param to The InputAnchor of this Connection.
-     */
-    public Connection(CustomUIPane pane, InputAnchor to) {
-        this(pane);
-        tryAddAnchor(to);
-        setStartPositionParent(getAnchorPositionInPane(to));
+        setStartPositionParent(getAnchorPositionInPane(anchor));
+        setEndPositionParent(getAnchorPositionInPane(anchor));
+        setAnchor(anchor);
     }
 
     /** 
@@ -87,26 +77,12 @@ public class Connection extends ConnectionLine implements
         this.setAnchor(to);
     }
 
-    /** Convenience method. */
-    public Connection(CustomUIPane pane, InputAnchor to, OutputAnchor from) {
-        this(pane, from, to);
-    }
-    
-    /** @return The current error state. */
-    public boolean getErrorState() {
-        return errorState.get();
-    }
     
     /** Set a new error state. */
     public void setErrorState(boolean error) {
         errorState.set(error);
     }
-    
-    /** @return The property describing the error state. */
-    public BooleanProperty errorStateProperty() {
-        return errorState;
-    }
-
+   
     
     /* GETTERS */
     
@@ -144,23 +120,6 @@ public class Connection extends ConnectionLine implements
     public Point2D getAnchorPositionInPane(ConnectionAnchor anchor) {
         return getPane().sceneToLocal(anchor.localToScene(anchor.getLocalCenter()));
     }
-
-    /**
-     * @param anchor
-     *            Anchor to get the slot of
-     * @return The slot (startAnchor or endAnchor variable) this anchor should
-     *         be put in if connected to this Connection
-     */
-    private Optional<? extends ConnectionAnchor> getAnchorSlot(ConnectionAnchor anchor) {
-        if (anchor instanceof OutputAnchor) {
-            return startAnchor;
-        } else if (anchor instanceof InputAnchor) {
-            return endAnchor;
-        } else {
-            return Optional.empty();
-        }
-    }
-    
     
     /* SETTERS */
 
@@ -168,7 +127,7 @@ public class Connection extends ConnectionLine implements
      * Sets an OutputAnchor or InputAnchor for this line. After setting the line
      * will update accordingly to the possible state change.
      */
-    private void setAnchor(ConnectionAnchor newAnchor) {
+    public void setAnchor(ConnectionAnchor newAnchor) {
         // Add the anchor.
         if (newAnchor instanceof OutputAnchor) {
             startAnchor.ifPresent(a -> disconnect(a));
@@ -187,8 +146,8 @@ public class Connection extends ConnectionLine implements
         if (isFullyConnected()) {
             // The ConnectionState changed.
             int state = ConnectionCreationManager.nextConnectionState();
-            startAnchor.get().getBlock().setConnectionState(state);
-            endAnchor.get().getBlock().setConnectionState(state);
+            startAnchor.get().getBlock().updateConnectionState(state);
+            endAnchor.get().getBlock().updateConnectionState(state);
         }
         invalidateAnchorPositions();
     }
@@ -231,35 +190,6 @@ public class Connection extends ConnectionLine implements
     }
 
     /**
-     * Shortcut to call tryAddAnchor with default settings as specified in ConnectionCreationManager.
-     */
-    public boolean tryAddAnchor(ConnectionAnchor anchor) {
-        return tryAddAnchor(anchor,
-                ConnectionCreationManager.CONNECTIONS_OVERRIDE_EXISTING);
-    }
-
-    /**
-     * Tries to add an unspecified ConnectionAnchor to the connection.
-     *
-     * @param anchor
-     *            Anchor to add
-     * @param overrideExisting
-     *            If set, old anchors could be disconnected to make room for
-     *            this new one.
-     * @return Whether or not the anchor was added.
-     */
-    public boolean tryAddAnchor(ConnectionAnchor anchor, boolean overrideExisting) {
-        Optional<? extends ConnectionAnchor> slot = getAnchorSlot(anchor);
-
-        if (!slot.isPresent() || overrideExisting) {
-            setAnchor(anchor);
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Properly disconnects the given anchor from this Connection, notifying the anchor of its disconnection.
      */
     public final void disconnect(ConnectionAnchor anchor) {
@@ -283,28 +213,21 @@ public class Connection extends ConnectionLine implements
                 int state = ConnectionCreationManager.nextConnectionState();
     
                 //Let the now disconnected anchor update its visuals.
-                anchor.getBlock().setConnectionState(state);
+                anchor.getBlock().updateConnectionState(state);
                 //Let the remaining connected anchors update their visuals.
-                startAnchor.ifPresent(a -> a.getBlock().setConnectionState(state));
-                endAnchor.ifPresent(a -> a.getBlock().setConnectionState(state));
+                startAnchor.ifPresent(a -> a.getBlock().updateConnectionState(state));
+                endAnchor.ifPresent(a -> a.getBlock().updateConnectionState(state));
                 this.setErrorState(false);
             }
         }
     }
 
     /**
-     * Disconnects both anchors.
-     */
-    public final void disconnect() {
-        startAnchor.ifPresent(a -> disconnect(a));
-        endAnchor.ifPresent(a -> disconnect(a));
-    }
-
-    /**
      * Removes this Connection, disconnecting its anchors and removing this Connection from the pane it is on.
      */
     public final void remove() {
-        disconnect();
+        startAnchor.ifPresent(a -> disconnect(a));
+        endAnchor.ifPresent(a -> disconnect(a));
         getPane().getChildren().remove(this);
     }
 

@@ -216,10 +216,6 @@ public class CustomUIPane extends TactilePane {
         errorOccurred.set(error);
     }
     
-    public BooleanProperty errorOccurredProperty() {
-        return errorOccurred;
-    }
-
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
         Optional<Block> target = Optional.of(block);

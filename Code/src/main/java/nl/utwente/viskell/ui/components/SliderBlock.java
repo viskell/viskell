@@ -3,7 +3,6 @@ package nl.utwente.viskell.ui.components;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import nl.utwente.viskell.haskell.type.Type;
-import nl.utwente.viskell.ui.ConnectionCreationManager;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 /**
@@ -26,7 +25,7 @@ public class SliderBlock extends ValueBlock {
 
         slider.valueProperty().addListener(ev -> {
             setValue(String.valueOf(slider.getValue()));
-            this.setConnectionState(ConnectionCreationManager.nextConnectionState());
+            this.updateConnectionState();
         });
     }
 }
