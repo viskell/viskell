@@ -13,10 +13,10 @@ import java.util.Map;
  * These actions are associated with an input id.
  * <p>
  * This class also provides the methods to perform actions based on user input.
- * Possible actions include: {@linkplain #buildConnectionWith(int, ConnectionAnchor)},<br> 
+ * Possible actions include: 
  * {@linkplain #finishConnection(int, ConnectionAnchor)},<br> 
  * {@linkplain #removeConnection(int)},<br> 
- * {@linkplain #editConnection(int, ConnectionAnchor)}.
+ * {@linkplain #initiateConnectionFrom(int, ConnectionAnchor)}.
  * </p>
  * <p>
  * This class also stores a ConnectionState.
@@ -58,46 +58,50 @@ public class ConnectionCreationManager {
     }
 
     /**
-     * Creates a new temporary Connection, with the given start or end anchor. 
+     * Creates either a temporary Connection, with the given start or end anchor,
+     * or when this anchor cannot have extra connection disconnect the existing one
+     * to use as editable partial connection instead. 
      * The Connection will be finalized when a matching anchor has been added.
-     * 
+     *
      * @param id The id associated with the action on which to follow up.
-     * @param anchor The anchor to build a Connection with
-     * @return The newly built Connection object.
+     * @param anchor The anchor to build a Connection from.
      */
-    public Connection buildConnectionWith(int id, ConnectionAnchor anchor) {
-        Connection newConnection = new Connection(pane, anchor);
-        pane.getChildren().add(0, newConnection);
-        connections.put(id, newConnection);
-        return newConnection;
+    public void initiateConnectionFrom(int inputId, ConnectionAnchor anchor) {
+        if (!anchor.canAddExtraConnection()) {
+            // take the existing connection instead
+            Connection connection = anchor.getPrimaryConnection().get();
+            connection.disconnect(anchor);
+            connections.put(inputId, connection);
+        } else {
+            Connection newConnection = new Connection(pane, anchor);
+            pane.getChildren().add(0, newConnection);
+            connections.put(inputId, newConnection);
+        }
     }
-
+    
     /**
      * Assigns the second anchor to finish the building of the Connection.
      * 
-     * @param id
-     *            The id associated with this action.
-     * @param anchor
-     *            The anchor to add to the connection being finished.
-     * @return The finished connection.
+     * @param id The id associated with this action.
+     * @param anchor The anchor to add to the connection being finished.
      * @throws InvalidInputException.
      */
-    public Connection finishConnection(int id, ConnectionAnchor anchor) {
+    public void finishConnection(int id, ConnectionAnchor anchor) {
         Connection connection = connections.get(id);
         if (connection != null) {
-            if (!anchor.canAddConnection()) {
-                anchor.removeConnections();
+            if (!anchor.canAddExtraConnection()) {
+                anchor.removeConnections(); // push out the existing connections
             }
-            
-            connection.setAnchor(anchor);
+
+            connection.connectTo(anchor);
             
             if (!connection.isFullyConnected()) {
+                 // failed to produce a complete connection, cancel it.
                 removeConnection(id);
-                return null;
+                return;
             }
-            
+
             connections.remove(id);
-            return connection;
         } else {
             throw new RuntimeException("InvalidInputId");
         }
@@ -109,29 +113,8 @@ public class ConnectionCreationManager {
     public void removeConnection(int id) {
         Connection connection = connections.get(id);
         if (connection != null) {
-            connections.put(id, null);
-            connection.remove();
             connections.remove(id);
-        }
-    }
-
-    /**
-     * Changes the primary state of the Connection associated with the anchor to
-     * an edit state. This means that the primary connection of the given anchor
-     * will be disconnected, and stored as if the {@linkplain #finishConnection()} method was
-     * not called for this connection.
-     * 
-     * @param id
-     *            The id associated with the action on which to follow up.
-     * @param anchor
-     *            The anchor to start the edit operation from, this anchor will
-     *            be disconnected from its connection.
-     */
-    public void editConnection(int id, ConnectionAnchor anchor) {
-        if (anchor.isPrimaryConnected()) {
-            Connection connection = anchor.getPrimaryConnection().get();
-            connection.disconnect(anchor);
-            connections.put(id, connection);
+            connection.remove();
         }
     }
 
@@ -154,4 +137,5 @@ public class ConnectionCreationManager {
     public static int nextConnectionState(){
         return ++connectionState;
     }
+
 }
