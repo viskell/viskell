@@ -3,8 +3,6 @@ package nl.utwente.viskell.ui;
 import javafx.geometry.Point2D;
 import nl.utwente.viskell.ui.components.Connection;
 import nl.utwente.viskell.ui.components.ConnectionAnchor;
-import nl.utwente.viskell.ui.components.InputAnchor;
-import nl.utwente.viskell.ui.components.OutputAnchor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,18 +45,6 @@ public class ConnectionCreationManager {
      */
     private Map<Integer, Connection> connections;
 
-    /**
-     * When set to true, the connection to be created can override existing
-     * connections to a ConnectionAnchor.
-     */
-    public static final boolean CONNECTIONS_OVERRIDE_EXISTING = true;
-
-    /**
-     * When set to true a connection can be made with input type and output type
-     * not matching.
-     */
-    public static final boolean CONNECTIONS_ALLOW_TYPE_MISMATCH = true;
-
     /** The int representing the current connection state */
     private static int connectionState = 0; 
     
@@ -75,19 +61,12 @@ public class ConnectionCreationManager {
      * Creates a new temporary Connection, with the given start or end anchor. 
      * The Connection will be finalized when a matching anchor has been added.
      * 
-     * @param id
-     *            The id associated with the action on which to follow up.
-     * @param anchor
-     *            The anchor to build a Connection with
+     * @param id The id associated with the action on which to follow up.
+     * @param anchor The anchor to build a Connection with
      * @return The newly built Connection object.
      */
     public Connection buildConnectionWith(int id, ConnectionAnchor anchor) {
-        Connection newConnection = null;
-        if (anchor instanceof OutputAnchor) {
-            newConnection = new Connection(pane, (OutputAnchor) anchor);
-        } else if (anchor instanceof InputAnchor) {
-            newConnection = new Connection(pane, (InputAnchor) anchor);
-        }
+        Connection newConnection = new Connection(pane, anchor);
         pane.getChildren().add(0, newConnection);
         connections.put(id, newConnection);
         return newConnection;
@@ -106,19 +85,20 @@ public class ConnectionCreationManager {
     public Connection finishConnection(int id, ConnectionAnchor anchor) {
         Connection connection = connections.get(id);
         if (connection != null) {
-            if (CONNECTIONS_OVERRIDE_EXISTING && !anchor.canAddConnection()) {
+            if (!anchor.canAddConnection()) {
                 anchor.removeConnections();
             }
             
-            if (!(anchor.canAddConnection() && connection.tryAddAnchor(anchor) 
-                    && connection.isFullyConnected())) {
+            connection.setAnchor(anchor);
+            
+            if (!connection.isFullyConnected()) {
                 removeConnection(id);
                 return null;
             }
             
             connections.remove(id);
             return connection;
-        }else{
+        } else {
             throw new RuntimeException("InvalidInputId");
         }
     }
@@ -167,14 +147,7 @@ public class ConnectionCreationManager {
             connections.get(id).setFreeEnds(localPos);
         }
     }
-    
-    /**
-     * Returns the current connection state.
-     */
-    public static int getConnectionState(){
-        return connectionState;
-    }
-    
+
     /**
      * Go to the next connection state.
      */

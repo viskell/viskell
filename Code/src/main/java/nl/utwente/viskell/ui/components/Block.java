@@ -2,10 +2,7 @@ package nl.utwente.viskell.ui.components;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.input.MouseButton;
@@ -44,9 +41,6 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
     
-    /** The Circle (Context) menu associated with this block instance. */
-    private CircleMenu circleMenu;
-    
     /** The expression of this Block. */
     protected Expression expr;
     
@@ -56,8 +50,8 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** Property for the VisualState. */
     protected IntegerProperty visualState;
     
-    /** Property for the expression freshness. */
-    private BooleanProperty exprIsDirty;
+    /** Marker for the expression freshness. */
+    private boolean exprIsDirty;
 
     /**
      * @param pane
@@ -65,16 +59,17 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      */
     public Block(CustomUIPane pane) {
         parentPane = pane;
-        connectionState = new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
-        visualState = new SimpleIntegerProperty(ConnectionCreationManager.getConnectionState());
-        exprIsDirty = new SimpleBooleanProperty(true);
+        int state = ConnectionCreationManager.nextConnectionState();
+        connectionState = new SimpleIntegerProperty(state);
+        visualState = new SimpleIntegerProperty(state);
+        exprIsDirty = true;
         
         // Add listeners to the states.
         // Invalidate listeners give the Block a change to react on the state
         // change before it is cascaded.
         // Cascade listeners make sure state changes are correctly propagated.
         connectionState.addListener(a -> invalidateConnectionState());
-        connectionState.addListener(a -> setExprIsDirty(true));
+        connectionState.addListener(a -> setExprIsDirty());
         connectionState.addListener(this::cascadeConnectionState);
         visualState.addListener(a -> invalidateVisualState());
         visualState.addListener(this::cascadeVisualState);
@@ -89,16 +84,6 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         });
         // Add selection trigger.
         this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseEvent);
-
-        // Create the CircleMenu after fully creating the Block.
-        Platform.runLater(this::createCircleMenu);
-    }
-
-    /**
-     * Creates the CircleMenu for this Block.
-     */
-    protected void createCircleMenu() {
-        circleMenu = new CircleMenu(this);
     }
 
     /**
@@ -108,6 +93,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     private void handleMouseEvent(MouseEvent t) {
         parentPane.setSelectedBlock(this);
         if (t.getButton() == MouseButton.SECONDARY) {
+            CircleMenu circleMenu = new CircleMenu(this);
             circleMenu.show(t);
         }
     }
@@ -146,9 +132,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      */
     public final Expression getExpr() {
         // Assure expr is up-to-date.
-        if (getExprIsDirty()) {
+        if (this.exprIsDirty) {
             updateExpr();
-            setExprIsDirty(false);
+            this.exprIsDirty = false;
         }
         return expr;
     }
@@ -158,57 +144,29 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      */
     public abstract void updateExpr();
     
-    /** @return The VisualState the Object is in. */
-    public final int getVisualState() {
-        return visualState.get();
-    }
 
     /** Sets the VisualState. */
-    public void setVisualState(int state) {
+    public void updateVisualState(int state) {
         this.visualState.set(state);
     }
     
-    /** @return the Property for the VisualState. */
-    public final IntegerProperty visualStateProperty() {
-        return visualState;
-    }
-    
-    /** @return The ConnectionState the Object is in. */
-    public int getConnectionState() {
-        return connectionState.get();
+    /** Sets the ConnectionState to a fresh state. */
+    public void updateConnectionState() {
+        this.connectionState.set(ConnectionCreationManager.nextConnectionState());
     }
 
     /** Sets the ConnectionState. */
-    public void setConnectionState(int state) {
+    public void updateConnectionState(int state) {
         this.connectionState.set(state);
     }
     
-    /** @return the Property for the ConnectionState. */
-    public final IntegerProperty connectionStateProperty() {
-        return connectionState;
-    }
-    
     /**
-     * @return True if the expression is not fresh.
+     * Sets the expression to dirty 
      */
-    public boolean getExprIsDirty() {
-        return exprIsDirty.get();
+    protected void setExprIsDirty() {
+        this.exprIsDirty = true;
     }
-    
-    /**
-     * Sets the dirty-ness of the expression
-     */
-    public void setExprIsDirty(boolean dirty) {
-        exprIsDirty.set(dirty);
-    }
-    
-    /**
-     * @return The BooleanProperty for the expression dirty-ness.
-     */
-    public BooleanProperty exprIsDirtyProperty() {
-        return exprIsDirty;
-    }
-    
+
     /**
      * Called when the ConnectionState changed.
      */
@@ -239,7 +197,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
                 for (Optional<? extends ConnectionAnchor> anchor : this.getOutputAnchor().get().getOppositeAnchors()) {
                     if (anchor.isPresent()) {
                         // This Block is an OutputBlock, and that Output is connected to at least 1 Block.
-                        anchor.get().getBlock().setConnectionState(newValue.intValue());
+                        anchor.get().getBlock().updateConnectionState(newValue.intValue());
                         cascadedFurther = true;
                     }
                 }
@@ -276,7 +234,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
                 }
                 
                 // Now that the expressions are updated, propagate a visual refresh upwards.
-                this.setVisualState((int) newValue);
+                this.updateVisualState((int) newValue);
                 
             }
         }
@@ -289,7 +247,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     public void cascadeVisualState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         for (InputAnchor input : this.getActiveInputs()) {
             if (input.isPrimaryConnected()) {
-                input.getPrimaryOppositeAnchor().get().getBlock().setVisualState((int) newValue);
+                input.getPrimaryOppositeAnchor().get().getBlock().updateVisualState((int) newValue);
             }
         }
     }

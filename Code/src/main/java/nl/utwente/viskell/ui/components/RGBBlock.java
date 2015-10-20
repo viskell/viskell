@@ -94,13 +94,6 @@ public class RGBBlock extends DisplayBlock {
         }
     }
 
-    /**
-     * @return The InputAnchor as specified by the given index.
-     */
-    private InputAnchor getInput(int index) {
-        return getAllInputs().get(index);
-    }
-
     @Override
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(r,g,b);
