@@ -40,6 +40,9 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     private class AnchorHandler implements EventHandler<InputEvent> {
         /** The ConnectionCreationManager to which this AnchorHandler belongs. */
         private ConnectionCreationManager manager;
+        
+        /** Whether a new connection line is partially created from this anchor */
+        private boolean lineInProgress;
 
         /**
          * Constructs a new AnchorHandler
@@ -49,6 +52,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         public AnchorHandler(ConnectionCreationManager manager) {
             this.manager = manager;
             ConnectionAnchor anchor = ConnectionAnchor.this;
+            this.lineInProgress = false;
 
             anchor.addEventFilter(MouseEvent.MOUSE_PRESSED, this);
             anchor.addEventFilter(MouseEvent.MOUSE_DRAGGED, this);
@@ -82,19 +86,26 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
             }
 
             /* Use the input information to call the appropriate method. */
-            if (pickResult != null && (inputId == ConnectionCreationManager.INPUT_ID_MOUSE || inputId > 0)) {
-                if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)
-                        || event.getEventType().equals(TouchEvent.TOUCH_PRESSED)) {
+            if ((inputId == ConnectionCreationManager.INPUT_ID_MOUSE || inputId > 0)) {
+                if ((event.getEventType().equals(MouseEvent.MOUSE_PRESSED)
+                        || event.getEventType().equals(TouchEvent.TOUCH_PRESSED))
+                        && !this.lineInProgress) {
+                    this.lineInProgress = true;
                     inputPressed(inputId);
-                } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)
-                        || event.getEventType().equals(TouchEvent.TOUCH_MOVED)) {
+                    event.consume();
+                } else if ((event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)
+                        || event.getEventType().equals(TouchEvent.TOUCH_MOVED))
+                        && this.lineInProgress) {
                     inputMoved(inputId,x,y);
-                } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)
-                        || event.getEventType().equals(TouchEvent.TOUCH_RELEASED)) {
+                    event.consume();
+                } else if ((event.getEventType().equals(MouseEvent.MOUSE_RELEASED)
+                        || event.getEventType().equals(TouchEvent.TOUCH_RELEASED))
+                        && this.lineInProgress) {
+                    this.lineInProgress = false;
                     inputReleased(inputId,pickResult);
+                    event.consume();
                 }
             }
-            event.consume();
         }
         
         /**
@@ -105,7 +116,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
          */
         private void inputPressed(int inputId){
             ConnectionAnchor anchor = ConnectionAnchor.this;
-            if (anchor.getPrimaryConnection().isPresent() && !anchor.canAddConnection()) {
+            if (!anchor.canAddConnection()) {
                 manager.editConnection(inputId, anchor);
             } else {
                 manager.buildConnectionWith(inputId, anchor);
@@ -175,7 +186,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /**
      * @param active The new active state for this ConnectionAnchor.
      */
-    public void setActiveState(boolean active) {
+    public void toggleActiveState(boolean active) {
         if (!active) {
             this.removeConnections();
         }

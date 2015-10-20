@@ -41,6 +41,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
     
+    /** The Circle (Context) menu associated with this block instance. */
+    private CircleMenu circleMenu;
+    
     /** The expression of this Block. */
     protected Expression expr;
     
@@ -93,8 +96,11 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     private void handleMouseEvent(MouseEvent t) {
         parentPane.setSelectedBlock(this);
         if (t.getButton() == MouseButton.SECONDARY) {
-            CircleMenu circleMenu = new CircleMenu(this);
-            circleMenu.show(t);
+            if (this.circleMenu == null) {
+                this.circleMenu = new CircleMenu(this);
+            }
+            
+            this.circleMenu.show(t);
         }
     }
 
