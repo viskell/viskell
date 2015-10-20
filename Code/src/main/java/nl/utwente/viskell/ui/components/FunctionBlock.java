@@ -195,7 +195,7 @@ public class FunctionBlock extends Block {
     private void invalidateKnotIndex() {
         List<InputAnchor> inputs = getAllInputs();
         for (int i = 0; i < inputs.size(); i++) {
-            inputs.get(i).setActiveState(i < getKnotIndex());
+            inputs.get(i).toggleActiveState(i < getKnotIndex());
         }
         
         // Trigger invalidation for the now changed output type.

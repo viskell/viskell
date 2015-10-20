@@ -186,7 +186,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /**
      * @param active The new active state for this ConnectionAnchor.
      */
-    public void setActiveState(boolean active) {
+    public void toggleActiveState(boolean active) {
         if (!active) {
             this.removeConnections();
         }
