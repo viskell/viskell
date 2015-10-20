@@ -203,7 +203,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
                 for (Optional<? extends ConnectionAnchor> anchor : this.getOutputAnchor().get().getOppositeAnchors()) {
                     if (anchor.isPresent()) {
                         // This Block is an OutputBlock, and that Output is connected to at least 1 Block.
-                        anchor.get().getBlock().updateConnectionState(newValue.intValue());
+                        anchor.get().updateConnectionState(newValue.intValue());
                         cascadedFurther = true;
                     }
                 }

@@ -19,7 +19,7 @@ public class OutputAnchor extends ConnectionAnchor {
     }
     
     @Override
-    public boolean canAddConnection() {
+    public boolean canAddExtraConnection() {
         // OutputAnchors can have multiple connections;
         return true;
     }

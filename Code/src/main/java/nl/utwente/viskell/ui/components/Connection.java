@@ -62,7 +62,7 @@ public class Connection extends ConnectionLine implements
         this(pane);
         setStartPositionParent(getAnchorPositionInPane(anchor));
         setEndPositionParent(getAnchorPositionInPane(anchor));
-        setAnchor(anchor);
+        connectTo(anchor);
     }
 
     /** 
@@ -73,8 +73,13 @@ public class Connection extends ConnectionLine implements
      */
     public Connection(CustomUIPane pane, OutputAnchor from, InputAnchor to) {
         this(pane);
-        this.setAnchor(from);
-        this.setAnchor(to);
+        this.startAnchor = Optional.of(from);
+        this.endAnchor = Optional.of(to);
+        from.addConnection(this);
+        to.addConnection(this);
+        this.addListeners(from);
+        this.addListeners(to);
+        this.updateConnectionState(ConnectionCreationManager.nextConnectionState());
     }
 
     
@@ -114,6 +119,25 @@ public class Connection extends ConnectionLine implements
     }
     
     /**
+     * This method provides a shortcut to optional anchor on the other side of
+     * the provided anchor in this Connection.
+     * 
+     * @param anchor on this side of the connection  
+     * @return the opposite anchor if it exists in this connection.
+     */
+    public Optional<? extends ConnectionAnchor> getOppositeAnchorOf(ConnectionAnchor anchor) {
+        if (anchor == null) {
+            return Optional.empty();
+        } else if (anchor.equals(this.startAnchor.orElse(null))) {
+            return this.endAnchor;
+        } else if (anchor.equals(this.endAnchor.orElse(null))) {
+            return this.startAnchor;
+        }
+        
+        return Optional.empty();
+    }
+    
+    /**
      * @return The position on the specified anchor local to the CustomUIPane at
      *         which the Line should start or end.
      */
@@ -124,32 +148,24 @@ public class Connection extends ConnectionLine implements
     /* SETTERS */
 
     /**
-     * Sets an OutputAnchor or InputAnchor for this line. After setting the line
-     * will update accordingly to the possible state change.
+     * Sets an OutputAnchor or InputAnchor for this line.
+     * After setting the line will update accordingly to the possible state change.
      */
-    public void setAnchor(ConnectionAnchor newAnchor) {
+    public void connectTo(ConnectionAnchor newAnchor) {
         // Add the anchor.
-        if (newAnchor instanceof OutputAnchor) {
-            startAnchor.ifPresent(a -> disconnect(a));
+        if (newAnchor instanceof OutputAnchor && !startAnchor.isPresent()) {
             startAnchor = Optional.of((OutputAnchor) newAnchor);
-        } else if (newAnchor instanceof InputAnchor) {
-            endAnchor.ifPresent(a -> disconnect(a));
+        } else if (newAnchor instanceof InputAnchor && !endAnchor.isPresent()) {
             endAnchor = Optional.of((InputAnchor) newAnchor);
         } else {
-            throw new RuntimeException("InvalidAnchor");
+            return;
         }
         
         // Add this to the anchor.
         newAnchor.addConnection(this);
-        addListeners(newAnchor);
-
-        if (isFullyConnected()) {
-            // The ConnectionState changed.
-            int state = ConnectionCreationManager.nextConnectionState();
-            startAnchor.get().getBlock().updateConnectionState(state);
-            endAnchor.get().getBlock().updateConnectionState(state);
-        }
-        invalidateAnchorPositions();
+        this.addListeners(newAnchor);
+        
+        this.updateConnectionState(ConnectionCreationManager.nextConnectionState());
     }
 
     /**
@@ -189,36 +205,38 @@ public class Connection extends ConnectionLine implements
         return startAnchor.isPresent() && endAnchor.isPresent();
     }
 
+    /** Sets the ConnectionState of connected anchors and refreshes itself. */
+    public void updateConnectionState(int state) {
+        startAnchor.ifPresent(a -> a.updateConnectionState(state));
+        endAnchor.ifPresent(a -> a.updateConnectionState(state));
+        this.setErrorState(false);
+        invalidateAnchorPositions();
+    }
+    
     /**
      * Properly disconnects the given anchor from this Connection, notifying the anchor of its disconnection.
      */
     public final void disconnect(ConnectionAnchor anchor) {
-        boolean disconnected = false;
         boolean wasConnected = isFullyConnected();
         // Find out what anchor to disconnect, and do so.
         if (startAnchor.isPresent() && startAnchor.get().equals(anchor)) {
             startAnchor = Optional.empty();
-            disconnected = true;
         } else if (endAnchor.isPresent() && endAnchor.get().equals(anchor)) {
             endAnchor = Optional.empty();
-            disconnected = true;
+        } else {
+            return; // can't find anchor to disconnect
         }
         
-        if (disconnected) {
-            // Fully disconnect the anchor from this Connection.
-            removeListeners(anchor);
-            anchor.disconnectConnection(this);
+        // Fully disconnect the anchor from this Connection.
+        anchor.localToSceneTransformProperty().removeListener(this);
+        anchor.dropConnection(this);
             
-            if (wasConnected) {
-                int state = ConnectionCreationManager.nextConnectionState();
-    
-                //Let the now disconnected anchor update its visuals.
-                anchor.getBlock().updateConnectionState(state);
-                //Let the remaining connected anchors update their visuals.
-                startAnchor.ifPresent(a -> a.getBlock().updateConnectionState(state));
-                endAnchor.ifPresent(a -> a.getBlock().updateConnectionState(state));
-                this.setErrorState(false);
-            }
+        if (wasConnected) {
+            int state = ConnectionCreationManager.nextConnectionState();
+            //Let the now disconnected anchor update its visuals.
+            anchor.updateConnectionState(state);
+            //Let the remaining connected anchors update their visuals.
+            this.updateConnectionState(state);
         }
     }
 
@@ -237,14 +255,6 @@ public class Connection extends ConnectionLine implements
      */
     private void addListeners(ConnectionAnchor anchor) {
         anchor.localToSceneTransformProperty().addListener(this);
-    }
-
-    /**
-     * Removes the listeners this Connections needed to keep its visual
-     * representation up-to-date from the given anchor.
-     */
-    private void removeListeners(ConnectionAnchor anchor) {
-        anchor.localToSceneTransformProperty().removeListener(this);
     }
 
     @Override
