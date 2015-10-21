@@ -208,7 +208,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * ChangeListener that will set the error state if isConnected().
      */
     public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        for (Connection conn : getConnections()) {
+        for (Connection conn : this.connections) {
             if (conn.isFullyConnected()) {
                 conn.setErrorState(newValue);
             }
@@ -266,35 +266,13 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * @return Whether or not the connection specified by the index is connected. False if the index is invalid.
      */
     public boolean isFullyConnected(int index) {
-        return index >= 0 && index < getConnections().size() && getConnections().get(index).isFullyConnected();
+        return index >= 0 && index < this.connections.size() && this.connections.get(index).isFullyConnected();
     }
 
     /**
      * @return Whether or not this anchor allows adding an extra connection.
      */
     public abstract boolean canAddExtraConnection();
-
-    /**
-     * This method provides a shortcut to get the anchors on the other side of
-     * the Connection from this anchor.
-     * 
-     * @return A list of each potential opposite anchor for each Connection this
-     *         anchor has.
-     */
-    public List<Optional<? extends ConnectionAnchor>> getOppositeAnchors() {
-        List<Optional<? extends ConnectionAnchor>> list = new ArrayList<>();
-        for (Connection c : this.connections) {
-            list.add(c.getOppositeAnchorOf(this));
-        }
-        return list;
-    }
-
-    /**
-     * @return Optional of the primary connection's opposite anchor.
-     */
-    public Optional<? extends ConnectionAnchor> getPrimaryOppositeAnchor() {
-        return this.getPrimaryConnection().flatMap(c -> c.getOppositeAnchorOf(this));
-    }
 
     /**
      * @return The block this anchor belongs to.
@@ -304,21 +282,24 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
 
     /**
-     * @return the connections this anchor is connected to.
-     */
-    public List<Connection> getConnections() {
+    * @return the connections this anchor is connected to.
+    */
+    protected List<Connection> getConnections() {
         return connections;
     }
 
     /**
-     * @return Optional of the primary connection.
+     * Attempt to get the nth connection to this anchor, if present
+     * 
+     * @param index this index of the connection.
+     * @return Optional of the connection at index.
      */
-    public Optional<Connection> getPrimaryConnection() {
-        if (this.connections.isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(getConnections().get(0));
+    public Optional<Connection> getConnection(int index) {
+        if (this.connections.size() > index) {
+            return Optional.of(this.connections.get(index));
         }
+        
+        return Optional.empty();
     }
 
     /** Sets the ConnectionState of the Block this anchor is attached to. */

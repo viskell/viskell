@@ -200,7 +200,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
             boolean cascadedFurther = false;
             
             if (this.getOutputAnchor().isPresent()) {
-                for (Optional<? extends ConnectionAnchor> anchor : this.getOutputAnchor().get().getOppositeAnchors()) {
+                for (Optional<InputAnchor> anchor : this.getOutputAnchor().get().getOppositeAnchors()) {
                     if (anchor.isPresent()) {
                         // This Block is an OutputBlock, and that Output is connected to at least 1 Block.
                         anchor.get().updateConnectionState(newValue.intValue());
@@ -252,9 +252,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      */
     public void cascadeVisualState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         for (InputAnchor input : this.getActiveInputs()) {
-            if (input.isPrimaryConnected()) {
-                input.getPrimaryOppositeAnchor().get().getBlock().updateVisualState((int) newValue);
-            }
+            input.getOppositeAnchor().ifPresent(a -> a.getBlock().updateVisualState((int) newValue));
         }
     }
     

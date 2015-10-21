@@ -69,12 +69,11 @@ public class ConnectionCreationManager {
     public void initiateConnectionFrom(int inputId, ConnectionAnchor anchor) {
         if (!anchor.canAddExtraConnection()) {
             // take the existing connection instead
-            Connection connection = anchor.getPrimaryConnection().get();
+            Connection connection = anchor.getConnection(0).get();
             connection.disconnect(anchor);
             connections.put(inputId, connection);
         } else {
             Connection newConnection = new Connection(pane, anchor);
-            pane.getChildren().add(0, newConnection);
             connections.put(inputId, newConnection);
         }
     }
