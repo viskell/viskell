@@ -19,6 +19,7 @@ import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.ui.components.Block;
 import nl.utwente.viskell.ui.components.Connection;
 import nl.utwente.viskell.ui.components.FunctionBlock;
+import nl.utwente.viskell.ui.components.InputAnchor;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -218,23 +219,12 @@ public class CustomUIPane extends TactilePane {
     
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
-        Optional<Block> target = Optional.of(block);
-        ArrayList<Node> toRemove = new ArrayList<>();
-
-        for (Node node : getChildren()) {
-            if (node instanceof Connection) {
-                Optional<Block> in = ((Connection) node).getInputBlock();
-                Optional<Block> out = ((Connection) node).getOutputBlock();
-
-                if (in.equals(target) || out.equals(target)) {
-                    toRemove.add(node);
-                }
-            } else if (node.equals(block)) {
-                toRemove.add(node);
-            }
+        for (InputAnchor in : block.getAllInputs()) {
+            in.removeConnections();
         }
-
-        this.getChildren().removeAll(toRemove);
+        
+        block.getOutputAnchor().ifPresent(out -> out.removeConnections());
+        this.getChildren().removeAll(block);
     }
 
     /** Remove the selected block, if any. */
