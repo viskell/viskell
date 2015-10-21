@@ -90,66 +90,32 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
                 if ((event.getEventType().equals(MouseEvent.MOUSE_PRESSED)
                         || event.getEventType().equals(TouchEvent.TOUCH_PRESSED))
                         && !this.lineInProgress) {
+
                     this.lineInProgress = true;
-                    inputPressed(inputId);
+                    manager.initiateConnectionFrom(inputId, ConnectionAnchor.this);
                     event.consume();
                 } else if ((event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)
                         || event.getEventType().equals(TouchEvent.TOUCH_MOVED))
                         && this.lineInProgress) {
-                    inputMoved(inputId,x,y);
+
+                    manager.updateLine(inputId, x, y);
                     event.consume();
                 } else if ((event.getEventType().equals(MouseEvent.MOUSE_RELEASED)
                         || event.getEventType().equals(TouchEvent.TOUCH_RELEASED))
                         && this.lineInProgress) {
+
+                    if (pickResult instanceof ConnectionAnchor) {
+                        manager.finishConnection(inputId, (ConnectionAnchor) pickResult);
+                    } else {
+                        manager.removeConnection(inputId);
+                    }
+                    
                     this.lineInProgress = false;
-                    inputReleased(inputId,pickResult);
                     event.consume();
                 }
             }
         }
         
-        /**
-         * Method to indicate that the Anchor with the given inputId is pressed.
-         * 
-         * @param inputId
-         *            The id associated with the input that triggered this action.
-         */
-        private void inputPressed(int inputId){
-            ConnectionAnchor anchor = ConnectionAnchor.this;
-            if (!anchor.canAddConnection()) {
-                manager.editConnection(inputId, anchor);
-            } else {
-                manager.buildConnectionWith(inputId, anchor);
-            }
-        }
-        
-        /**
-         * Method to indicate that the input moved.
-         * 
-         * @param inputId
-         *            The id associated with the input that triggered this action.
-         * @param x
-         *            The sceneX coordinate of the input.
-         * @param y
-         *            The sceneY coordinate of the input.
-         */
-        private void inputMoved(int inputId, double x, double y){
-            manager.updateLine(inputId, x, y);
-        }
-        
-        /**
-         * Method to indicate that the input was released.
-         * 
-         * @param inputId The id associated with the input that triggered this action.
-         * @param pickResult The PickResult done at the position where the input was released.
-         */
-        private void inputReleased(int inputId, Node pickResult){
-            if (pickResult instanceof ConnectionAnchor) {
-                manager.finishConnection(inputId, (ConnectionAnchor) pickResult);
-            } else {
-                manager.removeConnection(inputId);
-            }
-        }
     }
 
     /** The block this ConnectionAnchor belongs to. */
@@ -242,7 +208,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * ChangeListener that will set the error state if isConnected().
      */
     public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        for (Connection conn : getConnections()) {
+        for (Connection conn : this.connections) {
             if (conn.isFullyConnected()) {
                 conn.setErrorState(newValue);
             }
@@ -250,30 +216,13 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
     
     /**
-     * Removes the connection from its pane, first disconnecting it from its
-     * anchors.
+     * Drops the connection from this anchor
      *
-     * @param connection
-     *            Connection to remove from its pane.
+     * @param connection Connection to disconnect from.
      */
-    public void removeConnection(Connection connection) {
+    protected void dropConnection(Connection connection) {
         if (connections.contains(connection)) {
             connections.remove(connection);
-            connection.remove();
-        }
-    }
-
-    /**
-     * Disconnects the connection from this anchor, keeping the connection on
-     * its pane.
-     *
-     * @param connection
-     *            Connection to disconnect from.
-     */
-    public void disconnectConnection(Connection connection) {
-        if (connections.contains(connection)) {
-            connections.remove(connection);
-            connection.disconnect(this);
         }
     }
 
@@ -282,16 +231,8 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      */
     public void removeConnections() {
         while (!connections.isEmpty()) {
-            removeConnection(connections.get(0));
-        }
-    }
-
-    /**
-     * Disconnects all the connections this anchor has from this anchor.
-     */
-    public void disconnectConnections() {
-        while (!connections.isEmpty()) {
-            disconnectConnection(connections.get(0));
+            Connection connection = connections.remove(0);
+            connection.remove();
         }
     }
 
@@ -325,49 +266,13 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * @return Whether or not the connection specified by the index is connected. False if the index is invalid.
      */
     public boolean isFullyConnected(int index) {
-        return index >= 0 && index < getConnections().size() && getConnections().get(index).isFullyConnected();
+        return index >= 0 && index < this.connections.size() && this.connections.get(index).isFullyConnected();
     }
 
     /**
      * @return Whether or not this anchor allows adding an extra connection.
      */
-    public abstract boolean canAddConnection();
-
-    /**
-     * This method provides a shortcut to get the anchors on the other side of
-     * the Connection from this anchor.
-     * 
-     * @return A list of each potential opposite anchor for each Connection this
-     *         anchor has.
-     */
-    public List<Optional<? extends ConnectionAnchor>> getOppositeAnchors() {
-        List<Optional<? extends ConnectionAnchor>> list = new ArrayList<Optional<? extends ConnectionAnchor>>();
-        for (Connection c : getConnections()) {
-            if (c.isFullyConnected()) {
-                if (c.getInputAnchor().isPresent() && c.getInputAnchor().get().equals(this)) {
-                    list.add(c.getOutputAnchor());
-                } else if (c.getOutputAnchor().isPresent() && c.getOutputAnchor().get().equals(this)) {
-                    list.add(c.getInputAnchor());
-                } else {
-                    list.add(Optional.empty());
-                }
-            } else {
-                list.add(Optional.empty());
-            }
-        }
-        return list;
-    }
-
-    /**
-     * @return Optional of the primary connection's opposite anchor.
-     */
-    public Optional<? extends ConnectionAnchor> getPrimaryOppositeAnchor() {
-        if (!getOppositeAnchors().isEmpty()) {
-            return getOppositeAnchors().get(0);
-        } else {
-            return Optional.empty();
-        }
-    }
+    public abstract boolean canAddExtraConnection();
 
     /**
      * @return The block this anchor belongs to.
@@ -377,23 +282,31 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
 
     /**
-     * @return the connections this anchor is connected to.
-     */
-    public List<Connection> getConnections() {
+    * @return the connections this anchor is connected to.
+    */
+    protected List<Connection> getConnections() {
         return connections;
     }
 
     /**
-     * @return Optional of the primary connection.
+     * Attempt to get the nth connection to this anchor, if present
+     * 
+     * @param index this index of the connection.
+     * @return Optional of the connection at index.
      */
-    public Optional<Connection> getPrimaryConnection() {
-        if (getConnections().size() > 0) {
-            return Optional.of(getConnections().get(0));
-        } else {
-            return Optional.empty();
+    public Optional<Connection> getConnection(int index) {
+        if (this.connections.size() > index) {
+            return Optional.of(this.connections.get(index));
         }
+        
+        return Optional.empty();
     }
 
+    /** Sets the ConnectionState of the Block this anchor is attached to. */
+    public void updateConnectionState(int state) {
+        this.block.updateConnectionState(state);
+    }
+    
     /**
      * @return the position of the center of this anchor relative to its pane.
      */

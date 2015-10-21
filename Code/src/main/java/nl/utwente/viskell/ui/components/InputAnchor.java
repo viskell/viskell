@@ -1,5 +1,7 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.Optional;
+
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Hole;
 
@@ -20,15 +22,18 @@ public class InputAnchor extends ConnectionAnchor {
     }
 
     /**
+     * @return Optional of the connection's opposite output anchor.
+     */
+    public Optional<OutputAnchor> getOppositeAnchor() {
+        return this.getConnection(0).flatMap(c -> c.getOppositeAnchorOf(this));
+    }
+    
+    /**
      * @return The expression carried by the connection connected to this anchor.
      */
     @Override
     public final Expression getExpr() {
-        if (isPrimaryConnected()) {
-            return getPrimaryOppositeAnchor().get().getBlock().getExpr();
-        } else {
-            return connectionlessExpr;
-        }
+        return this.getOppositeAnchor().map(o -> o.getBlock().getExpr()).orElse(connectionlessExpr);
     }
     
     /**
@@ -41,7 +46,7 @@ public class InputAnchor extends ConnectionAnchor {
     }
 
     @Override
-    public boolean canAddConnection() {
+    public boolean canAddExtraConnection() {
         // InputAnchors only support 1 connection;
         return !hasConnection();
     }
@@ -50,5 +55,5 @@ public class InputAnchor extends ConnectionAnchor {
     public String toString() {
         return "InputAnchor for " + getBlock();
     }
-    
+
 }
