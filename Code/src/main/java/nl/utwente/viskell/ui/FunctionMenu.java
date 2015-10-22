@@ -116,12 +116,14 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
         Button defBlockButton = new Button("Definition Block");
         defBlockButton.setOnAction(event -> addDefinitionBlock());
+        Button lambdaBlockButton = new Button("Lambda Block");
+        lambdaBlockButton.setOnAction(event -> addLambdaBlock());
 
         Button closeButton = new Button("Close");
         closeButton.setOnAction(event -> close());
 
         utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton,
-                defBlockButton, sliderBlockButton, rgbBlockButton, graphBlockButton);
+                defBlockButton, lambdaBlockButton, sliderBlockButton, rgbBlockButton, graphBlockButton);
 
         for (Node button : utilSpace.getChildren()) {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);
@@ -177,6 +179,11 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         });
     }
 
+    private void addLambdaBlock() {
+        DefinitionBlock def = new DefinitionBlock(this.parent, 1);
+        addBlock(def);
+    }
+    
     private void addBlock(Block block) {
         parent.getChildren().add(block);
         block.updateConnectionState();
