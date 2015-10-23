@@ -79,21 +79,11 @@ public class Connection extends ConnectionLine implements
         return endAnchor;
     }
 
-    /** @return the downstream block, if any. */
-    public final Optional<Block> getInputBlock() {
-        return endAnchor.map(ConnectionAnchor::getBlock);
-    }
-
     /** @return this connection's start anchor, if any. */
     public final Optional<OutputAnchor> getOutputAnchor() {
         return startAnchor;
     }
 
-    /** @return the upstream block, if any. */
-    public final Optional<Block> getOutputBlock() {
-        return startAnchor.map(ConnectionAnchor::getBlock);
-    }
-    
     /**
      * Get the optional output anchor on the other side of
      * the provided input anchor in this Connection.

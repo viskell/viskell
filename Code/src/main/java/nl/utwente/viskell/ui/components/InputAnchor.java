@@ -32,8 +32,8 @@ public class InputAnchor extends ConnectionAnchor {
      * @return The expression carried by the connection connected to this anchor.
      */
     @Override
-    public final Expression getExpr() {
-        return this.getOppositeAnchor().map(o -> o.getBlock().getExpr()).orElse(connectionlessExpr);
+    public Expression getExpr() {
+        return this.getOppositeAnchor().map(o -> o.getExpr()).orElse(connectionlessExpr);
     }
     
     /**
