@@ -1,6 +1,26 @@
 # Viskell
 
-Programming has always been an activity which is done on a computer with a keyboard. Despite the existence of different visual programming languages (e.g. Pure Data) and tools which represent processes visually (e.g. Blender) there are no programs in which well known programming languages like Java, Haskell or C(++) can be visually implemented. 
+Viskell is an experimental visual programming environment for a typed (Haskell like) functional programming language.
+This project is exploring the possibilities and challenges of interactive visual programming in combination with the strenghts and weaknesses of functional languages.
+While many visual programming languages/environments exist they are often restricted to a specific application domain or a special target audience.
+The potential of an advanced type systems and higher level abstractions in visual programming has barely been explored yet.
 
-Viskell is a program for visually creating Haskell programs. Viskell tries to aide developers with real-time feedback on Haskell programs. This allows developers to spot type errors directly, without needing to have a compilable program, and provides a visual insight into the program. The intermediate output of a function can also be inspected at runtime. Viskell also allows developers to collaborate and work together on a large multi-touch screen. Other common touch interfaces such as those found on devices like the Microsoft Surface (Pro), are supported as well. Because of the user interface with touch capabilities developers can easily manipulate the code without having a keyboard or mouse around. This provides a better experience for programming on the go. Because of the spatial flexibility offered by handheld devices and touch interfaces, programming with Viskell should be more fun and more ergonomic.
+### Goals and focus points
+  * Creating readable and compact visualisation for functional language constructs.
+  * Direct feedback on every program modification (avoiding the slow edit-compile-debug cycle).
+  * Exploring alternative inputs methods (for now multi-touch devices).
+  * Type guided development (program fragments show their types, and type error are visualised).
+  * Programming with less local variables ('wirefull' approach as alternative to 'pointfree' style).
+  * Raising the level of abstraction (good support for higher order functions and other common Haskell abstractions).
+  * Addressing the scalability issues common to creating large visual programs.
+  * Supporting collaborative programming on eg. a large multi-touch screen.
+  * Refactoring as a first class programming action.
 
+### Status
+Not useable for any practical purpose, but suggestions or feedback from overly interested souls is welcome.
+  * Many essential basic features are still missing.
+  * The implementation is in the middle of big rewrite.
+  * Plan is to have demoable version with basic features by the end of the year.
+
+### Installation
+Import as a Maven project into a Java IDE, also requires JavaFX support.
