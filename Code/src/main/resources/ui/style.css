@@ -144,7 +144,7 @@ CustomUIPane {
 
 .connection {
     -fx-stroke-width: 3px;
-    -fx-stroke: #FCEBB6;
+    -fx-stroke: #3B1E00;
     -fx-fill: null;
 }
 
@@ -206,7 +206,8 @@ ImageView.hoverMenu {
 }
 
 .signature {
-    -fx-text-fill: white;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
     -fx-background-insets: 0, 0;
     -fx-background-radius: 0, 0;
     -fx-background-color: rgba(0, 0, 0, 0);
