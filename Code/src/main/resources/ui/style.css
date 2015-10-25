@@ -65,6 +65,14 @@ CustomUIPane {
     -fx-text-alignment: center;
 }
 
+.display.block .argumentType {
+    -fx-padding: 0 5 0 5;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-background-color: white;
+}
+
 .graph.block LineChart {
     -fx-font-size: 14px;
     -fx-background-color: #8A9B0F;

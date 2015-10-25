@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
@@ -30,6 +31,9 @@ public class DisplayBlock extends Block {
     /** The space containing the input anchor. */
     @FXML protected Pane inputSpace;
 
+    /** The label on which to display type information. */
+    @FXML protected Label inputType;
+    
     /** The space containing the output anchor. */
     @FXML protected Pane outputSpace;
     
@@ -84,6 +88,8 @@ public class DisplayBlock extends Block {
         super.invalidateVisualState();
         if (inputAnchor.hasConnection()) {
             try {
+                this.inputType.setText("  ... ");
+                this.inputType.setText(this.expr.findType().prettyPrint());
                 Optional<GhciSession> ghci = getPane().getGhciSession();
 
                 if (ghci.isPresent()) {
@@ -93,6 +99,7 @@ public class DisplayBlock extends Block {
                 setOutput("?!?!?!");
             } 
         } else {
+            this.inputType.setText("  ... ");
             setOutput("??");
         }
     }
