@@ -8,8 +8,14 @@
 			<Pane fx:id="inputSpace" maxHeight="0" />
 		</top>
 		<center>
-			<BorderPane fx:id="block" styleClass="display, block" 
-				minHeight="75" maxHeight="75" minWidth="150">
+			<BorderPane fx:id="block" styleClass="display, block" minHeight="75" maxHeight="75" minWidth="150">
+				<top>
+					<BorderPane>
+						<center>
+							<Label fx:id="inputType" styleClass="argumentType"/>
+						</center>
+					</BorderPane>
+				</top>
 				<center>
 					<Label text="${controller.output}" styleClass="content" />
 				</center>

@@ -1,3 +1,4 @@
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.BorderPane?>
 <?import nl.utwente.viskell.ui.components.SliderBlock?>
@@ -5,9 +6,12 @@
 	<BorderPane>
 		<center>
 			<BorderPane styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150" maxWidth="150">
-				<center>
+            	<center>
 					<Slider min="0.0" max="1.0" fx:id="slider"></Slider>
-				</center>
+            	</center>
+            	<bottom>
+					<Label text="${controller.value}" styleClass="content" />
+            	</bottom>
 			</BorderPane>
 		</center>
 		<bottom>
