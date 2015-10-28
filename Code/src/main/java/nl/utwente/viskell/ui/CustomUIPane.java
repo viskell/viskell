@@ -17,12 +17,10 @@ import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.ui.components.Block;
-import nl.utwente.viskell.ui.components.Connection;
 import nl.utwente.viskell.ui.components.FunctionBlock;
 import nl.utwente.viskell.ui.components.InputAnchor;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -187,7 +185,6 @@ public class CustomUIPane extends TactilePane {
     public final void invalidateAll() {
         for (Node node : getChildren()) {
             if (node instanceof Block) {
-                ((Block) node).invalidateConnectionState();
                 ((Block) node).invalidateVisualState();
             }
         }

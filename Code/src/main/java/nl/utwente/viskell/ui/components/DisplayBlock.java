@@ -85,7 +85,6 @@ public class DisplayBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
-        super.invalidateVisualState();
         if (inputAnchor.hasConnection()) {
             try {
                 this.inputType.setText("  ... ");

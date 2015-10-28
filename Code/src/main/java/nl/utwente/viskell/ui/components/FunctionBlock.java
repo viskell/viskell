@@ -128,7 +128,6 @@ public class FunctionBlock extends Block {
     /**
      * @return Only the active (as specified by the knot index) inputs.
      */
-    @Override
     public List<InputAnchor> getActiveInputs() {
         return getAllInputs().subList(0, getKnotIndex());
     }
@@ -162,21 +161,17 @@ public class FunctionBlock extends Block {
     
     @Override
     public void invalidateVisualState() {
-        super.invalidateVisualState();
         argumentSpace.invalidateInputContent();
         argumentSpace.invalidateOutputContent();
-    }
-    
-    /**
-     * If the latest analyze attempt was successful, remove all kept error
-     * indications.
-     * 
-     * Since only 1 error can be detected by analyzing, only setting error state
-     * to false whenever everything goes well makes it possible in some cases to
-     * show multiple errors.
-     */
-    @Override
-    public void invalidateConnectionState() {
+
+        /**
+         * If the latest analyze attempt was successful, remove all kept error
+         * indications.
+         * 
+         * Since only 1 error can be detected by analyzing, only setting error state
+         * to false whenever everything goes well makes it possible in some cases to
+         * show multiple errors.
+         */
         for (InputAnchor input : this.getAllInputs()) {
             if (!input.isPrimaryConnected()) {
                 // Remove error state is not connected.
@@ -187,7 +182,7 @@ public class FunctionBlock extends Block {
             }
         }
     }
-
+    
     /**
      * React to a potential state change with regards to the knot index.
      * This then activates / disables the inputs with regards to the knot index.

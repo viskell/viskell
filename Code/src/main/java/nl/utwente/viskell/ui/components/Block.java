@@ -24,9 +24,7 @@ import java.util.Optional;
 /**
  * Base block shaped UI Component that other visual elements will extend from.
  * Blocks can add input and output values by implementing the InputBlock and
- * OutputBlock interfaces. Blocks typically are dependent on the ConnectionState
- * and VisualState, although the default invalidateConnectionState() and
- * invalidateVisualState() implementation do nothing.
+ * OutputBlock interfaces.
  * <p>
  * MouseEvents are used for setting the selection state of a block, single
  * clicks can toggle the state to selected. When a block has already been
@@ -57,8 +55,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     private boolean exprIsDirty;
 
     /**
-     * @param pane
-     *            The pane this block belongs to.
+     * @param pane The pane this block belongs to.
      */
     public Block(CustomUIPane pane) {
         parentPane = pane;
@@ -71,11 +68,8 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         // Invalidate listeners give the Block a change to react on the state
         // change before it is cascaded.
         // Cascade listeners make sure state changes are correctly propagated.
-        connectionState.addListener(a -> invalidateConnectionState());
-        connectionState.addListener(a -> setExprIsDirty());
-        connectionState.addListener(this::cascadeConnectionState);
-        visualState.addListener(a -> invalidateVisualState());
-        visualState.addListener(this::cascadeVisualState);
+        connectionState.addListener(this::propagateConnectionState);
+        visualState.addListener(this::propagateVisualState);
         
         // Visually react on selection.
         parentPane.selectedBlockProperty().addListener(event -> {
@@ -106,7 +100,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
 
     /** @return the parent CustomUIPane of this component. */
     public final CustomUIPane getPane() {
-        return parentPane;
+        return this.parentPane;
     }
 
     /**
@@ -116,13 +110,6 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         return ImmutableList.of();
     }
 
-    /**
-     * @return Only the active (as specified with by the knot index) inputs.
-     */
-    public List<InputAnchor> getActiveInputs() {
-        return getAllInputs();
-    }
-    
     /**
      * @return the optional output Anchor for this Block
      * TODO generalize to List<OutputAnchor> getOutputAnchors()
@@ -139,7 +126,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     public final Expression getExpr() {
         // Assure expr is up-to-date.
         if (this.exprIsDirty) {
-            updateExpr();
+            this.updateExpr();
             this.exprIsDirty = false;
         }
         return expr;
@@ -150,9 +137,8 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      */
     public abstract void updateExpr();
     
-
     /** Sets the VisualState. */
-    public void updateVisualState(int state) {
+    private void updateVisualState(int state) {
         this.visualState.set(state);
     }
     
@@ -167,25 +153,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     }
     
     /**
-     * Sets the expression to dirty 
-     */
-    protected void setExprIsDirty() {
-        this.exprIsDirty = true;
-    }
-
-    /**
-     * Called when the ConnectionState changed.
-     */
-    public void invalidateConnectionState() {
-        // Default does nothing.
-    }
-    
-    /**
      * Called when the VisualState changed.
      */
-    public void invalidateVisualState() {
-        // Default does nothing.
-    }
+    public abstract void invalidateVisualState();
     
     /**
      * ChangeListener that propagates the new ConnectionState to other Blocks
@@ -194,55 +164,54 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      * When the ConnectionState can not be propagated further, a VisualState
      * cascade gets triggered in the reverse direction.
      */
-    public void cascadeConnectionState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if (oldValue != newValue) {
-            // Boolean to check if this was the last Block that changed.
-            boolean cascadedFurther = false;
-            
-            if (this.getOutputAnchor().isPresent()) {
-                for (Optional<InputAnchor> anchor : this.getOutputAnchor().get().getOppositeAnchors()) {
-                    if (anchor.isPresent()) {
-                        // This Block is an OutputBlock, and that Output is connected to at least 1 Block.
-                        anchor.get().updateConnectionState(newValue.intValue());
-                        cascadedFurther = true;
-                    }
+    private void propagateConnectionState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        // Set the expression to dirty
+        this.exprIsDirty = true;
+        // Boolean to check if this was the last Block that changed.
+        boolean cascadedFurther = false;
+
+        if (this.getOutputAnchor().isPresent()) {
+            for (Optional<InputAnchor> anchor : this.getOutputAnchor().get().getOppositeAnchors()) {
+                if (anchor.isPresent()) {
+                    // This Block is an OutputBlock, and that Output is connected to at least 1 Block.
+                    anchor.get().updateConnectionState(newValue.intValue());
+                    cascadedFurther = true;
                 }
             }
-            
-            
-            if (!cascadedFurther) {
-                // The ConnectionState change is not cascaded any further, now a
-                // visual update should be propagated upwards.
-                try {
-                    // Analyze the entire tree.
-                    this.getExpr().findType();
-                    getPane().setErrorOccurred(false);
-                    // TODO: This will set the errorOccurred for the entire
-                    // program, not just the invalidated tree. This means that
-                    // when having multiple small program trees, errors get
-                    // reset to quickly.
-                    
-                    // No type mismatches.
-                } catch (HaskellTypeError e) {
-                    // A Type mismatch occurred.
-                    int index = -1;
-                    // Determine the input index of the Type error.
-                    Expression errorExpr = e.getExpression();
-                    while (errorExpr instanceof Apply) {
-                        errorExpr = ((Apply) errorExpr).getChildren().get(0);
-                        index++;
-                    }
-                    // Get the Block in which the type error occurred and
-                    // set the error state for the mismatched input to true.
-                    getPane().getExprToFunction(errorExpr).getInput(index).setErrorState(true);
-                    // Indicate that an error occurred in the latest analyze attempt.
-                    getPane().setErrorOccurred(true);
+        }
+
+        if (!cascadedFurther) {
+            // The ConnectionState change is not cascaded any further, now a
+            // visual update should be propagated upwards.
+            try {
+                // Analyze the entire tree.
+                this.getExpr().findType();
+                getPane().setErrorOccurred(false);
+                // TODO: This will set the errorOccurred for the entire
+                // program, not just the invalidated tree. This means that
+                // when having multiple small program trees, errors get
+                // reset to quickly.
+
+                // No type mismatches.
+            } catch (HaskellTypeError e) {
+                // A Type mismatch occurred.
+                int index = -1;
+                // Determine the input index of the Type error.
+                Expression errorExpr = e.getExpression();
+                while (errorExpr instanceof Apply) {
+                    errorExpr = ((Apply) errorExpr).getChildren().get(0);
+                    index++;
                 }
-                
-                // Now that the expressions are updated, propagate a visual refresh upwards.
-                this.updateVisualState((int) newValue);
-                
+                // Get the Block in which the type error occurred and
+                // set the error state for the mismatched input to true.
+                getPane().getExprToFunction(errorExpr).getInput(index).setErrorState(true);
+                // Indicate that an error occurred in the latest analyze attempt.
+                getPane().setErrorOccurred(true);
             }
+
+            // Now that the expressions are updated, propagate a visual refresh upwards.
+            this.updateVisualState(newValue.intValue());
+
         }
     }
     
@@ -250,8 +219,10 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      * ChangeListener that propagates the new VisualState to other Blocks
      * used as input for this Block.
      */
-    public void cascadeVisualState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        for (InputAnchor input : this.getActiveInputs()) {
+    private void propagateVisualState(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        this.invalidateVisualState();
+        
+        for (InputAnchor input : this.getAllInputs()) {
             input.getOppositeAnchor().ifPresent(a -> a.getBlock().updateVisualState((int) newValue));
         }
     }
