@@ -194,7 +194,7 @@ public class FunctionBlock extends Block {
         }
         
         // Trigger invalidation for the now changed output type.
-        this.updateConnectionState();
+        this.handleConnectionChanges();
     }
     
     @Override
