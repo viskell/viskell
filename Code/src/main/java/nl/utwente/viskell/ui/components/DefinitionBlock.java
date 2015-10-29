@@ -20,97 +20,118 @@ import java.util.stream.Collectors;
 
 /**
  * A definition block is a block that represents a named lambda. It can be used to build lambda abstractions.
- *
- * For now, it requires the complete type of the function to be known in advance.
  */
 public class DefinitionBlock extends Block implements ComponentLoader {
 
-    /** A block for attaching the argument (top) anchors to. */
-    private class ArgumentBlock extends Block {
+    // TODO make this an independent class if other blocks (case?) need this too 
+    /** An internal output anchor for an argument binder. */
+    public static class BinderAnchor extends OutputAnchor {
         /** The variable binder corresponding to this input argument */
-        private Binder binder;
-        private OutputAnchor anchor;
+        private final Binder binder;
 
-        public ArgumentBlock(DefinitionBlock parent, Binder binder) {
-            super(parent.getPane());
+        public BinderAnchor(DefinitionBlock parent, Binder binder) {
+            super(parent);
             this.binder = binder;
-            this.expr = new LocalVar(binder);
-
-            anchor = new OutputAnchor(this);
         }
 
         @Override
-        public Optional<OutputAnchor> getOutputAnchor() {
-            return Optional.of(anchor);
-        }
-
-        @Override
-        public void updateExpr() {
-            this.expr = new LocalVar(this.binder);
+        public Expression getExpr() {
+            return new LocalVar(this.binder);
         }
     }
 
+    // TODO make this an independent class if other blocks (case?) need this too
+    /** An internal input anchor for a local result. */
+    public static class ResultAnchor extends InputAnchor {
+        /** The optional type of the result of the function (the last part of the signature). */
+        private final Optional<Type> resType;
+
+        public ResultAnchor(DefinitionBlock parent, Optional<Type> resType) {
+            super(parent);
+            this.resType = resType;
+        }
+        
+        @Override
+        public Expression getExpr() {
+            if (this.resType.isPresent()) {
+                return new Annotated(super.getExpr(), this.resType.get());
+            }
+           
+            return super.getExpr();
+        }
+    }
+    
     @FXML private Pane argSpace;
     @FXML private Pane resSpace;
     @FXML private Pane funSpace;
 
     @FXML private Label signature;
 
-    private List<ArgumentBlock> args;
+    private List<BinderAnchor> args;
 
     /** The result anchor (first bottom anchor) */
-    private InputAnchor res;
+    private ResultAnchor res;
 
     /** The function anchor (second bottom anchor) */
     private OutputAnchor fun;
 
-    /** The type of the result of the function (the last part of the signature). */
-    private Type resType;
 
+    /**
+     * Constructs a DefinitionBlock that is an untyped lambda of n arguments.
+     * @param pane the parent ui pane.
+     * @param arity the number of arguments of this lambda.
+     */
+    public DefinitionBlock(CustomUIPane pane, int arity) {
+        super(pane);
+        this.loadFXML("DefinitionBlock");
+
+        this.signature.setText("");
+        this.signature.setVisible(false);
+        this.args = new ArrayList<>();
+        for (int i = 0; i < arity; i++) {
+            this.args.add(new BinderAnchor(this, new Binder("x_" + i)));
+        }
+        this.res = new ResultAnchor(this, Optional.empty());
+        
+        this.setupAnchors();
+    }
+            
     public DefinitionBlock(CustomUIPane pane, String name, Type type) {
         super(pane);
         this.loadFXML("DefinitionBlock");
 
         this.args = new ArrayList<>();
-
-        signature.setText(name + " :: " + type.prettyPrint());
-
+        this.signature.setText(name + " :: " + type.prettyPrint());
         // Collect argument types and result type
         Type t = type;
         int i = 0;
         while (t instanceof FunType) {
             FunType ft = (FunType) t;
-            args.add(new ArgumentBlock(this, new Binder(name + "_x" + i, ft.getArgument())));
+            args.add(new BinderAnchor(this, new Binder(name + "_x" + i, ft.getArgument())));
             i++;
             t = ft.getResult();
         }
+        this.res = new ResultAnchor(this, Optional.of(t));
 
-        this.resType = t;
+        this.setupAnchors();
+    }
 
-        argSpace.getChildren().addAll(getArgumentAnchors());
-
-        res = new InputAnchor(this);
-        resSpace.getChildren().add(res);
-
-        fun = new OutputAnchor(this);
-        funSpace.getChildren().add(fun);
-
+    private void setupAnchors() {
+        this.argSpace.getChildren().addAll(this.args);
+        this.resSpace.getChildren().add(this.res);
+        this.fun = new OutputAnchor(this);
+        this.funSpace.getChildren().add(this.fun);
         TactilePane.setGoToForegroundOnContact(this, false);
     }
 
     @Override
     public Optional <OutputAnchor> getOutputAnchor() {
-        return Optional.of(fun);
-    }
-
-    private List<OutputAnchor> getArgumentAnchors() {
-        return this.args.stream().map(arg -> arg.getOutputAnchor().get()).collect(Collectors.toList());
+        return Optional.of(this.fun);
     }
 
     @Override
     public final void updateExpr() {
         List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
-        Expression body = new Annotated(this.res.getExpr(), this.resType); 
-        this.expr = new Lambda(binders, body);
+        this.expr = new Lambda(binders, this.res.getExpr());
     }
 }
