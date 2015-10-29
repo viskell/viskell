@@ -125,7 +125,7 @@ public class Connection extends ConnectionLine implements
         newAnchor.addConnection(this);
         this.addListeners(newAnchor);
         
-        this.handleConnectionChanges();
+        newAnchor.handleConnectionChanges();
     }
 
     /**
