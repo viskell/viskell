@@ -161,8 +161,7 @@ public class FunctionBlock extends Block {
     
     @Override
     public void invalidateVisualState() {
-        argumentSpace.invalidateInputContent();
-        argumentSpace.invalidateOutputContent();
+        argumentSpace.invalidateTypes();
 
         /**
          * If the latest analyze attempt was successful, remove all kept error

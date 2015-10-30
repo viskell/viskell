@@ -125,7 +125,10 @@ public class Connection extends ConnectionLine implements
         newAnchor.addConnection(this);
         this.addListeners(newAnchor);
         
-        newAnchor.handleConnectionChanges();
+        if (this.isFullyConnected()) {
+            // only when both ends are connected the visuals need to be updated
+            newAnchor.handleConnectionChanges();
+        }
     }
 
     /**
