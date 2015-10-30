@@ -38,6 +38,12 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         public Expression getExpr() {
             return new LocalVar(this.binder);
         }
+        
+        @Override
+        public void handleConnectionChanges() {
+            // do not propagate upwards to the outer block
+        }
+
     }
 
     // TODO make this an independent class if other blocks (case?) need this too
@@ -129,6 +135,16 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         return Optional.of(this.fun);
     }
 
+    @Override
+    public void handleConnectionChanges() {
+        if (!this.exprIsDirty) {
+            // also propagate into the internals
+            this.res.getOppositeAnchor().ifPresent(a -> a.handleConnectionChanges());
+        }
+        
+        super.handleConnectionChanges();
+    }
+    
     @Override
     public final void updateExpr() {
         List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());

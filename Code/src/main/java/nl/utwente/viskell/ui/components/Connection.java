@@ -124,6 +124,7 @@ public class Connection extends ConnectionLine implements
         // Add this to the anchor.
         newAnchor.addConnection(this);
         this.addListeners(newAnchor);
+        invalidateAnchorPositions();
         
         if (this.isFullyConnected()) {
             // only when both ends are connected the visuals need to be updated
@@ -168,14 +169,6 @@ public class Connection extends ConnectionLine implements
         return startAnchor.isPresent() && endAnchor.isPresent();
     }
 
-    /** Handle the Connection changes of connected anchors and refreshes itself. */
-    public void handleConnectionChanges() {
-        startAnchor.ifPresent(a -> a.handleConnectionChanges());
-        endAnchor.ifPresent(a -> a.handleConnectionChanges());
-        this.setErrorState(false);
-        invalidateAnchorPositions();
-    }
-    
     /**
      * Properly disconnects the given anchor from this Connection, notifying the anchor of its disconnection.
      */
@@ -198,7 +191,10 @@ public class Connection extends ConnectionLine implements
             //Let the now disconnected anchor update its visuals.
             anchor.handleConnectionChanges();
             //Let the remaining connected anchors update their visuals.
-            this.handleConnectionChanges();
+            this.startAnchor.ifPresent(a -> a.handleConnectionChanges());
+            this.endAnchor.ifPresent(a -> a.handleConnectionChanges());
+            this.setErrorState(false);
+            this.invalidateAnchorPositions();
         }
     }
 
