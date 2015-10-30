@@ -8,7 +8,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.transform.Transform;
-import nl.utwente.viskell.ui.ConnectionCreationManager;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
@@ -126,7 +125,10 @@ public class Connection extends ConnectionLine implements
         newAnchor.addConnection(this);
         this.addListeners(newAnchor);
         
-        this.updateConnectionState(ConnectionCreationManager.nextConnectionState());
+        if (this.isFullyConnected()) {
+            // only when both ends are connected the visuals need to be updated
+            newAnchor.handleConnectionChanges();
+        }
     }
 
     /**
@@ -166,10 +168,10 @@ public class Connection extends ConnectionLine implements
         return startAnchor.isPresent() && endAnchor.isPresent();
     }
 
-    /** Sets the ConnectionState of connected anchors and refreshes itself. */
-    public void updateConnectionState(int state) {
-        startAnchor.ifPresent(a -> a.updateConnectionState(state));
-        endAnchor.ifPresent(a -> a.updateConnectionState(state));
+    /** Handle the Connection changes of connected anchors and refreshes itself. */
+    public void handleConnectionChanges() {
+        startAnchor.ifPresent(a -> a.handleConnectionChanges());
+        endAnchor.ifPresent(a -> a.handleConnectionChanges());
         this.setErrorState(false);
         invalidateAnchorPositions();
     }
@@ -193,11 +195,10 @@ public class Connection extends ConnectionLine implements
         anchor.dropConnection(this);
             
         if (wasConnected) {
-            int state = ConnectionCreationManager.nextConnectionState();
             //Let the now disconnected anchor update its visuals.
-            anchor.updateConnectionState(state);
+            anchor.handleConnectionChanges();
             //Let the remaining connected anchors update their visuals.
-            this.updateConnectionState(state);
+            this.handleConnectionChanges();
         }
     }
 

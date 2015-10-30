@@ -45,9 +45,6 @@ public class ConnectionCreationManager {
      */
     private Map<Integer, Connection> connections;
 
-    /** The int representing the current connection state */
-    private static int connectionState = 0; 
-    
     /**
      * Constructs a new ConnectionCreationManager.
      * @param pane The CustomUIPane to which this ConnectionCreationManager belongs.
@@ -128,13 +125,6 @@ public class ConnectionCreationManager {
         if (connections.get(id) != null) {
             connections.get(id).setFreeEnds(localPos);
         }
-    }
-
-    /**
-     * Go to the next connection state.
-     */
-    public static int nextConnectionState(){
-        return ++connectionState;
     }
 
 }

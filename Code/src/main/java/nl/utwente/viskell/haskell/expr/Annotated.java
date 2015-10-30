@@ -26,7 +26,7 @@ public class Annotated extends Expression {
 
     @Override
     protected Type inferType() throws HaskellTypeError {
-        Type type = this.expr.inferType();
+        Type type = this.expr.findType();
         TypeChecker.unify(this, type, this.annotation.getFresh());
         return type;
     }

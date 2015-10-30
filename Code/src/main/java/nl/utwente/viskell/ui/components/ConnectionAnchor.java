@@ -302,9 +302,9 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         return Optional.empty();
     }
 
-    /** Sets the ConnectionState of the Block this anchor is attached to. */
-    public void updateConnectionState(int state) {
-        this.block.updateConnectionState(state);
+    /** Handle the Connection changes for the Block this anchor is attached to. */
+    public void handleConnectionChanges() {
+        this.block.handleConnectionChanges();
     }
     
     /**

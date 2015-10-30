@@ -69,7 +69,6 @@ public class GraphBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
-        super.invalidateVisualState();
         if (! this.input.hasConnection()) {
             return;
         }
