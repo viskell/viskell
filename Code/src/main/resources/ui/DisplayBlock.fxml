@@ -10,9 +10,9 @@
 		<center>
 			<BorderPane fx:id="block" styleClass="display, block" minHeight="75" maxHeight="75" minWidth="150">
 				<top>
-					<BorderPane>
+					<BorderPane styleClass="argumentSpace">
 						<center>
-							<Label fx:id="inputType" styleClass="argumentType"/>
+							<Label fx:id="inputType"/>
 						</center>
 					</BorderPane>
 				</top>

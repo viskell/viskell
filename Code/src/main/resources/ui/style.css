@@ -65,21 +65,6 @@ CustomUIPane {
     -fx-text-alignment: center;
 }
 
-.display.block .argumentType, .value.block .argumentType {
-    -fx-text-fill: black;
-    -fx-font-size: 14px;
-    -fx-font-weight: normal;
-    -fx-background-color: white;
-}
-
-.display.block .argumentType {
-    -fx-padding: 4 5 0 5;
-}
-
-.value.block .argumentType {
-    -fx-padding: 0 5 4 5;
-}
-
 .graph.block LineChart {
     -fx-font-size: 14px;
     -fx-background-color: #8A9B0F;
@@ -226,3 +211,12 @@ ImageView.hoverMenu {
     -fx-background-radius: 0, 0;
     -fx-background-color: rgba(0, 0, 0, 0);
 }
+
+.display.block Label {
+    -fx-padding: 4 5 0 5;
+}
+
+.value.block Label {
+    -fx-padding: 0 5 4 5;
+}
+

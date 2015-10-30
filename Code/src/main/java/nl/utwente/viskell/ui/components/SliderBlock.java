@@ -17,8 +17,8 @@ public class SliderBlock extends ValueBlock {
      * Constructs a new SliderBlock
      * @param pane The parent pane this Block resides on.
      */
-    public SliderBlock(CustomUIPane pane, Environment env) {
-        super(pane, env.buildType("Fractional a => a"), "0.0", "SliderBlock");
+    public SliderBlock(CustomUIPane pane) {
+        super(pane, pane.getEnvInstance().buildType("Fractional a => a"), "0.0", "SliderBlock");
 
         slider.setValue(0.0);
         this.setValue("0.0");

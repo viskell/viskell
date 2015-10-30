@@ -14,9 +14,9 @@
 					</BorderPane>
 				</top>
             	<bottom>
-					<BorderPane>
+					<BorderPane styleClass="argumentSpace">
 						<center>
-							<Label fx:id="valueType" styleClass="argumentType"/>
+							<Label fx:id="valueType" styleClass="rightArgument"/>
 						</center>
 					</BorderPane>
             	</bottom>

@@ -31,6 +31,8 @@ public class ValueBlock extends Block {
 
     /** The space containing the output anchor. */
     @FXML protected BorderPane outputSpace;
+    
+    /** The label containing the constrained type of this block */
     @FXML protected Label valueType;
 
     /** The type of this value. */
@@ -55,8 +57,6 @@ public class ValueBlock extends Block {
 
         outputSpace.setCenter(this.getOutputAnchor().get());
         outputSpace.toFront();
-        
-        this.valueType.setText("hoi");
     }
 
     /**
@@ -97,11 +97,11 @@ public class ValueBlock extends Block {
     @Override
     public void invalidateVisualState() {
         try {
-			this.valueType.setText(this.expr.findType().prettyPrint());
-		} catch (HaskellTypeError e) {
-			this.valueType.setText("???");
-		}
-    	super.invalidateVisualState();
+            this.valueType.setText(this.expr.findType().prettyPrint());
+        } catch (HaskellTypeError e) {
+            this.valueType.setText("???");
+        }
+        super.invalidateVisualState();
     }
 
     @Override
