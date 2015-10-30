@@ -109,7 +109,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         Button disBlockButton = new Button("Display Block");
         disBlockButton.setOnAction(event -> addBlock(new DisplayBlock(parent)));
         Button sliderBlockButton = new Button("Slider Block");
-        sliderBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent)));
+        sliderBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent, this.parent.getEnvInstance())));
         Button rgbBlockButton = new Button("RGB Block");
         rgbBlockButton.setOnAction(event -> addBlock(new RGBBlock(parent)));
         Button graphBlockButton = new Button("Graph Block");

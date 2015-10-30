@@ -24,17 +24,17 @@ import com.google.common.collect.ImmutableMap;
  */
 public class ValueBlock extends Block {
     /** The value of this ValueBlock. */
-    private StringProperty value;
+    protected StringProperty value;
 
     /** The OutputAnchor of this ValueBlock. */
-    private OutputAnchor output;
+    protected OutputAnchor output;
 
     /** The space containing the output anchor. */
-    @FXML private BorderPane outputSpace;
+    @FXML protected BorderPane outputSpace;
     @FXML protected Label valueType;
 
     /** The type of this value. */
-    private Type type;
+    protected Type type;
 
     /**
      * Construct a new ValueBlock.
