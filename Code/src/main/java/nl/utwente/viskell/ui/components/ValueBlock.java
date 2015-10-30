@@ -101,7 +101,6 @@ public class ValueBlock extends Block {
         } catch (HaskellTypeError e) {
             this.valueType.setText("???");
         }
-        super.invalidateVisualState();
     }
 
     @Override
