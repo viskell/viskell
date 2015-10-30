@@ -108,9 +108,4 @@ public class ValueBlock extends Block {
     protected ImmutableMap<String, Object> toBundleFragment() {
         return ImmutableMap.of("value", value.getValue());
     }
-    
-    @Override
-    public void invalidateVisualState() {
-        // constant value so nothing to do here
-    }
 }
