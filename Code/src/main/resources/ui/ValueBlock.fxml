@@ -8,6 +8,13 @@
 				<center>
 					<Label text="${controller.value}" styleClass="content" />
 				</center>
+				<bottom>
+					<BorderPane>
+						<center>
+							<Label fx:id="valueType" styleClass="argumentType"/>
+						</center>
+					</BorderPane>
+				</bottom>
 			</BorderPane>
 		</center>
 		<bottom>

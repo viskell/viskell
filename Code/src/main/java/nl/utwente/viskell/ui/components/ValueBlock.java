@@ -1,15 +1,17 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.Optional;
-
-import com.google.common.collect.ImmutableMap;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import nl.utwente.viskell.haskell.expr.Value;
+import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.CustomUIPane;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * ValueBlock is an extension of Block that contains only a value and does not
@@ -29,6 +31,7 @@ public class ValueBlock extends Block {
 
     /** The space containing the output anchor. */
     @FXML private BorderPane outputSpace;
+    @FXML protected Label valueType;
 
     /** The type of this value. */
     private Type type;
@@ -52,6 +55,8 @@ public class ValueBlock extends Block {
 
         outputSpace.setCenter(this.getOutputAnchor().get());
         outputSpace.toFront();
+        
+        this.valueType.setText("hoi");
     }
 
     /**
@@ -76,7 +81,7 @@ public class ValueBlock extends Block {
     
     @Override
     public void updateExpr() {
-        this.expr = new Value(type, getValue()); 
+        this.expr = new Value(type.getFresh(), getValue());
     }
 
     @Override
@@ -87,6 +92,16 @@ public class ValueBlock extends Block {
     @Override
     public String toString() {
         return "ValueBlock[" + getValue() + "]";
+    }
+    
+    @Override
+    public void invalidateVisualState() {
+        try {
+			this.valueType.setText(this.expr.findType().prettyPrint());
+		} catch (HaskellTypeError e) {
+			this.valueType.setText("???");
+		}
+    	super.invalidateVisualState();
     }
 
     @Override
