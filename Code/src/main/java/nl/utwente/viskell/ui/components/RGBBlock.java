@@ -80,9 +80,7 @@ public class RGBBlock extends DisplayBlock {
     }
 
     @Override
-    public final void invalidateConnectionState() {
-        super.invalidateConnectionState();
-
+    public final void invalidateVisualState() {
         if(r.isPrimaryConnected() || g.isPrimaryConnected() || b.isPrimaryConnected()) {
             int rv = evaluateAnchor(r);
             int gv = evaluateAnchor(g);
@@ -97,10 +95,5 @@ public class RGBBlock extends DisplayBlock {
     @Override
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(r,g,b);
-    }
-
-    @Override
-    public List<InputAnchor> getActiveInputs() {
-        return getAllInputs();
     }
 }

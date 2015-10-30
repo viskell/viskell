@@ -134,4 +134,9 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         this.expr = new Lambda(binders, this.res.getExpr());
     }
+
+    @Override
+    public void invalidateVisualState() {
+        // TODO maybe something with internal blocks?
+    }
 }

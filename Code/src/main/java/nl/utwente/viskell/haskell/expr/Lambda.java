@@ -34,7 +34,7 @@ public class Lambda extends Expression {
             x.refreshBinderType(scope);
         }
         // infer the type (y) for the body with the type variable in the context
-        Type type = this.body.inferType();
+        Type type = this.body.findType();
         // then lambda has the function type (x -> y)
         for (Binder x : Lists.reverse(this.binders)) {
             type = new FunType(x.getBoundType(this), type);
