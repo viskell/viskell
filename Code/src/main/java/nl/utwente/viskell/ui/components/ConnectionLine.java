@@ -14,16 +14,10 @@ import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 public class ConnectionLine extends CubicCurve implements ComponentLoader {
 
     /**
-     * Control offset for this bezier of this line. in simple terms: controls
-     * the curviness of the line.
-     *
-     * A higher offset equates to a more curved line. The offset is a function
-     * of the offset multiplier and the straight line length. The offset will
-     * always be between the defined minimum and maximum.
+     * Control offset for this bezier curve of this line.
+     * It determines how a far a line attempts to goes straight from its end points.
      */
-    public static final double BEZIER_CONTROL_OFFSET_MULTIPLIER = 0.7f;
-    public static final double BEZIER_CONTROL_OFFSET_MINIMUM = 10f;
-    public static final double BEZIER_CONTROL_OFFSET_MAXIMUM = 200f;
+    public static final double BEZIER_CONTROL_OFFSET = 150f;
 
     /**
      * Constructs a new ConnectionLine from FXML.
@@ -58,33 +52,20 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
         updateBezierControlPoints();
     }
 
-    /**
-     * Returns the current bezier offset based on the current start and end
-     * positions.
-     */
-    private double getCurrentBezierOffset() {
-        double unclamped = BEZIER_CONTROL_OFFSET_MULTIPLIER
-                * getStraightLineLength();
-        return Math.max(Math.min(unclamped, BEZIER_CONTROL_OFFSET_MAXIMUM),
-                BEZIER_CONTROL_OFFSET_MINIMUM);
-    }
-
-    /**
-     * Returns the length of a direct line between the end and start point of
-     * this CubicCurve
-     */
-    public double getStraightLineLength() {
-        return Math.sqrt(getDeltaX() * getDeltaX() + getDeltaY() * getDeltaY());
-    }
-
-    /** Returns the difference between the start and end X posistion. */
-    public double getDeltaX() {
-        return this.getEndX() - this.getStartX();
-    }
-
-    /** Returns the difference between the start and end Y posistion. */
-    public double getDeltaY() {
-        return this.getEndY() - this.getStartY();
+    /** Returns the current bezier offset based on the current start and end positions. */
+    private double getBezierYOffset() {
+        double distX = Math.abs(this.getEndX() - this.getStartX());
+        double distY = Math.abs(this.getEndY() - this.getStartY());
+        if (distY < BEZIER_CONTROL_OFFSET) {
+            if (distX < BEZIER_CONTROL_OFFSET) {
+                // short lines are extra flexible
+                return Math.max(BEZIER_CONTROL_OFFSET/10, Math.max(distX, distY));
+            } else {
+                return BEZIER_CONTROL_OFFSET;
+            }
+        } else {
+            return Math.cbrt(distY / BEZIER_CONTROL_OFFSET) * BEZIER_CONTROL_OFFSET;
+        }
     }
 
     /**
@@ -93,8 +74,8 @@ public class ConnectionLine extends CubicCurve implements ComponentLoader {
      */
     private void updateBezierControlPoints() {
         setControlX1(getStartX());
-        setControlY1(getStartY() + getCurrentBezierOffset());
+        setControlY1(getStartY() + getBezierYOffset());
         setControlX2(getEndX());
-        setControlY2(getEndY() - getCurrentBezierOffset());
+        setControlY2(getEndY() - getBezierYOffset());
     }
 }
