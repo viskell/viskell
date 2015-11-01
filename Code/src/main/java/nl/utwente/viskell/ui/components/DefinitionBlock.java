@@ -38,12 +38,6 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         public Expression getExpr() {
             return new LocalVar(this.binder);
         }
-        
-        @Override
-        public void handleConnectionChanges() {
-            // do not propagate upwards to the outer block
-        }
-
     }
 
     // TODO make this an independent class if other blocks (case?) need this too
@@ -153,6 +147,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
 
     @Override
     public void invalidateVisualState() {
-        // TODO maybe something with internal blocks?
+        // also update the internal blocks connected to the internal anchor 
+        this.res.getOppositeAnchor().ifPresent(a -> a.getBlock().staleVisuals.setValue(true));
     }
 }
