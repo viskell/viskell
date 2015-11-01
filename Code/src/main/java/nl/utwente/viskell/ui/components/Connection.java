@@ -45,21 +45,13 @@ public class Connection extends ConnectionLine implements
     /** 
      * Construct a new Connection.
      * @param pane The Pane this Connection is on.
+     * @param anchor A ConnectionAnchor of this Connection.
      */
-    private Connection(CustomUIPane pane) {
+    public Connection(CustomUIPane pane, ConnectionAnchor anchor) {
         this.pane = pane;
         pane.getChildren().add(0, this);
         this.errorState = new SimpleBooleanProperty(false);
         this.errorState.addListener(this::checkErrorListener);
-    }
-
-    /** 
-     * Construct a new Connection.
-     * @param pane The Pane this Connection is on.
-     * @param anchor A ConnectionAnchor of this Connection.
-     */
-    public Connection(CustomUIPane pane, ConnectionAnchor anchor) {
-        this(pane);
         Point2D initPos = pane.sceneToLocal(anchor.localToScene(anchor.getLocalCenter()));
         setStartPositionParent(initPos);
         setEndPositionParent(initPos);
@@ -71,18 +63,6 @@ public class Connection extends ConnectionLine implements
         errorState.set(error);
     }
     
-    /* GETTERS */
-    
-    /** @return this connection's end anchor, if any. */
-    public final Optional<InputAnchor> getInputAnchor() {
-        return endAnchor;
-    }
-
-    /** @return this connection's start anchor, if any. */
-    public final Optional<OutputAnchor> getOutputAnchor() {
-        return startAnchor;
-    }
-
     /**
      * Get the optional output anchor on the other side of
      * the provided input anchor in this Connection.
@@ -105,8 +85,6 @@ public class Connection extends ConnectionLine implements
         return this.startAnchor.filter(oa -> oa == anchor).flatMap(x -> this.endAnchor);
     }
     
-    /* SETTERS */
-
     /**
      * Sets an OutputAnchor or InputAnchor for this line.
      * After setting the line will update accordingly to the possible state change.
@@ -123,7 +101,7 @@ public class Connection extends ConnectionLine implements
         
         // Add this to the anchor.
         newAnchor.addConnection(this);
-        this.addListeners(newAnchor);
+        newAnchor.localToSceneTransformProperty().addListener(this);
         invalidateAnchorPositions();
         
         if (this.isFullyConnected()) {
@@ -135,8 +113,7 @@ public class Connection extends ConnectionLine implements
     /**
      * Sets the free ends (empty anchors) to the specified position.
      * 
-     * @param point
-     *            Coordinates local to the Line's parent.
+     * @param point Coordinates local to the Line's parent.
      */
     public void setFreeEnds(Point2D point) {
         if (!startAnchor.isPresent()) {
@@ -159,9 +136,6 @@ public class Connection extends ConnectionLine implements
         }
     }
     
-
-    /* OTHER METHODS */
-
     /**
      * @return Whether or not both sides of this Connection are connected to an Anchor.
      */
@@ -207,33 +181,20 @@ public class Connection extends ConnectionLine implements
         pane.getChildren().remove(this);
     }
 
-    /**
-     * Adds the listeners this Connections needs to keep its visual
-     * representation up-to-date to the given anchor.
-     */
-    private void addListeners(ConnectionAnchor anchor) {
-        anchor.localToSceneTransformProperty().addListener(this);
-    }
-
     @Override
-    public final void changed(ObservableValue<? extends Transform> observable,
-            Transform oldValue, Transform newValue) {
-        invalidateAnchorPositions();
+    public final void changed(ObservableValue<? extends Transform> observable, Transform oldValue, Transform newValue) {
+        this.invalidateAnchorPositions();
     }
 
-    /**
-     * Runs both the update Start end End position functions. Use when
-     * refreshing UI representation of the Line.
-     */
-    public void invalidateAnchorPositions() {
+    /** Update the UI positions of both start and end anchors. */
+    private void invalidateAnchorPositions() {
         startAnchor.ifPresent(a -> setStartPositionParent(pane.sceneToLocal(a.localToScene(a.getLocalCenter()))));
         endAnchor.ifPresent(a -> setEndPositionParent(pane.sceneToLocal(a.localToScene(a.getLocalCenter()))));
     }
 
     @Override
     public String toString() {
-        return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  "
-                + endAnchor;
+        return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  " + endAnchor;
     }
 
     @Override
