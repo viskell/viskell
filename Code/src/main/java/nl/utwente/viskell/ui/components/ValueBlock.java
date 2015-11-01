@@ -1,15 +1,17 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.Optional;
-
-import com.google.common.collect.ImmutableMap;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import nl.utwente.viskell.haskell.expr.Value;
+import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.CustomUIPane;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * ValueBlock is an extension of Block that contains only a value and does not
@@ -22,16 +24,19 @@ import nl.utwente.viskell.ui.CustomUIPane;
  */
 public class ValueBlock extends Block {
     /** The value of this ValueBlock. */
-    private StringProperty value;
+    protected StringProperty value;
 
     /** The OutputAnchor of this ValueBlock. */
-    private OutputAnchor output;
+    protected OutputAnchor output;
 
     /** The space containing the output anchor. */
-    @FXML private BorderPane outputSpace;
+    @FXML protected BorderPane outputSpace;
+    
+    /** The label containing the constrained type of this block */
+    @FXML protected Label valueType;
 
     /** The type of this value. */
-    private Type type;
+    protected Type type;
 
     /**
      * Construct a new ValueBlock.
@@ -76,7 +81,7 @@ public class ValueBlock extends Block {
     
     @Override
     public void updateExpr() {
-        this.expr = new Value(type, getValue()); 
+        this.expr = new Value(type.getFresh(), getValue());
     }
 
     @Override
@@ -88,14 +93,18 @@ public class ValueBlock extends Block {
     public String toString() {
         return "ValueBlock[" + getValue() + "]";
     }
+    
+    @Override
+    public void invalidateVisualState() {
+        try {
+            this.valueType.setText(this.expr.findType().prettyPrint());
+        } catch (HaskellTypeError e) {
+            this.valueType.setText("???");
+        }
+    }
 
     @Override
     protected ImmutableMap<String, Object> toBundleFragment() {
         return ImmutableMap.of("value", value.getValue());
-    }
-    
-    @Override
-    public void invalidateVisualState() {
-        // constant value so nothing to do here
     }
 }
