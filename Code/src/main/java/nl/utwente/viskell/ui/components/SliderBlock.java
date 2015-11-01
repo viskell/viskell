@@ -2,7 +2,6 @@ package nl.utwente.viskell.ui.components;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
-import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 /**

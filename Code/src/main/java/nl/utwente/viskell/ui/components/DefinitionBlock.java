@@ -72,7 +72,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
             if (this.resType.isPresent()) {
                 this.setType(this.resType.get().getFresh(scope));
             } else {
-                this.setType(scope.getVar("λ_res"));
+                this.setType(TypeScope.unique("λ_res"));
             }
         }
     }

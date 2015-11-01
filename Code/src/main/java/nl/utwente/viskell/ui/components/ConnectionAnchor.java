@@ -10,7 +10,6 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
-import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
@@ -141,7 +140,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         this.loadFXML("ConnectionAnchor");
         
         this.block = block;
-        this.type = new TypeScope().getVar("???");
+        this.type = TypeScope.unique("???");
         this.connections = new ArrayList<Connection>();
         
         this.new AnchorHandler(block.getPane().getConnectionCreationManager());
@@ -191,15 +190,10 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
     
     /**
-     * @return Optional of the string representation of the in- or output type.
+     * @return the string representation of the in- or output type.
      */
-    public Optional<String> getStringType() {
-        try {
-            Type type = getExpr().findType();
-            return Optional.of(type.prettyPrint());
-        } catch (HaskellException e) {
-            return Optional.empty();
-        }
+    public String getStringType() {
+        return this.type.prettyPrint();
     }
     
     /**
