@@ -1,9 +1,7 @@
 package nl.utwente.viskell.ui;
 
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -15,14 +13,10 @@ import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
-import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.ui.components.Block;
-import nl.utwente.viskell.ui.components.FunctionBlock;
 import nl.utwente.viskell.ui.components.InputAnchor;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -31,13 +25,6 @@ import java.util.Optional;
 public class CustomUIPane extends TactilePane {
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
-    
-    /**
-     * Property that keeps track of Haskell errors occurring somewhere in the
-     * program. This gets sets to true when an error first occurs somewhere,
-     * and only gets set to false again when the entire program is error free.
-     */
-    private BooleanProperty errorOccurred;
     
     private Optional<GhciSession> ghci;
     private InspectorWindow inspector;
@@ -55,23 +42,15 @@ public class CustomUIPane extends TactilePane {
     private Optional<File> currentFile;
 
     /**
-     * Maps expressions to function blocks for looking up the function block responsible for an expression in case of an
-     * error.
-     */
-    private Map<Expression, FunctionBlock> exprToFunction;
-
-    /**
      * Constructs a new instance.
      */
     public CustomUIPane(HaskellCatalog catalog) {
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
-        this.errorOccurred = new SimpleBooleanProperty(false);
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
         this.catalog = catalog;
         this.envInstance = catalog.asEnvironment();
-        this.exprToFunction = new HashMap<Expression, FunctionBlock>();
 
         try {
             this.ghci = Optional.of(new GhciSession());
@@ -206,14 +185,6 @@ public class CustomUIPane extends TactilePane {
         return selectedBlock;
     }
     
-    public boolean getErrorOccured() {
-        return errorOccurred.get();
-    }
-    
-    public void setErrorOccurred(boolean error) {
-        errorOccurred.set(error);
-    }
-    
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
         for (InputAnchor in : block.getAllInputs()) {
@@ -255,34 +226,6 @@ public class CustomUIPane extends TactilePane {
         this.setScale(scale * ratio);
         this.setTranslateX(this.getTranslateX() * ratio);
         this.setTranslateY(this.getTranslateY() * ratio);
-    }
-
-    /**
-     * Removes the association of the given expression. This should be called when an expression no longer exists in the
-     * tree.
-     * @param expr The expression to remove.
-     */
-    public void removeExprToFunction(Expression expr) {
-        exprToFunction.remove(expr);
-    }
-
-    /**
-     * Associates the given expression with the given function block. This should be called when a new expression is
-     * created and used in the tree.
-     * @param expr The expression to associate.
-     * @param block The function block for the expression.
-     */
-    public void putExprToFunction(Expression expr, FunctionBlock block) {
-        exprToFunction.put(expr,block);
-    }
-
-    /**
-     * Returns the function block for an expression.
-     * @param expr The expression to get the function block for.
-     * @return The function block for the given expression.
-     */
-    public FunctionBlock getExprToFunction(Expression expr) {
-        return exprToFunction.get(expr);
     }
 
     /** Gets the file we're currently working on, if any. */

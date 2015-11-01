@@ -244,16 +244,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * @return True if the primary connection is connected.
      */
     public boolean isPrimaryConnected() {
-        return isFullyConnected(0);
-    }
-
-    /**
-     * @param index
-     *            Index of the connection to check
-     * @return Whether or not the connection specified by the index is connected. False if the index is invalid.
-     */
-    public boolean isFullyConnected(int index) {
-        return index >= 0 && index < this.connections.size() && this.connections.get(index).isFullyConnected();
+        return this.connections.size() > 0 && this.connections.get(0).isFullyConnected();
     }
 
     /**

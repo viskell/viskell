@@ -38,7 +38,7 @@ public final class TypeChecker {
             // First, prevent ourselves from going into an infinite loop
             if (b.containsOccurenceOf(va)) {
                 TypeChecker.logger.info(String.format("Recursion in types %s and %s for context %s", a, b, context));
-                throw new HaskellTypeError(String.format("%s ∈ %s", a, b), context);
+                throw new HaskellTypeError(String.format("%s ∈ %s", a, b));
             }
 
             if (va.hasConcreteInstance()) {
@@ -72,7 +72,7 @@ public final class TypeChecker {
             if (! ca.getName().equals(cb.getName()))
             {
                 TypeChecker.logger.info(String.format("Mismatching TypeCon %s and %s for context %s", a, b, context));
-                throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context);
+                throw new HaskellTypeError(String.format("%s ⊥ %s", a, b));
             }
         } else if (a instanceof FunType && b instanceof FunType) {
             // Unifying function types is pairwise unification of its argument and result. 
@@ -89,7 +89,7 @@ public final class TypeChecker {
         } else {
             // Running out of things that can be unified, so bail out with a type error.
             TypeChecker.logger.info(String.format("Given up to unify types %s and %s for context %s", a, b, context));
-            throw new HaskellTypeError(String.format("%s ⊥ %s", a, b), context);
+            throw new HaskellTypeError(String.format("%s ⊥ %s", a, b));
         }
     }
 
@@ -146,7 +146,7 @@ public final class TypeChecker {
         
         // for now, constraining other types will fail.
         TypeChecker.logger.info(String.format("Unable to unify types %s with constraints %s for context %s", type, constraints, context));
-        throw new HaskellTypeError(String.format("%s ∉ constraints of %s", type, constraints), context);
+        throw new HaskellTypeError(String.format("%s ∉ constraints of %s", type, constraints));
     }
 
 }

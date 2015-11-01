@@ -132,28 +132,14 @@ public class FunctionBlock extends Block {
         return getAllInputs().subList(0, getKnotIndex());
     }
 
-    /**
-     * @return InputAnchor with the given index.
-     */
-    public InputAnchor getInput(int index) {
-        return getAllInputs().get(index);
-    }
-
     @Override
     public Optional<OutputAnchor> getOutputAnchor() {
         return Optional.of(output);
     }
 
-    /**
-     * On top of updating the expression, this method also adds a record to the
-     * CustomUIPane that maps the expr to this block.
-     */
     @Override
     public final void updateExpr() {
-        getPane().removeExprToFunction(expr);
         expr = new FunVar(this.funInfo);
-        getPane().putExprToFunction(expr, this);
-        
         for (InputAnchor in : getActiveInputs()) {
             expr = new Apply(expr, in.getUpdatedExpr());
         }
@@ -176,25 +162,7 @@ public class FunctionBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
-        argumentSpace.invalidateTypes();
-
-        /**
-         * If the latest analyze attempt was successful, remove all kept error
-         * indications.
-         * 
-         * Since only 1 error can be detected by analyzing, only setting error state
-         * to false whenever everything goes well makes it possible in some cases to
-         * show multiple errors.
-         */
-        for (InputAnchor input : this.getAllInputs()) {
-            if (!input.isPrimaryConnected()) {
-                // Remove error state is not connected.
-                input.setErrorState(false);
-            } else if (!getPane().getErrorOccured()) {
-                // Remove error state is no error occured.
-                input.setErrorState(false);
-            }
-        }
+        this.argumentSpace.invalidateTypes();
     }
     
     /**

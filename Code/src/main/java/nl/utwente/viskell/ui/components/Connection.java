@@ -10,6 +10,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+import nl.utwente.viskell.haskell.type.HaskellTypeError;
+import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
@@ -101,6 +103,36 @@ public class Connection extends CubicCurve implements
         return this.startAnchor.filter(oa -> oa == anchor).flatMap(x -> this.endAnchor);
     }
     
+    /**
+     * Handles the upward connections changes through an connection.
+     * Also perform typechecking for this connection.
+     * @param input the input anchor of this change propagation.
+     */
+    public void handleConnectionChangesFrom(InputAnchor input) {
+        if (!this.startAnchor.isPresent()) {
+            return;
+        }
+        
+        OutputAnchor output = this.startAnchor.get();
+        // first make sure the output is up to date
+        output.handleConnectionChanges();
+
+        // for connections in error state typechecking is delayed to keep error locations stable
+        if (this.errorState.get()) {
+            return;
+        }
+
+        //
+        try {
+            // first a trial unification on a copy of the types to minimize error propagation
+            TypeChecker.unify(null, output.getType().getFresh(), input.getType().getFresh());
+            // unify the actual types
+            TypeChecker.unify(null, output.getType(), input.getType());
+        } catch (HaskellTypeError e) {
+            input.setErrorState(true);
+        }
+    }
+
     /**
      * Sets an OutputAnchor or InputAnchor for this line.
      * After setting the line will update accordingly to the possible state change.

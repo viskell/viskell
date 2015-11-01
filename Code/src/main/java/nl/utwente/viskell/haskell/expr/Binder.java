@@ -66,10 +66,10 @@ public final class Binder {
      * @return the type for the use site of this binder 
      * @throws HaskellTypeError if this function is called before refreshBinderType
      */
-    public final Type getBoundType(Expression exp) throws HaskellTypeError {
+    public final Type getBoundType() throws HaskellTypeError {
         if (this.inferenceType == null) {
             // technically it is an error in scoping but this will do for now
-            throw new HaskellTypeError("Using the type before it is bound, of binder: " + this.name, exp);
+            throw new HaskellTypeError("Using the type before it is bound, of binder: " + this.name);
         }
         
         return this.inferenceType;

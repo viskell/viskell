@@ -38,7 +38,7 @@ public class Lambda extends Expression {
         Type type = this.body.findType();
         // then lambda has the function type (x -> y)
         for (Binder x : Lists.reverse(this.binders)) {
-            type = new FunType(x.getBoundType(this), type);
+            type = new FunType(x.getBoundType(), type);
         }
         
         return type;
