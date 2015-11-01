@@ -213,7 +213,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
             this.invalidateVisualState();
         
             for (InputAnchor input : this.getAllInputs()) {
-                input.getOppositeAnchor().ifPresent(a -> a.getBlock().staleVisuals.set(true));
+                input.getOppositeAnchor().ifPresent(a -> a.invalidateVisualState());
             }
             
             this.staleVisuals.setValue(false);

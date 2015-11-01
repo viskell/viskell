@@ -200,19 +200,8 @@ public class Connection extends ConnectionLine implements
     @Override
     public Map<String, Object> toBundle() {
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
-
-        startAnchor.ifPresent(start -> {
-            Block block = start.getBlock();
-            bundle.put("startBlock", block.hashCode());
-            bundle.put("startAnchor", 0);
-        });
-
-        endAnchor.ifPresent(end -> {
-            Block block = end.getBlock();
-            bundle.put("endBlock", block.hashCode());
-            bundle.put("endAnchor", block.getAllInputs().indexOf(end));
-        });
-
+        startAnchor.ifPresent(start -> bundle.putAll(start.toBundle()));
+        endAnchor.ifPresent(end -> bundle.putAll(end.toBundle()));
         return bundle.build();
     }
 }

@@ -17,6 +17,7 @@ import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.ConnectionCreationManager;
+import nl.utwente.viskell.ui.serialize.Bundleable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.Optional;
  * The primary Connection (if present) is the first element in getConnections().
  * This means that the oldest Connection is the primary connection.
  */
-public abstract class ConnectionAnchor extends StackPane implements ComponentLoader {
+public abstract class ConnectionAnchor extends StackPane implements ComponentLoader, Bundleable {
 
     /**
      * Handler class that reacts to user inputs on ConnectionAnchors to be able to
@@ -119,7 +120,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
 
     /** The block this ConnectionAnchor belongs to. */
-    private Block block;
+    protected final Block block;
 
     /** The connections this anchor has, can be empty for no connections. */
     private List<Connection> connections;
@@ -275,13 +276,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public abstract boolean canAddExtraConnection();
 
     /**
-     * @return The block this anchor belongs to.
-     */
-    public final Block getBlock() {
-        return block;
-    }
-
-    /**
     * @return the connections this anchor is connected to.
     */
     protected List<Connection> getConnections() {
@@ -316,6 +310,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     
     @Override
     public String toString() {
-        return String.format("%s belonging to %s", this.getClass().getSimpleName(), getBlock());
+        return String.format("%s belonging to %s", this.getClass().getSimpleName(), this.block);
     }
 }

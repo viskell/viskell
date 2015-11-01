@@ -148,6 +148,6 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     @Override
     public void invalidateVisualState() {
         // also update the internal blocks connected to the internal anchor 
-        this.res.getOppositeAnchor().ifPresent(a -> a.getBlock().staleVisuals.setValue(true));
+        this.res.getOppositeAnchor().ifPresent(a -> a.invalidateVisualState());
     }
 }
