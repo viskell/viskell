@@ -12,7 +12,6 @@ import javafx.stage.Stage;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.ui.components.Block;
-import nl.utwente.viskell.ui.components.ComponentLoader;
 import nl.utwente.viskell.ui.serialize.Exporter;
 
 import java.util.Optional;

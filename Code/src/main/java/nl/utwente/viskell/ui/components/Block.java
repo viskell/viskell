@@ -14,6 +14,7 @@ import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.ui.CircleMenu;
+import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomAlert;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;

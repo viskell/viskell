@@ -10,6 +10,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 

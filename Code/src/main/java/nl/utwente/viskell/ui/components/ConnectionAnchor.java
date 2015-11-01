@@ -16,6 +16,7 @@ import javafx.scene.shape.Shape;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ConnectionCreationManager;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
