@@ -130,6 +130,16 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
 
     @Override
+    public void handleConnectionChanges() {
+        if (!this.exprIsDirty) {
+            // also propagate into the internals
+            this.res.getOppositeAnchor().ifPresent(a -> a.handleConnectionChanges());
+        }
+        
+        super.handleConnectionChanges();
+    }
+    
+    @Override
     public final void updateExpr() {
         List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         this.expr = new Lambda(binders, this.res.getExpr());
@@ -137,6 +147,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
 
     @Override
     public void invalidateVisualState() {
-        // TODO maybe something with internal blocks?
+        // also update the internal blocks connected to the internal anchor 
+        this.res.getOppositeAnchor().ifPresent(a -> a.getBlock().staleVisuals.setValue(true));
     }
 }

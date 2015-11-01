@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui.components;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -49,7 +50,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     protected BooleanProperty staleVisuals;
     
     /** Marker for the expression freshness. */
-    private boolean exprIsDirty;
+    protected boolean exprIsDirty;
 
     /**
      * @param pane The pane this block belongs to.
@@ -148,7 +149,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         for (InputAnchor input : this.getAllInputs()) {
             input.getOppositeAnchor().ifPresent(a -> a.handleConnectionChanges());
         }
-        
+
         // Boolean to check if this was the last Block that changed.
         boolean propagatedDown = false;
         if (this.getOutputAnchor().isPresent()) {
@@ -160,37 +161,47 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
             }
         }
 
+        // Now the change is not propagated any further start recomputation.
         if (!propagatedDown) {
-            // Now the change is not propagated any further, start type checking the dirty expressions.
-            try {
-                // Analyze the entire tree.
-                this.getExpr().findType();
-                getPane().setErrorOccurred(false);
-                // TODO: This will set the errorOccurred for the entire
-                // program, not just the invalidated tree. This means that
-                // when having multiple small program trees, errors get
-                // reset to quickly.
-
-                // No type mismatches.
-            } catch (HaskellTypeError e) {
-                // A Type mismatch occurred.
-                int index = -1;
-                // Determine the input index of the Type error.
-                Expression errorExpr = e.getExpression();
-                while (errorExpr instanceof Apply) {
-                    errorExpr = ((Apply) errorExpr).getChildren().get(0);
-                    index++;
-                }
-                // Get the Block in which the type error occurred and
-                // set the error state for the mismatched input to true.
-                getPane().getExprToFunction(errorExpr).getInput(index).setErrorState(true);
-                // Indicate that an error occurred in the latest analyze attempt.
-                getPane().setErrorOccurred(true);
-            }
-
-            // Now that the expressions and types are updated, initiate a visual refresh.
-            this.staleVisuals.set(true);
+            // Needs to be delayed, because recomputation clears exprIsDirty also used to avoid infinite recursion.
+            Platform.runLater(this::recomputeExpression);
         }
+    }
+    
+    /** Reconstruct dirty expressions and typechecks them. */
+    private void recomputeExpression() {
+        if (!this.exprIsDirty) {
+            return; // do not recompute more than once.
+        }
+        
+        try {
+            // Analyze the entire tree.
+            this.getExpr().findType();
+            getPane().setErrorOccurred(false);
+            // TODO: This will set the errorOccurred for the entire
+            // program, not just the invalidated tree. This means that
+            // when having multiple small program trees, errors get
+            // reset to quickly.
+
+            // No type mismatches.
+        } catch (HaskellTypeError e) {
+            // A Type mismatch occurred.
+            int index = -1;
+            // Determine the input index of the Type error.
+            Expression errorExpr = e.getExpression();
+            while (errorExpr instanceof Apply) {
+                errorExpr = ((Apply) errorExpr).getChildren().get(0);
+                index++;
+            }
+            // Get the Block in which the type error occurred and
+            // set the error state for the mismatched input to true.
+            getPane().getExprToFunction(errorExpr).getInput(index).setErrorState(true);
+            // Indicate that an error occurred in the latest analyze attempt.
+            getPane().setErrorOccurred(true);
+        }
+
+        // Now that the expressions and types are updated, initiate a visual refresh.
+        this.staleVisuals.set(true);
     }
     
     /**
