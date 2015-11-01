@@ -1,8 +1,5 @@
 package nl.utwente.viskell.ui.components;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -136,9 +133,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** The invisible part of the ConnectionAnchor (the touch zone). */
     @FXML private Shape invisibleAnchor;
     
-    /** Property storing the error state. */
-    private BooleanProperty errorState;
-    
     /**
      * @param block
      *            The block this ConnectionAnchor belongs to.
@@ -148,10 +142,8 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         
         this.block = block;
         this.type = new TypeScope().getVar("???");
-        this.errorState = new SimpleBooleanProperty(false);
         this.connections = new ArrayList<Connection>();
         
-        this.errorState.addListener(this::checkError);
         this.new AnchorHandler(block.getPane().getConnectionCreationManager());
     }
     
@@ -163,21 +155,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         if (!active) {
             this.removeConnections();
         }
-    }
-    
-  
-    /**
-     * @param state The new error state for this ConnectionAnchor.
-     */
-    public void setErrorState(boolean state) {
-        errorState.set(state);
-    }
-    
-    /**
-     * @return The property describing the error state of this ConnectionAnchor.
-     */
-    public BooleanProperty errorStateProperty() {
-        return errorState;
     }
     
     /**
@@ -222,17 +199,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
             return Optional.of(type.prettyPrint());
         } catch (HaskellException e) {
             return Optional.empty();
-        }
-    }
-    
-    /**
-     * ChangeListener that will set the error state if isConnected().
-     */
-    public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        for (Connection conn : this.connections) {
-            if (conn.isFullyConnected()) {
-                conn.setErrorState(newValue);
-            }
         }
     }
     

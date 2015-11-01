@@ -5,6 +5,9 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableMap;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Hole;
 
@@ -15,6 +18,9 @@ public class InputAnchor extends ConnectionAnchor{
     /** The expression to return when there is no connection. */
     private Expression connectionlessExpr;
     
+    /** Property storing the error state. */
+    private BooleanProperty errorState;
+
     /**
      * @param block
      *            The Block this anchor is connected to.
@@ -22,8 +28,24 @@ public class InputAnchor extends ConnectionAnchor{
     public InputAnchor(Block block) {
         super(block);
         connectionlessExpr = new Hole();
+        this.errorState = new SimpleBooleanProperty(false);
+        this.errorState.addListener(this::checkError);
     }
 
+    /**
+     * @param state The new error state for this ConnectionAnchor.
+     */
+    public void setErrorState(boolean state) {
+        errorState.set(state);
+    }
+    
+    /**
+     * @return The property describing the error state of this ConnectionAnchor.
+     */
+    public BooleanProperty errorStateProperty() {
+        return errorState;
+    }
+    
     /**
      * @return Optional of the connection's opposite output anchor.
      */
@@ -52,6 +74,17 @@ public class InputAnchor extends ConnectionAnchor{
     public boolean canAddExtraConnection() {
         // InputAnchors only support 1 connection;
         return !hasConnection();
+    }
+
+    /**
+     * ChangeListener that will set the error state if isConnected().
+     */
+    public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        for (Connection conn : this.getConnections()) {
+            if (conn.isFullyConnected()) {
+                conn.setErrorState(newValue);
+            }
+        }
     }
 
     @Override
