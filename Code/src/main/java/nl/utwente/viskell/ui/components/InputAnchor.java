@@ -58,7 +58,7 @@ public class InputAnchor extends ConnectionAnchor{
      */
     @Override
     public Expression getExpr() {
-        return this.getOppositeAnchor().map(o -> o.getExpr()).orElse(connectionlessExpr);
+        return this.getConnection(0).flatMap(c -> c.getExprFrom(this)).orElse(connectionlessExpr);
     }
     
     /**

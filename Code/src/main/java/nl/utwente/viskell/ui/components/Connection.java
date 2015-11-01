@@ -10,6 +10,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.ui.ComponentLoader;
@@ -122,7 +123,6 @@ public class Connection extends CubicCurve implements
             return;
         }
 
-        //
         try {
             // first a trial unification on a copy of the types to minimize error propagation
             TypeChecker.unify(null, output.getType().getFresh(), input.getType().getFresh());
@@ -133,6 +133,29 @@ public class Connection extends CubicCurve implements
         }
     }
 
+    public Optional<Expression> getExprFrom(InputAnchor input){
+        if (!this.startAnchor.isPresent()) {
+            return Optional.empty();
+        }
+        
+        OutputAnchor output = this.startAnchor.get();
+        
+        if (this.errorState.get()) {
+            // attempt to recover from an error
+            try {
+                // first a trial unification on a copy of the types to minimize error propagation
+                TypeChecker.unify(null, output.getType().getFresh(), input.getType().getFresh());
+                // unify the actual types
+                TypeChecker.unify(null, output.getType(), input.getType());
+                input.setErrorState(false);
+            } catch (HaskellTypeError e) {
+                // the error is still present
+            }
+        }
+        
+        return Optional.of(output.getExpr());
+    }
+    
     /**
      * Sets an OutputAnchor or InputAnchor for this line.
      * After setting the line will update accordingly to the possible state change.
