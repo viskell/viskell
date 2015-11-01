@@ -1,13 +1,14 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import nl.utwente.viskell.ui.components.RGBBlock?>
+<?import javafx.scene.layout.TilePane?>
 <fx:root type="nl.utwente.viskell.ui.components.RGBBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane>
         <top>
-            <Pane fx:id="inputSpace" maxHeight="0"/>
+            <TilePane fx:id="inputSpace" tileAlignment="CENTER" prefTileWidth="50" alignment="CENTER" />
         </top>
         <center>
-                <Pane styleClass="rgb, block" minHeight="75" maxHeight="75" minWidth="150" maxWidth="150" fx:id="well" />
+            <Pane styleClass="rgb, block" minHeight="75" maxHeight="75" minWidth="150" maxWidth="150" fx:id="well"/>
         </center>
         <bottom>
             <Pane fx:id="outputSpace" maxHeight="0"/>
