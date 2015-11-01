@@ -1,5 +1,6 @@
 package nl.utwente.viskell.haskell.expr;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
@@ -72,4 +73,8 @@ public class Lambda extends Expression {
         return out.toString();
     }
 
+    @Override
+    public List<Expression> getChildren() {
+        return ImmutableList.of(body);
+    }
 }

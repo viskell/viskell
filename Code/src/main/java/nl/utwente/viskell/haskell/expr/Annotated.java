@@ -1,8 +1,11 @@
 package nl.utwente.viskell.haskell.expr;
 
+import com.google.common.collect.ImmutableList;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeChecker;
+
+import java.util.List;
 
 /**
  * An Expression be annotated (restricted) by a type, in Haskell notation it is "(expr :: type)".
@@ -42,4 +45,8 @@ public class Annotated extends Expression {
         return this.expr.toString() + " :: " + this.annotation.toString();
     }
 
+    @Override
+    public List<Expression> getChildren() {
+        return ImmutableList.of(expr);
+    }
 }
