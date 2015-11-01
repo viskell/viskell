@@ -85,6 +85,11 @@ public class ValueBlock extends Block {
     }
 
     @Override
+    public void refreshAnchorTypes() {
+        this.output.setType(this.type.getFresh());
+    }
+
+    @Override
     public Optional<OutputAnchor> getOutputAnchor() {
         return Optional.of(output);
     }

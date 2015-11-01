@@ -160,6 +160,21 @@ public class FunctionBlock extends Block {
     }
     
     @Override
+    public void refreshAnchorTypes() {
+        Type type = this.funInfo.getFreshSignature();
+        for (InputAnchor arg : this.getActiveInputs()) {
+            if (type instanceof FunType) {
+                FunType ftype = (FunType)type;
+                arg.setType(ftype.getArgument());
+                type = ftype.getResult();
+            } else {
+                new RuntimeException("too many arguments in this functionblock " + this.getName());
+            }
+        }
+        this.output.setType(type);
+    }
+
+    @Override
     public void invalidateVisualState() {
         argumentSpace.invalidateTypes();
 

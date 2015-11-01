@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.List;
@@ -113,6 +114,11 @@ public class DisplayBlock extends Block {
         this.expr = inputAnchor.getExpr();
     }
     
+    @Override
+    public void refreshAnchorTypes() {
+        this.inputAnchor.setType(new TypeScope().getVar("any"));        
+    }
+
     @Override
     public String toString() {
         return "DisplayBlock[" + getOutput() + "]";

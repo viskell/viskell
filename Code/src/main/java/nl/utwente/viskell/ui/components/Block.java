@@ -130,6 +130,11 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     public abstract void updateExpr();
     
     /**
+     * Set fresh types in all anchors of this block for the next typechecking cycle.
+     */
+    public abstract void refreshAnchorTypes();
+    
+    /**
      * Called when the VisualState changed.
      */
     public abstract void invalidateVisualState();
@@ -146,6 +151,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         // Set the expression to dirty
         this.exprIsDirty = true;
 
+        // Set fresh types in all anchors for the next typechecking cycle.
+        this.refreshAnchorTypes();
+        
         // First make sure that all connected inputs will be updated too.        
         for (InputAnchor input : this.getAllInputs()) {
             input.getOppositeAnchor().ifPresent(a -> a.handleConnectionChanges());

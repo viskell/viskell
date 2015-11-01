@@ -16,6 +16,7 @@ import javafx.scene.shape.Shape;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ConnectionCreationManager;
 import nl.utwente.viskell.ui.serialize.Bundleable;
@@ -122,6 +123,9 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
 
     /** The block this ConnectionAnchor belongs to. */
     protected final Block block;
+    
+    /** The local type of this anchor */
+    private Type type;
 
     /** The connections this anchor has, can be empty for no connections. */
     private List<Connection> connections;
@@ -143,6 +147,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         this.loadFXML("ConnectionAnchor");
         
         this.block = block;
+        this.type = new TypeScope().getVar("???");
         this.errorState = new SimpleBooleanProperty(false);
         this.connections = new ArrayList<Connection>();
         
@@ -193,6 +198,20 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * @return The Expr this ConnectionAnchor represents (coming from a Block).
      */
     public abstract Expression getExpr();
+    
+    /**
+     * @return the local type of this anchor
+     */
+    public Type getType() {
+        return this.type;
+    }
+    
+    /**
+     * @param type the local type of this anchor
+     */
+    public void setType(Type type) {
+        this.type = type;
+    }
     
     /**
      * @return Optional of the string representation of the in- or output type.

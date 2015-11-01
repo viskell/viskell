@@ -11,6 +11,7 @@ import nl.utwente.viskell.haskell.expr.Lambda;
 import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 
@@ -39,6 +40,11 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         public Expression getExpr() {
             return new LocalVar(this.binder);
         }
+        
+        /** Set fresh type for the next typechecking cycle.*/
+        private void refreshAnchorType(TypeScope scope) {
+            this.setType(this.binder.refreshBinderType(scope));
+        }
     }
 
     // TODO make this an independent class if other blocks (case?) need this too
@@ -59,6 +65,15 @@ public class DefinitionBlock extends Block implements ComponentLoader {
             }
            
             return super.getExpr();
+        }
+        
+        /** Set fresh type for the next typechecking cycle.*/
+        private void refreshAnchorType(TypeScope scope) {
+            if (this.resType.isPresent()) {
+                this.setType(this.resType.get().getFresh(scope));
+            } else {
+                this.setType(scope.getVar("λ_res"));
+            }
         }
     }
     
@@ -133,6 +148,13 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     @Override
     public void handleConnectionChanges() {
         if (!this.exprIsDirty) {
+            // refresh the types of the internal anchors first 
+            TypeScope scope = new TypeScope();
+            for (BinderAnchor arg : this.args) {
+                arg.refreshAnchorType(scope);
+            }
+            this.res.refreshAnchorType(scope);
+            
             // also propagate into the internals
             this.res.getOppositeAnchor().ifPresent(a -> a.handleConnectionChanges());
         }
@@ -144,6 +166,17 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     public final void updateExpr() {
         List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         this.expr = new Lambda(binders, this.res.getExpr());
+    }
+
+    @Override
+    public void refreshAnchorTypes() {
+        ArrayList<Type> types = new ArrayList<>();
+        for (BinderAnchor arg : this.args) {
+            types.add(arg.getType());
+        }
+        types.add(this.res.getType());
+
+        this.fun.setType(Type.fun(types.toArray(new Type[this.args.size()+1])));
     }
 
     @Override

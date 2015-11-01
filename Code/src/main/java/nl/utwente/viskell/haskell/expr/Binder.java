@@ -53,12 +53,13 @@ public final class Binder {
      * Refreshes the internal type of the binder for type inference
      * @param scope wherein the fresh type is constructed
      */
-    protected void refreshBinderType(final TypeScope scope) {
+    public Type refreshBinderType(final TypeScope scope) {
         if (this.annotation != null) {
             this.inferenceType = this.annotation.getFresh(scope);
         } else {
             this.inferenceType = scope.getVar(this.name);
         }
+        return this.inferenceType;
     }
 
     /**
