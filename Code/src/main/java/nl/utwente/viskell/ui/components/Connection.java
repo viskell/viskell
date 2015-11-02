@@ -175,8 +175,15 @@ public class Connection extends CubicCurve implements
         newAnchor.localToSceneTransformProperty().addListener(this);
         invalidateAnchorPositions();
         
+        // only when both ends are connected the visuals need to be updated
         if (this.isFullyConnected()) {
-            // only when both ends are connected the visuals need to be updated
+            // typecheck the new connection to mark potential errors at the best location
+            try {
+                TypeChecker.unify(null, this.startAnchor.get().getType(), this.endAnchor.get().getType());
+            } catch (HaskellTypeError e) {
+                this.endAnchor.get().setErrorState(true);
+            }
+
             newAnchor.handleConnectionChanges();
         }
     }
