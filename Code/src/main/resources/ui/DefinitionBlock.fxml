@@ -16,7 +16,7 @@
                 </VBox>
             </top>
             <center>
-                <Pane prefWidth="200" prefHeight="200">
+                <Pane prefWidth="400" prefHeight="400">
                 </Pane>
             </center>
             <bottom>

@@ -249,8 +249,8 @@ public class CustomUIPane extends TactilePane {
         double scale = this.getScaleX();
 
         /* Limit zoom to reasonable range. */
-        if (scale <= 0.25 && ratio < 1) return;
-        if (scale >= 8 && ratio > 1) return;
+        if (scale <= 0.2 && ratio < 1) return;
+        if (scale >= 3 && ratio > 1) return;
 
         this.setScale(scale * ratio);
         this.setTranslateX(this.getTranslateX() * ratio);
