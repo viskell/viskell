@@ -2,7 +2,6 @@ package nl.utwente.viskell.haskell.type;
 
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
-import nl.utwente.viskell.haskell.expr.Hole;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -41,14 +40,14 @@ public class ClassesTest {
         TypeScope scope = new TypeScope();
         final TypeVar a = scope.getVarTC("a", eq);
         final TypeVar b = scope.getVarTC("b", ord);
-        TypeChecker.unify(new Hole(), a, b);
+        TypeChecker.unify("test", a, b);
         // the Eq constraint disappears because it is direct superclass of Ord 
         assertEquals("Ord b", a.prettyPrint());
         assertEquals("Ord b", b.prettyPrint());
         
         final TypeVar c = scope.getVarTC("c", integral);
         final TypeVar d = scope.getVarTC("d", ord);
-        TypeChecker.unify(new Hole(), c, d);
+        TypeChecker.unify("test", c, d);
         // indirectly through Real, Ord is also implied by Integral 
         assertEquals("Integral d", c.prettyPrint());
         assertEquals("Integral d", d.prettyPrint());
@@ -68,7 +67,7 @@ public class ClassesTest {
         final TypeVar b = scope.getVar("b");
         final Type tab = Type.tupleOf(a, b ,a);
         final TypeVar x = scope.getVarTC("x", eq);
-        TypeChecker.unify(new Hole(), tab, x);
+        TypeChecker.unify("test", tab, x);
         assertEquals("Eq a", a.prettyPrint());
         assertEquals("Eq b", b.prettyPrint());
         assertEquals("(Eq a, Eq b, Eq a)", x.prettyPrint());
@@ -76,13 +75,13 @@ public class ClassesTest {
        final TypeVar c = scope.getVarTC("c", num);
        final Type mc = Type.con("Maybe", c);
        final TypeVar y = scope.getVarTC("y", ord);
-       TypeChecker.unify(new Hole(), y, mc);
+       TypeChecker.unify("test", y, mc);
        assertEquals("(Num+Ord c)", c.prettyPrint());
        assertEquals("Maybe (Num+Ord c)", y.prettyPrint());
        
        final Type str = Type.listOf(Type.con("Char"));
        final TypeVar z = scope.getVarTC("z", show);
-       TypeChecker.unify(new Hole(), str, z);
+       TypeChecker.unify("test", str, z);
        assertEquals("[Char]", z.prettyPrint());
     }
 }

@@ -1,6 +1,5 @@
 package nl.utwente.viskell.haskell.type;
 
-import nl.utwente.viskell.haskell.expr.Hole;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

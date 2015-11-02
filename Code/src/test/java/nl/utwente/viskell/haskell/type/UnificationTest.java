@@ -113,11 +113,10 @@ public class UnificationTest {
         TypeVar b = scope.getVar("b");
         TypeVar x = scope.getVar("x");
         TypeVar y = scope.getVar("y");
-        Expression dummy = new Hole();
-        TypeChecker.unify(dummy, a, b);
-        TypeChecker.unify(dummy, x, y);
-        TypeChecker.unify(dummy, a, x);
-        TypeChecker.unify(dummy, b, Type.con("Int"));
+        TypeChecker.unify("dummy", a, b);
+        TypeChecker.unify("dummy", x, y);
+        TypeChecker.unify("dummy", a, x);
+        TypeChecker.unify("dummy", b, Type.con("Int"));
         assertEquals("Int", y.prettyPrint());
     }
 }
