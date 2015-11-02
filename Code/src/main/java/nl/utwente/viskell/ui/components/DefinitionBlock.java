@@ -91,6 +91,8 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     /** The function anchor (second bottom anchor) */
     private OutputAnchor fun;
 
+    /** whether the internal anchor types are being refreshed*/
+    private boolean internalRefresh;
 
     /**
      * Constructs a DefinitionBlock that is an untyped lambda of n arguments.
@@ -108,7 +110,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
             this.args.add(new BinderAnchor(this, new Binder("x_" + i)));
         }
         this.res = new ResultAnchor(this, Optional.empty());
-        
+        this.internalRefresh = false;
         this.setupAnchors();
     }
             
@@ -147,19 +149,35 @@ public class DefinitionBlock extends Block implements ComponentLoader {
 
     @Override
     public void handleConnectionChanges() {
-        if (!this.exprIsDirty) {
+        if (! (this.exprIsDirty || this.internalRefresh)) {
             // refresh the types of the internal anchors first 
             TypeScope scope = new TypeScope();
             for (BinderAnchor arg : this.args) {
                 arg.refreshAnchorType(scope);
             }
             this.res.refreshAnchorType(scope);
-            
-            // also propagate into the internals
-            this.res.getOppositeAnchor().ifPresent(a -> a.handleConnectionChanges());
+
+            // propagate into the internal blocks, but avoid self recursion
+            this.internalRefresh = true;
+            if (this.res.hasConnection()) {
+                this.res.getConnection(0).ifPresent(c -> c.handleConnectionChangesFrom(this.res));
+            }
+            // also propagate in from above in case the lambda is partially connected 
+            for (BinderAnchor arg : this.args) {
+                for (Optional<InputAnchor> anchor : arg.getOppositeAnchors()) {
+                    if (anchor.isPresent()) {
+                        InputAnchor fromInput = anchor.get();
+                        fromInput.handleConnectionChanges();
+                        // force early type checking of connection to binder anchor
+                        fromInput.getConnection(0).get().handleConnectionChangesFrom(fromInput);
+                    }
+                }
+            }
+            this.internalRefresh = false;
+
+            // continue as normal with propagating changes on the outside
+            super.handleConnectionChanges();
         }
-        
-        super.handleConnectionChanges();
     }
     
     @Override
@@ -170,13 +188,14 @@ public class DefinitionBlock extends Block implements ComponentLoader {
 
     @Override
     public void refreshAnchorTypes() {
+        // refresh the type of outside function anchor, internal anchor are refreshed earlier
         ArrayList<Type> types = new ArrayList<>();
         for (BinderAnchor arg : this.args) {
             types.add(arg.getType());
         }
         types.add(this.res.getType());
 
-        this.fun.setType(Type.fun(types.toArray(new Type[this.args.size()+1])));
+        this.fun.setType(Type.fun(types.toArray(new Type[this.args.size()+1])).getFresh());
     }
 
     @Override
