@@ -125,9 +125,9 @@ public class Connection extends CubicCurve implements
 
         try {
             // first a trial unification on a copy of the types to minimize error propagation
-            TypeChecker.unify(null, output.getType().getFresh(), input.getType().getFresh());
+            TypeChecker.unify("trial connection", output.getType().getFresh(), input.getType().getFresh());
             // unify the actual types
-            TypeChecker.unify(null, output.getType(), input.getType());
+            TypeChecker.unify("connection", output.getType(), input.getType());
         } catch (HaskellTypeError e) {
             input.setErrorState(true);
         }
@@ -144,9 +144,9 @@ public class Connection extends CubicCurve implements
             // attempt to recover from an error
             try {
                 // first a trial unification on a copy of the types to minimize error propagation
-                TypeChecker.unify(null, output.getType().getFresh(), input.getType().getFresh());
+                TypeChecker.unify("trial error recovery", output.getType().getFresh(), input.getType().getFresh());
                 // unify the actual types
-                TypeChecker.unify(null, output.getType(), input.getType());
+                TypeChecker.unify("error recovery", output.getType(), input.getType());
                 input.setErrorState(false);
             } catch (HaskellTypeError e) {
                 // the error is still present
@@ -179,7 +179,7 @@ public class Connection extends CubicCurve implements
         if (this.isFullyConnected()) {
             // typecheck the new connection to mark potential errors at the best location
             try {
-                TypeChecker.unify(null, this.startAnchor.get().getType(), this.endAnchor.get().getType());
+                TypeChecker.unify("new connection", this.startAnchor.get().getType(), this.endAnchor.get().getType());
             } catch (HaskellTypeError e) {
                 this.endAnchor.get().setErrorState(true);
             }

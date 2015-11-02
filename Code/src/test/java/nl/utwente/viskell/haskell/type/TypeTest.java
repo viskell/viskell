@@ -50,10 +50,10 @@ public class TypeTest {
     	final Type i = Type.con("Int");
     	final Type t3 = Type.tupleOf(Type.listOf(i), Type.listOf(b));
 
-    	TypeChecker.unify(new Hole(), t, t3);
+    	TypeChecker.unify("test", t, t3);
     	assertEquals("([Int], [Int])", t.prettyPrint());
 
-    	TypeChecker.unify(new Hole(), t2, t3);
+    	TypeChecker.unify("test", t2, t3);
     	assertEquals("([Int], [Int])", t2.prettyPrint());
     }
 }
