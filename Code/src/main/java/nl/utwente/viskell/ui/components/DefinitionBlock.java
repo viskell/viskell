@@ -11,6 +11,7 @@ import nl.utwente.viskell.haskell.expr.Lambda;
 import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.ArrayList;
@@ -148,6 +149,6 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     @Override
     public void invalidateVisualState() {
         // also update the internal blocks connected to the internal anchor 
-        this.res.getOppositeAnchor().ifPresent(a -> a.getBlock().staleVisuals.setValue(true));
+        this.res.getOppositeAnchor().ifPresent(a -> a.invalidateVisualState());
     }
 }

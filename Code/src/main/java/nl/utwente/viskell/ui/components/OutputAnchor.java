@@ -2,7 +2,10 @@ package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import com.google.common.collect.ImmutableMap;
 
 import nl.utwente.viskell.haskell.expr.Expression;
 
@@ -46,6 +49,20 @@ public class OutputAnchor extends ConnectionAnchor {
      */
     @Override
     public Expression getExpr() {
-        return getBlock().getExpr();
+        return this.block.getExpr();
+    }
+    
+    /** invalidates the visual state of the block this anchor belongs to*/
+    public void invalidateVisualState() {
+        this.block.staleVisuals.set(true);
+    }
+
+    @Override
+    public Map<String, Object> toBundle() {
+        ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
+        Block block = this.block;
+        bundle.put("endBlock", block.hashCode());
+        bundle.put("endAnchor", block.getAllInputs().indexOf(this));
+        return bundle.build();
     }
 }

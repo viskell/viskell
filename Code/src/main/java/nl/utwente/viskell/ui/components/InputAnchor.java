@@ -1,6 +1,9 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.Map;
 import java.util.Optional;
+
+import com.google.common.collect.ImmutableMap;
 
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Hole;
@@ -8,7 +11,7 @@ import nl.utwente.viskell.haskell.expr.Hole;
 /**
  * ConnectionAnchor that specifically functions as an input.
  */
-public class InputAnchor extends ConnectionAnchor {
+public class InputAnchor extends ConnectionAnchor{
     /** The expression to return when there is no connection. */
     private Expression connectionlessExpr;
     
@@ -53,7 +56,15 @@ public class InputAnchor extends ConnectionAnchor {
 
     @Override
     public String toString() {
-        return "InputAnchor for " + getBlock();
+        return "InputAnchor for " + this.block;
+    }
+
+    @Override
+    public Map<String, Object> toBundle() {
+        ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
+        bundle.put("startBlock", this.block.hashCode());
+        bundle.put("startAnchor", 0);
+        return bundle.build();
     }
 
 }

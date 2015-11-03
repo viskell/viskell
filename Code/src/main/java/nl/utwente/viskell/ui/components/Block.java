@@ -14,6 +14,7 @@ import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.ui.CircleMenu;
+import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomAlert;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
@@ -213,7 +214,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
             this.invalidateVisualState();
         
             for (InputAnchor input : this.getAllInputs()) {
-                input.getOppositeAnchor().ifPresent(a -> a.getBlock().staleVisuals.set(true));
+                input.getOppositeAnchor().ifPresent(a -> a.invalidateVisualState());
             }
             
             this.staleVisuals.setValue(false);

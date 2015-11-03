@@ -1,4 +1,4 @@
-package nl.utwente.viskell.ui.components;
+package nl.utwente.viskell.ui;
 
 import javafx.fxml.FXMLLoader;
 

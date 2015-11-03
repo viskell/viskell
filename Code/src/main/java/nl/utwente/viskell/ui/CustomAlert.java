@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import nl.utwente.viskell.ui.components.ComponentLoader;
 
 /**
  * Recent versions of JavaFX ship with their own Alert dialogs, but those can't

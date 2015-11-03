@@ -7,7 +7,10 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
+import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
+import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
@@ -19,6 +22,7 @@ import java.util.Optional;
  * This is a Connection that represents a flow between an {@link InputAnchor}
  * and {@link OutputAnchor}. Both anchors are stored referenced respectively as
  * startAnchor and endAnchor {@link Optional} within this class.
+ * Visually a connection is represented as a cubic Bezier curve.
  * <p>
  * It is possible for a connection to exist without both anchors being present,
  * whenever the position of either the start or end anchor changes the
@@ -29,8 +33,15 @@ import java.util.Optional;
  * Connection is also a changeListener for a Transform, in order to be able to
  * update the Line's position when the anchor's positions change.
  */
-public class Connection extends ConnectionLine implements
-        ChangeListener<Transform>, Bundleable {
+public class Connection extends CubicCurve implements
+        ChangeListener<Transform>, Bundleable, ComponentLoader {
+    
+    /**
+     * Control offset for this bezier curve of this line.
+     * It determines how a far a line attempts to goes straight from its end points.
+     */
+    public static final double BEZIER_CONTROL_OFFSET = 150f;
+    
     /** Starting point of this Line that can be Anchored onto other objects. */
     private Optional<OutputAnchor> startAnchor = Optional.empty();
     /** Ending point of this Line that can be Anchored onto other objects. */
@@ -45,24 +56,21 @@ public class Connection extends ConnectionLine implements
     /** 
      * Construct a new Connection.
      * @param pane The Pane this Connection is on.
+     * @param anchor A ConnectionAnchor of this Connection.
      */
-    private Connection(CustomUIPane pane) {
+    public Connection(CustomUIPane pane, ConnectionAnchor anchor) {
+        this.loadFXML("Connection");
+        TactilePane.setDraggable(this, false);
+        TactilePane.setGoToForegroundOnContact(this, false);
+        this.setMouseTransparent(true);
+        
         this.pane = pane;
         pane.getChildren().add(0, this);
         this.errorState = new SimpleBooleanProperty(false);
         this.errorState.addListener(this::checkErrorListener);
-    }
-
-    /** 
-     * Construct a new Connection.
-     * @param pane The Pane this Connection is on.
-     * @param anchor A ConnectionAnchor of this Connection.
-     */
-    public Connection(CustomUIPane pane, ConnectionAnchor anchor) {
-        this(pane);
         Point2D initPos = pane.sceneToLocal(anchor.localToScene(anchor.getLocalCenter()));
-        setStartPositionParent(initPos);
-        setEndPositionParent(initPos);
+        this.setStartPosition(initPos);
+        this.setEndPosition(initPos);
         connectTo(anchor);
     }
     
@@ -71,18 +79,6 @@ public class Connection extends ConnectionLine implements
         errorState.set(error);
     }
     
-    /* GETTERS */
-    
-    /** @return this connection's end anchor, if any. */
-    public final Optional<InputAnchor> getInputAnchor() {
-        return endAnchor;
-    }
-
-    /** @return this connection's start anchor, if any. */
-    public final Optional<OutputAnchor> getOutputAnchor() {
-        return startAnchor;
-    }
-
     /**
      * Get the optional output anchor on the other side of
      * the provided input anchor in this Connection.
@@ -105,8 +101,6 @@ public class Connection extends ConnectionLine implements
         return this.startAnchor.filter(oa -> oa == anchor).flatMap(x -> this.endAnchor);
     }
     
-    /* SETTERS */
-
     /**
      * Sets an OutputAnchor or InputAnchor for this line.
      * After setting the line will update accordingly to the possible state change.
@@ -123,7 +117,7 @@ public class Connection extends ConnectionLine implements
         
         // Add this to the anchor.
         newAnchor.addConnection(this);
-        this.addListeners(newAnchor);
+        newAnchor.localToSceneTransformProperty().addListener(this);
         invalidateAnchorPositions();
         
         if (this.isFullyConnected()) {
@@ -135,15 +129,14 @@ public class Connection extends ConnectionLine implements
     /**
      * Sets the free ends (empty anchors) to the specified position.
      * 
-     * @param point
-     *            Coordinates local to the Line's parent.
+     * @param point Coordinates local to the Line's parent.
      */
     public void setFreeEnds(Point2D point) {
         if (!startAnchor.isPresent()) {
-            setStartPositionParent(point);
+            this.setStartPosition(point);
         }
         if (!endAnchor.isPresent()) {
-            setEndPositionParent(point);
+            this.setEndPosition(point);
         }
     }
     
@@ -159,9 +152,6 @@ public class Connection extends ConnectionLine implements
         }
     }
     
-
-    /* OTHER METHODS */
-
     /**
      * @return Whether or not both sides of this Connection are connected to an Anchor.
      */
@@ -207,51 +197,72 @@ public class Connection extends ConnectionLine implements
         pane.getChildren().remove(this);
     }
 
-    /**
-     * Adds the listeners this Connections needs to keep its visual
-     * representation up-to-date to the given anchor.
-     */
-    private void addListeners(ConnectionAnchor anchor) {
-        anchor.localToSceneTransformProperty().addListener(this);
-    }
-
     @Override
-    public final void changed(ObservableValue<? extends Transform> observable,
-            Transform oldValue, Transform newValue) {
-        invalidateAnchorPositions();
+    public final void changed(ObservableValue<? extends Transform> observable, Transform oldValue, Transform newValue) {
+        this.invalidateAnchorPositions();
     }
 
-    /**
-     * Runs both the update Start end End position functions. Use when
-     * refreshing UI representation of the Line.
-     */
-    public void invalidateAnchorPositions() {
-        startAnchor.ifPresent(a -> setStartPositionParent(pane.sceneToLocal(a.localToScene(a.getLocalCenter()))));
-        endAnchor.ifPresent(a -> setEndPositionParent(pane.sceneToLocal(a.localToScene(a.getLocalCenter()))));
+    /** Update the UI positions of both start and end anchors. */
+    private void invalidateAnchorPositions() {
+        startAnchor.ifPresent(a -> this.setStartPosition(pane.sceneToLocal(a.localToScene(a.getLocalCenter()))));
+        endAnchor.ifPresent(a -> this.setEndPosition(pane.sceneToLocal(a.localToScene(a.getLocalCenter()))));
     }
 
     @Override
     public String toString() {
-        return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  "
-                + endAnchor;
+        return "Connection connecting \n(out) " + startAnchor + "   to\n(in)  " + endAnchor;
     }
 
     @Override
     public Map<String, Object> toBundle() {
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
-
-        startAnchor.ifPresent(start -> {
-            Block block = start.getBlock();
-            bundle.put("startBlock", block.hashCode());
-            bundle.put("startAnchor", 0);
-        });
-
-        endAnchor.ifPresent(end -> {
-            Block block = end.getBlock();
-            bundle.put("endBlock", block.hashCode());
-            bundle.put("endAnchor", block.getAllInputs().indexOf(end));
-        });
-
+        startAnchor.ifPresent(start -> bundle.putAll(start.toBundle()));
+        endAnchor.ifPresent(end -> bundle.putAll(end.toBundle()));
         return bundle.build();
+    }
+
+    /**
+     * Sets the start coordinates for this Connection.
+     * @param point Coordinates local to this Line's parent.
+     */
+    private void setStartPosition(Point2D point) {
+        this.setStartX(point.getX());
+        this.setStartY(point.getY());
+        this.updateBezierControlPoints();
+    }
+
+    /**
+     * Sets the end coordinates for this Connection.
+     * @param point coordinates local to this Line's parent.
+     */
+    private void setEndPosition(Point2D point) {
+        this.setEndX(point.getX());
+        this.setEndY(point.getY());
+        this.updateBezierControlPoints();
+    }
+
+    /** Returns the current bezier offset based on the current start and end positions. */
+    private double getBezierYOffset() {
+        double distX = Math.abs(this.getEndX() - this.getStartX());
+        double distY = Math.abs(this.getEndY() - this.getStartY());
+        if (distY < BEZIER_CONTROL_OFFSET) {
+            if (distX < BEZIER_CONTROL_OFFSET) {
+                // short lines are extra flexible
+                return Math.max(BEZIER_CONTROL_OFFSET/10, Math.max(distX, distY));
+            } else {
+                return BEZIER_CONTROL_OFFSET;
+            }
+        } else {
+            return Math.cbrt(distY / BEZIER_CONTROL_OFFSET) * BEZIER_CONTROL_OFFSET;
+        }
+    }
+
+    /** Updates the Bezier offset (curviness) according to the current start and end positions. */
+    private void updateBezierControlPoints() {
+        double yOffset = this.getBezierYOffset();
+        this.setControlX1(this.getStartX());
+        this.setControlY1(this.getStartY() + yOffset);
+        this.setControlX2(this.getEndX());
+        this.setControlY2(this.getEndY() - yOffset);
     }
 }
