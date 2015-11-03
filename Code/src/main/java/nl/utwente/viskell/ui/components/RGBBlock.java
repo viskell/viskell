@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
@@ -22,15 +21,9 @@ import java.util.NoSuchElementException;
  * The RGBBlock colors according to these inputs.
  */
 public class RGBBlock extends DisplayBlock {
-    /** The InputAnchor to which the Red value should be connected. **/
-    private final InputAnchor r;
+    /** The InputAnchors to which the red, green and blue values should be connected. **/
+    private final InputAnchor r, g, b;
     
-    /** The InputAnchor to which the Green value should be connected. **/
-    private final InputAnchor g;
-    
-    /** The InputAnchor to which the Blue value should be connected. **/
-    private final InputAnchor b;
-
     /** The Pane to paint with the currently inputed color. **/
     @FXML private Pane well;
     
@@ -43,18 +36,9 @@ public class RGBBlock extends DisplayBlock {
         r = super.getAllInputs().get(0);
         g = new InputAnchor(this);
         b = new InputAnchor(this);
-        inputSpace.getChildren().setAll(ImmutableList.of(r, g, b));
-        
-        // Spread them out over the top of the Block.
-        r.layoutXProperty().bind(inputSpace.widthProperty().divide(3 / 0.5));
-        g.layoutXProperty().bind(inputSpace.widthProperty().divide(3 / 1.5));
-        b.layoutXProperty().bind(inputSpace.widthProperty().divide(3 / 2.5));
-        
-        //Make sure inputSpace is drawn on top.
-        BorderPane borderPane = (BorderPane) inputSpace.getParent();
-        borderPane.getChildren().remove(inputSpace);
-        borderPane.setTop(inputSpace);
 
+        inputSpace.getChildren().setAll(r, g, b);
+        
         //Makes the default background.
         Stop[] stops = new Stop[] { new Stop(0, Color.RED), new Stop(0.5, Color.GREEN), new Stop(1, Color.BLUE)};
         LinearGradient lg1 = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, stops);
@@ -94,6 +78,6 @@ public class RGBBlock extends DisplayBlock {
 
     @Override
     public List<InputAnchor> getAllInputs() {
-        return ImmutableList.of(r,g,b);
+        return ImmutableList.of(r, g, b);
     }
 }

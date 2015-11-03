@@ -2,10 +2,11 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 <?import nl.utwente.viskell.ui.components.DisplayBlock?>
+<?import javafx.scene.layout.TilePane?>
 <fx:root type="nl.utwente.viskell.ui.components.DisplayBlock" xmlns:fx="http://javafx.com/fxml/">
 	<BorderPane>
 		<top>
-			<Pane fx:id="inputSpace" maxHeight="0" />
+			<TilePane fx:id="inputSpace" maxHeight="0" alignment="CENTER" />
 		</top>
 		<center>
 			<BorderPane fx:id="block" styleClass="display, block" minHeight="75" maxHeight="75" minWidth="150">

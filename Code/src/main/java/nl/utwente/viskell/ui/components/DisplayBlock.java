@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.ui.CustomUIPane;
@@ -29,7 +30,7 @@ public class DisplayBlock extends Block {
     protected InputAnchor inputAnchor;
 
     /** The space containing the input anchor. */
-    @FXML protected Pane inputSpace;
+    @FXML protected TilePane inputSpace;
 
     /** The label on which to display type information. */
     @FXML protected Label inputType;
@@ -53,9 +54,8 @@ public class DisplayBlock extends Block {
         this.loadFXML(fxml);
 
         inputAnchor = new InputAnchor(this);
-        inputAnchor.layoutXProperty().bind(inputSpace.widthProperty().divide(2));
         inputSpace.getChildren().add(inputAnchor);
-        
+
         //Make sure inputSpace is drawn on top.
         BorderPane borderPane = (BorderPane) inputSpace.getParent();
         borderPane.getChildren().remove(inputSpace);
