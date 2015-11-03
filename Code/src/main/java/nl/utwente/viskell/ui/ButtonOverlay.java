@@ -38,6 +38,7 @@ public class ButtonOverlay extends StackPane {
 
         FlowPane toolBar = new FlowPane(10, 0, menu);
         toolBar.setMaxHeight(40);
+        toolBar.setMaxWidth(40); // workaround to make it not confiscate the whole top of the screen
         toolBar.setPadding(new Insets(10));
         toolBar.getStyleClass().add("overlayButtons");
         StackPane.setAlignment(toolBar, TOOLBAR_POS);

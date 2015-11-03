@@ -15,10 +15,10 @@ import nl.utwente.viskell.haskell.env.HaskellCatalog;
  */
 public class Main extends Application {
     /** The Width of the TactilePane used within Viskell. */
-    public static final int PANE_WIDTH = 3000;
+    public static final int PANE_WIDTH = 8000;
     
     /** The Height of the TactilePane used within Viskell. */
-    public static final int PANE_HEIGHT = 3000;
+    public static final int PANE_HEIGHT = 4500;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -65,8 +65,8 @@ public class Main extends Application {
         Scene scene = new Scene(buttonOverlay);
         scene.getStylesheets().add("/ui/style.css");
 
-        stage.setWidth(800);
-        stage.setHeight(600);
+        stage.setWidth(1024);
+        stage.setHeight(768);
 
         stage.setOnCloseRequest(event -> System.exit(0));
         stage.setScene(scene);

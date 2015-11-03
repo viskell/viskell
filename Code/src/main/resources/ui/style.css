@@ -76,7 +76,7 @@ CustomUIPane {
 }
 
 .menu.block .title {
-    -fx-font-size: 15px;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-font-color: #FCEBB6;
     -fx-background-color: #A4849E;
