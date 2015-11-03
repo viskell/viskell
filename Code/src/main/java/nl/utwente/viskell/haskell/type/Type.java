@@ -72,22 +72,19 @@ public abstract class Type {
      * @param The name of type constructor.
      */
     public final static TypeCon con(String name) {
+        if ("[]".equals(name)) {
+            return new ListTypeCon();
+        }
+        
+        if ("()".equals(name)) {
+            return new TupleTypeCon(0);
+        }
+        
+        if (name.startsWith("(,")) {
+            return new TupleTypeCon(name.length()-1);
+        }
+        
         return new TypeCon(name);
-    }
-
-    /**
-     * @return a new tuple constructor
-     * @param The arity of the tuple.
-     */
-    public final static TupleTypeCon tupleCon(int arity) {
-        return new TupleTypeCon(arity);
-    }
-
-    /**
-     * @return a new list constructor
-     */
-    public final static ListTypeCon listCon() {
-        return new ListTypeCon();
     }
 
     /**
@@ -96,7 +93,7 @@ public abstract class Type {
      * @param List of type argument to constructor is applied too
      */
     public final static Type con(String name, Type... args) {
-        Type t = new TypeCon(name);
+        Type t = Type.con(name);
         for (Type a : args) {
             t = new TypeApp(t, a);
         }
@@ -144,7 +141,7 @@ public abstract class Type {
      * @param the element type
      */
     public final static Type listOf(Type elem) {
-        return new TypeApp(listCon(), elem);
+        return new TypeApp(new ListTypeCon(), elem);
     }
 
     /**
@@ -152,7 +149,7 @@ public abstract class Type {
      * @param the list of element types
      */
     public final static Type tupleOf(Type... elems) {
-        Type t = tupleCon(elems.length);
+        Type t = new TupleTypeCon(elems.length);
         for (Type e : elems) {
             t = new TypeApp(t, e);
         }

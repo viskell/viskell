@@ -8,17 +8,21 @@ import java.util.List;
 public class TupleTypeCon extends TypeCon {
 
     /*
-     * @param arity the number of arguments (>= 2) in the type
+     * @param arity the number of arguments (>= 2) or 0 in the type
      */
     TupleTypeCon(int arity) {
         super(tupleName(arity));
     }
     
     /*
-     * @param arity the number of arguments (>= 2) in the type
+     * @param arity the number of arguments (>= 2) or 0 in the type
      * @return the name of a tuple constructor 
      */
     public final static String tupleName(final int arity) {
+        if (arity == 0) {
+            return "()";
+        }
+        
         return String.format("(%s)", Strings.repeat(",", arity - 1));
     }
 

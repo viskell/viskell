@@ -3,6 +3,7 @@ package nl.utwente.viskell.haskell.type;
 import java.lang.ref.WeakReference;
 import java.util.IdentityHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 
@@ -222,6 +223,15 @@ public class TypeVar extends Type {
     @Override
     public final String prettyPrint(final int fixity) {
         return this.instance.prettyPrint(fixity);
+    }
+
+    @Override
+    protected String prettyPrintAppChain(int fixity, List<Type> args) {
+        if (this.instance.isPresent()) {
+            return this.instance.get().prettyPrintAppChain(fixity, args);
+        }
+        
+        return super.prettyPrintAppChain(fixity, args);
     }
 
     @Override
