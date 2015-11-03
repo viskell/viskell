@@ -62,8 +62,7 @@ public class InputAnchor extends ConnectionAnchor{
     @Override
     public Map<String, Object> toBundle() {
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
-        Block block = this.block;
-        bundle.put("startBlock", block.hashCode());
+        bundle.put("startBlock", this.block.hashCode());
         bundle.put("startAnchor", 0);
         return bundle.build();
     }
