@@ -72,7 +72,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
             if (this.resType.isPresent()) {
                 this.setType(this.resType.get().getFresh(scope));
             } else {
-                this.setType(TypeScope.unique("λ_res"));
+                this.setType(TypeScope.unique("y"));
             }
         }
     }
@@ -91,9 +91,6 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     /** The function anchor (second bottom anchor) */
     private OutputAnchor fun;
 
-    /** whether the internal anchor types are being refreshed*/
-    private boolean internalRefresh;
-
     /**
      * Constructs a DefinitionBlock that is an untyped lambda of n arguments.
      * @param pane the parent ui pane.
@@ -110,7 +107,6 @@ public class DefinitionBlock extends Block implements ComponentLoader {
             this.args.add(new BinderAnchor(this, new Binder("x_" + i)));
         }
         this.res = new ResultAnchor(this, Optional.empty());
-        this.internalRefresh = false;
         this.setupAnchors();
     }
             
@@ -148,54 +144,44 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
 
     @Override
-    public void handleConnectionChanges() {
-        if (! (this.exprIsDirty || this.internalRefresh)) {
-            // refresh the types of the internal anchors first 
-            TypeScope scope = new TypeScope();
-            for (BinderAnchor arg : this.args) {
-                arg.refreshAnchorType(scope);
-            }
-            this.res.refreshAnchorType(scope);
-
-            // propagate into the internal blocks, but avoid self recursion
-            this.internalRefresh = true;
-            if (this.res.hasConnection()) {
-                this.res.getConnection(0).ifPresent(c -> c.handleConnectionChangesFrom(this.res));
-            }
-            // also propagate in from above in case the lambda is partially connected 
-            for (BinderAnchor arg : this.args) {
-                for (Optional<InputAnchor> anchor : arg.getOppositeAnchors()) {
-                    if (anchor.isPresent()) {
-                        InputAnchor fromInput = anchor.get();
-                        fromInput.handleConnectionChanges();
-                        // force early type checking of connection to binder anchor
-                        fromInput.getConnection(0).get().handleConnectionChangesFrom(fromInput);
-                    }
-                }
-            }
-            this.internalRefresh = false;
-
-            // continue as normal with propagating changes on the outside
-            super.handleConnectionChanges();
-        }
-    }
-    
-    @Override
-    public final void updateExpr() {
-        List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
-        this.expr = new Lambda(binders, this.res.getExpr());
-    }
-
-    @Override
     public void refreshAnchorTypes() {
-        // refresh the type of outside function anchor, internal anchor are refreshed earlier
+        TypeScope scope = new TypeScope();
+        for (BinderAnchor arg : this.args) {
+            arg.refreshAnchorType(scope);
+        }
+        this.res.refreshAnchorType(scope);
+        
         ArrayList<Type> types = new ArrayList<>();
         for (BinderAnchor arg : this.args) {
             types.add(arg.getType());
         }
         types.add(this.res.getType());
 
-        this.fun.setType(Type.fun(types.toArray(new Type[this.args.size()+1])).getFresh());
+        this.fun.setType(Type.fun(types.toArray(new Type[this.args.size()+1])));
+    }
+
+    @Override
+    protected void propagateConnectionChanges() {
+        // first propagate into the internal blocks
+        if (this.res.hasConnection()) {
+            this.res.getConnection(0).ifPresent(c -> c.handleConnectionChangesFrom(this.res));
+        }
+
+        // also propagate in from above in case the lambda is partially connected 
+        for (BinderAnchor arg : this.args) {
+            for (Optional<InputAnchor> anchor : arg.getOppositeAnchors()) {
+                anchor.ifPresent(a -> a.handleConnectionChanges());
+            }
+        }
+
+        // continue as normal with propagating changes on the outside
+        super.propagateConnectionChanges();
+    }
+    
+    @Override
+    public final void updateExpr() {
+        List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
+        this.expr = new Lambda(binders, this.res.getExpr());
     }
 
     @Override

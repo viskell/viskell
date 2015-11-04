@@ -48,6 +48,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** Property for the whether the visuals are up to date. */
     protected BooleanProperty staleVisuals;
     
+    /** Whether the anchor types are fresh*/
+    private boolean freshAnchorTypes;
+    
     /** Marker for the expression freshness. */
     protected boolean exprIsDirty;
 
@@ -57,6 +60,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     public Block(CustomUIPane pane) {
         this.parentPane = pane;
         this.staleVisuals = new SimpleBooleanProperty(false);
+        this.freshAnchorTypes = false;
         this.exprIsDirty = false;
         
         this.staleVisuals.addListener(this::fixupVisualState);
@@ -109,49 +113,45 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     }
     
     /**
-     * @return The expression this Block represents.
-     * 
-     * If the expression is not up-to-date it gets updated.
+     * Handle the expression and types changes caused by modified connections or values.
      */
-    public final Expression getExpr() {
-        // Assure expr is up-to-date.
-        if (this.exprIsDirty) {
-            this.updateExpr();
-            this.exprIsDirty = false;
-        }
-        return expr;
+    public final void handleConnectionChanges() {
+        this.prepareConnectionChanges();
+        this.finishConnectionChanges();
     }
     
     /**
-     * Updates the expression
+     * First connection change stage: set fresh types in all anchors. 
      */
-    public abstract void updateExpr();
+    public final void prepareConnectionChanges() {
+        if (this.exprIsDirty || this.freshAnchorTypes) {
+            return; // refresh anchor types in each block only once
+        }
+        this.freshAnchorTypes = true;
+        this.refreshAnchorTypes();
+    }
     
     /**
      * Set fresh types in all anchors of this block for the next typechecking cycle.
      */
-    public abstract void refreshAnchorTypes();
+    protected abstract void refreshAnchorTypes();
     
     /**
-     * Called when the VisualState changed.
+     * Second connection change stage: propagate through all connections
      */
-    public abstract void invalidateVisualState();
-    
-    /**
-     * Handle the expression and types changes caused by modified connections or values.
-     * After propagating the changes through connected blocks, a visual update is triggered.
-     */
-    public void handleConnectionChanges() {
+    public final void finishConnectionChanges() {
         if (this.exprIsDirty) {
             return; // avoid doing extra work and infinite recursion
         }
-        
-        // Set the expression to dirty
         this.exprIsDirty = true;
+        this.freshAnchorTypes = false;
+        this.propagateConnectionChanges();
+    }
 
-        // Set fresh types in all anchors for the next typechecking cycle.
-        this.refreshAnchorTypes();
-        
+    /**
+     * Propagate the changes through connected blocks, then trigger a visual update.
+     */
+    protected void propagateConnectionChanges() {
         // First make sure that all connected inputs will be updated too.        
         for (InputAnchor input : this.getAllInputs()) {
             if (input.hasConnection()) {
@@ -190,6 +190,30 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         // Now that the expressions and types are updated, initiate a visual refresh.
         this.staleVisuals.set(true);
     }
+    
+    /**
+     * @return The expression this Block represents.
+     * 
+     * If the expression is not up-to-date it gets updated.
+     */
+    public final Expression getExpr() {
+        // Assure expr is up-to-date.
+        if (this.exprIsDirty) {
+            this.updateExpr();
+            this.exprIsDirty = false;
+        }
+        return expr;
+    }
+    
+    /**
+     * Updates the expression
+     */
+    public abstract void updateExpr();
+    
+    /**
+     * Called when the VisualState changed.
+     */
+    public abstract void invalidateVisualState();
     
     /**
      * ChangeListener that resolves outdated visuals and 

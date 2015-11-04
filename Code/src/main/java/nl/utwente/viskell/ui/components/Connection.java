@@ -115,8 +115,8 @@ public class Connection extends CubicCurve implements
         }
         
         OutputAnchor output = this.startAnchor.get();
-        // first make sure the output is up to date
-        output.handleConnectionChanges();
+        // first make sure the output anchor block and types are fresh
+        output.prepareConnectionChanges();
 
         // for connections in error state typechecking is delayed to keep error locations stable
         if (this.errorState.get()) {
@@ -131,6 +131,9 @@ public class Connection extends CubicCurve implements
         } catch (HaskellTypeError e) {
             input.setErrorState(true);
         }
+
+        // continue with propagating connections changes in the output anchor block 
+        output.finishConnectionChanges();
     }
 
     public Optional<Expression> getExprFrom(InputAnchor input){
