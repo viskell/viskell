@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.List;
@@ -86,11 +87,10 @@ public class DisplayBlock extends Block {
     @Override
     public void invalidateVisualState() {
         if (inputAnchor.hasConnection()) {
-            try {
-                this.inputType.setText("  ... ");
-                this.inputType.setText(this.expr.findType().prettyPrint());
-                Optional<GhciSession> ghci = getPane().getGhciSession();
+            this.inputType.setText(this.inputAnchor.getStringType());
 
+            try {
+                Optional<GhciSession> ghci = getPane().getGhciSession();
                 if (ghci.isPresent()) {
                     setOutput(ghci.get().pull(inputAnchor.getExpr()));
                 }
@@ -113,6 +113,11 @@ public class DisplayBlock extends Block {
         this.expr = inputAnchor.getExpr();
     }
     
+    @Override
+    public void refreshAnchorTypes() {
+        this.inputAnchor.setType(TypeScope.unique("any"));        
+    }
+
     @Override
     public String toString() {
         return "DisplayBlock[" + getOutput() + "]";

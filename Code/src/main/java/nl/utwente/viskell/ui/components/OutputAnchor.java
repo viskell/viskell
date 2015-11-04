@@ -44,6 +44,16 @@ public class OutputAnchor extends ConnectionAnchor {
         return true;
     }
 
+    /** Prepare connection changes in the block this anchor belongs to. */
+    public void prepareConnectionChanges() {
+        this.block.prepareConnectionChanges();
+    }
+    
+    /** Finish connection changes in the block this anchor belongs to. */
+    public void finishConnectionChanges() {
+        this.block.finishConnectionChanges();
+    }
+
     /**
      * @return The expression carried by the block to which this anchor belongs.
      */

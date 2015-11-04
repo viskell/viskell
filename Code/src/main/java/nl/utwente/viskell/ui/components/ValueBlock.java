@@ -7,7 +7,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import nl.utwente.viskell.haskell.expr.Value;
-import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.CustomUIPane;
 
@@ -85,6 +84,11 @@ public class ValueBlock extends Block {
     }
 
     @Override
+    public void refreshAnchorTypes() {
+        this.output.setType(this.type.getFresh());
+    }
+
+    @Override
     public Optional<OutputAnchor> getOutputAnchor() {
         return Optional.of(output);
     }
@@ -96,11 +100,7 @@ public class ValueBlock extends Block {
     
     @Override
     public void invalidateVisualState() {
-        try {
-            this.valueType.setText(this.expr.findType().prettyPrint());
-        } catch (HaskellTypeError e) {
-            this.valueType.setText("???");
-        }
+        this.valueType.setText(this.output.getStringType());
     }
 
     @Override

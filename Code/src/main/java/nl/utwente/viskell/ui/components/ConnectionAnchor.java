@@ -1,8 +1,5 @@
 package nl.utwente.viskell.ui.components;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
@@ -13,9 +10,9 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
-import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ConnectionCreationManager;
 import nl.utwente.viskell.ui.serialize.Bundleable;
@@ -122,6 +119,9 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
 
     /** The block this ConnectionAnchor belongs to. */
     protected final Block block;
+    
+    /** The local type of this anchor */
+    private Type type;
 
     /** The connections this anchor has, can be empty for no connections. */
     private List<Connection> connections;
@@ -132,9 +132,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** The invisible part of the ConnectionAnchor (the touch zone). */
     @FXML private Shape invisibleAnchor;
     
-    /** Property storing the error state. */
-    private BooleanProperty errorState;
-    
     /**
      * @param block
      *            The block this ConnectionAnchor belongs to.
@@ -143,10 +140,9 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         this.loadFXML("ConnectionAnchor");
         
         this.block = block;
-        this.errorState = new SimpleBooleanProperty(false);
+        this.type = TypeScope.unique("???");
         this.connections = new ArrayList<Connection>();
         
-        this.errorState.addListener(this::checkError);
         this.new AnchorHandler(block.getPane().getConnectionCreationManager());
     }
     
@@ -158,21 +154,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         if (!active) {
             this.removeConnections();
         }
-    }
-    
-  
-    /**
-     * @param state The new error state for this ConnectionAnchor.
-     */
-    public void setErrorState(boolean state) {
-        errorState.set(state);
-    }
-    
-    /**
-     * @return The property describing the error state of this ConnectionAnchor.
-     */
-    public BooleanProperty errorStateProperty() {
-        return errorState;
     }
     
     /**
@@ -195,26 +176,24 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public abstract Expression getExpr();
     
     /**
-     * @return Optional of the string representation of the in- or output type.
+     * @return the local type of this anchor
      */
-    public Optional<String> getStringType() {
-        try {
-            Type type = getExpr().findType();
-            return Optional.of(type.prettyPrint());
-        } catch (HaskellException e) {
-            return Optional.empty();
-        }
+    public Type getType() {
+        return this.type;
     }
     
     /**
-     * ChangeListener that will set the error state if isConnected().
+     * @param type the local type of this anchor
      */
-    public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        for (Connection conn : this.connections) {
-            if (conn.isFullyConnected()) {
-                conn.setErrorState(newValue);
-            }
-        }
+    public void setType(Type type) {
+        this.type = type;
+    }
+    
+    /**
+     * @return the string representation of the in- or output type.
+     */
+    public String getStringType() {
+        return this.type.prettyPrint();
     }
     
     /**
@@ -259,16 +238,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * @return True if the primary connection is connected.
      */
     public boolean isPrimaryConnected() {
-        return isFullyConnected(0);
-    }
-
-    /**
-     * @param index
-     *            Index of the connection to check
-     * @return Whether or not the connection specified by the index is connected. False if the index is invalid.
-     */
-    public boolean isFullyConnected(int index) {
-        return index >= 0 && index < this.connections.size() && this.connections.get(index).isFullyConnected();
+        return this.connections.size() > 0 && this.connections.get(0).isFullyConnected();
     }
 
     /**

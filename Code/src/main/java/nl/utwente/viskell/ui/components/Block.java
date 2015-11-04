@@ -10,9 +10,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Expression;
-import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.ui.CircleMenu;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomAlert;
@@ -50,6 +48,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** Property for the whether the visuals are up to date. */
     protected BooleanProperty staleVisuals;
     
+    /** Whether the anchor types are fresh*/
+    private boolean freshAnchorTypes;
+    
     /** Marker for the expression freshness. */
     protected boolean exprIsDirty;
 
@@ -59,6 +60,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     public Block(CustomUIPane pane) {
         this.parentPane = pane;
         this.staleVisuals = new SimpleBooleanProperty(false);
+        this.freshAnchorTypes = false;
         this.exprIsDirty = false;
         
         this.staleVisuals.addListener(this::fixupVisualState);
@@ -111,44 +113,52 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     }
     
     /**
-     * @return The expression this Block represents.
-     * 
-     * If the expression is not up-to-date it gets updated.
+     * Handle the expression and types changes caused by modified connections or values.
      */
-    public final Expression getExpr() {
-        // Assure expr is up-to-date.
-        if (this.exprIsDirty) {
-            this.updateExpr();
-            this.exprIsDirty = false;
-        }
-        return expr;
+    public final void handleConnectionChanges() {
+        this.prepareConnectionChanges();
+        this.finishConnectionChanges();
     }
     
     /**
-     * Updates the expression
+     * First connection change stage: set fresh types in all anchors. 
      */
-    public abstract void updateExpr();
+    public final void prepareConnectionChanges() {
+        if (this.exprIsDirty || this.freshAnchorTypes) {
+            return; // refresh anchor types in each block only once
+        }
+        this.freshAnchorTypes = true;
+        this.refreshAnchorTypes();
+    }
     
     /**
-     * Called when the VisualState changed.
+     * Set fresh types in all anchors of this block for the next typechecking cycle.
      */
-    public abstract void invalidateVisualState();
+    protected abstract void refreshAnchorTypes();
     
     /**
-     * Handle the expression and types changes caused by modified connections or values.
-     * After propagating the changes through connected blocks, a visual update is triggered.
+     * Second connection change stage: propagate through all connections
      */
-    public void handleConnectionChanges() {
+    public final void finishConnectionChanges() {
         if (this.exprIsDirty) {
             return; // avoid doing extra work and infinite recursion
         }
-        
-        // Set the expression to dirty
         this.exprIsDirty = true;
+        this.freshAnchorTypes = false;
+        this.propagateConnectionChanges();
+    }
 
+    /**
+     * Propagate the changes through connected blocks, then trigger a visual update.
+     */
+    protected void propagateConnectionChanges() {
         // First make sure that all connected inputs will be updated too.        
         for (InputAnchor input : this.getAllInputs()) {
-            input.getOppositeAnchor().ifPresent(a -> a.handleConnectionChanges());
+            if (input.hasConnection()) {
+                input.getConnection(0).ifPresent(c -> c.handleConnectionChangesFrom(input));
+            } else {
+                input.setErrorState(false);
+            }
         }
 
         // Boolean to check if this was the last Block that changed.
@@ -175,35 +185,35 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
             return; // do not recompute more than once.
         }
         
-        try {
-            // Analyze the entire tree.
-            this.getExpr().findType();
-            getPane().setErrorOccurred(false);
-            // TODO: This will set the errorOccurred for the entire
-            // program, not just the invalidated tree. This means that
-            // when having multiple small program trees, errors get
-            // reset to quickly.
-
-            // No type mismatches.
-        } catch (HaskellTypeError e) {
-            // A Type mismatch occurred.
-            int index = -1;
-            // Determine the input index of the Type error.
-            Expression errorExpr = e.getExpression();
-            while (errorExpr instanceof Apply) {
-                errorExpr = ((Apply) errorExpr).getChildren().get(0);
-                index++;
-            }
-            // Get the Block in which the type error occurred and
-            // set the error state for the mismatched input to true.
-            getPane().getExprToFunction(errorExpr).getInput(index).setErrorState(true);
-            // Indicate that an error occurred in the latest analyze attempt.
-            getPane().setErrorOccurred(true);
-        }
-
+        // Recompute the entire expression tree.
+        this.getExpr();
         // Now that the expressions and types are updated, initiate a visual refresh.
         this.staleVisuals.set(true);
     }
+    
+    /**
+     * @return The expression this Block represents.
+     * 
+     * If the expression is not up-to-date it gets updated.
+     */
+    public final Expression getExpr() {
+        // Assure expr is up-to-date.
+        if (this.exprIsDirty) {
+            this.updateExpr();
+            this.exprIsDirty = false;
+        }
+        return expr;
+    }
+    
+    /**
+     * Updates the expression
+     */
+    public abstract void updateExpr();
+    
+    /**
+     * Called when the VisualState changed.
+     */
+    public abstract void invalidateVisualState();
     
     /**
      * ChangeListener that resolves outdated visuals and 

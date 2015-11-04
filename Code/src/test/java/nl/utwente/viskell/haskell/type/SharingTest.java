@@ -1,6 +1,5 @@
 package nl.utwente.viskell.haskell.type;
 
-import nl.utwente.viskell.haskell.expr.Hole;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -20,12 +19,12 @@ public class SharingTest {
         assertEquals("Unit", u.toString());
         assertTrue(l.toString().startsWith("([] @ x"));
 
-        TypeChecker.unify(new Hole(), x, y);
+        TypeChecker.unify("test", x, y);
 
         assertEquals(x.toString(), y.toString());
         assertTrue(l.toString().startsWith("([] @ y"));
 
-        TypeChecker.unify(new Hole(), x, u);
+        TypeChecker.unify("test", x, u);
 
         assertEquals("Unit", x.prettyPrint());
         assertEquals("Unit", y.prettyPrint());

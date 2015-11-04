@@ -12,6 +12,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
+import nl.utwente.viskell.haskell.type.FunType;
+import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.Iterator;
@@ -65,6 +67,11 @@ public class GraphBlock extends Block {
     @Override
     public void updateExpr() {
         this.expr = input.getExpr();
+    }
+
+    @Override
+    public void refreshAnchorTypes() {
+        this.input.setType(new FunType(Type.con("Double"), Type.con("Double"))); 
     }
 
     @Override

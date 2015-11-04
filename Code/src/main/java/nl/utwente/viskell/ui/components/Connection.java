@@ -10,6 +10,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+import nl.utwente.viskell.haskell.expr.Expression;
+import nl.utwente.viskell.haskell.type.HaskellTypeError;
+import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
@@ -102,6 +105,61 @@ public class Connection extends CubicCurve implements
     }
     
     /**
+     * Handles the upward connections changes through an connection.
+     * Also perform typechecking for this connection.
+     * @param input the input anchor of this change propagation.
+     */
+    public void handleConnectionChangesFrom(InputAnchor input) {
+        if (!this.startAnchor.isPresent()) {
+            return;
+        }
+        
+        OutputAnchor output = this.startAnchor.get();
+        // first make sure the output anchor block and types are fresh
+        output.prepareConnectionChanges();
+
+        // for connections in error state typechecking is delayed to keep error locations stable
+        if (this.errorState.get()) {
+            return;
+        }
+
+        try {
+            // first a trial unification on a copy of the types to minimize error propagation
+            TypeChecker.unify("trial connection", output.getType().getFresh(), input.getType().getFresh());
+            // unify the actual types
+            TypeChecker.unify("connection", output.getType(), input.getType());
+        } catch (HaskellTypeError e) {
+            input.setErrorState(true);
+        }
+
+        // continue with propagating connections changes in the output anchor block 
+        output.finishConnectionChanges();
+    }
+
+    public Optional<Expression> getExprFrom(InputAnchor input){
+        if (!this.startAnchor.isPresent()) {
+            return Optional.empty();
+        }
+        
+        OutputAnchor output = this.startAnchor.get();
+        
+        if (this.errorState.get()) {
+            // attempt to recover from an error
+            try {
+                // first a trial unification on a copy of the types to minimize error propagation
+                TypeChecker.unify("trial error recovery", output.getType().getFresh(), input.getType().getFresh());
+                // unify the actual types
+                TypeChecker.unify("error recovery", output.getType(), input.getType());
+                input.setErrorState(false);
+            } catch (HaskellTypeError e) {
+                // the error is still present
+            }
+        }
+        
+        return Optional.of(output.getExpr());
+    }
+    
+    /**
      * Sets an OutputAnchor or InputAnchor for this line.
      * After setting the line will update accordingly to the possible state change.
      */
@@ -120,8 +178,15 @@ public class Connection extends CubicCurve implements
         newAnchor.localToSceneTransformProperty().addListener(this);
         invalidateAnchorPositions();
         
+        // only when both ends are connected the visuals need to be updated
         if (this.isFullyConnected()) {
-            // only when both ends are connected the visuals need to be updated
+            // typecheck the new connection to mark potential errors at the best location
+            try {
+                TypeChecker.unify("new connection", this.startAnchor.get().getType(), this.endAnchor.get().getType());
+            } catch (HaskellTypeError e) {
+                this.endAnchor.get().setErrorState(true);
+            }
+
             newAnchor.handleConnectionChanges();
         }
     }
