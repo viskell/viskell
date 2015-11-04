@@ -119,17 +119,15 @@ public class Connection extends CubicCurve implements
         output.prepareConnectionChanges();
 
         // for connections in error state typechecking is delayed to keep error locations stable
-        if (this.errorState.get()) {
-            return;
-        }
-
-        try {
-            // first a trial unification on a copy of the types to minimize error propagation
-            TypeChecker.unify("trial connection", output.getType().getFresh(), input.getType().getFresh());
-            // unify the actual types
-            TypeChecker.unify("connection", output.getType(), input.getType());
-        } catch (HaskellTypeError e) {
-            input.setErrorState(true);
+        if (! this.errorState.get()) {
+            try {
+                // first a trial unification on a copy of the types to minimize error propagation
+                TypeChecker.unify("trial connection", output.getType().getFresh(), input.getType().getFresh());
+                // unify the actual types
+                TypeChecker.unify("connection", output.getType(), input.getType());
+            } catch (HaskellTypeError e) {
+                input.setErrorState(true);
+            }
         }
 
         // continue with propagating connections changes in the output anchor block 
