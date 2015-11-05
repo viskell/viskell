@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
+import com.google.common.collect.Iterables;
 import javafx.application.Platform;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.IntegerProperty;
@@ -213,7 +214,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
 
             // Calculate knot's bounds and limit the knot's position to that
             double leftBound = 0 + knot.getRadius();
-            Region leftMostArg = leftArguments.get(leftArguments.size() - 1);
+            Region leftMostArg = leftArguments.isEmpty() ? rightArgument : Iterables.getLast(leftArguments);
             double rightBound = leftMostArg.getLayoutX() + leftMostArg.getWidth() + H_GAP + knot.getRadius();
 
             //Set the knot's new position.
