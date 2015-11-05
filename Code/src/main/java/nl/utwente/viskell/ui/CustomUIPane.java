@@ -92,7 +92,7 @@ public class CustomUIPane extends TactilePane {
             case DIGIT1: this.setScale(1); break;
 
             case Z:
-                if (inspector != null) inspector.show();
+                showInspector();
                 break;
 
             case DELETE:
@@ -100,6 +100,12 @@ public class CustomUIPane extends TactilePane {
                 break;
             default:
                 break;
+        }
+    }
+
+    public void showInspector() {
+        if (inspector != null) {
+            inspector.show();
         }
     }
 

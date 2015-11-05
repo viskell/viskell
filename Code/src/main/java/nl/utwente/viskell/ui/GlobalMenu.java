@@ -36,10 +36,13 @@ public class GlobalMenu extends ContextMenu {
         MenuItem menuSaveAs = new MenuItem("Save as");
         menuSaveAs.setOnAction(this::onSaveAs);
 
+        MenuItem menuInspector = new MenuItem("Inspector");
+        menuInspector.setOnAction(e -> pane.showInspector());
+
         MenuItem menuQuit = new MenuItem("Quit");
         menuQuit.setOnAction(this::onQuit);
 
-        this.getItems().addAll(menuNew, menuOpen, menuSave, menuSaveAs, menuQuit);
+        this.getItems().addAll(menuNew, menuOpen, menuSave, menuSaveAs, menuInspector, menuQuit);
     }
 
     private void onNew(ActionEvent actionEvent) {
