@@ -135,9 +135,12 @@
         	<function name="not" signature="Bool -> Bool">
         		not
         	</function>
-        	<function name="otherwise" signature="Bool">
-        		otherwise is defined as the value True. It helps to make guards more readable.
-        	</function>
+		<function name="True" signature="Bool">
+			A true value.
+		</function>
+		<function name="False" signature="Bool">
+			A false value.
+		</function>
         </category>
         <category name="Enum and Conversions">
         	<function name="show" signature="Show a => a -> [Char]">
