@@ -2,6 +2,7 @@ package nl.utwente.viskell.ghcj;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,6 +34,9 @@ public class GhciEvaluator implements Closeable {
     /** The path to GHCI. */
     private static final String GHCIPATH = "ghci";
 
+    /** List of Haskell modules loaded at startup. */
+    private static final List<String> MODULES = ImmutableList.of("Prelude", "Data.List", "Data.Maybe", "Data.Either");
+
     /** A newline character. */
     private final String NL;
 
@@ -61,6 +65,9 @@ public class GhciEvaluator implements Closeable {
            character except for NUL, the zero character, which makes them a
            useful sentinel. */
         this.eval(":set prompt " + SENTINEL);
+
+        /* Load some useful modules. */
+        this.eval(":module " + Joiner.on(" ").join(MODULES));
 
         /* Make it so that GHCi resets bindings after every command. This makes
            it slightly less likely that GHCi state will affect our results. */
