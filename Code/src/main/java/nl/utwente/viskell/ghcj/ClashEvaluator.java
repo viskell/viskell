@@ -19,6 +19,6 @@ public class ClashEvaluator extends PipeEvaluator {
 
     @Override
     protected List<String> getModules() {
-        return ImmutableList.of("+", "Data.List", "Data.Maybe", "Data.Either");
+        return ImmutableList.of("CLaSH.Prelude", "Data.List", "Data.Maybe", "Data.Either");
     }
 }
