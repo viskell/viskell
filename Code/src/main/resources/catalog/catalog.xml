@@ -424,33 +424,33 @@
       </function>
     </category>
     <category name="Tuples, Maybe, Either">
-      <function name="(,)" signature="a -> b -> (a, b)" />
-      <function name="(,,)" signature="a -> b -> c -> (a, b, c)" />
-      <function name="(,,,)" signature="a -> b -> c -> d -> (a, b, c, d)" />
-      <function name="(,,,,)" signature="a -> b -> c -> d -> e -> (a, b, c, d, e)" />
-      <function name="(,,,,,)" signature="a -> b -> c -> d -> e -> f -> (a, b, c, d, e, f)" />
-      <function name="(,,,,,,)" signature="a -> b -> c -> d -> e -> f -> g -> (a, b, c, d, e, f, g)" />
+      <function name="(,)" signature="a -> b -> (a, b)"/>
+      <function name="(,,)" signature="a -> b -> c -> (a, b, c)"/>
+      <function name="(,,,)" signature="a -> b -> c -> d -> (a, b, c, d)"/>
+      <function name="(,,,,)" signature="a -> b -> c -> d -> e -> (a, b, c, d, e)"/>
+      <function name="(,,,,,)" signature="a -> b -> c -> d -> e -> f -> (a, b, c, d, e, f)"/>
+      <function name="(,,,,,,)" signature="a -> b -> c -> d -> e -> f -> g -> (a, b, c, d, e, f, g)"/>
 
-      <function name="Nothing" signature="Maybe a" />
-      <function name="Just" signature="a -> Maybe a" />
-      <function name="maybe" signature="b -> (a -> b) -> Maybe a -> b" />
-      <function name="isJust" signature="Maybe a -> Bool" />
-      <function name="isNothing" signature="Maybe a -> Bool" />
-      <function name="fromJust" signature="Maybe a -> a" />
-      <function name="fromMaybe" signature="a -> Maybe a -> a" />
+      <function name="Nothing" signature="Maybe a"/>
+      <function name="Just" signature="a -> Maybe a"/>
+      <function name="maybe" signature="b -> (a -> b) -> Maybe a -> b"/>
+      <function name="isJust" signature="Maybe a -> Bool"/>
+      <function name="isNothing" signature="Maybe a -> Bool"/>
+      <function name="fromJust" signature="Maybe a -> a"/>
+      <function name="fromMaybe" signature="a -> Maybe a -> a"/>
       <function name="maybeToList" signature="Maybe a -> [a] "/>
       <function name="listToMaybe" signature="[a] -> Maybe a "/>
       <function name="catMaybes" signature="[Maybe a] -> [a] "/>
-      <function name="mapMaybe" signature="(a -> Maybe b) -> [a] -> [b]" />
+      <function name="mapMaybe" signature="(a -> Maybe b) -> [a] -> [b]"/>
 
-      <function name="Left" signature="a -> Either a b" />
-      <function name="Right" signature="b -> Either a b" />
-      <function name="either" signature="(a -> c) -> (b -> c) -> Either a b -> c" />
-      <function name="lefts" signature="[Either a b] -> [a]" />
-      <function name="rights" signature="[Either a b] -> [b]" />
-      <function name="isLeft" signature="Either a b -> Bool" />
-      <function name="isRight" signature="Either a b -> Bool" />
-      <function name="partitionEithers" signature="[Either a b] -> ([a],[b])" />
+      <function name="Left" signature="a -> Either a b"/>
+      <function name="Right" signature="b -> Either a b"/>
+      <function name="either" signature="(a -> c) -> (b -> c) -> Either a b -> c"/>
+      <function name="lefts" signature="[Either a b] -> [a]"/>
+      <function name="rights" signature="[Either a b] -> [b]"/>
+      <function name="isLeft" signature="Either a b -> Bool"/>
+      <function name="isRight" signature="Either a b -> Bool"/>
+      <function name="partitionEithers" signature="[Either a b] -> ([a],[b])"/>
 
       <function name="fst" signature="(a, b) -> a">
         Extract the first component of a pair.
