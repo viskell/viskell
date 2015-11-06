@@ -15,6 +15,7 @@ import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.ui.components.Block;
 import nl.utwente.viskell.ui.components.InputAnchor;
+import nl.utwente.viskell.ui.commands.History;
 
 import java.io.File;
 import java.util.Optional;
@@ -37,6 +38,7 @@ public class CustomUIPane extends TactilePane {
 
     private HaskellCatalog catalog;
     private Environment envInstance;
+    private History history;
 
     /** The File we're currently working on, if any. */
     private Optional<File> currentFile;
@@ -51,6 +53,7 @@ public class CustomUIPane extends TactilePane {
         this.offset = Point2D.ZERO;
         this.catalog = catalog;
         this.envInstance = catalog.asEnvironment();
+        this.history = new History();
 
         try {
             this.ghci = Optional.of(new GhciSession());
@@ -92,7 +95,11 @@ public class CustomUIPane extends TactilePane {
             case DIGIT1: this.setScale(1); break;
 
             case Z:
-                showInspector();
+                if (keyEvent.isControlDown()) {
+                    history.undo();
+                } else {
+                    showInspector();
+                }
                 break;
 
             case DELETE:
@@ -245,5 +252,9 @@ public class CustomUIPane extends TactilePane {
      */
     public void setCurrentFile(File currentFile) {
         this.currentFile = Optional.of(currentFile);
+    }
+
+    public History getHistory() {
+        return history;
     }
 }

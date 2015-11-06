@@ -14,6 +14,9 @@
             <Tab closable="false" text="JSON serialization">
                 <TextArea fx:id="json" />
             </Tab>
+            <Tab closable="false" text="History">
+                <ListView fx:id="hist" />
+            </Tab>
         </TabPane>
     </center>
     <bottom>

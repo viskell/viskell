@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -14,6 +15,7 @@ import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.ui.CircleMenu;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.commands.MoveCommand;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
 import java.util.List;
@@ -53,6 +55,8 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** Marker for the expression freshness. */
     protected boolean exprIsDirty;
 
+    private Point2D lastPosition;
+
     /**
      * @param pane The pane this block belongs to.
      */
@@ -61,6 +65,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.staleVisuals = new SimpleBooleanProperty(false);
         this.freshAnchorTypes = false;
         this.exprIsDirty = false;
+        this.lastPosition = getPosition();
         
         this.staleVisuals.addListener(this::fixupVisualState);
         
@@ -89,6 +94,17 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
             
             this.circleMenu.show(t);
         }
+
+        Point2D newPosition = this.getPosition();
+        if (! this.getPosition().equals(lastPosition)) {
+            // Add move command to undo history (after the fact!)
+            getPane().getHistory().add(new MoveCommand(parentPane, this, lastPosition, newPosition));
+        }
+        lastPosition = newPosition;
+    }
+
+    private Point2D getPosition() {
+        return new Point2D(getLayoutX(), getLayoutY());
     }
 
     /** @return the parent CustomUIPane of this component. */
