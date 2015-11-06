@@ -1,18 +1,28 @@
 package nl.utwente.viskell.ghcj;
 
+import com.google.common.collect.Lists;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.ui.Main;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.prefs.Preferences;
 
 /**
  * A conversation with an instance of ghci.
  */
 public final class GhciSession implements Closeable {
     /** The evaluator this GhciSession will communicate with. */
-    private final GhciEvaluator ghci;
+    private Evaluator ghci;
+
+    public enum Backend {
+        GHCi,
+        Clash,
+    }
 
     /**
      * Builds a new communication session with ghci.
@@ -21,7 +31,7 @@ public final class GhciSession implements Closeable {
      *         or does not understand our setup sequence.
      */
     public GhciSession() throws HaskellException {
-        this.ghci = new GhciEvaluator();
+        start();
     }
 
     /**
@@ -88,6 +98,37 @@ public final class GhciSession implements Closeable {
 
     @Override
     public void close() throws IOException {
-        this.ghci.close();
+        try {
+            this.ghci.close();
+            this.ghci = null;
+        } catch (HaskellException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void start() throws HaskellException {
+        if (this.ghci != null) {
+            this.ghci.close();
+        }
+
+        this.ghci = evaluatorFactory(pickBackend());
+    }
+
+    private Evaluator evaluatorFactory(Backend evaluator) throws HaskellException {
+        switch (evaluator) {
+            case GHCi:  return new GhciEvaluator();
+            case Clash: return new ClashEvaluator();
+            default:    return new GhciEvaluator();
+        }
+    }
+
+    public static Backend pickBackend() {
+        Preferences prefs = Preferences.userNodeForPackage(Main.class);
+        String name = prefs.get("ghci", Backend.GHCi.name());
+        return Backend.valueOf(name);
+    }
+
+    public static List<Backend> getBackends() {
+        return Lists.newArrayList(EnumSet.allOf(Backend.class));
     }
 }
