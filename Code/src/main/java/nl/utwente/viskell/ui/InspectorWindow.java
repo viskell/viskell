@@ -1,7 +1,5 @@
 package nl.utwente.viskell.ui;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
@@ -11,17 +9,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
-import nl.utwente.viskell.ui.components.Block;
 import nl.utwente.viskell.ui.serialize.Exporter;
-
-import java.util.Optional;
 
 /**
  * This class provides a developer interface to inspect the current state
  * of the Viskell expr tree and give details on the used Haskell source code.
  */
 public class InspectorWindow extends BorderPane implements ComponentLoader {
-    private ObjectProperty<Optional<Block>> block;
     private Stage stage;
     private CustomUIPane pane;
 
@@ -31,14 +25,13 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
 
     public InspectorWindow(CustomUIPane parentPane) {
         loadFXML("InspectorWindow");
-        block = new SimpleObjectProperty<>();
         pane = parentPane;
 
         stage = new Stage();
         stage.setTitle("Inspect");
         stage.setScene(new Scene(this, 450, 450));
 
-        block.addListener(e -> this.update());
+        pane.selectedBlockProperty().addListener(e -> this.update());
     }
 
     public void show() {
@@ -49,16 +42,8 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
         stage.hide();
     }
 
-    public Optional<Block> getBlock() {
-        return block.get();
-    }
-
-    public ObjectProperty<Optional<Block>> blockProperty() {
-        return block;
-    }
-
     public void update() {
-        this.block.get().ifPresent(block -> {
+        pane.getSelectedBlock().ifPresent(block -> {
             Expression expr = block.getExpr();
             String haskell = expr.toHaskell();
 

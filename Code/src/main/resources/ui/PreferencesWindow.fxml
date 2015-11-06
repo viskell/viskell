@@ -1,0 +1,20 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import nl.utwente.viskell.ui.PreferencesWindow?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<fx:root type="nl.utwente.viskell.ui.PreferencesWindow" xmlns:fx="http://javafx.com/fxml/">
+    <center>
+        <GridPane hgap="12" vgap="12">
+            <padding><Insets top="12" right="12" bottom="12" left="12" /></padding>
+            <children>
+            </children>
+        </GridPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <padding><Insets top="12" right="12" bottom="12" left="12" /></padding>
+            <Button onAction="#close">Close</Button>
+        </HBox>
+    </bottom>
+</fx:root>
