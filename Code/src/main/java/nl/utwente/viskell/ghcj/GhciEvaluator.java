@@ -63,6 +63,7 @@ public class GhciEvaluator implements Closeable {
         this.eval(":set prompt " + SENTINEL);
 
         /* Load some useful libraries. */
+        this.eval("import Prelude");
         this.eval("import Data.List");
         this.eval("import Data.Maybe");
         this.eval("import Data.Either");
