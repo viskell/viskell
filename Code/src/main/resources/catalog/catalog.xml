@@ -14,6 +14,10 @@
             <instance name="Either" constrainedArgs="2"/>
             <instance name="(,)" constrainedArgs="2"/>
             <instance name="(,,)" constrainedArgs="3"/>
+            <instance name="(,,,)" constrainedArgs="4"/>
+            <instance name="(,,,,)" constrainedArgs="5"/>
+            <instance name="(,,,,,)" constrainedArgs="6"/>
+            <instance name="(,,,,,,)" constrainedArgs="7"/>
         </class>
         <class name="Ord">
         	<superClass name="Eq"/>
@@ -28,6 +32,10 @@
             <instance name="Either" constrainedArgs="2"/>
             <instance name="(,)" constrainedArgs="2"/>
             <instance name="(,,)" constrainedArgs="3"/>
+            <instance name="(,,,)" constrainedArgs="4"/>
+            <instance name="(,,,,)" constrainedArgs="5"/>
+            <instance name="(,,,,,)" constrainedArgs="6"/>
+            <instance name="(,,,,,,)" constrainedArgs="7"/>
         </class>   	
         <class name="Enum">
             <instance name="Ordering"/>
@@ -93,6 +101,10 @@
             <instance name="Either" constrainedArgs="2"/>
             <instance name="(,)" constrainedArgs="2"/>
             <instance name="(,,)" constrainedArgs="3"/>
+            <instance name="(,,,)" constrainedArgs="4"/>
+            <instance name="(,,,,)" constrainedArgs="5"/>
+            <instance name="(,,,,,)" constrainedArgs="6"/>
+            <instance name="(,,,,,,)" constrainedArgs="7"/>
         </class>
         <class name="Read">
         	<instance name="Ordering"/>
@@ -107,6 +119,10 @@
             <instance name="Either" constrainedArgs="2"/>
             <instance name="(,)" constrainedArgs="2"/>
             <instance name="(,,)" constrainedArgs="3"/>
+            <instance name="(,,,)" constrainedArgs="4"/>
+            <instance name="(,,,,)" constrainedArgs="5"/>
+            <instance name="(,,,,,)" constrainedArgs="6"/>
+            <instance name="(,,,,,,)" constrainedArgs="7"/>
         </class>
         <class name="Functor">
         	<instance name="Maybe"/>
@@ -140,6 +156,15 @@
 		</function>
 		<function name="False" signature="Bool">
 			A false value.
+		</function>
+		<function name="LT" signature="Ordering">
+			Less than
+		</function>
+		<function name="EQ" signature="Ordering">
+			Equal to
+		</function>
+		<function name="GT" signature="Ordering">
+			Greater than
 		</function>
         </category>
         <category name="Enum and Conversions">
@@ -397,20 +422,52 @@
         		Strict (call-by-value) application operator. It takes a function and an argument, evaluates the 
         		argument to weak head normal form (WHNF), then calls the function with that value.
         	</function>
+        </category>
+	<category name="Tuples, Maybe, Either">
+		<function name="(,)" signature="a -> b -> (a, b)" />
+		<function name="(,,)" signature="a -> b -> c -> (a, b, c)" />
+		<function name="(,,,)" signature="a -> b -> c -> d -> (a, b, c, d)" />
+		<function name="(,,,,)" signature="a -> b -> c -> d -> e -> (a, b, c, d, e)" />
+		<function name="(,,,,,)" signature="a -> b -> c -> d -> e -> f -> (a, b, c, d, e, f)" />
+		<function name="(,,,,,,)" signature="a -> b -> c -> d -> e -> f -> g -> (a, b, c, d, e, f, g)" />
+
+		<function name="Nothing" signature="Maybe a" />
+		<function name="Just" signature="a -> Maybe a" />
+		<function name="maybe" signature="b -> (a -> b) -> Maybe a -> b" />
+		<function name="isJust" signature="Maybe a -> Bool" />
+		<function name="isNothing" signature="Maybe a -> Bool" />
+		<function name="fromJust" signature="Maybe a -> a" />
+		<function name="fromMaybe" signature="a -> Maybe a -> a" />
+		<function name="maybeToList" signature="Maybe a -> [a] "/>
+		<function name="listToMaybe" signature="[a] -> Maybe a "/>
+		<function name="catMaybes" signature="[Maybe a] -> [a] "/>
+		<function name="mapMaybe" signature="(a -> Maybe b) -> [a] -> [b]" />
+
+		<function name="Left" signature="a -> Either a b" />
+		<function name="Right" signature="b -> Either a b" />
+		<function name="either" signature="(a -> c) -> (b -> c) -> Either a b -> c" />
+		<function name="lefts" signature="[Either a b] -> [a]" />
+		<function name="rights" signature="[Either a b] -> [b]" />
+		<function name="isLeft" signature="Either a b -> Bool" />
+		<function name="isRight" signature="Either a b -> Bool" />
+		<function name="partitionEithers" signature="[Either a b] -> ([a],[b])" />
+
         	<function name="fst" signature="(a, b) -> a">
         		Extract the first component of a pair.
         	</function>
         	<function name="snd" signature="(a, b) -> b">
         		Extract the second component of a pair
         	</function>
+
         	<function name="curry" signature="((a, b) -> c) -> (a, b) -> c">
         		curry converts an uncurried function to a curried function
         	</function>
         	<function name="uncurry" signature="(a -> b -> c) -> (a, b) -> c">
         		uncurry converts a curried function to a function on pairs
         	</function>
-        </category>
+	</category>
         <category name="List operations">
+		<function name="[]" signature="[a]">An empty list.</function>
         	<function name="(:)" signature="a -> [a] -> [a]">
 			prepend an element to a list.
         	</function>
