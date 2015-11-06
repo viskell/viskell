@@ -20,15 +20,19 @@ public class History implements Iterable<Command> {
     }
 
     public void undo() {
-        Command command = undo.pop();
-        command.undo();
-        redo.push(command);
+        if (!undo.isEmpty()) {
+            Command command = undo.pop();
+            command.undo();
+            redo.push(command);
+        }
     }
 
     public void redo() {
-        Command command = redo.pop();
-        command.redo();
-        undo.push(command);
+        if (!redo.isEmpty()) {
+            Command command = redo.pop();
+            command.redo();
+            undo.push(command);
+        }
     }
 
     public Iterator<Command> iterator() {
