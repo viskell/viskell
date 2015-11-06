@@ -1,0 +1,25 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import nl.utwente.viskell.ui.PreferencesWindow?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<fx:root type="nl.utwente.viskell.ui.PreferencesWindow" xmlns:fx="http://javafx.com/fxml/">
+    <center>
+        <GridPane hgap="12" vgap="12">
+            <padding><Insets top="12" right="12" bottom="12" left="12" /></padding>
+            <children>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="0">Theme</Label>
+                <ComboBox fx:id="theme" GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" />
+
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">GHCi interpreter</Label>
+                <ComboBox fx:id="ghci" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" />
+            </children>
+        </GridPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER_RIGHT">
+            <padding><Insets top="12" right="12" bottom="12" left="12" /></padding>
+            <Button onAction="#close">Close</Button>
+        </HBox>
+    </bottom>
+</fx:root>

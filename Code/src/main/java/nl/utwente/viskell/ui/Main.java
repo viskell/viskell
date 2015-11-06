@@ -10,6 +10,8 @@ import nl.utwente.viskell.ghcj.GhciEvaluator;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 
+import java.util.prefs.PreferencesFactory;
+
 /**
  * Main application class for the GUI.
  */
@@ -64,6 +66,7 @@ public class Main extends Application {
         // Init scene
         Scene scene = new Scene(buttonOverlay);
         scene.getStylesheets().add("/ui/style.css");
+        scene.getStylesheets().add(Themes.cssPath());
 
         stage.setWidth(1024);
         stage.setHeight(768);

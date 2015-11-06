@@ -1,0 +1,26 @@
+.selected .function.block {
+    -fx-background-color: #8D6094;
+}
+
+.function.block {
+    -fx-background-color: #75507b;
+}
+
+.selected .value.block {
+    -fx-background-color: #3C75C2;
+}
+
+.value.block {
+    -fx-background-color: #3465a8;
+}
+
+.selected .display.block {
+    -fx-background-color: #e60000;
+}
+
+.display.block {
+    -fx-background-color: #cc0000;
+}
+.connection {
+    -fx-stroke: #eeeeee;
+}

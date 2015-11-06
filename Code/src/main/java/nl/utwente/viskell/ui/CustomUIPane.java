@@ -28,6 +28,7 @@ public class CustomUIPane extends TactilePane {
     
     private Optional<GhciSession> ghci;
     private InspectorWindow inspector;
+    private PreferencesWindow preferences;
 
     private Point2D dragStart;
     private Point2D offset;
@@ -66,10 +67,8 @@ public class CustomUIPane extends TactilePane {
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
 
         /* Run the Inspector window. */
-        Platform.runLater(() -> {
-            inspector = new InspectorWindow(this);
-            inspector.blockProperty().bind(this.selectedBlock);
-        });
+        inspector = new InspectorWindow(this);
+        preferences = new PreferencesWindow(this);
     }
 
     private void handleKey(KeyEvent keyEvent) {
@@ -104,9 +103,11 @@ public class CustomUIPane extends TactilePane {
     }
 
     public void showInspector() {
-        if (inspector != null) {
-            inspector.show();
-        }
+        inspector.show();
+    }
+
+    public void showPreferences() {
+        preferences.show();
     }
 
     private void handlePress(MouseEvent e) {
