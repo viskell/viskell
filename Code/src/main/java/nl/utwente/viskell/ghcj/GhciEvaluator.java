@@ -62,6 +62,11 @@ public class GhciEvaluator implements Closeable {
            useful sentinel. */
         this.eval(":set prompt " + SENTINEL);
 
+        /* Load some useful libraries. */
+        this.eval("import Data.List");
+        this.eval("import Data.Maybe");
+        this.eval("import Data.Either");
+
         /* Make it so that GHCi resets bindings after every command. This makes
            it slightly less likely that GHCi state will affect our results. */
         this.eval(":set +r");
