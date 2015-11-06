@@ -13,7 +13,6 @@ import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.ui.CircleMenu;
 import nl.utwente.viskell.ui.ComponentLoader;
-import nl.utwente.viskell.ui.CustomAlert;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
@@ -229,13 +228,6 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
             
             this.staleVisuals.setValue(false);
         }
-    }
-    
-    protected void informUnkownHaskellException() {
-        String msg = "Whoops! An unkown error has occured. We're sorry, but can't really tell you more than this.";
-        CustomAlert alert = new CustomAlert(getPane(), msg);
-        getPane().getChildren().add(alert);
-        alert.relocate(this.getLayoutX() + 100, this.getLayoutY() + 100);
     }
 
     /**

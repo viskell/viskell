@@ -2,6 +2,7 @@ package nl.utwente.viskell.ui;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
@@ -54,9 +55,7 @@ public class Main extends Application {
                     "available. Executing programs will not be enabled. We " +
                     "strongly recommend you install GHC, for example by " +
                     "installing the Haskell Platform (haskell.org/platform).";
-            CustomAlert alert = new CustomAlert(tactilePane, msg);
-            tactilePane.getChildren().add(alert);
-            alert.relocate(tactilePane.getWidth() / 2 - 200, tactilePane.getHeight() / 2 - 200);
+            new Alert(Alert.AlertType.WARNING, msg).showAndWait();
 
             e.printStackTrace(); // In case it's not a file-not-found
         }
