@@ -67,8 +67,8 @@ public class CustomUIPane extends TactilePane {
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
 
         /* Run the Inspector window. */
-        inspector = new InspectorWindow(this);
-        preferences = new PreferencesWindow(this);
+        Platform.runLater(() -> inspector = new InspectorWindow(this));
+        Platform.runLater(() -> preferences = new PreferencesWindow(this));
     }
 
     private void handleKey(KeyEvent keyEvent) {
@@ -103,11 +103,15 @@ public class CustomUIPane extends TactilePane {
     }
 
     public void showInspector() {
-        inspector.show();
+        if (inspector != null) {
+            inspector.show();
+        }
     }
 
     public void showPreferences() {
-        preferences.show();
+        if (preferences != null) {
+            preferences.show();
+        }
     }
 
     private void handlePress(MouseEvent e) {
