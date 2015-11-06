@@ -34,8 +34,11 @@ public class GhciEvaluator implements Closeable {
     /** The path to GHCI. */
     private static final String GHCIPATH = "ghci";
 
+    /** GHCI parameters. */
+    private static final String GHCIPARAMS = "-ignore-dot-ghci";
+
     /** List of Haskell modules loaded at startup. */
-    private static final List<String> MODULES = ImmutableList.of("Prelude", "Data.List", "Data.Maybe", "Data.Either");
+    private static final List<String> MODULES = ImmutableList.of("Data.List", "Data.Maybe", "Data.Either");
 
     /** A newline character. */
     private final String NL;
@@ -46,7 +49,7 @@ public class GhciEvaluator implements Closeable {
      */
     public GhciEvaluator() throws HaskellException {
         try {
-            this.ghci = new ProcessBuilder(GHCIPATH)
+            this.ghci = new ProcessBuilder(GHCIPATH, GHCIPARAMS)
                     .redirectErrorStream(true)
                     .start();
 
