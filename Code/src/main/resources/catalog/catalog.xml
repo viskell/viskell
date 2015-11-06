@@ -134,14 +134,14 @@
 
   <functions>
     <category name="Comparison and logic">
-      <function name="(==)" signature="Eq a => a -> a -> Bool"></function>
-      <function name="(/=)" signature="Eq a => a -> a -> Bool"></function>
-      <function name="(&lt;)" signature="Ord a => a -> a -> Bool"></function>
-      <function name="(&lt;=)" signature="Ord a => a -> a -> Bool"></function>
-      <function name="(&gt;)" signature="Ord a => a -> a -> Bool"></function>
-      <function name="(&gt;=)" signature="Ord a => a -> a -> Bool"></function>
-      <function name="max" signature="Ord a => a -> a -> a"></function>
-      <function name="min" signature="Ord a => a -> a -> a"></function>
+      <function name="(==)" signature="Eq a => a -> a -> Bool"/>
+      <function name="(/=)" signature="Eq a => a -> a -> Bool"/>
+      <function name="(&lt;)" signature="Ord a => a -> a -> Bool"/>
+      <function name="(&lt;=)" signature="Ord a => a -> a -> Bool"/>
+      <function name="(&gt;)" signature="Ord a => a -> a -> Bool"/>
+      <function name="(&gt;=)" signature="Ord a => a -> a -> Bool"/>
+      <function name="max" signature="Ord a => a -> a -> a"/>
+      <function name="min" signature="Ord a => a -> a -> a"/>
       <function name="(&amp;&amp;)" signature="Bool -> Bool -> Bool">
         and
       </function>
@@ -257,24 +257,24 @@
       <function name="fromRational" signature="Fractional a => Rational -> a">
         Conversion from a Rational (that is Ratio Integer).
       </function>
-      <function name="pi" signature="Floating a => a"></function>
-      <function name="exp" signature="Floating a => a -> a"></function>
-      <function name="log" signature="Floating a => a -> a"></function>
-      <function name="sqrt" signature="Floating a => a -> a"></function>
-      <function name="(**)" signature="Floating a => a -> a -> a"></function>
-      <function name="logBase" signature="Floating a => a -> a -> a"></function>
-      <function name="sin" signature="Floating a => a -> a"></function>
-      <function name="cos" signature="Floating a => a -> a"></function>
-      <function name="tan" signature="Floating a => a -> a"></function>
-      <function name="asin" signature="Floating a => a -> a"></function>
-      <function name="acos" signature="Floating a => a -> a"></function>
-      <function name="atan" signature="Floating a => a -> a"></function>
-      <function name="sinh" signature="Floating a => a -> a"></function>
-      <function name="cosh" signature="Floating a => a -> a"></function>
-      <function name="tanh" signature="Floating a => a -> a"></function>
-      <function name="asinh" signature="Floating a => a -> a"></function>
-      <function name="acosh" signature="Floating a => a -> a"></function>
-      <function name="atanh" signature="Floating a => a -> a"></function>
+      <function name="pi" signature="Floating a => a"/>
+      <function name="exp" signature="Floating a => a -> a"/>
+      <function name="log" signature="Floating a => a -> a"/>
+      <function name="sqrt" signature="Floating a => a -> a"/>
+      <function name="(**)" signature="Floating a => a -> a -> a"/>
+      <function name="logBase" signature="Floating a => a -> a -> a"/>
+      <function name="sin" signature="Floating a => a -> a"/>
+      <function name="cos" signature="Floating a => a -> a"/>
+      <function name="tan" signature="Floating a => a -> a"/>
+      <function name="asin" signature="Floating a => a -> a"/>
+      <function name="acos" signature="Floating a => a -> a"/>
+      <function name="atan" signature="Floating a => a -> a"/>
+      <function name="sinh" signature="Floating a => a -> a"/>
+      <function name="cosh" signature="Floating a => a -> a"/>
+      <function name="tanh" signature="Floating a => a -> a"/>
+      <function name="asinh" signature="Floating a => a -> a"/>
+      <function name="acosh" signature="Floating a => a -> a"/>
+      <function name="atanh" signature="Floating a => a -> a"/>
       <function name="properFraction" signature="(RealFrac a, Integral b) => a -> (b, a)">
         The function properFraction takes a real fractional number x and returns a pair (n,f) such that x = n+f, and:
         - n is an integral number with the same sign as x; and
@@ -316,8 +316,8 @@
         default definition of atan2 is provided, but implementors can provide a more accurate
         implementation.
       </function>
-      <function name="even" signature="Integral a => a -> Bool"></function>
-      <function name="odd" signature="Integral a => a -> Bool"></function>
+      <function name="even" signature="Integral a => a -> Bool"/>
+      <function name="odd" signature="Integral a => a -> Bool"/>
       <function name="gcd" signature="Integral a => a -> a -> a">
         gcd x y is the non-negative factor of both x and y of which every common factor of x and
         y is also a factor; for example gcd 4 2 = 2, gcd (-4) 6 = 2, gcd 0 4 = 4. gcd 0 0
