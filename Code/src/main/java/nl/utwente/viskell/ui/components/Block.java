@@ -107,6 +107,12 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         return new Point2D(getLayoutX(), getLayoutY());
     }
 
+    @Override
+    public void relocate(double x, double y) {
+        super.relocate(x, y);
+        lastPosition = getPosition();
+    }
+
     /** @return the parent CustomUIPane of this component. */
     public final CustomUIPane getPane() {
         return this.parentPane;
@@ -252,7 +258,6 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     protected ImmutableMap<String, Object> toBundleFragment() {
         return ImmutableMap.of();
     }
-
     @Override
     public Map<String, Object> toBundle() {
         return ImmutableMap.of(
