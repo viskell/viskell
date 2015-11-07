@@ -26,12 +26,6 @@ import java.util.Optional;
  * and {@link OutputAnchor}. Both anchors are stored referenced respectively as
  * startAnchor and endAnchor {@link Optional} within this class.
  * Visually a connection is represented as a cubic Bezier curve.
- * <p>
- * It is possible for a connection to exist without both anchors being present,
- * whenever the position of either the start or end anchor changes the
- * {@link #invalidateAnchorPositions()} should be called to refresh the visual
- * representation of the connection.
- * </p>
  * 
  * Connection is also a changeListener for a Transform, in order to be able to
  * update the Line's position when the anchor's positions change.
@@ -46,9 +40,9 @@ public class Connection extends CubicCurve implements
     public static final double BEZIER_CONTROL_OFFSET = 150f;
     
     /** Starting point of this Line that can be Anchored onto other objects. */
-    private Optional<OutputAnchor> startAnchor = Optional.empty();
+    private final OutputAnchor startAnchor;
     /** Ending point of this Line that can be Anchored onto other objects. */
-    private Optional<InputAnchor> endAnchor = Optional.empty();
+    private final InputAnchor endAnchor;
 
     /** The Pane this Connection is on. */
     private CustomUIPane pane;
@@ -61,20 +55,30 @@ public class Connection extends CubicCurve implements
      * @param pane The Pane this Connection is on.
      * @param anchor A ConnectionAnchor of this Connection.
      */
-    public Connection(CustomUIPane pane, ConnectionAnchor anchor) {
+    public Connection(CustomUIPane pane, OutputAnchor source, InputAnchor sink) {
         this.loadFXML("Connection");
         TactilePane.setDraggable(this, false);
         TactilePane.setGoToForegroundOnContact(this, false);
         this.setMouseTransparent(true);
         
         this.pane = pane;
+        this.startAnchor = source;
+        this.endAnchor = sink;
         pane.getChildren().add(0, this);
         this.errorState = new SimpleBooleanProperty(false);
         this.errorState.addListener(this::checkErrorListener);
-        Point2D initPos = pane.sceneToLocal(anchor.localToScene(anchor.getLocalCenter()));
-        this.setStartPosition(initPos);
-        this.setEndPosition(initPos);
-        connectTo(anchor);
+        this.invalidateAnchorPositions();
+        this.startAnchor.addConnection(this);
+        this.startAnchor.localToSceneTransformProperty().addListener(this);
+        this.endAnchor.addConnection(this);
+        this.endAnchor.localToSceneTransformProperty().addListener(this);
+
+        // typecheck the new connection to mark potential errors at the best location
+        try {
+            TypeChecker.unify("new connection", this.startAnchor.getType(), this.endAnchor.getType());
+        } catch (HaskellTypeError e) {
+            this.endAnchor.setErrorState(true);
+        }
     }
     
     /** Set a new error state. */
@@ -83,38 +87,26 @@ public class Connection extends CubicCurve implements
     }
     
     /**
-     * Get the optional output anchor on the other side of
-     * the provided input anchor in this Connection.
-     * 
-     * @param anchor on this side of the connection  
-     * @return the output anchor if it exists in this connection.
+     * @return the output anchor of this connection.
      */
-    public Optional<OutputAnchor> getOppositeAnchorOf(InputAnchor anchor) {
-        return this.endAnchor.filter(ia -> ia == anchor).flatMap(x -> this.startAnchor);
+    public OutputAnchor getStartAnchor() {
+        return this.startAnchor;
     }
 
     /**
-     * Get the optional output anchor on the other side of
-     * the provided input anchor in this Connection.
-     * 
-     * @param anchor on this side of the connection  
-     * @return the input anchor if it exists in this connection.
+     * @return the input anchor of this connection.
      */
-    public Optional<InputAnchor> getOppositeAnchorOf(OutputAnchor anchor) {
-        return this.startAnchor.filter(oa -> oa == anchor).flatMap(x -> this.endAnchor);
+    public InputAnchor getEndAnchor() {
+        return this.endAnchor;
     }
     
     /**
      * Handles the upward connections changes through an connection.
      * Also perform typechecking for this connection.
-     * @param input the input anchor of this change propagation.
      */
-    public void handleConnectionChangesFrom(InputAnchor input) {
-        if (!this.startAnchor.isPresent()) {
-            return;
-        }
-        
-        OutputAnchor output = this.startAnchor.get();
+    public void handleConnectionChangesUpwards() {
+        InputAnchor input = this.endAnchor;
+        OutputAnchor output = this.startAnchor;
         // first make sure the output anchor block and types are fresh
         output.prepareConnectionChanges();
 
@@ -134,12 +126,8 @@ public class Connection extends CubicCurve implements
         output.finishConnectionChanges();
     }
 
-    public Optional<Expression> getExprFrom(InputAnchor input){
-        if (!this.startAnchor.isPresent()) {
-            return Optional.empty();
-        }
-        
-        OutputAnchor output = this.startAnchor.get();
+    public Expression getExprFrom(InputAnchor input){
+        OutputAnchor output = this.startAnchor;
         
         if (this.errorState.get()) {
             // attempt to recover from an error
@@ -154,53 +142,7 @@ public class Connection extends CubicCurve implements
             }
         }
         
-        return Optional.of(output.getExpr());
-    }
-    
-    /**
-     * Sets an OutputAnchor or InputAnchor for this line.
-     * After setting the line will update accordingly to the possible state change.
-     */
-    public void connectTo(ConnectionAnchor newAnchor) {
-        // Add the anchor.
-        if (newAnchor instanceof OutputAnchor && !startAnchor.isPresent()) {
-            startAnchor = Optional.of((OutputAnchor) newAnchor);
-        } else if (newAnchor instanceof InputAnchor && !endAnchor.isPresent()) {
-            endAnchor = Optional.of((InputAnchor) newAnchor);
-        } else {
-            return;
-        }
-        
-        // Add this to the anchor.
-        newAnchor.addConnection(this);
-        newAnchor.localToSceneTransformProperty().addListener(this);
-        invalidateAnchorPositions();
-        
-        // only when both ends are connected the visuals need to be updated
-        if (this.isFullyConnected()) {
-            // typecheck the new connection to mark potential errors at the best location
-            try {
-                TypeChecker.unify("new connection", this.startAnchor.get().getType(), this.endAnchor.get().getType());
-            } catch (HaskellTypeError e) {
-                this.endAnchor.get().setErrorState(true);
-            }
-
-            newAnchor.handleConnectionChanges();
-        }
-    }
-
-    /**
-     * Sets the free ends (empty anchors) to the specified position.
-     * 
-     * @param point Coordinates local to the Line's parent.
-     */
-    public void setFreeEnds(Point2D point) {
-        if (!startAnchor.isPresent()) {
-            this.setStartPosition(point);
-        }
-        if (!endAnchor.isPresent()) {
-            this.setEndPosition(point);
-        }
+        return output.getExpr();
     }
     
     /**
@@ -216,48 +158,16 @@ public class Connection extends CubicCurve implements
     }
     
     /**
-     * @return Whether or not both sides of this Connection are connected to an Anchor.
-     */
-    public final boolean isFullyConnected() {
-        return startAnchor.isPresent() && endAnchor.isPresent();
-    }
-
-    /**
-     * Properly disconnects the given anchor from this Connection, notifying the anchor of its disconnection.
-     */
-    public final void disconnect(ConnectionAnchor anchor) {
-        boolean wasConnected = isFullyConnected();
-        // Find out what anchor to disconnect, and do so.
-        if (startAnchor.isPresent() && startAnchor.get().equals(anchor)) {
-            startAnchor = Optional.empty();
-        } else if (endAnchor.isPresent() && endAnchor.get().equals(anchor)) {
-            endAnchor = Optional.empty();
-        } else {
-            return; // can't find anchor to disconnect
-        }
-        
-        // Fully disconnect the anchor from this Connection.
-        anchor.localToSceneTransformProperty().removeListener(this);
-        anchor.dropConnection(this);
-            
-        if (wasConnected) {
-            //Let the now disconnected anchor update its visuals.
-            anchor.handleConnectionChanges();
-            //Let the remaining connected anchors update their visuals.
-            this.startAnchor.ifPresent(a -> a.handleConnectionChanges());
-            this.endAnchor.ifPresent(a -> a.handleConnectionChanges());
-            this.setErrorState(false);
-            this.invalidateAnchorPositions();
-        }
-    }
-
-    /**
      * Removes this Connection, disconnecting its anchors and removing this Connection from the pane it is on.
      */
     public final void remove() {
-        startAnchor.ifPresent(a -> disconnect(a));
-        endAnchor.ifPresent(a -> disconnect(a));
+        this.startAnchor.localToSceneTransformProperty().removeListener(this);
+        this.endAnchor.localToSceneTransformProperty().removeListener(this);
+        this.startAnchor.dropConnection(this);
+        this.endAnchor.dropConnection(this);
         pane.getChildren().remove(this);
+        this.startAnchor.handleConnectionChanges();
+        this.endAnchor.handleConnectionChanges();
     }
 
     @Override
@@ -267,8 +177,8 @@ public class Connection extends CubicCurve implements
 
     /** Update the UI positions of both start and end anchors. */
     private void invalidateAnchorPositions() {
-        startAnchor.ifPresent(a -> this.setStartPosition(pane.sceneToLocal(a.localToScene(a.getLocalCenter()))));
-        endAnchor.ifPresent(a -> this.setEndPosition(pane.sceneToLocal(a.localToScene(a.getLocalCenter()))));
+        this.setStartPosition(pane.sceneToLocal(this.startAnchor.localToScene(this.startAnchor.getLocalCenter())));
+        this.setEndPosition(pane.sceneToLocal(this.endAnchor.localToScene(this.endAnchor.getLocalCenter())));
     }
 
     @Override
@@ -279,8 +189,8 @@ public class Connection extends CubicCurve implements
     @Override
     public Map<String, Object> toBundle() {
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
-        startAnchor.ifPresent(start -> bundle.putAll(start.toBundle()));
-        endAnchor.ifPresent(end -> bundle.putAll(end.toBundle()));
+        bundle.putAll(this.startAnchor.toBundle());
+        bundle.putAll(this.endAnchor.toBundle());
         return bundle.build();
     }
 
@@ -328,4 +238,5 @@ public class Connection extends CubicCurve implements
         this.setControlX2(this.getEndX());
         this.setControlY2(this.getEndY() - yOffset);
     }
+
 }

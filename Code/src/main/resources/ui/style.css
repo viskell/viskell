@@ -142,6 +142,12 @@ CustomUIPane {
     -fx-text-fill: white;
 }
 
+.drawwire {
+    -fx-stroke-width: 5px;
+    -fx-stroke: #0066FF;
+    -fx-fill: null;
+}
+
 .connection {
     -fx-stroke-width: 3px;
     -fx-stroke: #FCEBB6;

@@ -91,7 +91,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
                         && !this.lineInProgress) {
 
                     this.lineInProgress = true;
-                    manager.initiateConnectionFrom(inputId, ConnectionAnchor.this);
+                    manager.initiateWireFrom(inputId, ConnectionAnchor.this);
                     event.consume();
                 } else if ((event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)
                         || event.getEventType().equals(TouchEvent.TOUCH_MOVED))
@@ -106,7 +106,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
                     if (pickResult instanceof ConnectionAnchor) {
                         manager.finishConnection(inputId, (ConnectionAnchor) pickResult);
                     } else {
-                        manager.removeConnection(inputId);
+                        manager.removeWire(inputId);
                     }
                     
                     this.lineInProgress = false;
@@ -238,7 +238,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      * @return True if the primary connection is connected.
      */
     public boolean isPrimaryConnected() {
-        return this.connections.size() > 0 && this.connections.get(0).isFullyConnected();
+        return this.connections.size() > 0;
     }
 
     /**

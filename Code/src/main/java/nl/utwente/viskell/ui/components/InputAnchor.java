@@ -50,7 +50,7 @@ public class InputAnchor extends ConnectionAnchor{
      * @return Optional of the connection's opposite output anchor.
      */
     public Optional<OutputAnchor> getOppositeAnchor() {
-        return this.getConnection(0).flatMap(c -> c.getOppositeAnchorOf(this));
+        return this.getConnection(0).map(c -> c.getStartAnchor());
     }
     
     /**
@@ -58,7 +58,7 @@ public class InputAnchor extends ConnectionAnchor{
      */
     @Override
     public Expression getExpr() {
-        return this.getConnection(0).flatMap(c -> c.getExprFrom(this)).orElse(connectionlessExpr);
+        return this.getConnection(0).map(c -> c.getExprFrom(this)).orElse(connectionlessExpr);
     }
     
     /**
@@ -81,9 +81,7 @@ public class InputAnchor extends ConnectionAnchor{
      */
     public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         for (Connection conn : this.getConnections()) {
-            if (conn.isFullyConnected()) {
-                conn.setErrorState(newValue);
-            }
+            conn.setErrorState(newValue);
         }
     }
 
