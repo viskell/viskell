@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Evaluator for ghci that pushes code to the ghci environment and can evaluate expressions and return a result.
  */
-public class GhciEvaluator extends PipeEvaluator {
+public class GhciEvaluator extends Evaluator {
     public GhciEvaluator() throws HaskellException {
         super();
     }

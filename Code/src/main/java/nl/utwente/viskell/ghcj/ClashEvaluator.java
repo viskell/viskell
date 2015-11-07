@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Evaluator for ghci that pushes code to the ghci environment and can evaluate expressions and return a result.
  */
-public class ClashEvaluator extends PipeEvaluator {
+public class ClashEvaluator extends GhciEvaluator {
     public ClashEvaluator() throws HaskellException {
         super();
     }
