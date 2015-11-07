@@ -62,10 +62,13 @@ public class ConnectionCreationManager {
     public void initiateWireFrom(int inputId, ConnectionAnchor anchor) {
         if (anchor instanceof InputAnchor && ((InputAnchor)anchor).hasConnection()) {
             // make room for a new connection by removing existing one
-            anchor.removeConnections();
+            Connection conn = ((InputAnchor)anchor).getConnection().get();
+            conn.remove();
+            // keep the other end of old connection to initiate the new one
+            this.wires.put(inputId, new DrawWire(this.pane, conn.getStartAnchor()));
+        } else {
+            this.wires.put(inputId, new DrawWire(this.pane, anchor));
         }
-        
-        this.wires.put(inputId, new DrawWire(this.pane, anchor));
     }
     
     /**
@@ -79,7 +82,7 @@ public class ConnectionCreationManager {
         DrawWire wire = wires.get(id);
         if (wire != null) {
             Connection connection = wire.buildConnectionTo(anchor);
-            // drop up the wire, even if connection failed
+            // drop the wire, even if connection failed
             this.removeWire(id);
             if (connection != null) {
                 anchor.handleConnectionChanges();

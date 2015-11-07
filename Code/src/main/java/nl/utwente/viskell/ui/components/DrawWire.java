@@ -10,7 +10,7 @@ import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 /**
- * A DrawWire is a helper class to represent a new incomplete connection is the process of being drawn. 
+ * A DrawWire represents the UI for a new incomplete connection is the process of being drawn. 
  * It is linked to a single Anchor as starting point, and with a second anchor it produces a new Connection.
  */
 public class DrawWire extends CubicCurve implements ChangeListener<Transform>, ComponentLoader {
@@ -37,7 +37,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         Point2D initPos = pane.sceneToLocal(anchor.localToScene(new Point2D(0, 0)));
         this.setFreePosition(initPos);
         this.invalidateAnchorPosition();
-        anchor.localToSceneTransformProperty().addListener(this);
+        anchor.localToSceneTransformProperty().addListener(x -> this.invalidateAnchorPosition());
     }
 
     /**

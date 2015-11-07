@@ -98,38 +98,34 @@ public class Connection extends CubicCurve implements
      * Also perform typechecking for this connection.
      */
     public void handleConnectionChangesUpwards() {
-        InputAnchor input = this.endAnchor;
-        OutputAnchor output = this.startAnchor;
         // first make sure the output anchor block and types are fresh
-        output.prepareConnectionChanges();
+        this.startAnchor.prepareConnectionChanges();
 
         // for connections in error state typechecking is delayed to keep error locations stable
         if (! this.errorState) {
             try {
                 // first a trial unification on a copy of the types to minimize error propagation
-                TypeChecker.unify("trial connection", output.getType().getFresh(), input.getType().getFresh());
+                TypeChecker.unify("trial connection", this.startAnchor.getType().getFresh(), this.endAnchor.getType().getFresh());
                 // unify the actual types
-                TypeChecker.unify("connection", output.getType(), input.getType());
+                TypeChecker.unify("connection", this.startAnchor.getType(), this.endAnchor.getType());
             } catch (HaskellTypeError e) {
-                input.setErrorState(true);
+                this.endAnchor.setErrorState(true);
                 this.toggleErrorState(true);
             }
         }
 
         // continue with propagating connections changes in the output anchor block 
-        output.finishConnectionChanges();
+        this.startAnchor.finishConnectionChanges();
     }
 
-    public Expression getExprFrom(InputAnchor input){
-        OutputAnchor output = this.startAnchor;
-        
+    public Expression getExprFrom(InputAnchor input) {
         if (this.errorState) {
             // attempt to recover from an error
             try {
                 // first a trial unification on a copy of the types to minimize error propagation
-                TypeChecker.unify("trial error recovery", output.getType().getFresh(), input.getType().getFresh());
+                TypeChecker.unify("trial error recovery", this.startAnchor.getType().getFresh(), input.getType().getFresh());
                 // unify the actual types
-                TypeChecker.unify("error recovery", output.getType(), input.getType());
+                TypeChecker.unify("error recovery", this.startAnchor.getType(), input.getType());
                 input.setErrorState(false);
                 this.toggleErrorState(false);
             } catch (HaskellTypeError e) {
@@ -137,7 +133,7 @@ public class Connection extends CubicCurve implements
             }
         }
         
-        return output.getExpr();
+        return this.startAnchor.getExpr();
     }
     
     /**

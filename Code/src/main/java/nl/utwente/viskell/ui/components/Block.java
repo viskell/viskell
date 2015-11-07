@@ -113,7 +113,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     
     /** @return true if no connected output anchor exist */
     private boolean isBottomMost() {
-        return this.getOutputAnchor().map(a -> a.getOppositeAnchors().isEmpty()).orElse(true);
+        return this.getOutputAnchor().map(a -> !a.hasConnection()).orElse(true);
     }
     
     /**
@@ -164,7 +164,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         // propagate changes down from the output anchor to connected inputs
         this.getOutputAnchor().ifPresent(a -> a.getOppositeAnchors().stream().forEach(x -> x.handleConnectionChanges()));
 
-        // If the change is not propagated any further dwon start recomputation.
+        // If the change is not propagated any further down start recomputation.
         if (this.isBottomMost()) {
             // Needs to be delayed, because recomputation clears exprIsDirty also used to avoid infinite recursion.
             Platform.runLater(this::recomputeExpression);
