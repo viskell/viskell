@@ -57,7 +57,7 @@ public class InputAnchor extends ConnectionAnchor {
     /**
      * @param state The new error state for this ConnectionAnchor.
      */
-    public void setErrorState(boolean state) {
+    protected void setErrorState(boolean state) {
         errorState.set(state);
     }
     
@@ -124,7 +124,6 @@ public class InputAnchor extends ConnectionAnchor {
      * ChangeListener that will set the error state if isConnected().
      */
     public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        this.connection.ifPresent(c -> c.setErrorState(newValue));
         this.errorImage.setVisible(newValue);
     }
 

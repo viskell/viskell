@@ -71,11 +71,9 @@ public class InputArgument extends Pane implements ComponentLoader {
      */
     private void checkError(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
         ObservableList<String> styleClass = this.getStyleClass();
+        styleClass.removeAll("error");
         if (newValue) {
-            styleClass.removeAll("error");
             styleClass.add("error");
-        } else {
-            styleClass.removeAll("error");
         }
     }
 }

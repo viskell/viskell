@@ -1,8 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
 import com.google.common.collect.ImmutableMap;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -47,8 +45,8 @@ public class Connection extends CubicCurve implements
     /** The Pane this Connection is on. */
     private CustomUIPane pane;
     
-    /** Property describing the error state. */
-    private BooleanProperty errorState;
+    /** Whether this connection produced an error in the latest type unification. */
+    private boolean errorState;
 
     /** 
      * Construct a new Connection.
@@ -64,9 +62,8 @@ public class Connection extends CubicCurve implements
         this.pane = pane;
         this.startAnchor = source;
         this.endAnchor = sink;
+        this.errorState = false;
         pane.getChildren().add(0, this);
-        this.errorState = new SimpleBooleanProperty(false);
-        this.errorState.addListener(this::checkErrorListener);
         this.invalidateAnchorPositions();
         this.startAnchor.addConnection(this);
         this.startAnchor.localToSceneTransformProperty().addListener(this);
@@ -78,12 +75,8 @@ public class Connection extends CubicCurve implements
             TypeChecker.unify("new connection", this.startAnchor.getType(), this.endAnchor.getType());
         } catch (HaskellTypeError e) {
             this.endAnchor.setErrorState(true);
+            this.toggleErrorState(true);
         }
-    }
-    
-    /** Set a new error state. */
-    public void setErrorState(boolean error) {
-        errorState.set(error);
     }
     
     /**
@@ -111,7 +104,7 @@ public class Connection extends CubicCurve implements
         output.prepareConnectionChanges();
 
         // for connections in error state typechecking is delayed to keep error locations stable
-        if (! this.errorState.get()) {
+        if (! this.errorState) {
             try {
                 // first a trial unification on a copy of the types to minimize error propagation
                 TypeChecker.unify("trial connection", output.getType().getFresh(), input.getType().getFresh());
@@ -119,6 +112,7 @@ public class Connection extends CubicCurve implements
                 TypeChecker.unify("connection", output.getType(), input.getType());
             } catch (HaskellTypeError e) {
                 input.setErrorState(true);
+                this.toggleErrorState(true);
             }
         }
 
@@ -129,7 +123,7 @@ public class Connection extends CubicCurve implements
     public Expression getExprFrom(InputAnchor input){
         OutputAnchor output = this.startAnchor;
         
-        if (this.errorState.get()) {
+        if (this.errorState) {
             // attempt to recover from an error
             try {
                 // first a trial unification on a copy of the types to minimize error propagation
@@ -137,6 +131,7 @@ public class Connection extends CubicCurve implements
                 // unify the actual types
                 TypeChecker.unify("error recovery", output.getType(), input.getType());
                 input.setErrorState(false);
+                this.toggleErrorState(false);
             } catch (HaskellTypeError e) {
                 // the error is still present
             }
@@ -146,13 +141,14 @@ public class Connection extends CubicCurve implements
     }
     
     /**
-     * Listener method that can be attached to a BooleanProperty in order to
-     * update the error state based on that property.
+     * Updates the error state of this connection, including visual effects.
+     * @param error The new error state
      */
-    private void checkErrorListener(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
+    private void toggleErrorState(boolean error) {
+        this.errorState = error;
         ObservableList<String> styleClass = this.getStyleClass();
         styleClass.removeAll("error");
-        if (newValue) {
+        if (error) {
             styleClass.add("error");
         }
     }

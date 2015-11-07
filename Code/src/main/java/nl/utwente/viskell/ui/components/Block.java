@@ -158,11 +158,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     protected void propagateConnectionChanges() {
         // First make sure that all connected inputs will be updated too.        
         for (InputAnchor input : this.getAllInputs()) {
-            if (input.hasConnection()) {
-                input.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards());
-            } else {
-                input.setErrorState(false);
-            }
+            input.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards());
         }
 
         // propagate changes down from the output anchor to connected inputs
