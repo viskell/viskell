@@ -3,7 +3,6 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -28,12 +27,12 @@ public class OutputAnchor extends ConnectionAnchor {
     /**
      * Get the input anchors on the other side of the Connection from this anchor.
      * 
-     * @return A list of each potential input anchor for each Connection this anchor has.
+     * @return A list of each input anchor for each Connection this anchor has.
      */
-    public List<Optional<InputAnchor>> getOppositeAnchors() {
-        List<Optional<InputAnchor>> list = new ArrayList<>();
+    public List<InputAnchor> getOppositeAnchors() {
+        List<InputAnchor> list = new ArrayList<>();
         for (Connection c : this.getConnections()) {
-            list.add(c.getOppositeAnchorOf(this));
+            list.add(c.getEndAnchor());
         }
         return list;
     }

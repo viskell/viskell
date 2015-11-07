@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui;
 import javafx.geometry.Point2D;
 import nl.utwente.viskell.ui.components.Connection;
 import nl.utwente.viskell.ui.components.ConnectionAnchor;
+import nl.utwente.viskell.ui.components.DrawWire;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +16,8 @@ import java.util.Map;
  * This class also provides the methods to perform actions based on user input.
  * Possible actions include: 
  * {@linkplain #finishConnection(int, ConnectionAnchor)},<br> 
- * {@linkplain #removeConnection(int)},<br> 
- * {@linkplain #initiateConnectionFrom(int, ConnectionAnchor)}.
+ * {@linkplain #removeWire(int)},<br> 
+ * {@linkplain #initiateWireFrom(int, ConnectionAnchor)}.
  * </p>
  * <p>
  * This class also stores a ConnectionState.
@@ -39,11 +40,8 @@ public class ConnectionCreationManager {
      */
     public static final Integer INPUT_ID_NONE = -2;
     
-    /**
-     * Maps an (Touch or Mouse) ID to a line, used to keep track of what touch
-     * point is dragging what line.
-     */
-    private Map<Integer, Connection> connections;
+    /** Maps an (Touch or Mouse) ID to a partial connection line */
+    private Map<Integer, DrawWire> wires;
 
     /**
      * Constructs a new ConnectionCreationManager.
@@ -51,28 +49,22 @@ public class ConnectionCreationManager {
      */
     public ConnectionCreationManager(CustomUIPane pane) {
         this.pane = pane;
-        connections = new HashMap<Integer, Connection>();
+        this.wires = new HashMap<>();
     }
 
     /**
-     * Creates either a temporary Connection, with the given start or end anchor,
-     * or when this anchor cannot have extra connection disconnect the existing one
-     * to use as editable partial connection instead. 
-     * The Connection will be finalized when a matching anchor has been added.
-     *
+     * Creates a new partial wire given an anchor, and in case the anchor
+     * cannot have more connections, existing connection will be removed. 
      * @param id The id associated with the action on which to follow up.
-     * @param anchor The anchor to build a Connection from.
+     * @param anchor The anchor to build a wire from.
      */
-    public void initiateConnectionFrom(int inputId, ConnectionAnchor anchor) {
+    public void initiateWireFrom(int inputId, ConnectionAnchor anchor) {
         if (!anchor.canAddExtraConnection()) {
-            // take the existing connection instead
-            Connection connection = anchor.getConnection(0).get();
-            connection.disconnect(anchor);
-            connections.put(inputId, connection);
-        } else {
-            Connection newConnection = new Connection(pane, anchor);
-            connections.put(inputId, newConnection);
+            // make room for a new connection by removing existing ones
+            anchor.removeConnections();
         }
+        
+        this.wires.put(inputId, new DrawWire(this.pane, anchor));
     }
     
     /**
@@ -83,47 +75,40 @@ public class ConnectionCreationManager {
      * @throws InvalidInputException.
      */
     public void finishConnection(int id, ConnectionAnchor anchor) {
-        Connection connection = connections.get(id);
-        if (connection != null) {
-            if (!anchor.canAddExtraConnection()) {
-                anchor.removeConnections(); // push out the existing connections
+        DrawWire wire = wires.get(id);
+        if (wire != null) {
+            Connection connection = wire.buildConnectionTo(anchor);
+            // drop up the wire, even if connection failed
+            this.removeWire(id);
+            if (connection != null) {
+                anchor.handleConnectionChanges();
             }
-
-            connection.connectTo(anchor);
-            
-            if (!connection.isFullyConnected()) {
-                 // failed to produce a complete connection, cancel it.
-                removeConnection(id);
-                return;
-            }
-
-            connections.remove(id);
         } else {
             throw new RuntimeException("InvalidInputId");
         }
     }
 
     /**
-     * Completely Removes the Connection associated with the given id.
+     * Completely Removes the wire associated with the given id.
      */
-    public void removeConnection(int id) {
-        Connection connection = connections.get(id);
-        if (connection != null) {
-            connections.remove(id);
-            connection.remove();
+    public void removeWire(int id) {
+        DrawWire wire = this.wires.get(id);
+        if (wire != null) {
+            this.wires.remove(id);
+            wire.remove();
         }
     }
 
     /**
-     * Updates the Connection's line associated with the given action id to its new position.
+     * Updates the wire associated with the given action id to its new position.
      * @param id    The id associated with the action on which to follow up.
      * @param x     New X coordinate
      * @param y     New Y coordinate
      */
     public void updateLine(int id, double x, double y) {
         Point2D localPos = pane.sceneToLocal(x, y);
-        if (connections.get(id) != null) {
-            connections.get(id).setFreeEnds(localPos);
+        if (wires.get(id) != null) {
+            wires.get(id).setFreePosition(localPos);
         }
     }
 
