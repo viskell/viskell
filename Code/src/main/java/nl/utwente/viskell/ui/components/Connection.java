@@ -70,7 +70,7 @@ public class Connection extends CubicCurve implements
         this.invalidateAnchorPositions();
         this.startAnchor.addConnection(this);
         this.startAnchor.localToSceneTransformProperty().addListener(this);
-        this.endAnchor.addConnection(this);
+        this.endAnchor.setConnection(this);
         this.endAnchor.localToSceneTransformProperty().addListener(this);
 
         // typecheck the new connection to mark potential errors at the best location
@@ -164,7 +164,7 @@ public class Connection extends CubicCurve implements
         this.startAnchor.localToSceneTransformProperty().removeListener(this);
         this.endAnchor.localToSceneTransformProperty().removeListener(this);
         this.startAnchor.dropConnection(this);
-        this.endAnchor.dropConnection(this);
+        this.endAnchor.removeConnections();
         pane.getChildren().remove(this);
         this.startAnchor.handleConnectionChanges();
         this.endAnchor.handleConnectionChanges();
@@ -177,8 +177,8 @@ public class Connection extends CubicCurve implements
 
     /** Update the UI positions of both start and end anchors. */
     private void invalidateAnchorPositions() {
-        this.setStartPosition(pane.sceneToLocal(this.startAnchor.localToScene(this.startAnchor.getLocalCenter())));
-        this.setEndPosition(pane.sceneToLocal(this.endAnchor.localToScene(this.endAnchor.getLocalCenter())));
+        this.setStartPosition(pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 0))));
+        this.setEndPosition(pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, 0))));
     }
 
     @Override

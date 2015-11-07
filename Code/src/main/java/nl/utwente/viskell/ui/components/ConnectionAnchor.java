@@ -2,7 +2,6 @@ package nl.utwente.viskell.ui.components;
 
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
@@ -17,17 +16,10 @@ import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ConnectionCreationManager;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 /**
  * Represents an anchor of a Block that can connect to (1 or more) Connections.
  * 
  * A ConnectionAnchor has an invisible part that acts as an enlargement of the touch zone.
- * 
- * The primary Connection (if present) is the first element in getConnections().
- * This means that the oldest Connection is the primary connection.
  */
 public abstract class ConnectionAnchor extends StackPane implements ComponentLoader, Bundleable {
 
@@ -123,9 +115,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** The local type of this anchor */
     private Type type;
 
-    /** The connections this anchor has, can be empty for no connections. */
-    private List<Connection> connections;
-    
     /** The visual representation of the ConnectionAnchor. */
     @FXML private Shape visibleAnchor;
     
@@ -133,16 +122,12 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     @FXML private Shape invisibleAnchor;
     
     /**
-     * @param block
-     *            The block this ConnectionAnchor belongs to.
+     * @param block The block this ConnectionAnchor belongs to.
      */
     public ConnectionAnchor(Block block) {
         this.loadFXML("ConnectionAnchor");
-        
         this.block = block;
         this.type = TypeScope.unique("???");
-        this.connections = new ArrayList<Connection>();
-        
         this.new AnchorHandler(block.getPane().getConnectionCreationManager());
     }
     
@@ -197,86 +182,23 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
     
     /**
-     * Drops the connection from this anchor
-     *
-     * @param connection Connection to disconnect from.
-     */
-    protected void dropConnection(Connection connection) {
-        if (connections.contains(connection)) {
-            connections.remove(connection);
-        }
-    }
-
-    /**
      * Removes all the connections this anchor has.
      */
-    public void removeConnections() {
-        while (!connections.isEmpty()) {
-            Connection connection = connections.remove(0);
-            connection.remove();
-        }
-    }
-
-    /**
-     * Adds the given connection to the connections this anchor has.
-     * 
-     * @param connection
-     *            Connection to add
-     */
-    public void addConnection(Connection connection) {
-        connections.add(connection);
-    }
+    public abstract void removeConnections();
 
     /**
      * @return True if this anchor has 1 or more connections.
      */
-    public boolean hasConnection() {
-        return !connections.isEmpty();
-    }
-
-    /**
-     * @return True if the primary connection is connected.
-     */
-    public boolean isPrimaryConnected() {
-        return this.connections.size() > 0;
-    }
+    public abstract boolean hasConnection();
 
     /**
      * @return Whether or not this anchor allows adding an extra connection.
      */
     public abstract boolean canAddExtraConnection();
 
-    /**
-    * @return the connections this anchor is connected to.
-    */
-    protected List<Connection> getConnections() {
-        return connections;
-    }
-
-    /**
-     * Attempt to get the nth connection to this anchor, if present
-     * 
-     * @param index this index of the connection.
-     * @return Optional of the connection at index.
-     */
-    public Optional<Connection> getConnection(int index) {
-        if (this.connections.size() > index) {
-            return Optional.of(this.connections.get(index));
-        }
-        
-        return Optional.empty();
-    }
-
     /** Handle the Connection changes for the Block this anchor is attached to. */
     public void handleConnectionChanges() {
         this.block.handleConnectionChanges();
-    }
-    
-    /**
-     * @return the position of the center of this anchor relative to its pane.
-     */
-    public Point2D getLocalCenter() {
-        return new Point2D(0, 0);
     }
     
     @Override

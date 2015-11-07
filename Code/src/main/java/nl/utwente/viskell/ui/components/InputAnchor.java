@@ -15,6 +15,9 @@ import nl.utwente.viskell.haskell.expr.Hole;
  * ConnectionAnchor that specifically functions as an input.
  */
 public class InputAnchor extends ConnectionAnchor{
+    /** The Optional connection this anchor has. */
+    private Optional<Connection> connection;
+    
     /** The expression to return when there is no connection. */
     private Expression connectionlessExpr;
     
@@ -27,7 +30,8 @@ public class InputAnchor extends ConnectionAnchor{
      */
     public InputAnchor(Block block) {
         super(block);
-        connectionlessExpr = new Hole();
+        this.connection = Optional.empty();
+        this.connectionlessExpr = new Hole();
         this.errorState = new SimpleBooleanProperty(false);
         this.errorState.addListener(this::checkError);
     }
@@ -46,11 +50,38 @@ public class InputAnchor extends ConnectionAnchor{
         return errorState;
     }
     
+    /** @return The Optional connection this anchor has. */
+    public Optional<Connection> getConnection() {
+        return this.connection;
+    }
+
+    /**
+     * Sets the connection of this anchor.
+     * @param connection The connection to set.
+     */
+    protected void setConnection(Connection connection) {
+        this.connection = Optional.of(connection);
+    }
+    
+    @Override
+    public void removeConnections() {
+        if (this.connection.isPresent()) {
+            Connection conn = this.connection.get();
+            this.connection = Optional.empty();
+            conn.remove();
+        }
+    }
+
+    @Override
+    public boolean hasConnection() {
+        return this.connection.isPresent();
+    }
+    
     /**
      * @return Optional of the connection's opposite output anchor.
      */
     public Optional<OutputAnchor> getOppositeAnchor() {
-        return this.getConnection(0).map(c -> c.getStartAnchor());
+        return this.connection.map(c -> c.getStartAnchor());
     }
     
     /**
@@ -58,7 +89,7 @@ public class InputAnchor extends ConnectionAnchor{
      */
     @Override
     public Expression getExpr() {
-        return this.getConnection(0).map(c -> c.getExprFrom(this)).orElse(connectionlessExpr);
+        return this.connection.map(c -> c.getExprFrom(this)).orElse(connectionlessExpr);
     }
     
     /**
@@ -80,9 +111,7 @@ public class InputAnchor extends ConnectionAnchor{
      * ChangeListener that will set the error state if isConnected().
      */
     public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        for (Connection conn : this.getConnections()) {
-            conn.setErrorState(newValue);
-        }
+        this.connection.ifPresent(c -> c.setErrorState(newValue));
     }
 
     @Override
