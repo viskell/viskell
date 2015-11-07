@@ -46,12 +46,6 @@ public class OutputAnchor extends ConnectionAnchor {
         return !this.connections.isEmpty();
     }
 
-    @Override
-    public boolean canAddExtraConnection() {
-        // OutputAnchors can have multiple connections;
-        return true;
-    }
-
     /**
      * Adds the given connection to the connections this anchor has.
      * @param connection The connection to add.

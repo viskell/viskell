@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 import nl.utwente.viskell.ui.components.Connection;
 import nl.utwente.viskell.ui.components.ConnectionAnchor;
 import nl.utwente.viskell.ui.components.DrawWire;
+import nl.utwente.viskell.ui.components.InputAnchor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,8 +60,8 @@ public class ConnectionCreationManager {
      * @param anchor The anchor to build a wire from.
      */
     public void initiateWireFrom(int inputId, ConnectionAnchor anchor) {
-        if (!anchor.canAddExtraConnection()) {
-            // make room for a new connection by removing existing ones
+        if (anchor instanceof InputAnchor && ((InputAnchor)anchor).hasConnection()) {
+            // make room for a new connection by removing existing one
             anchor.removeConnections();
         }
         

@@ -8,13 +8,15 @@ import com.google.common.collect.ImmutableMap;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Hole;
 
 /**
  * ConnectionAnchor that specifically functions as an input.
  */
-public class InputAnchor extends ConnectionAnchor{
+public class InputAnchor extends ConnectionAnchor {
     /** The Optional connection this anchor has. */
     private Optional<Connection> connection;
     
@@ -24,6 +26,12 @@ public class InputAnchor extends ConnectionAnchor{
     /** Property storing the error state. */
     private BooleanProperty errorState;
 
+    /** The pictogram to show when in error state. */
+    private final static Image ERROR_PICTURE = new Image(InputAnchor.class.getResourceAsStream("/ui/warningTriangle.png"));
+    
+    /** The ImageView used to indicate a type mismatch. */
+    private ImageView errorImage;
+    
     /**
      * @param block
      *            The Block this anchor is connected to.
@@ -32,6 +40,16 @@ public class InputAnchor extends ConnectionAnchor{
         super(block);
         this.connection = Optional.empty();
         this.connectionlessExpr = new Hole();
+        
+        this.errorImage = new ImageView(ERROR_PICTURE);
+        double height = this.getVisibleAnchor().getBoundsInLocal().getHeight();
+        double width = this.getVisibleAnchor().getBoundsInLocal().getWidth();
+        this.errorImage.setFitHeight(height);
+        this.errorImage.setFitWidth(width);
+        this.errorImage.setMouseTransparent(true);
+        this.errorImage.setVisible(false);
+        this.getChildren().add(this.errorImage);
+        
         this.errorState = new SimpleBooleanProperty(false);
         this.errorState.addListener(this::checkError);
     }
@@ -70,6 +88,7 @@ public class InputAnchor extends ConnectionAnchor{
             this.connection = Optional.empty();
             conn.remove();
         }
+        this.setErrorState(false);
     }
 
     @Override
@@ -101,17 +120,12 @@ public class InputAnchor extends ConnectionAnchor{
         return getExpr();
     }
 
-    @Override
-    public boolean canAddExtraConnection() {
-        // InputAnchors only support 1 connection;
-        return !hasConnection();
-    }
-
     /**
      * ChangeListener that will set the error state if isConnected().
      */
     public void checkError(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         this.connection.ifPresent(c -> c.setErrorState(newValue));
+        this.errorImage.setVisible(newValue);
     }
 
     @Override

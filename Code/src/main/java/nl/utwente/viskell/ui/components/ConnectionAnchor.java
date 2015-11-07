@@ -191,11 +191,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      */
     public abstract boolean hasConnection();
 
-    /**
-     * @return Whether or not this anchor allows adding an extra connection.
-     */
-    public abstract boolean canAddExtraConnection();
-
     /** Handle the Connection changes for the Block this anchor is attached to. */
     public void handleConnectionChanges() {
         this.block.handleConnectionChanges();

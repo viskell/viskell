@@ -60,10 +60,10 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             }
             sink = (InputAnchor)target;
             source = (OutputAnchor)this.anchor;
-        }
-        
-        if (!target.canAddExtraConnection()) {
-            target.removeConnections(); // push out the existing connections
+            
+            if (sink.hasConnection()) {
+                sink.removeConnections(); // push out the existing connection
+            }
         }
 
         return new Connection(this.pane, source, sink);
