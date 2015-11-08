@@ -16,17 +16,18 @@ public class ConstantBox implements Box {
     
     private Type type;
     
-    private OutputPort ouput;
+    private final OutputPort ouput;
 
-    public ConstantBox(Component parent, String name, Expression expr, Type type) {
+    public ConstantBox(Grouping parent, String name, Expression expr, Type type) {
         this.parent = parent;
         this.expr = expr;
         this.type = type;
         this.ouput = new OutputPort(this, new Binder(name));
+        this.parent.addPart(this);
     }
 
     @Override
-    public Grouping getParent() {
+    public Grouping getDirectParent() {
         return this.parent;
     }
 
