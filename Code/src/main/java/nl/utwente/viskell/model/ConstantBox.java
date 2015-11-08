@@ -8,9 +8,9 @@ import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 
-public class ConstantBox implements Box {
+public class ConstantBox extends Box {
     
-    private Grouping parent;
+    private BoxGroup parent;
     
     private Expression expr;
     
@@ -18,7 +18,7 @@ public class ConstantBox implements Box {
     
     private final OutputPort ouput;
 
-    public ConstantBox(Grouping parent, String name, Expression expr, Type type) {
+    public ConstantBox(BoxGroup parent, String name, Expression expr, Type type) {
         this.parent = parent;
         this.expr = expr;
         this.type = type;
@@ -27,7 +27,7 @@ public class ConstantBox implements Box {
     }
 
     @Override
-    public Grouping getDirectParent() {
+    public BoxGroup getDirectParent() {
         return this.parent;
     }
 
@@ -39,6 +39,16 @@ public class ConstantBox implements Box {
     @Override
     public List<OutputPort> getOutputs() {
         return Collections.singletonList(this.ouput);
+    }
+
+    @Override
+    protected void refreshPortTypes() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    protected void updateExpr() {
+        // TODO Auto-generated method stub
     }
 
 }

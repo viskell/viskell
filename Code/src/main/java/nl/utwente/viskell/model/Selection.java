@@ -1,15 +1,15 @@
 package nl.utwente.viskell.model;
 
-public class Selection extends Grouping {
+public class Selection extends BoxGroup {
 
-    public Grouping parent;
+    public BoxGroup parent;
 
-    public Selection(Grouping parent) {
+    public Selection(BoxGroup parent) {
         super();
         this.parent = parent;
     }
 
-    public Grouping getParent() {
+    public BoxGroup getParent() {
         return this.parent;
     }
 

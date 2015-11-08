@@ -5,10 +5,13 @@ public class Wire {
     private final SourcePort source;
     
     private final SinkPort sink;
+    
+    private boolean hasTypeError;
 
     public Wire(SourcePort source, SinkPort sink) {
         this.source = source;
         this.sink = sink;
+        this.hasTypeError = false;
     }
 
     /** @return the source port of this wire */

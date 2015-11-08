@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class Component extends Grouping {
+public class Component extends BoxGroup {
     
     private Optional<Box> wrapper;
     

@@ -6,15 +6,15 @@ import java.util.List;
 
 import nl.utwente.viskell.haskell.expr.Binder;
 
-public class LambdaBox implements Box {
+public class LambdaBox extends Box {
     
-    private Grouping parent;
+    private BoxGroup parent;
     
     private Component body;
     
     private final OutputPort funRes;
 
-    public LambdaBox(Grouping parent, Component body) {
+    public LambdaBox(BoxGroup parent, Component body) {
         this.parent = parent;
         this.body = body;
         this.body.setWrapper(this);
@@ -23,7 +23,7 @@ public class LambdaBox implements Box {
     }
 
     @Override
-    public Grouping getDirectParent() {
+    public BoxGroup getDirectParent() {
         return this.parent;
     }
 
@@ -36,5 +36,15 @@ public class LambdaBox implements Box {
     public List<OutputPort> getOutputs() {
         return Collections.singletonList(this.funRes);
     }
-    
+
+    @Override
+    protected void refreshPortTypes() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    protected void updateExpr() {
+        // TODO Auto-generated method stub
+    }
+
 }
