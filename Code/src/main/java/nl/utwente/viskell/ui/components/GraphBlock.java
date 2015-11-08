@@ -67,7 +67,7 @@ public class GraphBlock extends Block {
     
     @Override
     public void updateExpr() {
-        this.localExpr = input.getUpdatedExpr();
+        this.localExpr = input.getLocalExpr();
     }
 
     @Override

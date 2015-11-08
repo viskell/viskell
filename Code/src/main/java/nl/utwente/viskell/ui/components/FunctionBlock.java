@@ -143,7 +143,7 @@ public class FunctionBlock extends Block {
     public final void updateExpr() {
         this.localExpr = new FunVar(this.funInfo);
         for (InputAnchor in : this.getActiveInputs()) {
-            this.localExpr = new Apply(this.localExpr, in.getUpdatedExpr());
+            this.localExpr = new Apply(this.localExpr, in.getLocalExpr());
         }
     }
     

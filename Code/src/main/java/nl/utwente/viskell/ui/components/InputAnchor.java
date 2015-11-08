@@ -26,9 +26,6 @@ public class InputAnchor extends ConnectionAnchor {
     /** The local type of this anchor */
     private Type type;
     
-    /** The expression to return when there is no connection. */
-    private Hole connectionlessExpr;
-    
     /** Property storing the error state. */
     private BooleanProperty errorState;
 
@@ -46,7 +43,6 @@ public class InputAnchor extends ConnectionAnchor {
         super(block);
         this.connection = Optional.empty();
         this.type = TypeScope.unique("???");
-        this.connectionlessExpr = new Hole();
         
         this.errorImage = new ImageView(ERROR_PICTURE);
         double height = this.getVisibleAnchor().getBoundsInLocal().getHeight();
@@ -128,7 +124,7 @@ public class InputAnchor extends ConnectionAnchor {
      * @return The local expression carried by the connection connected to this anchor.
      */
     public Expression getLocalExpr() {
-        return this.connection.map(c -> c.getStartAnchor().getVariable()).orElse(connectionlessExpr);
+        return this.connection.map(c -> c.getStartAnchor().getVariable()).orElse(new Hole());
     }
     
     /**
@@ -146,15 +142,6 @@ public class InputAnchor extends ConnectionAnchor {
      */
     protected void extendExprGraph(LetExpression exprGraph) {
         this.connection.ifPresent(c -> c.getStartAnchor().extendExprGraph(exprGraph));
-    }
-
-    /**
-     * Gets the Expression that is connected to this, or when not connected create a fresh expression representing the open input.   
-     * @return The updated expression carried by the connection connected to this anchor.
-     */
-    public final Expression getUpdatedExpr() {
-        this.connectionlessExpr = new Hole();
-        return this.getLocalExpr();
     }
 
     /**

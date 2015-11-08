@@ -110,7 +110,7 @@ public class DisplayBlock extends Block {
 
     @Override
     public void updateExpr() {
-        this.localExpr = inputAnchor.getUpdatedExpr();
+        this.localExpr = inputAnchor.getLocalExpr();
     }
     
     @Override
