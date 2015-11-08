@@ -11,6 +11,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.haskell.expr.Expression;
+import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.ui.CircleMenu;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
@@ -41,8 +42,8 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** The Circle (Context) menu associated with this block instance. */
     private CircleMenu circleMenu;
     
-    /** The expression of this Block. */
-    protected Expression expr;
+    /** The local expression of this Block. */
+    protected Expression localExpr;
     
     /** Property for the whether the visuals are up to date. */
     protected BooleanProperty staleVisuals;
@@ -50,8 +51,8 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** Whether the anchor types are fresh*/
     private boolean freshAnchorTypes;
     
-    /** Marker for the expression freshness. */
-    protected boolean exprIsDirty;
+    /** Status of change updating process in this block. */
+    private boolean updateInProgress;
 
     /**
      * @param pane The pane this block belongs to.
@@ -60,7 +61,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.parentPane = pane;
         this.staleVisuals = new SimpleBooleanProperty(false);
         this.freshAnchorTypes = false;
-        this.exprIsDirty = false;
+        this.updateInProgress = false;
         
         this.staleVisuals.addListener(this::fixupVisualState);
         
@@ -112,23 +113,31 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     }
     
     /** @return true if no connected output anchor exist */
-    private boolean isBottomMost() {
+    public boolean isBottomMost() {
         return this.getOutputAnchor().map(a -> !a.hasConnection()).orElse(true);
+    }
+    
+    public final void initiateConnectionChanges() {
+        this.handleConnectionChanges(false);
+        this.handleConnectionChanges(true);
     }
     
     /**
      * Handle the expression and types changes caused by modified connections or values.
      */
-    public final void handleConnectionChanges() {
-        this.prepareConnectionChanges();
-        this.finishConnectionChanges();
+    public final void handleConnectionChanges(boolean finalPhase) {
+        if (! finalPhase) {
+            this.prepareConnectionChanges();
+        }
+        
+        this.propagateConnectionChanges(finalPhase);
     }
     
     /**
-     * First connection change stage: set fresh types in all anchors. 
+     * Connection change preparation; set fresh types in all anchors. 
      */
     public final void prepareConnectionChanges() {
-        if (this.exprIsDirty || this.freshAnchorTypes) {
+        if (this.updateInProgress || this.freshAnchorTypes) {
             return; // refresh anchor types in each block only once
         }
         this.freshAnchorTypes = true;
@@ -141,60 +150,59 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     protected abstract void refreshAnchorTypes();
     
     /**
-     * Second connection change stage: propagate through all connections
-     */
-    public final void finishConnectionChanges() {
-        if (this.exprIsDirty) {
-            return; // avoid doing extra work and infinite recursion
-        }
-        this.exprIsDirty = true;
-        this.freshAnchorTypes = false;
-        this.propagateConnectionChanges();
-    }
-
-    /**
      * Propagate the changes through connected blocks, then trigger a visual update.
      */
-    protected void propagateConnectionChanges() {
+    protected void propagateConnectionChanges(boolean finalPhase) {
+        if (this.updateInProgress != finalPhase) {
+            return; // avoid doing extra work and infinite recursion
+        }
+        this.updateInProgress = !finalPhase;
+        this.freshAnchorTypes = false;
+        
         // First make sure that all connected inputs will be updated too.        
         for (InputAnchor input : this.getAllInputs()) {
-            input.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards());
+            input.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards(finalPhase));
+        }
+        
+        // after type checking all input in the first phase, refresh the local expression of this block
+        if (!finalPhase) {
+            this.updateExpr();
         }
 
         // propagate changes down from the output anchor to connected inputs
-        this.getOutputAnchor().ifPresent(a -> a.getOppositeAnchors().stream().forEach(x -> x.handleConnectionChanges()));
+        this.getOutputAnchor().ifPresent(a -> a.getOppositeAnchors().stream().forEach(x -> x.handleConnectionChanges(finalPhase)));
 
         // If the change is not propagated any further down start recomputation.
-        if (this.isBottomMost()) {
-            // Needs to be delayed, because recomputation clears exprIsDirty also used to avoid infinite recursion.
-            Platform.runLater(this::recomputeExpression);
+        if (finalPhase && this.isBottomMost()) {
+            // Now that the expressions and types are updated, initiate a visual refresh.
+            Platform.runLater(() -> this.staleVisuals.set(true));
         }
-    }
-    
-    /** Reconstruct dirty expressions and typechecks them. */
-    private void recomputeExpression() {
-        if (!this.exprIsDirty) {
-            return; // do not recompute more than once.
-        }
-        
-        // Recompute the entire expression tree.
-        this.getExpr();
-        // Now that the expressions and types are updated, initiate a visual refresh.
-        this.staleVisuals.set(true);
     }
     
     /**
-     * @return The expression this Block represents.
-     * 
-     * If the expression is not up-to-date it gets updated.
+     * @return The local expression this Block represents.
      */
-    public final Expression getExpr() {
-        // Assure expr is up-to-date.
-        if (this.exprIsDirty) {
-            this.updateExpr();
-            this.exprIsDirty = false;
-        }
-        return expr;
+    public final Expression getLocalExpr() {
+        return this.localExpr;
+    }
+    
+    /**
+     * @return A complete expression of this block and all its dependencies.
+     */
+    public final Expression getFullExpr() {
+        LetExpression fullExpr = new LetExpression(this.localExpr);
+        this.extendExprGraph(fullExpr);
+        return fullExpr;
+    }
+
+    /**
+     * Extends the expression graph to include all subexpression required
+     * @param exprGraph the let expression representing the current expression graph
+     */
+    protected void extendExprGraph(LetExpression exprGraph) {
+         for (InputAnchor input : this.getAllInputs()) {
+             input.extendExprGraph(exprGraph);
+         }
     }
     
     /**

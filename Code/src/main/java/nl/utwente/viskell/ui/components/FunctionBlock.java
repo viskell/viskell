@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Apply;
+import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.FunVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
@@ -83,7 +84,7 @@ public class FunctionBlock extends Block {
         argumentSpace.knotIndexProperty().addListener(e -> invalidateKnotIndex());
         
         // Create an anchor for the result
-        output = new OutputAnchor(this);
+        output = new OutputAnchor(this, new Binder("res"));
         outputSpace.setCenter(output);
         
         // Make sure the prefWidth is correctly updated.
@@ -139,9 +140,9 @@ public class FunctionBlock extends Block {
 
     @Override
     public final void updateExpr() {
-        expr = new FunVar(this.funInfo);
-        for (InputAnchor in : getActiveInputs()) {
-            expr = new Apply(expr, in.getUpdatedExpr());
+        this.localExpr = new FunVar(this.funInfo);
+        for (InputAnchor in : this.getActiveInputs()) {
+            this.localExpr = new Apply(this.localExpr, in.getUpdatedExpr());
         }
     }
     
@@ -176,7 +177,7 @@ public class FunctionBlock extends Block {
         }
         
         // Trigger invalidation for the now changed output type.
-        this.handleConnectionChanges();
+        this.initiateConnectionChanges();
     }
     
     @Override

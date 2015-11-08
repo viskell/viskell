@@ -92,7 +92,7 @@ public class DisplayBlock extends Block {
             try {
                 Optional<GhciSession> ghci = getPane().getGhciSession();
                 if (ghci.isPresent()) {
-                    setOutput(ghci.get().pull(inputAnchor.getExpr()));
+                    setOutput(ghci.get().pull(inputAnchor.getFullExpr()));
                 }
             } catch (HaskellException e) {
                 setOutput("?!?!?!");
@@ -110,7 +110,7 @@ public class DisplayBlock extends Block {
 
     @Override
     public void updateExpr() {
-        this.expr = inputAnchor.getExpr();
+        this.localExpr = inputAnchor.getUpdatedExpr();
     }
     
     @Override

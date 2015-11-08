@@ -9,7 +9,6 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
-import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
@@ -156,11 +155,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
 
     /**
-     * @return The Expr this ConnectionAnchor represents (coming from a Block).
-     */
-    public abstract Expression getExpr();
-    
-    /**
      * @return the local type of this anchor
      */
     public Type getType() {
@@ -191,9 +185,14 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      */
     public abstract boolean hasConnection();
 
+    /** Initiate connection changes at the Block this anchor is attached to. */
+    public void initiateConnectionChanges() {
+        this.block.initiateConnectionChanges();
+    }
+    
     /** Handle the Connection changes for the Block this anchor is attached to. */
-    public void handleConnectionChanges() {
-        this.block.handleConnectionChanges();
+    protected void handleConnectionChanges(boolean finalPhase) {
+        this.block.handleConnectionChanges(finalPhase);
     }
     
     @Override

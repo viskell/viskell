@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Hole;
+import nl.utwente.viskell.haskell.expr.LetExpression;
 
 /**
  * ConnectionAnchor that specifically functions as an input.
@@ -21,7 +22,7 @@ public class InputAnchor extends ConnectionAnchor {
     private Optional<Connection> connection;
     
     /** The expression to return when there is no connection. */
-    private Expression connectionlessExpr;
+    private Hole connectionlessExpr;
     
     /** Property storing the error state. */
     private BooleanProperty errorState;
@@ -58,7 +59,7 @@ public class InputAnchor extends ConnectionAnchor {
      * @param state The new error state for this ConnectionAnchor.
      */
     protected void setErrorState(boolean state) {
-        errorState.set(state);
+        this.errorState.set(state);
     }
     
     /**
@@ -104,20 +105,36 @@ public class InputAnchor extends ConnectionAnchor {
     }
     
     /**
-     * @return The expression carried by the connection connected to this anchor.
+     * @return The local expression carried by the connection connected to this anchor.
      */
-    @Override
-    public Expression getExpr() {
-        return this.connection.map(c -> c.getExprFrom(this)).orElse(connectionlessExpr);
+    public Expression getLocalExpr() {
+        return this.connection.map(c -> c.getStartAnchor().getVariable()).orElse(connectionlessExpr);
     }
     
+    /**
+     * @return The full expression carried by the connection connected to this anchor.
+     */
+    public Expression getFullExpr() {
+        LetExpression expr = new LetExpression(this.getLocalExpr());
+        this.extendExprGraph(expr);
+        return expr;
+    }
+    
+    /**
+     * Extends the expression graph to include all subexpression required
+     * @param exprGraph the let expression representing the current expression graph
+     */
+    protected void extendExprGraph(LetExpression exprGraph) {
+        this.connection.ifPresent(c -> c.getStartAnchor().extendExprGraph(exprGraph));
+    }
+
     /**
      * Gets the Expression that is connected to this, or when not connected create a fresh expression representing the open input.   
      * @return The updated expression carried by the connection connected to this anchor.
      */
     public final Expression getUpdatedExpr() {
-        connectionlessExpr = new Hole();
-        return getExpr();
+        this.connectionlessExpr = new Hole();
+        return this.getLocalExpr();
     }
 
     /**

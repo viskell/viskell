@@ -66,7 +66,7 @@ public class GraphBlock extends Block {
     
     @Override
     public void updateExpr() {
-        this.expr = input.getExpr();
+        this.localExpr = input.getUpdatedExpr();
     }
 
     @Override
@@ -89,7 +89,7 @@ public class GraphBlock extends Block {
         try {
             GhciSession ghciSession = getPane().getGhciSession().get();
             String funName = "graph_fun_" + Integer.toHexString(this.hashCode());
-            ghciSession.push(funName, this.getExpr());
+            ghciSession.push(funName, this.getFullExpr());
             String range = String.format(Locale.US, " [%f,%f..%f]", min, min+step, max);
             String results = ghciSession.pullRaw("putStrLn $ unwords $ map show $ map " + funName + range);
 

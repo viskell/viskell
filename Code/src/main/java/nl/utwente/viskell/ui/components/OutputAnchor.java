@@ -6,7 +6,10 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
-import nl.utwente.viskell.haskell.expr.Expression;
+import nl.utwente.viskell.haskell.expr.Binder;
+import nl.utwente.viskell.haskell.expr.LetExpression;
+import nl.utwente.viskell.haskell.expr.LocalVar;
+import nl.utwente.viskell.haskell.expr.Variable;
 
 /**
  * Anchor that specifically functions as an output.
@@ -16,12 +19,17 @@ public class OutputAnchor extends ConnectionAnchor {
     /** The connections this anchor has, can be empty for no connections. */
     private List<Connection> connections;
 
+    /** The variable binder attached to the expression corresponding to this anchor */
+    protected final Binder binder;
+    
     /**
-     * @param block The block this Anchor is connected to.
+     * @param block The block this Anchor is connected to
+     * @param binder The binder to use for this
      */
-    public OutputAnchor(Block block) {
+    public OutputAnchor(Block block, Binder binder) {
         super(block);
         this.connections = new ArrayList<>();
+        this.binder = binder;
         // By default the invisible anchor covers an area above the visible
         // anchor (for InputAnchors), this switches that around to cover more of
         // the area under the visible anchor.
@@ -77,17 +85,22 @@ public class OutputAnchor extends ConnectionAnchor {
         this.block.prepareConnectionChanges();
     }
     
-    /** Finish connection changes in the block this anchor belongs to. */
-    public void finishConnectionChanges() {
-        this.block.finishConnectionChanges();
+    /**
+     * @return The variable refering to the expression belong to this anchor.
+     */
+    public Variable getVariable() {
+        return new LocalVar(this.binder);
     }
 
     /**
-     * @return The expression carried by the block to which this anchor belongs.
+     * Extends the expression graph to include all subexpression required
+     * @param exprGraph the let expression representing the current expression graph
      */
-    @Override
-    public Expression getExpr() {
-        return this.block.getExpr();
+    protected void extendExprGraph(LetExpression exprGraph) {
+        boolean fresh = exprGraph.prepend(this.binder, this.block.getLocalExpr());
+        if (fresh) {
+            this.block.extendExprGraph(exprGraph);
+        }
     }
     
     /** invalidates the visual state of the block this anchor belongs to*/

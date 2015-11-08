@@ -8,7 +8,7 @@ import nl.utwente.viskell.haskell.expr.Annotated;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Lambda;
-import nl.utwente.viskell.haskell.expr.LocalVar;
+import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
@@ -28,22 +28,19 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     // TODO make this an independent class if other blocks (case?) need this too 
     /** An internal output anchor for an argument binder. */
     public static class BinderAnchor extends OutputAnchor {
-        /** The variable binder corresponding to this input argument */
-        private final Binder binder;
 
         public BinderAnchor(DefinitionBlock parent, Binder binder) {
-            super(parent);
-            this.binder = binder;
+            super(parent, binder);
         }
 
-        @Override
-        public Expression getExpr() {
-            return new LocalVar(this.binder);
-        }
-        
         /** Set fresh type for the next typechecking cycle.*/
         private void refreshAnchorType(TypeScope scope) {
             this.setType(this.binder.refreshBinderType(scope));
+        }
+        
+        @Override
+        protected void extendExprGraph(LetExpression exprGraph) {
+            return; // the scope of graph is limited its parent
         }
     }
 
@@ -59,12 +56,12 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         }
         
         @Override
-        public Expression getExpr() {
+        public Expression getLocalExpr() {
             if (this.resType.isPresent()) {
-                return new Annotated(super.getExpr(), this.resType.get());
+                return new Annotated(super.getLocalExpr(), this.resType.get());
             }
            
-            return super.getExpr();
+            return super.getLocalExpr();
         }
         
         /** Set fresh type for the next typechecking cycle.*/
@@ -133,7 +130,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     private void setupAnchors() {
         this.argSpace.getChildren().addAll(this.args);
         this.resSpace.getChildren().add(this.res);
-        this.fun = new OutputAnchor(this);
+        this.fun = new OutputAnchor(this, new Binder("lam"));
         this.funSpace.getChildren().add(this.fun);
         TactilePane.setGoToForegroundOnContact(this, false);
     }
@@ -161,25 +158,27 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
 
     @Override
-    protected void propagateConnectionChanges() {
+    protected void propagateConnectionChanges(boolean finalPhase) {
         // first propagate into the internal blocks
-        this.res.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards());
+        this.res.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards(finalPhase));
 
         // also propagate in from above in case the lambda is partially connected 
         for (BinderAnchor arg : this.args) {
             for (InputAnchor anchor : arg.getOppositeAnchors()) {
-                anchor.handleConnectionChanges();
+                anchor.handleConnectionChanges(finalPhase);
             }
         }
 
         // continue as normal with propagating changes on the outside
-        super.propagateConnectionChanges();
+        super.propagateConnectionChanges(finalPhase);
     }
     
     @Override
     public final void updateExpr() {
         List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
-        this.expr = new Lambda(binders, this.res.getExpr());
+        LetExpression body = new LetExpression(this.res.getLocalExpr());
+        this.res.extendExprGraph(body);
+        this.localExpr = new Lambda(binders, body);
     }
 
     @Override
