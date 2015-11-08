@@ -12,10 +12,11 @@ public class EvalBox implements Box {
     public EvalBox(Grouping parent) {
         this.parent = parent;
         this.inputs = new ArrayList<>();
+        this.parent.addPart(this);
     }
 
     @Override
-    public Grouping getParent() {
+    public Grouping getDirectParent() {
         return parent;
     }
 
