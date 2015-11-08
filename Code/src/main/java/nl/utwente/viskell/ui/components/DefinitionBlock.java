@@ -62,9 +62,9 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         /** Set fresh type for the next typechecking cycle.*/
         private void refreshAnchorType(TypeScope scope) {
             if (this.resType.isPresent()) {
-                this.setRequiredType(this.resType.get().getFresh(scope));
+                this.setFreshRequiredType(this.resType.get(), scope);
             } else {
-                this.setRequiredType(TypeScope.unique("y"));
+                this.setFreshRequiredType(TypeScope.unique("y"), scope);
             }
         }
     }
@@ -149,7 +149,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         }
         types.add(this.res.getType());
 
-        this.fun.setFreshRequiredType(Type.fun(types.toArray(new Type[this.args.size()+1])));
+        this.fun.setExactRequiredType(Type.fun(types.toArray(new Type[this.args.size()+1])));
     }
 
     @Override

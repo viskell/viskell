@@ -14,6 +14,7 @@ import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.FunVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.ArrayList;
@@ -149,16 +150,17 @@ public class FunctionBlock extends Block {
     @Override
     public void refreshAnchorTypes() {
         Type type = this.funInfo.getFreshSignature();
+        TypeScope scope = new TypeScope();
         for (InputAnchor arg : this.getActiveInputs()) {
             if (type instanceof FunType) {
                 FunType ftype = (FunType)type;
-                arg.setRequiredType(ftype.getArgument());
+                arg.setFreshRequiredType(ftype.getArgument(), scope);
                 type = ftype.getResult();
             } else {
                 new RuntimeException("too many arguments in this functionblock " + this.getName());
             }
         }
-        this.output.setFreshRequiredType(type);
+        this.output.setFreshRequiredType(type, scope);
     }
 
     @Override

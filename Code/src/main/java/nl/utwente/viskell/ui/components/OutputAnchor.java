@@ -43,13 +43,29 @@ public class OutputAnchor extends ConnectionAnchor {
         return this.binder.getBoundType();
     }
 
+    /**
+     * Refreshes the internal anchor type. 
+     * @param scope wherein the fresh type is constructed
+     */
     public void refreshType(TypeScope scope) {
         this.binder.refreshBinderType(scope);
     }
     
-    public void setFreshRequiredType(Type type) {
-        this.binder.setAnnotation(type);
-        this.binder.refreshBinderType(new TypeScope());
+    /**
+     * Sets the internal anchor type.
+     * @param type to replace the internal type with.
+     */
+    public void setExactRequiredType(Type type) {
+        this.binder.setAnnotationAsType(type);
+    }
+    
+    /**
+     * Set a new type constraint for this anchor, and refreshes it internal type.
+     * @param type to constrain this anchor with.
+     * @param scope scope wherein the fresh type is constructed.
+     */
+    public void setFreshRequiredType(Type type, TypeScope scope) {
+        this.binder.setFreshAnnotation(type, scope);
     }
     
     /**

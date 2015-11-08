@@ -108,8 +108,13 @@ public class InputAnchor extends ConnectionAnchor {
         return this.type;
     }
 
-    public void setRequiredType(Type type) {
-        this.type = type;
+    /**
+     * Sets the type constraint of this input anchor to a fresh type.
+     * @param type constraint which this input anchor will require.
+     * @param scope wherein the fresh type is constructed.
+     */
+    public void setFreshRequiredType(Type type, TypeScope scope) {
+        this.type = type.getFresh(scope);
     }
 
     /**
