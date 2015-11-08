@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import com.google.common.collect.ImmutableMap;
@@ -35,9 +36,6 @@ public class ValueBlock extends Block {
     /** The label containing the constrained type of this block */
     @FXML protected Label valueType;
 
-    /** The type of this value. */
-    protected Type type;
-
     /**
      * Construct a new ValueBlock.
      * @param pane
@@ -50,8 +48,7 @@ public class ValueBlock extends Block {
         super(pane);
 
         this.value = new SimpleStringProperty(value);
-        this.output = new OutputAnchor(this, new Binder("val"));
-        this.type = type;
+        this.output = new OutputAnchor(this, new Binder("val", type));
 
         this.loadFXML(fxml);
 
@@ -81,12 +78,12 @@ public class ValueBlock extends Block {
     
     @Override
     public void updateExpr() {
-        this.localExpr = new Value(type.getFresh(), getValue());
+        this.localExpr = new Value(this.output.getType(), getValue());
     }
 
     @Override
     public void refreshAnchorTypes() {
-        this.output.setType(this.type.getFresh());
+        this.output.refreshType(new TypeScope());
     }
 
     @Override

@@ -33,11 +33,6 @@ public class DefinitionBlock extends Block implements ComponentLoader {
             super(parent, binder);
         }
 
-        /** Set fresh type for the next typechecking cycle.*/
-        private void refreshAnchorType(TypeScope scope) {
-            this.setType(this.binder.refreshBinderType(scope));
-        }
-        
         @Override
         protected void extendExprGraph(LetExpression exprGraph) {
             return; // the scope of graph is limited its parent
@@ -67,9 +62,9 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         /** Set fresh type for the next typechecking cycle.*/
         private void refreshAnchorType(TypeScope scope) {
             if (this.resType.isPresent()) {
-                this.setType(this.resType.get().getFresh(scope));
+                this.setRequiredType(this.resType.get().getFresh(scope));
             } else {
-                this.setType(TypeScope.unique("y"));
+                this.setRequiredType(TypeScope.unique("y"));
             }
         }
     }
@@ -144,7 +139,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     public void refreshAnchorTypes() {
         TypeScope scope = new TypeScope();
         for (BinderAnchor arg : this.args) {
-            arg.refreshAnchorType(scope);
+            arg.refreshType(scope);
         }
         this.res.refreshAnchorType(scope);
         
@@ -154,7 +149,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         }
         types.add(this.res.getType());
 
-        this.fun.setType(Type.fun(types.toArray(new Type[this.args.size()+1])));
+        this.fun.setFreshRequiredType(Type.fun(types.toArray(new Type[this.args.size()+1])));
     }
 
     @Override

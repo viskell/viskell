@@ -152,13 +152,13 @@ public class FunctionBlock extends Block {
         for (InputAnchor arg : this.getActiveInputs()) {
             if (type instanceof FunType) {
                 FunType ftype = (FunType)type;
-                arg.setType(ftype.getArgument());
+                arg.setRequiredType(ftype.getArgument());
                 type = ftype.getResult();
             } else {
                 new RuntimeException("too many arguments in this functionblock " + this.getName());
             }
         }
-        this.output.setType(type);
+        this.output.setFreshRequiredType(type);
     }
 
     @Override

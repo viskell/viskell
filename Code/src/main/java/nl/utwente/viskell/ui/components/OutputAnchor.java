@@ -10,6 +10,8 @@ import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.expr.Variable;
+import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 
 /**
  * Anchor that specifically functions as an output.
@@ -34,6 +36,20 @@ public class OutputAnchor extends ConnectionAnchor {
         // anchor (for InputAnchors), this switches that around to cover more of
         // the area under the visible anchor.
         getInvisibleAnchor().setTranslateY(getInvisibleAnchor().getTranslateY() * -1);
+    }
+    
+    @Override
+    public Type getType() {
+        return this.binder.getBoundType();
+    }
+
+    public void refreshType(TypeScope scope) {
+        this.binder.refreshBinderType(scope);
+    }
+    
+    public void setFreshRequiredType(Type type) {
+        this.binder.setAnnotation(type);
+        this.binder.refreshBinderType(new TypeScope());
     }
     
     /**
@@ -80,6 +96,11 @@ public class OutputAnchor extends ConnectionAnchor {
         }
     }
 
+    /** Initiate connection changes at the Block this anchor is attached to. */
+    public void initiateConnectionChanges() {
+        this.block.initiateConnectionChanges();
+    }
+    
     /** Prepare connection changes in the block this anchor belongs to. */
     public void prepareConnectionChanges() {
         this.block.prepareConnectionChanges();

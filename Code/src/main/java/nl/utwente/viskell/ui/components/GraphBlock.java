@@ -71,7 +71,7 @@ public class GraphBlock extends Block {
 
     @Override
     public void refreshAnchorTypes() {
-        this.input.setType(new FunType(Type.con("Double"), Type.con("Double"))); 
+        this.input.setRequiredType(new FunType(Type.con("Double"), Type.con("Double"))); 
     }
 
     @Override

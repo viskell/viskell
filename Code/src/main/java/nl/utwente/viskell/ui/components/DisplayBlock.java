@@ -115,7 +115,7 @@ public class DisplayBlock extends Block {
     
     @Override
     public void refreshAnchorTypes() {
-        this.inputAnchor.setType(TypeScope.unique("any"));        
+        this.inputAnchor.setRequiredType(TypeScope.unique("any"));        
     }
 
     @Override

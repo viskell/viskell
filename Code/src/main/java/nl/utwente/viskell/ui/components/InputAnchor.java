@@ -13,6 +13,8 @@ import javafx.scene.image.ImageView;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Hole;
 import nl.utwente.viskell.haskell.expr.LetExpression;
+import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 
 /**
  * ConnectionAnchor that specifically functions as an input.
@@ -20,6 +22,9 @@ import nl.utwente.viskell.haskell.expr.LetExpression;
 public class InputAnchor extends ConnectionAnchor {
     /** The Optional connection this anchor has. */
     private Optional<Connection> connection;
+    
+    /** The local type of this anchor */
+    private Type type;
     
     /** The expression to return when there is no connection. */
     private Hole connectionlessExpr;
@@ -40,6 +45,7 @@ public class InputAnchor extends ConnectionAnchor {
     public InputAnchor(Block block) {
         super(block);
         this.connection = Optional.empty();
+        this.type = TypeScope.unique("???");
         this.connectionlessExpr = new Hole();
         
         this.errorImage = new ImageView(ERROR_PICTURE);
@@ -97,6 +103,15 @@ public class InputAnchor extends ConnectionAnchor {
         return this.connection.isPresent();
     }
     
+    @Override
+    public Type getType() {
+        return this.type;
+    }
+
+    public void setRequiredType(Type type) {
+        this.type = type;
+    }
+
     /**
      * @return Optional of the connection's opposite output anchor.
      */
