@@ -31,4 +31,10 @@ public class SinkPort {
     public Type getType() {
         return this.type;
     }
+    
+    /** @return Optional of the wire's opposite sink port.  */
+    public Optional<SourcePort> getOppositePort() {
+        return this.wire.map(w -> w.getSource());
+    }
+
 }

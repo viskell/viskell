@@ -3,20 +3,20 @@ package nl.utwente.viskell.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EvalBox implements Box {
+public class EvalBox extends Box {
     
-    private Grouping parent;
+    private BoxGroup parent;
     
     private List<InputPort> inputs;
     
-    public EvalBox(Grouping parent) {
+    public EvalBox(BoxGroup parent) {
         this.parent = parent;
         this.inputs = new ArrayList<>();
         this.parent.addPart(this);
     }
 
     @Override
-    public Grouping getDirectParent() {
+    public BoxGroup getDirectParent() {
         return parent;
     }
 
@@ -28,6 +28,16 @@ public class EvalBox implements Box {
     @Override
     public List<OutputPort> getOutputs() {
         return new ArrayList<>();
+    }
+
+    @Override
+    protected void refreshPortTypes() {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    protected void updateExpr() {
+        // TODO Auto-generated method stub
     }
 
 }
