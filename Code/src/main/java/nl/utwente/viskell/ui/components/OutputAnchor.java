@@ -86,7 +86,7 @@ public class OutputAnchor extends ConnectionAnchor {
     }
     
     /**
-     * @return The variable refering to the expression belong to this anchor.
+     * @return The variable referring to the expression belong to this anchor.
      */
     public Variable getVariable() {
         return new LocalVar(this.binder);
@@ -97,8 +97,9 @@ public class OutputAnchor extends ConnectionAnchor {
      * @param exprGraph the let expression representing the current expression graph
      */
     protected void extendExprGraph(LetExpression exprGraph) {
-        boolean fresh = exprGraph.prepend(this.binder, this.block.getLocalExpr());
-        if (fresh) {
+        boolean added = exprGraph.addLetBinding(this.binder, this.block.getLocalExpr());
+        if (added) {
+            // for a new let binding everything from the subexpression in this block needs to be included
             this.block.extendExprGraph(exprGraph);
         }
     }

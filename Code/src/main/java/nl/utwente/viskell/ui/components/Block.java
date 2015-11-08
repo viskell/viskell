@@ -117,6 +117,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         return this.getOutputAnchor().map(a -> !a.hasConnection()).orElse(true);
     }
     
+    /**
+     * Starts a new (2 phase) change propagation process from this block.
+     */
     public final void initiateConnectionChanges() {
         this.handleConnectionChanges(false);
         this.handleConnectionChanges(true);
@@ -124,6 +127,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     
     /**
      * Handle the expression and types changes caused by modified connections or values.
+     * @param finalPhase whether the change propagation is in the second (final) phase.
      */
     public final void handleConnectionChanges(boolean finalPhase) {
         if (! finalPhase) {
@@ -151,6 +155,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     
     /**
      * Propagate the changes through connected blocks, then trigger a visual update.
+     * @param finalPhase whether the change propagation is in the second (final) phase.
      */
     protected void propagateConnectionChanges(boolean finalPhase) {
         if (this.updateInProgress != finalPhase) {

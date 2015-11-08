@@ -10,17 +10,35 @@ import nl.utwente.viskell.haskell.type.Type;
 
 public class LetExpression extends Expression {
 
-    private LinkedHashMap<Binder, Expression> binders;
+    /** An ordered map of let bindings consisting of binder and expression pairs. */
+    private final LinkedHashMap<Binder, Expression> binders;
     
-    private Expression body;
+    /** The expression forming the body of this let expression*/
+    private final Expression body;
     
+    /**
+     * Constructs an empty let expression (with no local bindings).
+     * @param body the main expression of this let.
+     */
     public LetExpression(Expression body) {
         super();
         this.body = body;
         this.binders = new LinkedHashMap<>();
     }
 
-    public boolean prepend(Binder binder, Expression expr) {
+    /** @return The body of this let expression */
+    public Expression getBody() {
+        return this.body;
+    }
+    
+    /**
+     * Extends a let expression with an extra binding.
+     * Preserves ordering of let bindings and avoids duplicate binders.
+     * @param binder the binder variable for the extra let binding.
+     * @param expr the bound subexpression for the extra let binding.
+     * @return whether a extra let binding has added to this let expression.
+     */
+    public boolean addLetBinding(Binder binder, Expression expr) {
         if (this.binders.containsKey(binder)) {
             // remove the old entry to preserve least recent insertion ordering
             this.binders.remove(binder);
@@ -34,6 +52,7 @@ public class LetExpression extends Expression {
     
     @Override
     protected Type inferType() throws HaskellTypeError {
+        // TODO the binders should be typechecked first
         return this.body.inferType();
     }
 

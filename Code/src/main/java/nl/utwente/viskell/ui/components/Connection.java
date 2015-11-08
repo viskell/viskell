@@ -95,10 +95,13 @@ public class Connection extends CubicCurve implements
     /**
      * Handles the upward connections changes through an connection.
      * Also perform typechecking for this connection.
+     * @param finalPhase whether the change propagation is in the second (final) phase.
      */
     public void handleConnectionChangesUpwards(boolean finalPhase) {
         // first make sure the output anchor block and types are fresh
-        this.startAnchor.prepareConnectionChanges();
+        if (!finalPhase) {
+            this.startAnchor.prepareConnectionChanges();
+        }
 
         // for connections in error state typechecking is delayed to the final phase to keep error locations stable
         if (finalPhase == this.errorState) {

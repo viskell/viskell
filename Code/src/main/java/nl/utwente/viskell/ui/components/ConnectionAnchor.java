@@ -129,7 +129,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         this.type = TypeScope.unique("???");
         this.new AnchorHandler(block.getPane().getConnectionCreationManager());
     }
-    
  
     /**
      * @param active The new active state for this ConnectionAnchor.
@@ -190,7 +189,10 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         this.block.initiateConnectionChanges();
     }
     
-    /** Handle the Connection changes for the Block this anchor is attached to. */
+    /** 
+     * Handle the Connection changes for the Block this anchor is attached to.
+     * @param finalPhase whether the change propagation is in the second (final) phase.
+     */
     protected void handleConnectionChanges(boolean finalPhase) {
         this.block.handleConnectionChanges(finalPhase);
     }
