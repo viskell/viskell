@@ -46,15 +46,7 @@ public class ExprTest {
 
     @Test
     public final void testAnalyze() throws HaskellException {
-        assertEquals("[Int -> Int]", this.expr.findType().prettyPrint());
-    }
-
-    @Test
-    public final void testCacheType() throws HaskellException {
-        Type type = this.expr.findType();
-
-        // Test is object is equal after subsequent call
-        assertTrue(type == this.expr.findType());
+        assertEquals("[Int -> Int]", this.expr.inferType().prettyPrint());
     }
 
     @Test(expected = HaskellTypeError.class)
@@ -69,13 +61,13 @@ public class ExprTest {
                         "[\"a\", \"b\", \"c\"]"
                 )
         );
-        assertNotEquals("[(String -> String)]", expr.findType().prettyPrint());
+        assertNotEquals("[(String -> String)]", expr.inferType().prettyPrint());
     }
 
     @Test
     public final void testValueToHaskell() throws HaskellException {
         final Expression v = new Value(this.integer, "10");
-        assertEquals(this.integer.prettyPrint(), v.findType().prettyPrint());
+        assertEquals(this.integer.prettyPrint(), v.inferType().prettyPrint());
         assertEquals("(10)", v.toHaskell());
     }
 

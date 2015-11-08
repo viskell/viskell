@@ -27,7 +27,7 @@ public class Lambda extends Expression {
     }
 
     @Override
-    protected Type inferType() throws HaskellTypeError {
+    public Type inferType() throws HaskellTypeError {
         TypeScope scope = new TypeScope();
         // Rule [Abs]:
         // assign the binder fresh type variable (x)
@@ -35,7 +35,7 @@ public class Lambda extends Expression {
             x.refreshBinderType(scope);
         }
         // infer the type (y) for the body with the type variable in the context
-        Type type = this.body.findType();
+        Type type = this.body.inferType();
         // then lambda has the function type (x -> y)
         for (Binder x : Lists.reverse(this.binders)) {
             type = new FunType(x.getBoundType(), type);

@@ -17,7 +17,7 @@ public class Hole extends Variable {
     }
 
     @Override
-    protected Type inferType() {
+    public Type inferType() {
         return typevar;
     }
 

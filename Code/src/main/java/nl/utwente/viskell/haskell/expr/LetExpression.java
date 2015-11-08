@@ -51,7 +51,7 @@ public class LetExpression extends Expression {
     }
     
     @Override
-    protected Type inferType() throws HaskellTypeError {
+    public Type inferType() throws HaskellTypeError {
         // TODO the binders should be typechecked first
         return this.body.inferType();
     }
