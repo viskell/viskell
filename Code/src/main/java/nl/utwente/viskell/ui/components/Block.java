@@ -111,6 +111,11 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         return Optional.empty();
     }
     
+    /** @return true if no connected output anchor exist */
+    private boolean isBottomMost() {
+        return this.getOutputAnchor().map(a -> !a.hasConnection()).orElse(true);
+    }
+    
     /**
      * Handle the expression and types changes caused by modified connections or values.
      */
@@ -153,26 +158,14 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     protected void propagateConnectionChanges() {
         // First make sure that all connected inputs will be updated too.        
         for (InputAnchor input : this.getAllInputs()) {
-            if (input.hasConnection()) {
-                input.getConnection(0).ifPresent(c -> c.handleConnectionChangesFrom(input));
-            } else {
-                input.setErrorState(false);
-            }
+            input.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards());
         }
 
-        // Boolean to check if this was the last Block that changed.
-        boolean propagatedDown = false;
-        if (this.getOutputAnchor().isPresent()) {
-            for (Optional<InputAnchor> anchor : this.getOutputAnchor().get().getOppositeAnchors()) {
-                if (anchor.isPresent()) {
-                    anchor.get().handleConnectionChanges();
-                    propagatedDown = true;
-                }
-            }
-        }
+        // propagate changes down from the output anchor to connected inputs
+        this.getOutputAnchor().ifPresent(a -> a.getOppositeAnchors().stream().forEach(x -> x.handleConnectionChanges()));
 
-        // Now the change is not propagated any further start recomputation.
-        if (!propagatedDown) {
+        // If the change is not propagated any further down start recomputation.
+        if (this.isBottomMost()) {
             // Needs to be delayed, because recomputation clears exprIsDirty also used to avoid infinite recursion.
             Platform.runLater(this::recomputeExpression);
         }

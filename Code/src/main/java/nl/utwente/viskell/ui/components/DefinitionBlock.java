@@ -163,14 +163,12 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     @Override
     protected void propagateConnectionChanges() {
         // first propagate into the internal blocks
-        if (this.res.hasConnection()) {
-            this.res.getConnection(0).ifPresent(c -> c.handleConnectionChangesFrom(this.res));
-        }
+        this.res.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards());
 
         // also propagate in from above in case the lambda is partially connected 
         for (BinderAnchor arg : this.args) {
-            for (Optional<InputAnchor> anchor : arg.getOppositeAnchors()) {
-                anchor.ifPresent(a -> a.handleConnectionChanges());
+            for (InputAnchor anchor : arg.getOppositeAnchors()) {
+                anchor.handleConnectionChanges();
             }
         }
 

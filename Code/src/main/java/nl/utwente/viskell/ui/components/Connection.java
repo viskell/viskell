@@ -1,8 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
 import com.google.common.collect.ImmutableMap;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -26,12 +24,6 @@ import java.util.Optional;
  * and {@link OutputAnchor}. Both anchors are stored referenced respectively as
  * startAnchor and endAnchor {@link Optional} within this class.
  * Visually a connection is represented as a cubic Bezier curve.
- * <p>
- * It is possible for a connection to exist without both anchors being present,
- * whenever the position of either the start or end anchor changes the
- * {@link #invalidateAnchorPositions()} should be called to refresh the visual
- * representation of the connection.
- * </p>
  * 
  * Connection is also a changeListener for a Transform, in order to be able to
  * update the Line's position when the anchor's positions change.
@@ -46,218 +38,128 @@ public class Connection extends CubicCurve implements
     public static final double BEZIER_CONTROL_OFFSET = 150f;
     
     /** Starting point of this Line that can be Anchored onto other objects. */
-    private Optional<OutputAnchor> startAnchor = Optional.empty();
+    private final OutputAnchor startAnchor;
     /** Ending point of this Line that can be Anchored onto other objects. */
-    private Optional<InputAnchor> endAnchor = Optional.empty();
+    private final InputAnchor endAnchor;
 
     /** The Pane this Connection is on. */
     private CustomUIPane pane;
     
-    /** Property describing the error state. */
-    private BooleanProperty errorState;
+    /** Whether this connection produced an error in the latest type unification. */
+    private boolean errorState;
 
     /** 
      * Construct a new Connection.
      * @param pane The Pane this Connection is on.
      * @param anchor A ConnectionAnchor of this Connection.
      */
-    public Connection(CustomUIPane pane, ConnectionAnchor anchor) {
+    public Connection(CustomUIPane pane, OutputAnchor source, InputAnchor sink) {
         this.loadFXML("Connection");
         TactilePane.setDraggable(this, false);
         TactilePane.setGoToForegroundOnContact(this, false);
         this.setMouseTransparent(true);
         
         this.pane = pane;
+        this.startAnchor = source;
+        this.endAnchor = sink;
+        this.errorState = false;
         pane.getChildren().add(0, this);
-        this.errorState = new SimpleBooleanProperty(false);
-        this.errorState.addListener(this::checkErrorListener);
-        Point2D initPos = pane.sceneToLocal(anchor.localToScene(anchor.getLocalCenter()));
-        this.setStartPosition(initPos);
-        this.setEndPosition(initPos);
-        connectTo(anchor);
-    }
-    
-    /** Set a new error state. */
-    public void setErrorState(boolean error) {
-        errorState.set(error);
+        this.invalidateAnchorPositions();
+        this.startAnchor.addConnection(this);
+        this.startAnchor.localToSceneTransformProperty().addListener(this);
+        this.endAnchor.setConnection(this);
+        this.endAnchor.localToSceneTransformProperty().addListener(this);
+
+        // typecheck the new connection to mark potential errors at the best location
+        try {
+            TypeChecker.unify("new connection", this.startAnchor.getType(), this.endAnchor.getType());
+        } catch (HaskellTypeError e) {
+            this.endAnchor.setErrorState(true);
+            this.toggleErrorState(true);
+        }
     }
     
     /**
-     * Get the optional output anchor on the other side of
-     * the provided input anchor in this Connection.
-     * 
-     * @param anchor on this side of the connection  
-     * @return the output anchor if it exists in this connection.
+     * @return the output anchor of this connection.
      */
-    public Optional<OutputAnchor> getOppositeAnchorOf(InputAnchor anchor) {
-        return this.endAnchor.filter(ia -> ia == anchor).flatMap(x -> this.startAnchor);
+    public OutputAnchor getStartAnchor() {
+        return this.startAnchor;
     }
 
     /**
-     * Get the optional output anchor on the other side of
-     * the provided input anchor in this Connection.
-     * 
-     * @param anchor on this side of the connection  
-     * @return the input anchor if it exists in this connection.
+     * @return the input anchor of this connection.
      */
-    public Optional<InputAnchor> getOppositeAnchorOf(OutputAnchor anchor) {
-        return this.startAnchor.filter(oa -> oa == anchor).flatMap(x -> this.endAnchor);
+    public InputAnchor getEndAnchor() {
+        return this.endAnchor;
     }
     
     /**
      * Handles the upward connections changes through an connection.
      * Also perform typechecking for this connection.
-     * @param input the input anchor of this change propagation.
      */
-    public void handleConnectionChangesFrom(InputAnchor input) {
-        if (!this.startAnchor.isPresent()) {
-            return;
-        }
-        
-        OutputAnchor output = this.startAnchor.get();
+    public void handleConnectionChangesUpwards() {
         // first make sure the output anchor block and types are fresh
-        output.prepareConnectionChanges();
+        this.startAnchor.prepareConnectionChanges();
 
         // for connections in error state typechecking is delayed to keep error locations stable
-        if (! this.errorState.get()) {
+        if (! this.errorState) {
             try {
                 // first a trial unification on a copy of the types to minimize error propagation
-                TypeChecker.unify("trial connection", output.getType().getFresh(), input.getType().getFresh());
+                TypeChecker.unify("trial connection", this.startAnchor.getType().getFresh(), this.endAnchor.getType().getFresh());
                 // unify the actual types
-                TypeChecker.unify("connection", output.getType(), input.getType());
+                TypeChecker.unify("connection", this.startAnchor.getType(), this.endAnchor.getType());
             } catch (HaskellTypeError e) {
-                input.setErrorState(true);
+                this.endAnchor.setErrorState(true);
+                this.toggleErrorState(true);
             }
         }
 
         // continue with propagating connections changes in the output anchor block 
-        output.finishConnectionChanges();
+        this.startAnchor.finishConnectionChanges();
     }
 
-    public Optional<Expression> getExprFrom(InputAnchor input){
-        if (!this.startAnchor.isPresent()) {
-            return Optional.empty();
-        }
-        
-        OutputAnchor output = this.startAnchor.get();
-        
-        if (this.errorState.get()) {
+    public Expression getExprFrom(InputAnchor input) {
+        if (this.errorState) {
             // attempt to recover from an error
             try {
                 // first a trial unification on a copy of the types to minimize error propagation
-                TypeChecker.unify("trial error recovery", output.getType().getFresh(), input.getType().getFresh());
+                TypeChecker.unify("trial error recovery", this.startAnchor.getType().getFresh(), input.getType().getFresh());
                 // unify the actual types
-                TypeChecker.unify("error recovery", output.getType(), input.getType());
+                TypeChecker.unify("error recovery", this.startAnchor.getType(), input.getType());
                 input.setErrorState(false);
+                this.toggleErrorState(false);
             } catch (HaskellTypeError e) {
                 // the error is still present
             }
         }
         
-        return Optional.of(output.getExpr());
+        return this.startAnchor.getExpr();
     }
     
     /**
-     * Sets an OutputAnchor or InputAnchor for this line.
-     * After setting the line will update accordingly to the possible state change.
+     * Updates the error state of this connection, including visual effects.
+     * @param error The new error state
      */
-    public void connectTo(ConnectionAnchor newAnchor) {
-        // Add the anchor.
-        if (newAnchor instanceof OutputAnchor && !startAnchor.isPresent()) {
-            startAnchor = Optional.of((OutputAnchor) newAnchor);
-        } else if (newAnchor instanceof InputAnchor && !endAnchor.isPresent()) {
-            endAnchor = Optional.of((InputAnchor) newAnchor);
-        } else {
-            return;
-        }
-        
-        // Add this to the anchor.
-        newAnchor.addConnection(this);
-        newAnchor.localToSceneTransformProperty().addListener(this);
-        invalidateAnchorPositions();
-        
-        // only when both ends are connected the visuals need to be updated
-        if (this.isFullyConnected()) {
-            // typecheck the new connection to mark potential errors at the best location
-            try {
-                TypeChecker.unify("new connection", this.startAnchor.get().getType(), this.endAnchor.get().getType());
-            } catch (HaskellTypeError e) {
-                this.endAnchor.get().setErrorState(true);
-            }
-
-            newAnchor.handleConnectionChanges();
-        }
-    }
-
-    /**
-     * Sets the free ends (empty anchors) to the specified position.
-     * 
-     * @param point Coordinates local to the Line's parent.
-     */
-    public void setFreeEnds(Point2D point) {
-        if (!startAnchor.isPresent()) {
-            this.setStartPosition(point);
-        }
-        if (!endAnchor.isPresent()) {
-            this.setEndPosition(point);
-        }
-    }
-    
-    /**
-     * Listener method that can be attached to a BooleanProperty in order to
-     * update the error state based on that property.
-     */
-    private void checkErrorListener(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
+    private void toggleErrorState(boolean error) {
+        this.errorState = error;
         ObservableList<String> styleClass = this.getStyleClass();
         styleClass.removeAll("error");
-        if (newValue) {
+        if (error) {
             styleClass.add("error");
         }
     }
     
     /**
-     * @return Whether or not both sides of this Connection are connected to an Anchor.
-     */
-    public final boolean isFullyConnected() {
-        return startAnchor.isPresent() && endAnchor.isPresent();
-    }
-
-    /**
-     * Properly disconnects the given anchor from this Connection, notifying the anchor of its disconnection.
-     */
-    public final void disconnect(ConnectionAnchor anchor) {
-        boolean wasConnected = isFullyConnected();
-        // Find out what anchor to disconnect, and do so.
-        if (startAnchor.isPresent() && startAnchor.get().equals(anchor)) {
-            startAnchor = Optional.empty();
-        } else if (endAnchor.isPresent() && endAnchor.get().equals(anchor)) {
-            endAnchor = Optional.empty();
-        } else {
-            return; // can't find anchor to disconnect
-        }
-        
-        // Fully disconnect the anchor from this Connection.
-        anchor.localToSceneTransformProperty().removeListener(this);
-        anchor.dropConnection(this);
-            
-        if (wasConnected) {
-            //Let the now disconnected anchor update its visuals.
-            anchor.handleConnectionChanges();
-            //Let the remaining connected anchors update their visuals.
-            this.startAnchor.ifPresent(a -> a.handleConnectionChanges());
-            this.endAnchor.ifPresent(a -> a.handleConnectionChanges());
-            this.setErrorState(false);
-            this.invalidateAnchorPositions();
-        }
-    }
-
-    /**
      * Removes this Connection, disconnecting its anchors and removing this Connection from the pane it is on.
      */
     public final void remove() {
-        startAnchor.ifPresent(a -> disconnect(a));
-        endAnchor.ifPresent(a -> disconnect(a));
+        this.startAnchor.localToSceneTransformProperty().removeListener(this);
+        this.endAnchor.localToSceneTransformProperty().removeListener(this);
+        this.startAnchor.dropConnection(this);
+        this.endAnchor.removeConnections();
         pane.getChildren().remove(this);
+        this.startAnchor.handleConnectionChanges();
+        this.endAnchor.handleConnectionChanges();
     }
 
     @Override
@@ -267,8 +169,8 @@ public class Connection extends CubicCurve implements
 
     /** Update the UI positions of both start and end anchors. */
     private void invalidateAnchorPositions() {
-        startAnchor.ifPresent(a -> this.setStartPosition(pane.sceneToLocal(a.localToScene(a.getLocalCenter()))));
-        endAnchor.ifPresent(a -> this.setEndPosition(pane.sceneToLocal(a.localToScene(a.getLocalCenter()))));
+        this.setStartPosition(pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 0))));
+        this.setEndPosition(pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, 0))));
     }
 
     @Override
@@ -279,8 +181,8 @@ public class Connection extends CubicCurve implements
     @Override
     public Map<String, Object> toBundle() {
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
-        startAnchor.ifPresent(start -> bundle.putAll(start.toBundle()));
-        endAnchor.ifPresent(end -> bundle.putAll(end.toBundle()));
+        bundle.putAll(this.startAnchor.toBundle());
+        bundle.putAll(this.endAnchor.toBundle());
         return bundle.build();
     }
 
@@ -328,4 +230,5 @@ public class Connection extends CubicCurve implements
         this.setControlX2(this.getEndX());
         this.setControlY2(this.getEndY() - yOffset);
     }
+
 }
