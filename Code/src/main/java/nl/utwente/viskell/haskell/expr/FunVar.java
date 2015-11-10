@@ -23,7 +23,7 @@ public class FunVar extends Variable {
     }
 
     @Override
-    protected Type inferType() throws HaskellTypeError {
+    public Type inferType() throws HaskellTypeError {
         return this.funInfo.getFreshSignature();
     }
 

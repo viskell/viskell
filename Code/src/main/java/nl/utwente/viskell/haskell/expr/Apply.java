@@ -35,9 +35,9 @@ public class Apply extends Expression {
     }
 
     @Override
-    protected final Type inferType() throws HaskellTypeError {
-        final Type funcType = func.findType();
-        final Type argType = arg.findType();
+    public final Type inferType() throws HaskellTypeError {
+        final Type funcType = func.inferType();
+        final Type argType = arg.inferType();
         final Type resType = TypeScope.unique("b");
 
         // Rule [App]:

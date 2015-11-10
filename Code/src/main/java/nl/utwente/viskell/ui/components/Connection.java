@@ -8,7 +8,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
-import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.ui.ComponentLoader;
@@ -96,18 +95,23 @@ public class Connection extends CubicCurve implements
     /**
      * Handles the upward connections changes through an connection.
      * Also perform typechecking for this connection.
+     * @param finalPhase whether the change propagation is in the second (final) phase.
      */
-    public void handleConnectionChangesUpwards() {
+    public void handleConnectionChangesUpwards(boolean finalPhase) {
         // first make sure the output anchor block and types are fresh
-        this.startAnchor.prepareConnectionChanges();
+        if (!finalPhase) {
+            this.startAnchor.prepareConnectionChanges();
+        }
 
-        // for connections in error state typechecking is delayed to keep error locations stable
-        if (! this.errorState) {
+        // for connections in error state typechecking is delayed to the final phase to keep error locations stable
+        if (finalPhase == this.errorState) {
             try {
                 // first a trial unification on a copy of the types to minimize error propagation
                 TypeChecker.unify("trial connection", this.startAnchor.getType().getFresh(), this.endAnchor.getType().getFresh());
                 // unify the actual types
                 TypeChecker.unify("connection", this.startAnchor.getType(), this.endAnchor.getType());
+                this.endAnchor.setErrorState(false);
+                this.toggleErrorState(false);
             } catch (HaskellTypeError e) {
                 this.endAnchor.setErrorState(true);
                 this.toggleErrorState(true);
@@ -115,27 +119,9 @@ public class Connection extends CubicCurve implements
         }
 
         // continue with propagating connections changes in the output anchor block 
-        this.startAnchor.finishConnectionChanges();
+        this.startAnchor.handleConnectionChanges(finalPhase);
     }
 
-    public Expression getExprFrom(InputAnchor input) {
-        if (this.errorState) {
-            // attempt to recover from an error
-            try {
-                // first a trial unification on a copy of the types to minimize error propagation
-                TypeChecker.unify("trial error recovery", this.startAnchor.getType().getFresh(), input.getType().getFresh());
-                // unify the actual types
-                TypeChecker.unify("error recovery", this.startAnchor.getType(), input.getType());
-                input.setErrorState(false);
-                this.toggleErrorState(false);
-            } catch (HaskellTypeError e) {
-                // the error is still present
-            }
-        }
-        
-        return this.startAnchor.getExpr();
-    }
-    
     /**
      * Updates the error state of this connection, including visual effects.
      * @param error The new error state
@@ -157,9 +143,12 @@ public class Connection extends CubicCurve implements
         this.endAnchor.localToSceneTransformProperty().removeListener(this);
         this.startAnchor.dropConnection(this);
         this.endAnchor.removeConnections();
-        pane.getChildren().remove(this);
-        this.startAnchor.handleConnectionChanges();
-        this.endAnchor.handleConnectionChanges();
+        this.pane.getChildren().remove(this);
+        // propagate the connection changes of both anchors simultaneously in two phases to avoid duplicate work 
+        this.startAnchor.handleConnectionChanges(false);
+        this.endAnchor.handleConnectionChanges(false);
+        this.startAnchor.handleConnectionChanges(true);
+        this.endAnchor.handleConnectionChanges(true);
     }
 
     @Override
@@ -169,8 +158,8 @@ public class Connection extends CubicCurve implements
 
     /** Update the UI positions of both start and end anchors. */
     private void invalidateAnchorPositions() {
-        this.setStartPosition(pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 0))));
-        this.setEndPosition(pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, 0))));
+        this.setStartPosition(this.pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 0))));
+        this.setEndPosition(this.pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, 0))));
     }
 
     @Override

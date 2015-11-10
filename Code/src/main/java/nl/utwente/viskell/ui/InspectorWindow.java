@@ -59,7 +59,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
 
     public void update() {
         this.block.get().ifPresent(block -> {
-            Expression expr = block.getExpr();
+            Expression expr = block.getFullExpr();
             String haskell = expr.toHaskell();
 
             json.setText(Exporter.export(pane));
@@ -81,7 +81,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
         String type;
 
         try {
-            type = expr.findType().prettyPrint();
+            type = expr.inferType().prettyPrint();
         } catch (HaskellException e) {
             type = "?";
         }

@@ -7,16 +7,17 @@ import nl.utwente.viskell.haskell.type.TypeVar;
 /*
  * A Hole represents an yet unknown gap in an Expression or an open input connection
  */
-public class Hole extends Expression {
+public class Hole extends Variable {
 
     private final TypeVar typevar;
     
     public Hole() {
+        super("<<hole>>");
         this.typevar = TypeScope.unique("holey");
     }
 
     @Override
-    protected Type inferType() {
+    public Type inferType() {
         return typevar;
     }
 

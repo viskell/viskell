@@ -6,6 +6,7 @@ import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.CustomUIPane;
@@ -49,7 +50,7 @@ public class ValueBlock extends Block {
         super(pane);
 
         this.value = new SimpleStringProperty(value);
-        this.output = new OutputAnchor(this);
+        this.output = new OutputAnchor(this, new Binder("val"));
         this.type = type;
 
         this.loadFXML(fxml);
@@ -80,7 +81,7 @@ public class ValueBlock extends Block {
     
     @Override
     public void updateExpr() {
-        this.expr = new Value(type.getFresh(), getValue());
+        this.localExpr = new Value(type.getFresh(), getValue());
     }
 
     @Override

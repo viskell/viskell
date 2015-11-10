@@ -9,7 +9,6 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
-import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
@@ -130,7 +129,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         this.type = TypeScope.unique("???");
         this.new AnchorHandler(block.getPane().getConnectionCreationManager());
     }
-    
  
     /**
      * @param active The new active state for this ConnectionAnchor.
@@ -155,11 +153,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         return invisibleAnchor;
     }
 
-    /**
-     * @return The Expr this ConnectionAnchor represents (coming from a Block).
-     */
-    public abstract Expression getExpr();
-    
     /**
      * @return the local type of this anchor
      */
@@ -191,9 +184,17 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      */
     public abstract boolean hasConnection();
 
-    /** Handle the Connection changes for the Block this anchor is attached to. */
-    public void handleConnectionChanges() {
-        this.block.handleConnectionChanges();
+    /** Initiate connection changes at the Block this anchor is attached to. */
+    public void initiateConnectionChanges() {
+        this.block.initiateConnectionChanges();
+    }
+    
+    /** 
+     * Handle the Connection changes for the Block this anchor is attached to.
+     * @param finalPhase whether the change propagation is in the second (final) phase.
+     */
+    protected void handleConnectionChanges(boolean finalPhase) {
+        this.block.handleConnectionChanges(finalPhase);
     }
     
     @Override

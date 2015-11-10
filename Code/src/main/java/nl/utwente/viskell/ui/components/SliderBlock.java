@@ -24,7 +24,7 @@ public class SliderBlock extends ValueBlock {
 
         slider.valueProperty().addListener(ev -> {
             setValue(String.valueOf(slider.getValue()));
-            this.handleConnectionChanges();
+            this.initiateConnectionChanges();
         });
     }
 }

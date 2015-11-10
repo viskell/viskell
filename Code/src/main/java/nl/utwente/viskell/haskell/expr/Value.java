@@ -29,7 +29,7 @@ public class Value extends Expression {
     }
 
     @Override
-    protected final Type inferType() throws HaskellTypeError {
+    public final Type inferType() throws HaskellTypeError {
         return this.type;
     }
 

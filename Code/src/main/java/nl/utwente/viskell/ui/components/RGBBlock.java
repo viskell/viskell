@@ -54,7 +54,7 @@ public class RGBBlock extends DisplayBlock {
     private int evaluateAnchor(InputAnchor anchor) {
         try {
             GhciSession ghci = getPane().getGhciSession().get();
-            String result = ghci.pull(anchor.getExpr());
+            String result = ghci.pull(anchor.getFullExpr());
 
             double v = Math.max(0.0, Math.min(1.0, Double.valueOf(result)));
             return (int) Math.round(v * 255);

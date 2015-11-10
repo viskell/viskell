@@ -28,8 +28,8 @@ public class Annotated extends Expression {
     }
 
     @Override
-    protected Type inferType() throws HaskellTypeError {
-        Type type = this.expr.findType();
+    public Type inferType() throws HaskellTypeError {
+        Type type = this.expr.inferType();
         TypeChecker.unify(this, type, this.annotation.getFresh());
         return type;
     }

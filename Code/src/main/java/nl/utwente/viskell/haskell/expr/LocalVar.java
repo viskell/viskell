@@ -20,7 +20,7 @@ public class LocalVar extends Variable {
     }
 
     @Override
-    protected Type inferType() throws HaskellTypeError {
+    public Type inferType() throws HaskellTypeError {
         return binder.getBoundType();
     }
 
