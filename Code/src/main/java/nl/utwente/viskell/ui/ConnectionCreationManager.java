@@ -85,7 +85,7 @@ public class ConnectionCreationManager {
             // drop the wire, even if connection failed
             this.removeWire(id);
             if (connection != null) {
-                anchor.initiateConnectionChanges();
+                connection.getStartAnchor().initiateConnectionChanges();
             }
         } else {
             throw new RuntimeException("InvalidInputId");

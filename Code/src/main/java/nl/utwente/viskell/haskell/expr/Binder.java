@@ -1,6 +1,5 @@
 package nl.utwente.viskell.haskell.expr;
 
-import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 
@@ -16,7 +15,7 @@ public final class Binder {
     private Type inferenceType;
     
     /** An optional type annotation to restrict the type of this binder */
-    private final Type annotation;
+    private Type annotation;
     
     /** 
      * @param name of this Binder
@@ -64,17 +63,36 @@ public final class Binder {
 
     /**
      * @return the type for the use site of this binder 
-     * @throws HaskellTypeError if this function is called before refreshBinderType
+     * @throws RuntimeException if this function is called before refreshBinderType
      */
-    public final Type getBoundType() throws HaskellTypeError {
+    public final Type getBoundType() {
         if (this.inferenceType == null) {
             // technically it is an error in scoping but this will do for now
-            throw new HaskellTypeError("Using the type before it is bound, of binder: " + this.name);
+            throw new RuntimeException("Using the type before it is bound, of binder: " + this.name);
         }
         
         return this.inferenceType;
     }
     
+    /**
+     * Sets the type annotation of the binder and makes its internal type fresh.
+     * @param type to annotate this binder with.
+     * @param scope wherein the fresh type is constructed.
+     */
+    public void setFreshAnnotation(Type type, TypeScope scope) {
+        this.annotation = type;
+        this.inferenceType = type.getFresh(scope);
+    }
+
+    /**
+     * Replaces the type annotation and internal type with another type. 
+     * @param type to annotate this binder with.
+     */
+    public void setAnnotationAsType(Type type) {
+        this.annotation = type;
+        this.inferenceType = type;
+    }
+
     @Override
     public final String toString() {
         if (this.inferenceType == null) {
@@ -83,5 +101,5 @@ public final class Binder {
         
         return this.name + "::" + this.inferenceType.toString();
     }
-    
+
 }

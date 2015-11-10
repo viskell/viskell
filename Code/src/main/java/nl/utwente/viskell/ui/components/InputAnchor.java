@@ -13,6 +13,8 @@ import javafx.scene.image.ImageView;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Hole;
 import nl.utwente.viskell.haskell.expr.LetExpression;
+import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 
 /**
  * ConnectionAnchor that specifically functions as an input.
@@ -21,8 +23,8 @@ public class InputAnchor extends ConnectionAnchor {
     /** The Optional connection this anchor has. */
     private Optional<Connection> connection;
     
-    /** The expression to return when there is no connection. */
-    private Hole connectionlessExpr;
+    /** The local type of this anchor */
+    private Type type;
     
     /** Property storing the error state. */
     private BooleanProperty errorState;
@@ -40,7 +42,7 @@ public class InputAnchor extends ConnectionAnchor {
     public InputAnchor(Block block) {
         super(block);
         this.connection = Optional.empty();
-        this.connectionlessExpr = new Hole();
+        this.type = TypeScope.unique("???");
         
         this.errorImage = new ImageView(ERROR_PICTURE);
         double height = this.getVisibleAnchor().getBoundsInLocal().getHeight();
@@ -97,6 +99,20 @@ public class InputAnchor extends ConnectionAnchor {
         return this.connection.isPresent();
     }
     
+    @Override
+    public Type getType() {
+        return this.type;
+    }
+
+    /**
+     * Sets the type constraint of this input anchor to a fresh type.
+     * @param type constraint which this input anchor will require.
+     * @param scope wherein the fresh type is constructed.
+     */
+    public void setFreshRequiredType(Type type, TypeScope scope) {
+        this.type = type.getFresh(scope);
+    }
+
     /**
      * @return Optional of the connection's opposite output anchor.
      */
@@ -108,7 +124,7 @@ public class InputAnchor extends ConnectionAnchor {
      * @return The local expression carried by the connection connected to this anchor.
      */
     public Expression getLocalExpr() {
-        return this.connection.map(c -> c.getStartAnchor().getVariable()).orElse(connectionlessExpr);
+        return this.connection.map(c -> c.getStartAnchor().getVariable()).orElse(new Hole());
     }
     
     /**
@@ -126,15 +142,6 @@ public class InputAnchor extends ConnectionAnchor {
      */
     protected void extendExprGraph(LetExpression exprGraph) {
         this.connection.ifPresent(c -> c.getStartAnchor().extendExprGraph(exprGraph));
-    }
-
-    /**
-     * Gets the Expression that is connected to this, or when not connected create a fresh expression representing the open input.   
-     * @return The updated expression carried by the connection connected to this anchor.
-     */
-    public final Expression getUpdatedExpr() {
-        this.connectionlessExpr = new Hole();
-        return this.getLocalExpr();
     }
 
     /**

@@ -110,12 +110,12 @@ public class DisplayBlock extends Block {
 
     @Override
     public void updateExpr() {
-        this.localExpr = inputAnchor.getUpdatedExpr();
+        this.localExpr = inputAnchor.getLocalExpr();
     }
     
     @Override
     public void refreshAnchorTypes() {
-        this.inputAnchor.setType(TypeScope.unique("any"));        
+        this.inputAnchor.setFreshRequiredType(TypeScope.unique("any"), new TypeScope());        
     }
 
     @Override

@@ -10,7 +10,6 @@ import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.type.Type;
-import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ConnectionCreationManager;
 import nl.utwente.viskell.ui.serialize.Bundleable;
@@ -111,9 +110,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** The block this ConnectionAnchor belongs to. */
     protected final Block block;
     
-    /** The local type of this anchor */
-    private Type type;
-
     /** The visual representation of the ConnectionAnchor. */
     @FXML private Shape visibleAnchor;
     
@@ -126,7 +122,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public ConnectionAnchor(Block block) {
         this.loadFXML("ConnectionAnchor");
         this.block = block;
-        this.type = TypeScope.unique("???");
         this.new AnchorHandler(block.getPane().getConnectionCreationManager());
     }
  
@@ -156,22 +151,13 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /**
      * @return the local type of this anchor
      */
-    public Type getType() {
-        return this.type;
-    }
-    
-    /**
-     * @param type the local type of this anchor
-     */
-    public void setType(Type type) {
-        this.type = type;
-    }
+    public abstract Type getType();
     
     /**
      * @return the string representation of the in- or output type.
      */
-    public String getStringType() {
-        return this.type.prettyPrint();
+    public final String getStringType() {
+        return this.getType().prettyPrint();
     }
     
     /**
@@ -184,11 +170,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      */
     public abstract boolean hasConnection();
 
-    /** Initiate connection changes at the Block this anchor is attached to. */
-    public void initiateConnectionChanges() {
-        this.block.initiateConnectionChanges();
-    }
-    
     /** 
      * Handle the Connection changes for the Block this anchor is attached to.
      * @param finalPhase whether the change propagation is in the second (final) phase.
