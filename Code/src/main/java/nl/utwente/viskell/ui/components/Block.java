@@ -19,7 +19,6 @@ import nl.utwente.viskell.ui.serialize.Bundleable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.
@@ -105,16 +104,21 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     }
 
     /**
-     * @return the optional output Anchor for this Block
-     * TODO generalize to List<OutputAnchor> getOutputAnchors()
+     * @return All OutputAnchors of the Block.
      */
-    public Optional<OutputAnchor> getOutputAnchor() {
-        return Optional.empty();
+    public List<OutputAnchor> getAllOutputs() {
+        return ImmutableList.of();
     }
     
     /** @return true if no connected output anchor exist */
     public boolean isBottomMost() {
-        return this.getOutputAnchor().map(a -> !a.hasConnection()).orElse(true);
+        for (OutputAnchor anchor : getAllOutputs()) {
+            if (anchor.hasConnection()) {
+                return false;
+            }
+        }
+        
+        return true;
     }
     
     /**
@@ -175,8 +179,8 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         }
 
         // propagate changes down from the output anchor to connected inputs
-        this.getOutputAnchor().ifPresent(a -> a.getOppositeAnchors().stream().forEach(x -> x.handleConnectionChanges(finalPhase)));
-
+        this.getAllOutputs().stream().forEach(output -> output.getOppositeAnchors().forEach(input -> input.handleConnectionChanges(finalPhase)));
+        
         // If the change is not propagated any further down start recomputation.
         if (finalPhase && this.isBottomMost()) {
             // Now that the expressions and types are updated, initiate a visual refresh.

@@ -1,6 +1,8 @@
 package nl.utwente.viskell.ui.components;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -19,7 +21,6 @@ import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -135,8 +136,8 @@ public class FunctionBlock extends Block {
     }
 
     @Override
-    public Optional<OutputAnchor> getOutputAnchor() {
-        return Optional.of(output);
+    public List<OutputAnchor> getAllOutputs() {
+        return ImmutableList.of(output);
     }
 
     @Override
