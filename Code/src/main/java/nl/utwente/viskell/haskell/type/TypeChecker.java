@@ -35,7 +35,7 @@ public final class TypeChecker {
         TypeChecker.logger.info(String.format("Unifying types %s and %s for context %s", a, b, context));
 
         if (a.equals(b)) {
-        	// for identical types unifying is trivial
+            // for identical types unifying is trivial
         } else if (a instanceof TypeVar) {
             TypeVar va = (TypeVar) a;
 
@@ -46,8 +46,8 @@ public final class TypeChecker {
             }
 
             if (va.hasConcreteInstance()) {
-            	// if a type variable has been instantiated already then we can just unify b with a concrete type of a
-            	TypeChecker.unify(context, va.getInstantiatedType(), b);
+                // if a type variable has been instantiated already then we can just unify b with a concrete type of a
+                TypeChecker.unify(context, va.getInstantiatedType(), b);
             } else if (b instanceof TypeVar) {
                 TypeVar vb = (TypeVar) b;
                 
@@ -80,8 +80,8 @@ public final class TypeChecker {
             }
         } else if (a instanceof FunType && b instanceof FunType) {
             // Unifying function types is pairwise unification of its argument and result. 
-        	FunType fa = (FunType) a;
-        	FunType fb = (FunType) b;
+            FunType fa = (FunType) a;
+            FunType fb = (FunType) b;
             TypeChecker.unify(context, fa.getArgument(), fb.getArgument());
             TypeChecker.unify(context, fa.getResult(), fb.getResult());
         } else if (a instanceof TypeApp && b instanceof TypeApp) {
