@@ -10,6 +10,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+/**
+ * Evaluator class. Haskell expressions (strings) go in, results (strings)
+ * come out. Results that look like errors or exceptions cause a HaskellException.
+ *
+ * Uses an actual interpreter as a subprocess. Which interpreter that is is
+ * decided by a subclass. Which subclass to pick is decided by GhciSession.
+ *
+ * Not to be used from multiple threads.
+ */
 abstract public class Evaluator {
     /** Responses from ghci are terminated by a null byte. */
     protected static final char SENTINEL = 0;
@@ -59,7 +68,7 @@ abstract public class Evaluator {
 
     /**
      * Destroys the ghci instance and closes communications channels.
-     * @throws IOException when closing the channels fails.
+     * @throws HaskellException when closing the channels fails.
      */
     public final void close() throws HaskellException {
         try {
@@ -122,6 +131,9 @@ abstract public class Evaluator {
         return response;
     }
 
+    /** @return the command and arguments for the subprocess. */
     protected abstract List<String> getCommand();
+
+    /** @return the list of modules to load automatically. */
     protected abstract List<String> getModules();
 }

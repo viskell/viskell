@@ -106,6 +106,7 @@ public final class GhciSession implements Closeable {
         }
     }
 
+    /** Build a new Evaluator, closing the old one if it exists. */
     public void start() throws HaskellException {
         if (this.ghci != null) {
             this.ghci.close();
@@ -114,6 +115,7 @@ public final class GhciSession implements Closeable {
         this.ghci = evaluatorFactory(pickBackend());
     }
 
+    /** Build the Evaluator that corresponds to the given Backend identifier. */
     private Evaluator evaluatorFactory(Backend evaluator) throws HaskellException {
         switch (evaluator) {
             case GHCi:  return new GhciEvaluator();
@@ -122,12 +124,14 @@ public final class GhciSession implements Closeable {
         }
     }
 
+    /** @return the Backend in the preferences, or GHCi otherwise. */
     public static Backend pickBackend() {
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
         String name = prefs.get("ghci", Backend.GHCi.name());
         return Backend.valueOf(name);
     }
 
+    /** @return the available backend identifiers. */
     public static List<Backend> getBackends() {
         return Lists.newArrayList(EnumSet.allOf(Backend.class));
     }

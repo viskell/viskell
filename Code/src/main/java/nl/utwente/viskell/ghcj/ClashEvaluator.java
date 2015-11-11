@@ -5,7 +5,8 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 /**
- * Evaluator for ghci that pushes code to the ghci environment and can evaluate expressions and return a result.
+ * Evaluator implementation that talks with CLaSH interactive mode instead of GHCi.
+ * http://www.clash-lang.org/
  */
 public class ClashEvaluator extends GhciEvaluator {
     public ClashEvaluator() throws HaskellException {

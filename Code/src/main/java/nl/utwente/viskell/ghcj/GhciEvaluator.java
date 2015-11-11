@@ -5,7 +5,8 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 
 /**
- * Evaluator for ghci that pushes code to the ghci environment and can evaluate expressions and return a result.
+ * Evaluator implementation that uses GHCi, the Glasgow Haskell Compiler's
+ * interactive mode, for evaluating Haskell expressions.
  */
 public class GhciEvaluator extends Evaluator {
     public GhciEvaluator() throws HaskellException {
