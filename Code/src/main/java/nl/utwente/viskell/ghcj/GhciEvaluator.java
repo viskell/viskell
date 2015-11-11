@@ -25,6 +25,6 @@ public class GhciEvaluator extends Evaluator {
 
     @Override
     protected String getCatalogPath() {
-        return "/catalog/catalog.xml";
+        return "/catalog/haskell.xml";
     }
 }

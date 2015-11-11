@@ -25,6 +25,6 @@ public class ClashEvaluator extends GhciEvaluator {
 
     @Override
     protected String getCatalogPath() {
-        return "/catalog/catalog.xml";
+        return "/catalog/clash.xml";
     }
 }
