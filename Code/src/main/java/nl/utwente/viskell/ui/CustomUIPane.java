@@ -64,8 +64,6 @@ public class CustomUIPane extends Region {
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
-        this.catalog = new HaskellCatalog();
-        this.envInstance = this.catalog.asEnvironment();
 
         this.ghci = new GhciSession();
         this.ghci.startAsync();

@@ -5,6 +5,7 @@ import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import nl.utwente.viskell.haskell.env.Environment;
+import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.Main;
@@ -181,5 +182,9 @@ public final class GhciSession extends AbstractExecutionThreadService {
     /** @return the available backend identifiers. */
     public static List<Backend> getBackends() {
         return Lists.newArrayList(EnumSet.allOf(Backend.class));
+    }
+
+    public HaskellCatalog getCatalog() {
+        return new HaskellCatalog(this.ghci.getCatalogPath());
     }
 }

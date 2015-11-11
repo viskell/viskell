@@ -22,4 +22,9 @@ public class GhciEvaluator extends Evaluator {
     protected List<String> getModules() {
         return ImmutableList.of("Data.List", "Data.Maybe", "Data.Either");
     }
+
+    @Override
+    protected String getCatalogPath() {
+        return "/catalog/catalog.xml";
+    }
 }
