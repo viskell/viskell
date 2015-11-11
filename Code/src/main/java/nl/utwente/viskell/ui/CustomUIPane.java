@@ -24,13 +24,13 @@ import java.util.stream.Stream;
 public class CustomUIPane extends Region {
     /** bottom pane layer intended for block container such as lambda's */
     private final Pane bottomLayer;
-    
+
     /** middle pane layer for ordinary blocks */
     private final Pane blockLayer;
-    
+
     /** higher pane layer for connections wires */
     private final Pane wireLayer;
-    
+
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
     
@@ -53,19 +53,19 @@ public class CustomUIPane extends Region {
     /**
      * Constructs a new instance.
      */
-    public CustomUIPane(HaskellCatalog catalog) {
+    public CustomUIPane() {
         super();
         this.bottomLayer = new Pane();
         this.blockLayer = new Pane(this.bottomLayer);
         this.wireLayer = new Pane(this.blockLayer);
         this.getChildren().add(this.wireLayer);
-        
+
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
-        this.catalog = catalog;
-        this.envInstance = catalog.asEnvironment();
+        this.catalog = new HaskellCatalog();
+        this.envInstance = this.catalog.asEnvironment();
 
         this.ghci = new GhciSession();
         this.ghci.startAsync();
@@ -185,7 +185,7 @@ public class CustomUIPane extends Region {
         }
         
         block.getAllOutputs().stream().forEach(output -> output.removeConnections());
-        
+
         if (block.belongsOnBottom()) {
             this.bottomLayer.getChildren().remove(block);
         } else {
@@ -262,7 +262,7 @@ public class CustomUIPane extends Region {
     public void addMenu(Node menu) {
         this.getChildren().add(menu);
     }
-    
+
     public void removeMenu(Node menu) {
         this.getChildren().remove(menu);
     }
@@ -282,7 +282,7 @@ public class CustomUIPane extends Region {
     public void removeWire(Node drawWire) {
         this.getChildren().remove(drawWire);
     }
-    
+
     public void clearChildren() {
         this.bottomLayer.getChildren().clear();
         this.blockLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
@@ -293,5 +293,5 @@ public class CustomUIPane extends Region {
         return Stream.concat(this.bottomLayer.getChildren().stream(), Stream.concat(
                 this.blockLayer.getChildren().stream().skip(1), this.wireLayer.getChildren().stream().skip(1)));
     }
-    
+
 }
