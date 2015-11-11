@@ -1,0 +1,25 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import nl.utwente.viskell.ui.components.MatchBlock?>
+<fx:root type="nl.utwente.viskell.ui.components.MatchBlock" xmlns:fx="http://javafx.com/fxml/">
+    <BorderPane>
+        <top>
+            <TilePane fx:id="inputSpace" tileAlignment="CENTER" prefTileWidth="50" alignment="CENTER" />
+        </top>
+        <center>
+			<HBox styleClass="match, block">
+				<BorderPane fx:id="functionInfo">
+                    <padding><Insets top="0" right="10" bottom="0" left="10"/></padding>
+					<center>
+						<Label text="${controller.name}" styleClass="title" />
+					</center>
+				</BorderPane>
+			    <Pane fx:id="nestSpace"/>
+			</HBox>
+        </center>
+        <bottom>
+            <TilePane fx:id="outputSpace" tileAlignment="CENTER" prefTileWidth="50" alignment="CENTER" maxHeight="0"/>
+        </bottom>
+    </BorderPane>
+</fx:root>

@@ -79,7 +79,12 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                 return new ListCell<CatalogFunction>() {
                     {
                         this.setOnMouseReleased(e -> {
-                            addFunctionBlock(this.getItem());
+                            if (!e.isControlDown()) {
+                                addFunctionBlock(this.getItem());
+                            }
+                            else {
+                                addConstructorBlock(this.getItem());
+                            }
                         });
                     }
 
@@ -133,6 +138,11 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
     private void addFunctionBlock(FunctionInfo entry) {
         FunctionBlock fb = new FunctionBlock(entry, parent);
+        addBlock(fb);
+    }
+
+    private void addConstructorBlock(FunctionInfo entry) {
+        MatchBlock fb = new MatchBlock(entry, parent);
         addBlock(fb);
     }
 

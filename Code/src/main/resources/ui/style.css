@@ -226,3 +226,17 @@ ImageView.hoverMenu {
     -fx-padding: 0 5 4 5;
 }
 
+MatchBlock {
+	-fx-background-color: lime;
+}
+
+MatchBlock .block {
+	-fx-min-height: 60px;
+	-fx-height: 60px;
+	-fx-background-color: fuchsia;
+}
+
+MatchBlock BorderPane {
+	-fx-background_color: yellow;
+	-fx-min-width: 100px;
+}

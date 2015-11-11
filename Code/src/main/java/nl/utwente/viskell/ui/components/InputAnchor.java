@@ -103,6 +103,10 @@ public class InputAnchor extends ConnectionAnchor {
     public Type getType() {
         return this.type;
     }
+    
+    public void setType(Type t) {
+        this.type = t;
+    }
 
     /**
      * Sets the type constraint of this input anchor to a fresh type.
