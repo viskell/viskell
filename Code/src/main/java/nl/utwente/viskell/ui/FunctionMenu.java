@@ -118,12 +118,15 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         defBlockButton.setOnAction(event -> addDefinitionBlock());
         Button lambdaBlockButton = new Button("Lambda Block");
         lambdaBlockButton.setOnAction(event -> addLambdaBlock());
+        Button muxBlockButton = new Button("Multiplexer Block");
+        muxBlockButton.setOnAction(event -> addBlock(new MultiplexerBlock(parent)));
 
         Button closeButton = new Button("Close");
         closeButton.setOnAction(event -> close());
 
         utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton,
-                defBlockButton, lambdaBlockButton, sliderBlockButton, rgbBlockButton, graphBlockButton);
+                defBlockButton, lambdaBlockButton, sliderBlockButton, rgbBlockButton,
+                graphBlockButton, muxBlockButton);
 
         for (Node button : utilSpace.getChildren()) {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);

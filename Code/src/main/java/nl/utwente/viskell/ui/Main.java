@@ -46,6 +46,7 @@ public class Main extends Application {
         ButtonOverlay buttonOverlay = new ButtonOverlay(debug, tactilePane);
 
         // Check if GHCI is available
+        /*
         try {
             GhciEvaluator testGhci = new GhciEvaluator(); 
             testGhci.eval("");
@@ -59,6 +60,7 @@ public class Main extends Application {
 
             e.printStackTrace(); // In case it's not a file-not-found
         }
+        */
         
         // Init scene
         Scene scene = new Scene(buttonOverlay);
