@@ -1,15 +1,16 @@
 package nl.utwente.viskell.ui.components;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.TilePane;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Binder;
@@ -19,9 +20,8 @@ import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Main building block for the visual interface, this class represents a Haskell
@@ -38,19 +38,16 @@ public class FunctionBlock extends Block {
     private FunctionInfo funInfo;
 
     /** The space containing the input anchor(s). */
-    @FXML private Pane inputSpace;
+    @FXML private TilePane inputSpace;
 
     /** The space containing the output anchor. */
-    @FXML private BorderPane outputSpace;
+    @FXML private TilePane outputSpace;
 
     /** The space containing all the arguments of the function. */
     private ArgumentSpace argumentSpace;
     
     /** The space in which to nest the FunctionBlock's inner parts. */
     @FXML private Pane nestSpace;
-    
-    /** The space in which the information of the function is displayed. */
-    @FXML private Pane functionInfo;
     
     /**
      * Method that creates a newInstance of this class along with it's visual
@@ -87,15 +84,11 @@ public class FunctionBlock extends Block {
         
         // Create an anchor for the result
         output = new OutputAnchor(this, new Binder("res"));
-        outputSpace.setCenter(output);
+        outputSpace.getChildren().add(output);
         
-        // Make sure the prefWidth is correctly updated.
-        this.prefWidthProperty().bind(functionInfo.widthProperty().add(argumentSpace.prefWidthProperty()));
         
         this.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         this.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        functionInfo.setMinWidth(Region.USE_PREF_SIZE);
-        functionInfo.setMaxWidth(Region.USE_PREF_SIZE);
         
         // Since at this point of the width of the Labels is unknown, we have to ask for another layout pass.
         Platform.runLater(this::updateLayout);

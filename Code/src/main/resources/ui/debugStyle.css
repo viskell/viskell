@@ -1,0 +1,165 @@
+/* Layout */
+
+CustomUIPane {
+    -fx-background-position: 2500 2500;
+}
+
+.menu.block {
+    -fx-font-size: 12px;
+}
+
+.menu.block .title {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.menu.block .content {
+    -fx-font-size: 15px;
+    -fx-font-weight: normal;
+}
+
+.menu.block #categorySpace TitledPane {
+    -fx-padding: 3px;
+}
+
+.menu.block #utilSpace {
+    -fx-padding: 3px;
+    -fx-spacing: 6px;
+}
+
+.block {
+	-fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-font-family: Titillium;
+	-fx-alignment: center-left;
+}
+
+.block .header {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-font-family: fantasy;
+}
+
+.block .title {
+	-fx-padding: 0 10px 0 10px;
+	-fx-font-size: 20px;
+    -fx-font-weight: bolder;
+}
+
+.block .content {
+    -fx-font-size: 25px;
+    -fx-font-weight: normal;
+}
+
+.value.block {
+    -fx-padding: 0 20 0 20;
+}
+
+.display.block {
+    -fx-text-alignment: center;
+}
+
+.graph.block LineChart {
+    -fx-font-size: 14px;
+}
+
+.argumentSpace Label {
+    -fx-padding: 0 5 0 5;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.display.block Label {
+    -fx-padding: 4 5 0 5;
+}
+
+.value.block Label {
+    -fx-padding: 0 5 4 5;
+}
+
+.match.block {
+	-fx-border-radius: 20px;
+}
+
+#inputSpace, #outputSpace {
+	-fx-pref-tile-width: 50px;
+	-fx-alignment: center;
+}
+
+.drawwire {
+    -fx-stroke-width: 5px;
+}
+
+.connection {
+    -fx-stroke-width: 3px;
+}
+
+.overlayButtons Button {
+    -fx-font-family: monospace;
+    -fx-font-size: 14px;
+}
+
+.context-menu .menu-item .label {
+    -fx-font-family: Titillium;
+}
+
+.signature {
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 0, 0;
+}
+
+
+
+
+/* Colouring */
+
+.invisTouchZone { 
+    -fx-fill: rgba(0,255,0,0.1);
+}
+
+.drawwire {
+    -fx-stroke: #0066FF;
+    -fx-fill: null;
+}
+
+.connection {
+    -fx-stroke: #FF0000;
+    -fx-fill: null;
+}
+
+
+
+CustomUIPane * {
+	-fx-border-style: solid;
+	-fx-border-size: 2px;
+	-fx-background-color: rgba(255, 255, 255, 0.3);
+}
+
+CustomUIPane > * {
+	-fx-border-color: yellow;
+}
+
+CustomUIPane > * > * {
+	-fx-border-color: red;
+}
+
+CustomUIPane > * > * > * {
+	-fx-border-color: lime;
+}
+
+CustomUIPane > * > * > * > * {
+	-fx-border-color: fuchsia;
+}
+
+CustomUIPane > * > * > * > * > * {
+	-fx-border-color: orange;
+}
+
+CustomUIPane > * > * > * > * > * > * {
+	-fx-border-color: cyan;
+}
+
+CustomUIPane > * > * > * > * > * > * > * {
+	-fx-border-color: red;
+}
+

@@ -3,16 +3,20 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
+import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Binder;
+import nl.utwente.viskell.haskell.expr.FunVar;
+import nl.utwente.viskell.haskell.expr.OtherMatchBinder;
+import nl.utwente.viskell.haskell.expr.PrimaryMatchBinder;
+import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import com.google.common.collect.ImmutableList;
@@ -32,16 +36,21 @@ public class MatchBlock extends Block {
      */
     protected InputAnchor input;
     
-    protected StringProperty name;
-    
     /** The space containing the input anchor(s). */
-    @FXML private TilePane inputSpace;
+    @FXML protected TilePane inputSpace;
 
     /** The space containing the output anchor. */
-    @FXML private TilePane outputSpace;
+    @FXML protected TilePane outputSpace;
+
+    /** The space containing the output anchor. */
+    @FXML protected Label name;
 
     /** The space in which to nest the FunctionBlock's inner parts. */
-    @FXML private Pane nestSpace;
+    @FXML protected Pane nestSpace;
+    
+    protected FunctionInfo info;
+
+    protected PrimaryMatchBinder primaryBinder;
     
 
     public MatchBlock(FunctionInfo funInfo, CustomUIPane pane) {
@@ -49,12 +58,17 @@ public class MatchBlock extends Block {
         this.loadFXML("MatchBlock");
         
         outputs = new ArrayList<>();
+        info = funInfo;
+        Type type = info.getFreshSignature();
+        primaryBinder = new PrimaryMatchBinder(info.getName());
         
-        Type type = funInfo.getFreshSignature();
         int outputCount = 0;
         while (type instanceof FunType) {
             FunType ft = (FunType) type;
-            outputs.add(new OutputAnchor(this, new Binder("res"+outputCount, ft.getArgument())));
+            
+            Binder binder = new OtherMatchBinder("res"+outputCount, ft.getArgument());
+            primaryBinder.addBinder(binder);
+            outputs.add(new OutputAnchor(this, binder));
             type = ft.getResult();
             outputCount++;
         }
@@ -62,28 +76,13 @@ public class MatchBlock extends Block {
         input = new InputAnchor(this);
         input.setType(type);
         
-        name = new SimpleStringProperty("DERP "+funInfo.getName());
-
-        /*ArgumentSpace typeSpace = new ArgumentSpace(this, outputCount);
-        typeSpace.setKnotIndex(getAllInputs().size());
+        name.setText(info.getName());
         
-        nestSpace.getChildren().add(typeSpace);
-        typeSpace.knotIndexProperty().addListener(e -> invalidateKnotIndex());*/
+        //TODO Fill in the type space
         
         outputSpace.getChildren().addAll(outputs);
         inputSpace.getChildren().add(input);
-        
-        // Since at this point of the width of the Labels is unknown, we have to ask for another layout pass.
-        Platform.runLater(this::updateLayout);
     }
-    
-    /** Updates the layout, if this Pane has a parent. */
-    public void updateLayout() {
-        if (this.getParent() != null) {
-            this.getParent().requestLayout();
-        }
-    }
-    
     
     @Override
     public List<InputAnchor> getAllInputs() {
@@ -97,20 +96,35 @@ public class MatchBlock extends Block {
 
     @Override
     protected void refreshAnchorTypes() {
-        // TODO Auto-generated method stub
-
+        Type type = info.getFreshSignature();
+        TypeScope scope = new TypeScope();
+        
+        for (OutputAnchor anchor : outputs) {
+            if (type instanceof FunType) {
+                FunType ftype = (FunType)type;
+                anchor.setFreshRequiredType(ftype.getArgument(), scope);
+                type = ftype.getResult();
+            } else {
+                new RuntimeException("too many arguments in this functionblock " + name.getText());
+            }
+        }
+        
+        input.setFreshRequiredType(type, scope);
     }
 
     @Override
     public void updateExpr() {
-        // TODO Auto-generated method stub
-
+        localExpr = input.getLocalExpr();//new Value(info.getFreshSignature(), "derp");
     }
 
     @Override
     public void invalidateVisualState() {
         // TODO Auto-generated method stub
 
+    }
+
+    public Binder getPrimaryBinder() {
+        return primaryBinder;
     }
 
 }

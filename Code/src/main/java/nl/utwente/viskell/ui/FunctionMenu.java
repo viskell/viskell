@@ -1,6 +1,7 @@
 package nl.utwente.viskell.ui;
 
 import com.google.common.base.Splitter;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -8,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -79,11 +81,11 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                 return new ListCell<CatalogFunction>() {
                     {
                         this.setOnMouseReleased(e -> {
-                            if (!e.isControlDown()) {
-                                addFunctionBlock(this.getItem());
+                            if (e.getButton() == MouseButton.SECONDARY) {
+                                addConstructorBlock(this.getItem());
                             }
                             else {
-                                addConstructorBlock(this.getItem());
+                                addFunctionBlock(this.getItem());
                             }
                         });
                     }

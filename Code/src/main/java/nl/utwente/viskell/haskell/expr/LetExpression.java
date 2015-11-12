@@ -59,7 +59,17 @@ public class LetExpression extends Expression {
     @Override
     public String toHaskell() {
         StringBuilder builder = new StringBuilder();
-        this.binders.forEach((v, x) -> builder.insert(0, v.getUniqueName() + " = " + x.toHaskell() + "; "));
+        this.binders.forEach((binder, expression) -> {
+            if (binder instanceof PrimaryMatchBinder) {
+                builder.insert(0, ((PrimaryMatchBinder)binder).getPattern() + " = " + expression.toHaskell() + "; ");
+            }
+            else if (binder instanceof OtherMatchBinder) {
+                //nothing
+            }
+            else {
+                builder.insert(0, binder.getUniqueName() + " = " + expression.toHaskell() + "; ");
+            }
+        });
         builder.insert(0, "let {");
         builder.append("} in ");
         builder.append(this.body.toHaskell());
