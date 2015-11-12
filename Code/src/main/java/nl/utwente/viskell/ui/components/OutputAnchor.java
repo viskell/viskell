@@ -143,7 +143,7 @@ public class OutputAnchor extends ConnectionAnchor {
     
     /** invalidates the visual state of the block this anchor belongs to*/
     public void invalidateVisualState() {
-        this.block.staleVisuals.set(true);
+        this.block.invalidateVisualState();
     }
 
     @Override

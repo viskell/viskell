@@ -1,12 +1,8 @@
 package nl.utwente.viskell.ui.components;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -39,15 +35,6 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** The pane that is used to hold state and place all components on. */
     private CustomUIPane parentPane;
     
-    /** The Circle (Context) menu associated with this block instance. */
-    private CircleMenu circleMenu;
-    
-    /** The local expression of this Block. */
-    protected Expression localExpr;
-    
-    /** Property for the whether the visuals are up to date. */
-    protected BooleanProperty staleVisuals;
-    
     /** Whether the anchor types are fresh*/
     private boolean freshAnchorTypes;
     
@@ -59,11 +46,8 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      */
     public Block(CustomUIPane pane) {
         this.parentPane = pane;
-        this.staleVisuals = new SimpleBooleanProperty(false);
         this.freshAnchorTypes = false;
         this.updateInProgress = false;
-        
-        this.staleVisuals.addListener(this::fixupVisualState);
         
         // Visually react on selection.
         this.parentPane.selectedBlockProperty().addListener(event -> {
@@ -84,11 +68,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     private void handleMouseEvent(MouseEvent t) {
         parentPane.setSelectedBlock(this);
         if (t.getButton() == MouseButton.SECONDARY) {
-            if (this.circleMenu == null) {
-                this.circleMenu = new CircleMenu(this);
-            }
-            
-            this.circleMenu.show(t);
+            CircleMenu.showFor(this, t);
         }
     }
 
@@ -100,17 +80,13 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /**
      * @return All InputAnchors of the block.
      */
-    public List<InputAnchor> getAllInputs() {
-        return ImmutableList.of();
-    }
+    public abstract List<InputAnchor> getAllInputs();
 
     /**
      * @return the optional output Anchor for this Block
      * TODO generalize to List<OutputAnchor> getOutputAnchors()
      */
-    public Optional<OutputAnchor> getOutputAnchor() {
-        return Optional.empty();
-    }
+    public abstract Optional<OutputAnchor> getOutputAnchor();
     
     /** @return true if no connected output anchor exist */
     public boolean isBottomMost() {
@@ -169,33 +145,25 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
             input.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards(finalPhase));
         }
         
-        // after type checking all input in the first phase, refresh the local expression of this block
-        if (!finalPhase) {
-            this.updateExpr();
-        }
-
         // propagate changes down from the output anchor to connected inputs
         this.getOutputAnchor().ifPresent(a -> a.getOppositeAnchors().stream().forEach(x -> x.handleConnectionChanges(finalPhase)));
 
-        // If the change is not propagated any further down start recomputation.
-        if (finalPhase && this.isBottomMost()) {
-            // Now that the expressions and types are updated, initiate a visual refresh.
-            Platform.runLater(() -> this.staleVisuals.set(true));
+        if (finalPhase) {
+            // Now that the expressions and types are fully updated, initiate a visual refresh.
+            Platform.runLater(() -> this.invalidateVisualState());
         }
     }
     
     /**
      * @return The local expression this Block represents.
      */
-    public final Expression getLocalExpr() {
-        return this.localExpr;
-    }
+    public abstract Expression getLocalExpr();
     
     /**
      * @return A complete expression of this block and all its dependencies.
      */
     public final Expression getFullExpr() {
-        LetExpression fullExpr = new LetExpression(this.localExpr);
+        LetExpression fullExpr = new LetExpression(this.getLocalExpr());
         this.extendExprGraph(fullExpr);
         return fullExpr;
     }
@@ -211,31 +179,10 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     }
     
     /**
-     * Updates the expression
-     */
-    public abstract void updateExpr();
-    
-    /**
      * Called when the VisualState changed.
      */
     public abstract void invalidateVisualState();
     
-    /**
-     * ChangeListener that resolves outdated visuals and 
-     * propagates visual update requirements upwards.
-     */
-    private void fixupVisualState(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newStale) {
-        if (newStale) {
-            this.invalidateVisualState();
-        
-            for (InputAnchor input : this.getAllInputs()) {
-                input.getOppositeAnchor().ifPresent(a -> a.invalidateVisualState());
-            }
-            
-            this.staleVisuals.setValue(false);
-        }
-    }
-
     /**
      * @return class-specific properties of this Block.
      */

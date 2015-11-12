@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.List;
 import java.util.Optional;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -7,11 +8,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import nl.utwente.viskell.haskell.expr.Binder;
+import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -77,8 +80,8 @@ public class ValueBlock extends Block {
     }
     
     @Override
-    public void updateExpr() {
-        this.localExpr = new Value(this.output.getType(), getValue());
+    public Expression getLocalExpr() {
+        return new Value(this.output.getType(), getValue());
     }
 
     @Override
@@ -86,6 +89,11 @@ public class ValueBlock extends Block {
         this.output.refreshType(new TypeScope());
     }
 
+    @Override
+    public List<InputAnchor> getAllInputs() {
+        return ImmutableList.of();
+    }
+    
     @Override
     public Optional<OutputAnchor> getOutputAnchor() {
         return Optional.of(output);
