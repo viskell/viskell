@@ -62,7 +62,6 @@ public class CustomUIPane extends TactilePane {
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
         this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleRelease);
-        this.addEventHandler(ScrollEvent.SCROLL, this::handleScroll);
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
     }
 
@@ -147,17 +146,6 @@ public class CustomUIPane extends TactilePane {
     private void setScale(double scale) {
         this.setScaleX(scale);
         this.setScaleY(scale);
-    }
-
-    private void handleScroll(ScrollEvent scrollEvent) {
-        /* Ignore (drop) scroll events synthesized from touches. */
-        if (scrollEvent.getTouchCount() > 0) return;
-
-        if (scrollEvent.getDeltaY() > 0) {
-            zoomIn();
-        } else if (scrollEvent.getDeltaY() < 0) {
-            zoomOut();
-        }
     }
 
     /**
