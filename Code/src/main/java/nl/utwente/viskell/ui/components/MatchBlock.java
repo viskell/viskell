@@ -8,12 +8,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
-import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Binder;
-import nl.utwente.viskell.haskell.expr.FunVar;
 import nl.utwente.viskell.haskell.expr.OtherMatchBinder;
 import nl.utwente.viskell.haskell.expr.PrimaryMatchBinder;
-import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
@@ -114,13 +111,12 @@ public class MatchBlock extends Block {
 
     @Override
     public void updateExpr() {
-        localExpr = input.getLocalExpr();//new Value(info.getFreshSignature(), "derp");
+        localExpr = input.getLocalExpr();
     }
 
     @Override
     public void invalidateVisualState() {
-        // TODO Auto-generated method stub
-
+        // TODO Propagate new visual state to anchors
     }
 
     public Binder getPrimaryBinder() {

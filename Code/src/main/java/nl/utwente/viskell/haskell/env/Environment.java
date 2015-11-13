@@ -80,7 +80,7 @@ public class Environment {
     public final void addTestSignature(String name, String signature) {
         TypeBuilder builder = new TypeBuilder(this.typeClasses);
         Type type = builder.build(signature);
-        this.functions.put(name, new CatalogFunction(name, "!TEST!", type, ""));
+        this.functions.put(name, new CatalogFunction(name, "!TEST!", type, "", false));
     }
 
     /**

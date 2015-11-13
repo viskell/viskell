@@ -143,9 +143,11 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         addBlock(fb);
     }
 
-    private void addConstructorBlock(FunctionInfo entry) {
-        MatchBlock fb = new MatchBlock(entry, parent);
-        addBlock(fb);
+    private void addConstructorBlock(CatalogFunction entry) {
+        if (entry.getConstructor()) {
+            MatchBlock fb = new MatchBlock(entry, parent);
+            addBlock(fb);
+        }
     }
 
     private void addValueBlock() {

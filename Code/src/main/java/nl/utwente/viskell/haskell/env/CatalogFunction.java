@@ -12,16 +12,20 @@ public class CatalogFunction extends FunctionInfo implements Comparable<CatalogF
     /** The documentation string for this Entry. */
     private final String documentation;
 
+    /** Whether this function is a constructor **/
+    private boolean isConstructor;
+
     /**
      * @param name The function name.
      * @param category The category this function belongs to.
      * @param signature The type signature for this function.
      * @param documentation The documentation for this function.
      */
-    CatalogFunction(final String name, final String category, final Type signature, final String documentation) {
+    CatalogFunction(final String name, final String category, final Type signature, final String documentation, final boolean isConstructor) {
         super(name, signature);
         this.category = category;
         this.documentation = documentation;
+        this.isConstructor = isConstructor;
     }
 
     /**
@@ -41,6 +45,10 @@ public class CatalogFunction extends FunctionInfo implements Comparable<CatalogF
     @Override
     public final int compareTo(final CatalogFunction entry) {
         return this.getName().compareTo(entry.getName());
+    }
+
+    public boolean getConstructor() {
+        return isConstructor;
     }
 
 }

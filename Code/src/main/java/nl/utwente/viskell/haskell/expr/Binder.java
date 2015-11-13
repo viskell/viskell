@@ -37,7 +37,7 @@ public class Binder {
     /**
      * @return The name (made unique) of this binder, for avoiding name conflicts in code generation
      */
-    public final String getUniqueName() {
+    public String getUniqueName() {
         return name + "__" + Integer.toHexString(this.hashCode());
     }
 

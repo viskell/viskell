@@ -43,12 +43,14 @@
     </xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="functionType">
-    <xs:simpleContent>
-      <xs:extension base="xs:token">
-        <xs:attribute type="xs:token" name="name" use="required"/>
-        <xs:attribute type="xs:token" name="signature" use="required"/>
-      </xs:extension>
-    </xs:simpleContent>
+  	<xs:simpleContent>
+  		<xs:extension base="xs:token">
+  			<xs:attribute type="xs:token" name="name" use="required" />
+  			<xs:attribute type="xs:token" name="signature"
+  				use="required" />
+  			<xs:attribute name="isConstructor" type="xs:boolean"></xs:attribute>
+  		</xs:extension>
+  	</xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="superClassType">
     <xs:simpleContent>

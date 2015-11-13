@@ -3,8 +3,6 @@ package nl.utwente.viskell.haskell.expr;
 import java.util.ArrayList;
 import java.util.List;
 
-import nl.utwente.viskell.haskell.type.Type;
-
 public class PrimaryMatchBinder extends Binder {
     
     protected List<Binder> binders;
@@ -21,7 +19,8 @@ public class PrimaryMatchBinder extends Binder {
         binders.add(binder);
     }
     
-    public String getPattern() {
+    @Override
+    public String getUniqueName() {
         return binders.stream().map(Binder::getUniqueName).reduce(constructor, (str, bname) -> str+" "+bname);
     }
 }

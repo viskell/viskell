@@ -1,5 +1,3 @@
-/* Layout */
-
 CustomUIPane {
     -fx-background-position: 2500 2500;
 }
@@ -20,6 +18,7 @@ CustomUIPane {
 
 .menu.block #categorySpace TitledPane {
     -fx-padding: 3px;
+    -fx-label-padding: 5px;
 }
 
 .menu.block #utilSpace {
@@ -32,6 +31,7 @@ CustomUIPane {
     -fx-font-weight: bold;
     -fx-font-family: Titillium;
 	-fx-alignment: center-left;
+    -fx-border-width: 2px;
 }
 
 .block .header {
@@ -77,10 +77,6 @@ CustomUIPane {
     -fx-padding: 0 5 4 5;
 }
 
-.match.block {
-	-fx-border-radius: 20px;
-}
-
 #inputSpace, #outputSpace {
 	-fx-pref-tile-width: 50px;
 	-fx-alignment: center;
@@ -107,59 +103,3 @@ CustomUIPane {
     -fx-background-insets: 0, 0;
     -fx-background-radius: 0, 0;
 }
-
-
-
-
-/* Colouring */
-
-.invisTouchZone { 
-    -fx-fill: rgba(0,255,0,0.1);
-}
-
-.drawwire {
-    -fx-stroke: #0066FF;
-    -fx-fill: null;
-}
-
-.connection {
-    -fx-stroke: #FF0000;
-    -fx-fill: null;
-}
-
-
-
-CustomUIPane * {
-	-fx-border-style: solid;
-	-fx-border-size: 2px;
-	-fx-background-color: rgba(255, 255, 255, 0.3);
-}
-
-CustomUIPane > * {
-	-fx-border-color: yellow;
-}
-
-CustomUIPane > * > * {
-	-fx-border-color: red;
-}
-
-CustomUIPane > * > * > * {
-	-fx-border-color: lime;
-}
-
-CustomUIPane > * > * > * > * {
-	-fx-border-color: fuchsia;
-}
-
-CustomUIPane > * > * > * > * > * {
-	-fx-border-color: orange;
-}
-
-CustomUIPane > * > * > * > * > * > * {
-	-fx-border-color: cyan;
-}
-
-CustomUIPane > * > * > * > * > * > * > * {
-	-fx-border-color: red;
-}
-
