@@ -18,6 +18,7 @@ import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 
+/** Represent a lambda construct with internal anchor and blocks */
 public class LambdaContainer extends BorderPane implements ComponentLoader {
 
     // TODO make this an independent class if other blocks (case?) need this too 
@@ -94,7 +95,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader {
     /* area contain result anchor */
     @FXML private Pane resSpace;
 
-    /* The */
+    /* The definition block this lambda is contained by. */
     private DefinitionBlock wrapper;
     
     /* The lambda argument anchors */

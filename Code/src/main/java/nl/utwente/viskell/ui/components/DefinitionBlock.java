@@ -21,10 +21,13 @@ import com.google.common.collect.ImmutableList;
  */
 public class DefinitionBlock extends Block implements ComponentLoader {
 
+    /** the area in which the function anchor is in */
     @FXML private Pane funSpace;
 
+    /* The label with the explicit name and type of this definition, if it has one. */
     @FXML private Label signature;
 
+    /** The internal lambda within this definition block */
     private LambdaContainer body;
     
     /** The function anchor (second bottom anchor) */
