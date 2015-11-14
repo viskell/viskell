@@ -11,9 +11,9 @@ import nl.utwente.viskell.haskell.type.Type;
 
 public class SourcePort {
     
-    private List<Wire> wires;
+    private final List<Wire> wires;
     
-    private Binder binder;
+    private final Binder binder;
 
     public SourcePort(Binder binder) {
         this.wires = new ArrayList<>();
@@ -33,7 +33,7 @@ public class SourcePort {
     }
 
     public void dropAllWires() {
-        this.wires = new ArrayList<>();
+        this.wires.clear();
     }
 
     public Type getType() {
