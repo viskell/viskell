@@ -16,6 +16,7 @@ public class Component extends BoxGroup {
         super();
         this.sources = new ArrayList<>();
         this.sinks = new ArrayList<>();
+        this.wrapper = Optional.empty();
     }
 
     public Optional<Box> getWrapper() {
