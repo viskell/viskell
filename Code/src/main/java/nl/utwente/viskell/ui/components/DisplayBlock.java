@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
+import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
@@ -109,8 +110,13 @@ public class DisplayBlock extends Block {
     }
 
     @Override
-    public void updateExpr() {
-        this.localExpr = inputAnchor.getLocalExpr();
+    public Optional<OutputAnchor> getOutputAnchor() {
+        return Optional.empty();
+    }
+    
+    @Override
+    public Expression getLocalExpr() {
+        return inputAnchor.getLocalExpr();
     }
     
     @Override
@@ -122,4 +128,5 @@ public class DisplayBlock extends Block {
     public String toString() {
         return "DisplayBlock[" + getOutput() + "]";
     }
+
 }

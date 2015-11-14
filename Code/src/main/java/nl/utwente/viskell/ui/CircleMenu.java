@@ -3,7 +3,7 @@ package nl.utwente.viskell.ui;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import jfxtras.scene.layout.CircularPane;
 import jfxtras.scene.menu.CirclePopupMenu;
@@ -25,8 +25,14 @@ public class CircleMenu extends CirclePopupMenu {
     /** The context of the menu. */
     private Block block;
 
+    /** Show the Circle menu for a specific block. */
+    public static void showFor(Block block, MouseEvent t) {
+        CircleMenu menu = new CircleMenu(block);
+        menu.show(t);
+    }
+    
     public CircleMenu(Block block) {
-        super((StackPane) block, null);
+        super(block, null);
         this.block = block;
 
         // Define menu items

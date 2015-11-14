@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * A definition block is a block that represents a named lambda. It can be used to build lambda abstractions.
  */
@@ -131,6 +133,11 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
 
     @Override
+    public List<InputAnchor> getAllInputs() {
+        return ImmutableList.of();
+    }
+
+    @Override
     public Optional <OutputAnchor> getOutputAnchor() {
         return Optional.of(this.fun);
     }
@@ -169,11 +176,11 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
     
     @Override
-    public final void updateExpr() {
+    public final Expression getLocalExpr() {
         List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         LetExpression body = new LetExpression(this.res.getLocalExpr());
         this.res.extendExprGraph(body);
-        this.localExpr = new Lambda(binders, body);
+        return new Lambda(binders, body);
     }
 
     @Override
@@ -181,4 +188,5 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         // also update the internal blocks connected to the internal anchor 
         this.res.getOppositeAnchor().ifPresent(a -> a.invalidateVisualState());
     }
+
 }
