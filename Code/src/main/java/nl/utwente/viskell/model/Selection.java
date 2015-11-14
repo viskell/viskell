@@ -2,7 +2,7 @@ package nl.utwente.viskell.model;
 
 public class Selection extends BoxGroup {
 
-    public BoxGroup parent;
+    private BoxGroup parent;
 
     public Selection(BoxGroup parent) {
         super();
