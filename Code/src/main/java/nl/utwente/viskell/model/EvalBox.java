@@ -1,5 +1,7 @@
 package nl.utwente.viskell.model;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,12 +24,12 @@ public class EvalBox extends Box {
 
     @Override
     public List<InputPort> getInputs() {
-        return inputs;
+        return ImmutableList.copyOf(inputs);
     }
 
     @Override
     public List<OutputPort> getOutputs() {
-        return new ArrayList<>();
+        return ImmutableList.of();
     }
 
     @Override

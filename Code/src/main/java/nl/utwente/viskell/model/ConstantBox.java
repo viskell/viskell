@@ -1,12 +1,11 @@
 package nl.utwente.viskell.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
+
+import java.util.List;
 
 public class ConstantBox extends Box {
     
@@ -33,12 +32,12 @@ public class ConstantBox extends Box {
 
     @Override
     public List<InputPort> getInputs() {
-        return new ArrayList<>();
+        return ImmutableList.of();
     }
 
     @Override
     public List<OutputPort> getOutputs() {
-        return Collections.singletonList(this.output);
+        return ImmutableList.of(this.output);
     }
 
     @Override

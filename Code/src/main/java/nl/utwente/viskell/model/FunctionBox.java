@@ -1,6 +1,7 @@
 package nl.utwente.viskell.model;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
+
 import java.util.List;
 
 public class FunctionBox extends Box {
@@ -24,12 +25,12 @@ public class FunctionBox extends Box {
 
     @Override
     public List<InputPort> getInputs() {
-        return Collections.unmodifiableList(this.inputs);
+        return ImmutableList.copyOf(inputs);
     }
 
     @Override
     public List<OutputPort> getOutputs() {
-        return Collections.unmodifiableList(this.outputs);
+        return ImmutableList.copyOf(outputs);
     }
 
     @Override

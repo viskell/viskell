@@ -1,10 +1,9 @@
 package nl.utwente.viskell.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import com.google.common.collect.ImmutableList;
 import nl.utwente.viskell.haskell.expr.Binder;
+
+import java.util.List;
 
 public class LambdaBox extends Box {
     
@@ -29,12 +28,12 @@ public class LambdaBox extends Box {
 
     @Override
     public List<InputPort> getInputs() {
-        return new ArrayList<>();
+        return ImmutableList.of();
     }
 
     @Override
     public List<OutputPort> getOutputs() {
-        return Collections.singletonList(this.funRes);
+        return ImmutableList.of(this.funRes);
     }
 
     @Override
