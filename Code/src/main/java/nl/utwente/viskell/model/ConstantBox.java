@@ -16,13 +16,13 @@ public class ConstantBox extends Box {
     
     private Type type;
     
-    private final OutputPort ouput;
+    private final OutputPort output;
 
     public ConstantBox(BoxGroup parent, String name, Expression expr, Type type) {
         this.parent = parent;
         this.expr = expr;
         this.type = type;
-        this.ouput = new OutputPort(this, new Binder(name));
+        this.output = new OutputPort(this, new Binder(name));
         this.parent.addPart(this);
     }
 
@@ -38,7 +38,7 @@ public class ConstantBox extends Box {
 
     @Override
     public List<OutputPort> getOutputs() {
-        return Collections.singletonList(this.ouput);
+        return Collections.singletonList(this.output);
     }
 
     @Override
