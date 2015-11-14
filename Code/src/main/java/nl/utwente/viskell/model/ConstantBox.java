@@ -18,6 +18,7 @@ public class ConstantBox extends Box {
     private final OutputPort output;
 
     public ConstantBox(BoxGroup parent, String name, Expression expr, Type type) {
+        super();
         this.parent = parent;
         this.expr = expr;
         this.type = type;

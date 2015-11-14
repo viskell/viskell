@@ -10,12 +10,13 @@ import nl.utwente.viskell.haskell.expr.Variable;
 import nl.utwente.viskell.haskell.type.Type;
 
 public class SourcePort {
-    
+
     private final List<Wire> wires;
     
     private final Binder binder;
 
     public SourcePort(Binder binder) {
+        super();
         this.wires = new ArrayList<>();
         this.binder = binder;
     }

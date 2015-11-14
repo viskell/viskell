@@ -14,6 +14,7 @@ public class LambdaBox extends Box {
     private final OutputPort funRes;
 
     public LambdaBox(BoxGroup parent, Component body) {
+        super();
         this.parent = parent;
         this.body = body;
         this.body.setWrapper(this);

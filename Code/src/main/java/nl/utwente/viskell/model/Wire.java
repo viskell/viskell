@@ -9,6 +9,7 @@ public class Wire {
     private boolean hasTypeError;
 
     public Wire(SourcePort source, SinkPort sink) {
+        super();
         this.source = source;
         this.sink = sink;
         this.hasTypeError = false;

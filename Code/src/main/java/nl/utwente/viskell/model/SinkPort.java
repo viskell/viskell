@@ -12,6 +12,7 @@ public class SinkPort {
     private Type type;
 
     public SinkPort() {
+        super();
         this.wire = Optional.empty();
         this.type = TypeScope.unique("???");
     }

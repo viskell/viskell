@@ -8,6 +8,7 @@ public abstract class BoxGroup {
     private List<Box> parts;
 
     public BoxGroup() {
+        super();
         this.parts = new ArrayList<>();
     }
 

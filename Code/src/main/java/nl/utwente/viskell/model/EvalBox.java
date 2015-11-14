@@ -12,6 +12,7 @@ public class EvalBox extends Box {
     private List<InputPort> inputs;
     
     public EvalBox(BoxGroup parent) {
+        super();
         this.parent = parent;
         this.inputs = new ArrayList<>();
         this.parent.addPart(this);
