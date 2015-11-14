@@ -8,7 +8,7 @@ public class Wire {
     
     private boolean hasTypeError;
 
-    public Wire(SourcePort source, SinkPort sink) {
+    private Wire(SourcePort source, SinkPort sink) {
         super();
         this.source = source;
         this.sink = sink;
@@ -28,6 +28,13 @@ public class Wire {
     public void remove() {
         this.source.dropWire(this);
         this.sink.dropWire();
+    }
+
+    public static Wire connect(SourcePort source, SinkPort sink) {
+        Wire wire = new Wire(source, sink);
+        source.addWire(wire);
+        sink.setWire(wire);
+        return wire;
     }
 
 }
