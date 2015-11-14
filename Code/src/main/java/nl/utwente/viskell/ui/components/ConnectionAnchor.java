@@ -1,14 +1,12 @@
 package nl.utwente.viskell.ui.components;
 
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ConnectionCreationManager;
@@ -110,17 +108,10 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     /** The block this ConnectionAnchor belongs to. */
     protected final Block block;
     
-    /** The visual representation of the ConnectionAnchor. */
-    @FXML private Shape visibleAnchor;
-    
-    /** The invisible part of the ConnectionAnchor (the touch zone). */
-    @FXML private Shape invisibleAnchor;
-    
     /**
      * @param block The block this ConnectionAnchor belongs to.
      */
     public ConnectionAnchor(Block block) {
-        this.loadFXML("ConnectionAnchor");
         this.block = block;
         this.new AnchorHandler(block.getPane().getConnectionCreationManager());
     }
@@ -134,20 +125,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         }
     }
     
-    /**
-     * @return The Shape that is the visible part of the ConnectionAnchor.
-     */
-    public Shape getVisibleAnchor() {
-        return visibleAnchor;
-    }
-    
-    /**
-     * @return The Shape that is the invisible part (touch zone) of this ConnectionAnchor.
-     */
-    public Shape getInvisibleAnchor() {
-        return invisibleAnchor;
-    }
-
     /**
      * @return the local type of this anchor
      */

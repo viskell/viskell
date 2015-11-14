@@ -6,6 +6,8 @@ import java.util.Map;
 
 import com.google.common.collect.ImmutableMap;
 
+import javafx.fxml.FXML;
+import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.expr.LocalVar;
@@ -17,6 +19,15 @@ import nl.utwente.viskell.haskell.type.TypeScope;
  * Anchor that specifically functions as an output.
  */
 public class OutputAnchor extends ConnectionAnchor {
+    
+    /** The visual representation of the OutputAnchor. */
+    @FXML private Shape visibleAnchor;
+    
+    /** The invisible part of the OutputAnchor (the touch zone). */
+    @FXML private Shape invisibleAnchor;
+
+    /** The thing sticking out of an unconnected OutputAnchor. */
+    @FXML private Shape openWire;
     
     /** The connections this anchor has, can be empty for no connections. */
     private List<Connection> connections;
@@ -30,12 +41,9 @@ public class OutputAnchor extends ConnectionAnchor {
      */
     public OutputAnchor(Block block, Binder binder) {
         super(block);
+        this.loadFXML("OutputAnchor");
         this.connections = new ArrayList<>();
         this.binder = binder;
-        // By default the invisible anchor covers an area above the visible
-        // anchor (for InputAnchors), this switches that around to cover more of
-        // the area under the visible anchor.
-        getInvisibleAnchor().setTranslateY(getInvisibleAnchor().getTranslateY() * -1);
     }
     
     @Override
@@ -92,6 +100,7 @@ public class OutputAnchor extends ConnectionAnchor {
      */
     protected void addConnection(Connection connection) {
         this.connections.add(connection);
+        this.openWire.setVisible(false);
     }
 
     /**
@@ -101,6 +110,7 @@ public class OutputAnchor extends ConnectionAnchor {
     protected void dropConnection(Connection connection) {
         if (this.connections.contains(connection)) {
             this.connections.remove(connection);
+            this.openWire.setVisible(!this.hasConnection());
         }
     }
     
@@ -110,6 +120,7 @@ public class OutputAnchor extends ConnectionAnchor {
             Connection connection = this.connections.remove(0);
             connection.remove();
         }
+        this.openWire.setVisible(true);
     }
 
     /** Initiate connection changes at the Block this anchor is attached to. */
