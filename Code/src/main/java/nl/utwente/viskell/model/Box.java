@@ -1,6 +1,6 @@
 package nl.utwente.viskell.model;
 
-import java.util.List;
+import com.google.common.collect.ImmutableList;
 
 public abstract class Box {
     
@@ -11,10 +11,10 @@ public abstract class Box {
     }
 
     /** @return An immutable list of all input ports. */
-    public abstract List<InputPort> getInputs();
+    public abstract ImmutableList<InputPort> getInputs();
 
     /** @return An immutable list of all output ports. */
-    public abstract List<OutputPort> getOutputs();
+    public abstract ImmutableList<OutputPort> getOutputs();
     
     /** Set fresh types in all ports of this box for the next typechecking cycle. */
     protected abstract void refreshPortTypes();

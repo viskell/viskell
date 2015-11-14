@@ -3,8 +3,6 @@ package nl.utwente.viskell.model;
 import com.google.common.collect.ImmutableList;
 import nl.utwente.viskell.haskell.expr.Binder;
 
-import java.util.List;
-
 public class LambdaBox extends Box {
     
     private BoxGroup parent;
@@ -28,12 +26,12 @@ public class LambdaBox extends Box {
     }
 
     @Override
-    public List<InputPort> getInputs() {
+    public ImmutableList<InputPort> getInputs() {
         return ImmutableList.of();
     }
 
     @Override
-    public List<OutputPort> getOutputs() {
+    public ImmutableList<OutputPort> getOutputs() {
         return ImmutableList.of(this.funRes);
     }
 

@@ -24,12 +24,12 @@ public class FunctionBox extends Box {
     }
 
     @Override
-    public List<InputPort> getInputs() {
+    public ImmutableList<InputPort> getInputs() {
         return ImmutableList.copyOf(inputs);
     }
 
     @Override
-    public List<OutputPort> getOutputs() {
+    public ImmutableList<OutputPort> getOutputs() {
         return ImmutableList.copyOf(outputs);
     }
 

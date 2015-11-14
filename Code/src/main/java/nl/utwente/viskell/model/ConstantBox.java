@@ -5,8 +5,6 @@ import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 
-import java.util.List;
-
 public class ConstantBox extends Box {
     
     private BoxGroup parent;
@@ -32,12 +30,12 @@ public class ConstantBox extends Box {
     }
 
     @Override
-    public List<InputPort> getInputs() {
+    public ImmutableList<InputPort> getInputs() {
         return ImmutableList.of();
     }
 
     @Override
-    public List<OutputPort> getOutputs() {
+    public ImmutableList<OutputPort> getOutputs() {
         return ImmutableList.of(this.output);
     }
 
