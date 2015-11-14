@@ -25,7 +25,7 @@ public class CircleMenu extends CirclePopupMenu {
     /** The context of the menu. */
     private Block block;
 
-    /** Show the Circle menu for a block if not already active. */
+    /** Show the Circle menu for a specific block. */
     public static void showFor(Block block, MouseEvent t) {
         CircleMenu menu = new CircleMenu(block);
         menu.show(t);
