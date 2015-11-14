@@ -1,7 +1,5 @@
 package nl.utwente.viskell.ui;
 
-import java.util.ArrayList;
-
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -24,19 +22,13 @@ import nl.utwente.viskell.ui.components.Block;
  */
 public class CircleMenu extends CirclePopupMenu {
 
-    /** List of all block on which a CircleMenu is active. */
-    private static ArrayList<Block> activeBlocks = new ArrayList<>();
-    
     /** The context of the menu. */
     private Block block;
 
     /** Show the Circle menu for a block if not already active. */
     public static void showFor(Block block, MouseEvent t) {
-        if (! activeBlocks.contains(block)) {
-            activeBlocks.add(block);
-            CircleMenu menu = new CircleMenu(block);
-            menu.show(t);
-        }
+        CircleMenu menu = new CircleMenu(block);
+        menu.show(t);
     }
     
     public CircleMenu(Block block) {
@@ -79,12 +71,6 @@ public class CircleMenu extends CirclePopupMenu {
         return image;
     }
 
-    @Override
-    public void hide() {
-        CircleMenu.activeBlocks.remove(this.block);
-        super.hide();
-    }
-    
     /** Copy the {@link Block} in this context. */
     public void copy() {
         // TODO implement clipBoard in main app.
