@@ -91,13 +91,12 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         this.fun.setExactRequiredType(this.body.getLambdaType().getFresh());
     }
 
-    @Override
-    protected void propagateConnectionChanges(boolean finalPhase) {
+    public void handleConnectionChanges(boolean finalPhase) {
         // first propagate into the internals
         this.body.handleConnectionChanges(finalPhase);
 
         // continue as normal with propagating changes on the outside
-        super.propagateConnectionChanges(finalPhase);
+        super.handleConnectionChanges(finalPhase);
     }
     
     @Override

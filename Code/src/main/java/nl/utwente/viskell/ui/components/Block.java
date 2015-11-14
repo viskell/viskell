@@ -102,18 +102,6 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     }
     
     /**
-     * Handle the expression and types changes caused by modified connections or values.
-     * @param finalPhase whether the change propagation is in the second (final) phase.
-     */
-    public final void handleConnectionChanges(boolean finalPhase) {
-        if (! finalPhase) {
-            this.prepareConnectionChanges();
-        }
-        
-        this.propagateConnectionChanges(finalPhase);
-    }
-    
-    /**
      * Connection change preparation; set fresh types in all anchors. 
      */
     public final void prepareConnectionChanges() {
@@ -130,13 +118,20 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     protected abstract void refreshAnchorTypes();
     
     /**
-     * Propagate the changes through connected blocks, then trigger a visual update.
+     * Handle the expression and types changes caused by modified connections or values.
+     * Propagate the changes through connected blocks, and if final phase trigger a visual update.
      * @param finalPhase whether the change propagation is in the second (final) phase.
      */
-    protected void propagateConnectionChanges(boolean finalPhase) {
+    public void handleConnectionChanges(boolean finalPhase) {
         if (this.updateInProgress != finalPhase) {
             return; // avoid doing extra work and infinite recursion
         }
+
+        if (! finalPhase) {
+            // in first phase ensure that anchor types are refreshed
+            this.prepareConnectionChanges();
+        }
+        
         this.updateInProgress = !finalPhase;
         this.freshAnchorTypes = false;
         

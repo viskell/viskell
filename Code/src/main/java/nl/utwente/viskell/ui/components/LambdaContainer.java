@@ -182,23 +182,19 @@ public class LambdaContainer extends BorderPane implements ComponentLoader {
     
     /**
      * Handle the expression and types changes caused by modified connections or values.
+     * Also propagate the changes through internal connected blocks, and then outwards.
      * @param finalPhase whether the change propagation is in the second (final) phase.
      */
     public final void handleConnectionChanges(boolean finalPhase) {
-        if (! finalPhase) {
-            this.refreshAnchorTypes();
-        }
-        this.propagateConnectionChanges(finalPhase);
-    }
-    
-    /**
-     * Propagate the changes through connected blocks, then trigger a visual update.
-     * @param finalPhase whether the change propagation is in the second (final) phase.
-     */
-    private void propagateConnectionChanges(boolean finalPhase) {
         if (this.updateInProgress != finalPhase) {
             return; // avoid doing extra work and infinite recursion
         }
+        
+        if (! finalPhase) {
+            // in first phase ensure that anchor types are refreshed
+            this.refreshAnchorTypes();
+        }
+        
         this.updateInProgress = !finalPhase;
         this.freshAnchorTypes = false;
         
