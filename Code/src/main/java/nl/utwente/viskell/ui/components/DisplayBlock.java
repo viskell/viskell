@@ -101,11 +101,13 @@ public class DisplayBlock extends Block {
 
                 Futures.addCallback(result, new FutureCallback<String>() {
                     public void onSuccess(String s) {
+                        // Can't call setOutput directly - this may not be JavaFX app thread.
+                        // Instead, schedule setOutput to be done some time in the future.
                         Platform.runLater(() -> setOutput(s));
                     }
 
                     public void onFailure(Throwable throwable) {
-                        Platform.runLater(() -> setOutput("?!?!?!"));
+                        onSuccess("?!?!?!");
                     }
                 });
             }
