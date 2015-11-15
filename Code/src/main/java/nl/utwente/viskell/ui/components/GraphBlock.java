@@ -11,7 +11,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
-import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
@@ -22,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -69,8 +67,8 @@ public class GraphBlock extends Block {
     }
 
     @Override
-    public Optional<OutputAnchor> getOutputAnchor() {
-        return Optional.empty();
+    public List<OutputAnchor> getAllOutputs() {
+        return ImmutableList.of();
     }
     
     @Override

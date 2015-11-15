@@ -72,6 +72,15 @@ public class InputAnchor extends ConnectionAnchor {
     }
 
     /**
+     * @param block The Block this anchor is connected to.
+     * @param type The type constraint for this anchor.
+     */
+    public InputAnchor(Block block, Type type) {
+        this(block);
+        this.type = type;
+    }
+    
+    /**
      * @param state The new error state for this ConnectionAnchor.
      */
     protected void setErrorState(boolean state) {
@@ -119,7 +128,7 @@ public class InputAnchor extends ConnectionAnchor {
     public Type getType() {
         return this.type;
     }
-
+    
     /**
      * Sets the type constraint of this input anchor to a fresh type.
      * @param type constraint which this input anchor will require.

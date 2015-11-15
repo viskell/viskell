@@ -1,25 +1,19 @@
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.FunctionBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
 	<BorderPane>
-		<top>
-			<Pane fx:id="inputSpace" maxHeight="0"/>
-		</top>
 		<center>
 			<HBox styleClass="function, block">
-				<BorderPane fx:id="functionInfo">
-                    <padding><Insets top="0" right="10" bottom="0" left="10"/></padding>
-					<center>
-						<Label text="${controller.name}" styleClass="title" />
-					</center>
-				</BorderPane>
+				<Label fx:id="functionInfo" text="${controller.name}" styleClass="title" />
 			    <Pane fx:id="nestSpace"/>
 			</HBox>
 		</center>
+		<top>
+			<TilePane fx:id="inputSpace"/>
+		</top>
 		<bottom>
-			<BorderPane fx:id="outputSpace" maxHeight="0"/>
+			<TilePane fx:id="outputSpace"/>
 		</bottom>
 	</BorderPane>
 </fx:root>

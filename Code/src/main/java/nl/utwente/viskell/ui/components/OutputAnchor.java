@@ -145,10 +145,17 @@ public class OutputAnchor extends ConnectionAnchor {
      * @param exprGraph the let expression representing the current expression graph
      */
     protected void extendExprGraph(LetExpression exprGraph) {
-        boolean added = exprGraph.addLetBinding(this.binder, this.block.getLocalExpr());
+        boolean added = false;
+        
+        if (block instanceof MatchBlock) {
+            added = exprGraph.addLetBinding(((MatchBlock)block).getPrimaryBinder(), block.getLocalExpr());
+        } else {
+            added = exprGraph.addLetBinding(binder, block.getLocalExpr());
+        }
+        
         if (added) {
             // for a new let binding everything from the subexpression in this block needs to be included
-            this.block.extendExprGraph(exprGraph);
+            block.extendExprGraph(exprGraph);
         }
     }
     

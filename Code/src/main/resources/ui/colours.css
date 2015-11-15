@@ -1,14 +1,9 @@
 CustomUIPane {
     -fx-background-image: url('grid.png');
-    -fx-background-position: 2500 2500;
 }
 
 .block {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-font-family: Titillium;
     -fx-text-fill: black;
-    -fx-border-width: 2;
     -fx-border-color: black;
 }
 
@@ -21,21 +16,14 @@ CustomUIPane {
 }
 
 .block .header {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-font-family: fantasy;
     -fx-text-fill: black;
 }
 
 .block .title {
     -fx-text-fill: black;
-    -fx-font-size: 20px;
-    -fx-font-weight: bolder;
 }
 
 .block .content {
-    -fx-font-size: 25px;
-    -fx-font-weight: normal;
     -fx-text-fill: black;
 }
 
@@ -52,8 +40,15 @@ CustomUIPane {
 }
 
 .value.block {
-    -fx-padding: 0 20 0 20;
     -fx-background-color: #BD1550;
+}
+
+MatchBlock {
+    -fx-background-color: #8DD0D0;
+}
+
+MatchBlock.selected {
+    -fx-background-color: #42A0A0;
 }
 
 .selected .display.block {
@@ -62,22 +57,17 @@ CustomUIPane {
 
 .display.block {
     -fx-background-color: #8A9B0F;
-    -fx-text-alignment: center;
 }
 
 .graph.block LineChart {
-    -fx-font-size: 14px;
     -fx-background-color: #8A9B0F;
 }
 
 .menu.block {
-    -fx-font-size: 12px;
     -fx-background-color: #490A3D;
 }
 
 .menu.block .title {
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
     -fx-font-color: #FCEBB6;
     -fx-background-color: #A4849E;
 }
@@ -86,16 +76,9 @@ CustomUIPane {
     -fx-background-color: #926C8B;
 }
 
-
-
 .menu.block .title .arrow-button .arrow {
     -fx-background-color: #EDE6EC;
     -fx-focus-color: white;
-}
-
-.menu.block .content {
-    -fx-font-size: 15px;
-    -fx-font-weight: normal;
 }
 
 .menu.block Button {
@@ -104,15 +87,6 @@ CustomUIPane {
 
 .menu.block Button:hover {
     -fx-background-color: #926C8B;
-}
-
-.menu.block #categorySpace TitledPane {
-    -fx-padding: 3px;
-}
-
-.menu.block #utilSpace {
-    -fx-padding: 3px;
-    -fx-spacing: 6px;
 }
 
 .menu.block .list-cell:even {
@@ -124,10 +98,7 @@ CustomUIPane {
 }
 
 .argumentSpace Label {
-    -fx-padding: 0 5 0 5;
     -fx-text-fill: black;
-    -fx-font-size: 14px;
-    -fx-font-weight: normal;
     -fx-background-color: white;
 }
 
@@ -143,13 +114,11 @@ CustomUIPane {
 }
 
 .drawwire {
-    -fx-stroke-width: 5px;
     -fx-stroke: #0066FF;
     -fx-fill: null;
 }
 
 .connection {
-    -fx-stroke-width: 3px;
     -fx-stroke: #FCEBB6;
     -fx-fill: null;
 }
@@ -169,12 +138,10 @@ CustomUIPane {
 .alert {
     -fx-background-color: white;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
-    -fx-padding: 12;
 }
 
 .alert .msg {
     -fx-text-fill: black;
-    -fx-line-spacing: 0.2em;
 }
 
 .alert .btn {
@@ -182,14 +149,10 @@ CustomUIPane {
 }
 
 .alert .btn Label {
-    -fx-padding: 6;
     -fx-text-fill: white;
-    -fx-font-weight: bold;
 }
 
 .overlayButtons Button {
-    -fx-font-family: monospace;
-    -fx-font-size: 14px;
     -fx-text-fill: white;
     -fx-background-color: rgba(0, 0, 0, 0.3);
 }
@@ -217,12 +180,3 @@ ImageView.hoverMenu {
     -fx-background-radius: 0, 0;
     -fx-background-color: rgba(0, 0, 0, 0);
 }
-
-.display.block Label {
-    -fx-padding: 4 5 0 5;
-}
-
-.value.block Label {
-    -fx-padding: 0 5 4 5;
-}
-

@@ -18,7 +18,6 @@ import nl.utwente.viskell.ui.ConnectionCreationManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Custom Pane that displays function's input and output and a knot to be able
@@ -305,10 +304,10 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
 
     /**
      * Method to indicate that the content in the input and output Labels are possibly outdated.
+     * TODO Update all right arguments instead of the single one
      */
     public void invalidateTypes() {
-        Optional<String> text = block.getOutputAnchor().map(OutputAnchor::getStringType);
-        text.ifPresent(a -> rightArgument.setText(a));
+        rightArgument.setText(block.getAllOutputs().get(0).getStringType());
 
         for (InputArgument argument : leftArguments) {
             argument.setInputText(argument.getInputAnchor().getStringType());

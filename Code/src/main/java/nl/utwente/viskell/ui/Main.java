@@ -65,7 +65,8 @@ public class Main extends Application {
 
         // Init scene
         Scene scene = new Scene(buttonOverlay);
-        scene.getStylesheets().add("/ui/style.css");
+        scene.getStylesheets().add("/ui/layout.css");
+        scene.getStylesheets().add("/ui/colours.css");
 
         stage.setWidth(1024);
         stage.setHeight(768);

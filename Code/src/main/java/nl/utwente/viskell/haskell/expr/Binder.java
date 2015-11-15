@@ -6,7 +6,7 @@ import nl.utwente.viskell.haskell.type.TypeScope;
 /**
  * A Binder is the definition side of a local variable, it is used link variable to their binding constructs, such as lambdas 
  */
-public final class Binder {
+public class Binder {
 
     /** The name of this binder */
     private final String name;
@@ -37,7 +37,7 @@ public final class Binder {
     /**
      * @return The name (made unique) of this binder, for avoiding name conflicts in code generation
      */
-    public final String getUniqueName() {
+    public String getUniqueName() {
         return name + "__" + Integer.toHexString(this.hashCode());
     }
 

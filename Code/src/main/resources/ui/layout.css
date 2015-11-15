@@ -1,0 +1,108 @@
+CustomUIPane {
+    -fx-background-position: 2500 2500;
+}
+
+.menu.block {
+    -fx-font-size: 12px;
+}
+
+.menu.block .title {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.menu.block .content {
+    -fx-font-size: 15px;
+    -fx-font-weight: normal;
+}
+
+.menu.block #categorySpace TitledPane {
+    -fx-padding: 3px;
+    -fx-label-padding: 5px;
+}
+
+.menu.block #utilSpace {
+    -fx-padding: 3px;
+    -fx-spacing: 6px;
+}
+
+.block {
+	-fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-font-family: Titillium;
+	-fx-alignment: center-left;
+    -fx-border-width: 2px;
+}
+
+.block .header {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-font-family: fantasy;
+}
+
+.block .title {
+	-fx-padding: 0 10px 0 10px;
+	-fx-font-size: 20px;
+    -fx-font-weight: bolder;
+}
+
+.block .content {
+    -fx-font-size: 25px;
+    -fx-font-weight: normal;
+}
+
+.match.block {
+    -fx-padding: 10;
+}
+
+.value.block {
+    -fx-padding: 0 20 0 20;
+}
+
+.display.block {
+    -fx-text-alignment: center;
+}
+
+.graph.block LineChart {
+    -fx-font-size: 14px;
+}
+
+.argumentSpace Label {
+    -fx-padding: 0 5 0 5;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.display.block Label {
+    -fx-padding: 4 5 0 5;
+}
+
+.value.block Label {
+    -fx-padding: 0 5 4 5;
+}
+
+#inputSpace, #outputSpace {
+	-fx-alignment: center;
+}
+
+.drawwire {
+    -fx-stroke-width: 5px;
+}
+
+.connection {
+    -fx-stroke-width: 3px;
+}
+
+.overlayButtons Button {
+    -fx-font-family: monospace;
+    -fx-font-size: 14px;
+}
+
+.context-menu .menu-item .label {
+    -fx-font-family: Titillium;
+}
+
+.signature {
+    -fx-background-insets: 0, 0;
+    -fx-background-radius: 0, 0;
+}

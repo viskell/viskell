@@ -1,0 +1,50 @@
+.invisTouchZone { 
+    -fx-fill: rgba(0,255,0,0.1);
+}
+
+.drawwire {
+    -fx-stroke: #0066FF;
+    -fx-fill: null;
+}
+
+.connection {
+    -fx-stroke: #FF0000;
+    -fx-fill: null;
+}
+
+
+
+CustomUIPane * {
+	-fx-border-style: solid;
+	-fx-border-size: 2px;
+	-fx-background-color: rgba(255, 255, 255, 0.3);
+}
+
+CustomUIPane > * {
+	-fx-border-color: yellow;
+}
+
+CustomUIPane > * > * {
+	-fx-border-color: red;
+}
+
+CustomUIPane > * > * > * {
+	-fx-border-color: lime;
+}
+
+CustomUIPane > * > * > * > * {
+	-fx-border-color: fuchsia;
+}
+
+CustomUIPane > * > * > * > * > * {
+	-fx-border-color: orange;
+}
+
+CustomUIPane > * > * > * > * > * > * {
+	-fx-border-color: cyan;
+}
+
+CustomUIPane > * > * > * > * > * > * > * {
+	-fx-border-color: red;
+}
+

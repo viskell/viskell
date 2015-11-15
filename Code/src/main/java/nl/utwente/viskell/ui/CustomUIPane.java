@@ -184,7 +184,7 @@ public class CustomUIPane extends TactilePane {
             in.removeConnections();
         }
         
-        block.getOutputAnchor().ifPresent(out -> out.removeConnections());
+        block.getAllOutputs().stream().forEach(output -> output.removeConnections());
         this.getChildren().removeAll(block);
     }
 

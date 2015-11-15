@@ -59,7 +59,7 @@ public class LetExpression extends Expression {
     @Override
     public String toHaskell() {
         StringBuilder builder = new StringBuilder();
-        this.binders.forEach((v, x) -> builder.insert(0, v.getUniqueName() + " = " + x.toHaskell() + "; "));
+        this.binders.forEach((binder, expr) -> builder.insert(0, binder.getUniqueName() + " = " + expr.toHaskell() + "; "));
         builder.insert(0, "let {");
         builder.append("} in ");
         builder.append(this.body.toHaskell());
@@ -69,7 +69,7 @@ public class LetExpression extends Expression {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        this.binders.forEach((v, x) -> builder.insert(0, "    " +v.getUniqueName() + " = " + x.toHaskell() + ";\n"));
+        this.binders.forEach((binder, expr) -> builder.insert(0, binder.getUniqueName() + " = " + expr.toHaskell() + "; "));
         builder.insert(0, "let {\n");
         builder.append("  }\n in ");
         builder.append(this.body.toHaskell());

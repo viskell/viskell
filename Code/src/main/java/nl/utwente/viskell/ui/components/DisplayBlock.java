@@ -121,8 +121,8 @@ public class DisplayBlock extends Block {
     }
 
     @Override
-    public Optional<OutputAnchor> getOutputAnchor() {
-        return Optional.empty();
+    public List<OutputAnchor> getAllOutputs() {
+        return ImmutableList.of();
     }
     
     @Override

@@ -1,7 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.List;
-import java.util.Optional;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -55,7 +54,7 @@ public class ValueBlock extends Block {
 
         this.loadFXML(fxml);
 
-        outputSpace.setCenter(this.getOutputAnchor().get());
+        outputSpace.setCenter(output);
         outputSpace.toFront();
     }
 
@@ -93,10 +92,10 @@ public class ValueBlock extends Block {
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of();
     }
-    
+
     @Override
-    public Optional<OutputAnchor> getOutputAnchor() {
-        return Optional.of(output);
+    public List<OutputAnchor> getAllOutputs() {
+        return ImmutableList.of(output);
     }
     
     @Override

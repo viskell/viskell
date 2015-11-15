@@ -144,12 +144,13 @@ public class HaskellCatalog {
 
             String name = attributes.getNamedItem("name").getTextContent();
             String signature = attributes.getNamedItem("signature").getTextContent();
+            Boolean isConstructor = attributes.getNamedItem("isConstructor") != null;
             String category = node.getParentNode().getAttributes().getNamedItem("name").getTextContent();
             String documentation = node.getTextContent();
 
             TypeBuilder builder = new TypeBuilder(typeClasses);
             Type tsig = builder.build(signature);
-            entries.add(new CatalogFunction(name, category, tsig, documentation));
+            entries.add(new CatalogFunction(name, category, tsig, documentation, isConstructor));
         }
 
         return entries;

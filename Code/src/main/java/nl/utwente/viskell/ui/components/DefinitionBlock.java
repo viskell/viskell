@@ -138,8 +138,8 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
 
     @Override
-    public Optional <OutputAnchor> getOutputAnchor() {
-        return Optional.of(this.fun);
+    public List<OutputAnchor> getAllOutputs() {
+        return ImmutableList.of(this.fun);
     }
 
     @Override
