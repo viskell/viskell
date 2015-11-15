@@ -53,6 +53,7 @@ public class CustomUIPane extends TactilePane {
 
         try {
             this.ghci = Optional.of(new GhciSession());
+            this.ghci.get().startAsync();
         } catch (HaskellException e) {
             this.ghci = Optional.empty();
         }
@@ -235,5 +236,23 @@ public class CustomUIPane extends TactilePane {
      */
     public void setCurrentFile(File currentFile) {
         this.currentFile = Optional.of(currentFile);
+    }
+
+    /**
+     * Terminate the current GhciSession, if any, then start a new one.
+     * Waits for the old session to end, but not for the new session to start.
+     */
+    public void restartBackend() {
+        this.ghci.ifPresent(g -> {
+            g.stopAsync();
+            g.awaitTerminated();
+        });
+
+        try {
+            this.ghci = Optional.of(new GhciSession());
+            this.ghci.get().startAsync();
+        } catch (HaskellException e) {
+            this.ghci = Optional.empty();
+        }
     }
 }

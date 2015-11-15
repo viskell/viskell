@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Block that accepts a (Float -> Float) function to be displayed on a linechart
@@ -99,7 +100,7 @@ public class GraphBlock extends Block {
             String funName = "graph_fun_" + Integer.toHexString(this.hashCode());
             ghciSession.push(funName, this.getFullExpr());
             String range = String.format(Locale.US, " [%f,%f..%f]", min, min+step, max);
-            String results = ghciSession.pullRaw("putStrLn $ unwords $ map show $ map " + funName + range);
+            String results = ghciSession.pullRaw("putStrLn $ unwords $ map show $ map " + funName + range).get();
 
             LineChart.Series<Double, Double> series = new LineChart.Series<>();
             ObservableList<XYChart.Data<Double, Double>> data = series.getData();
@@ -110,7 +111,7 @@ public class GraphBlock extends Block {
             }
 
             lineChartData.add(series);
-        } catch (HaskellException | NoSuchElementException | NumberFormatException ignored) {
+        } catch (NoSuchElementException | NumberFormatException | InterruptedException | ExecutionException ignored) {
             // Pretend we didn't hear anything.
         }
 

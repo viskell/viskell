@@ -1,6 +1,10 @@
 package nl.utwente.viskell.ui.components;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -90,14 +94,21 @@ public class DisplayBlock extends Block {
         if (inputAnchor.hasConnection()) {
             this.inputType.setText(this.inputAnchor.getStringType());
 
-            try {
-                Optional<GhciSession> ghci = getPane().getGhciSession();
-                if (ghci.isPresent()) {
-                    setOutput(ghci.get().pull(inputAnchor.getFullExpr()));
-                }
-            } catch (HaskellException e) {
-                setOutput("?!?!?!");
-            } 
+            Optional<GhciSession> ghci = getPane().getGhciSession();
+
+            if (ghci.isPresent()) {
+                ListenableFuture<String> result = ghci.get().pull(inputAnchor.getFullExpr());
+
+                Futures.addCallback(result, new FutureCallback<String>() {
+                    public void onSuccess(String s) {
+                        Platform.runLater(() -> setOutput(s));
+                    }
+
+                    public void onFailure(Throwable throwable) {
+                        Platform.runLater(() -> setOutput("?!?!?!"));
+                    }
+                });
+            }
         } else {
             this.inputType.setText("  ... ");
             setOutput("??");

@@ -15,6 +15,7 @@ import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Block with three inputs that represent RGB values.
@@ -54,11 +55,11 @@ public class RGBBlock extends DisplayBlock {
     private int evaluateAnchor(InputAnchor anchor) {
         try {
             GhciSession ghci = getPane().getGhciSession().get();
-            String result = ghci.pull(anchor.getFullExpr());
+            String result = ghci.pull(anchor.getFullExpr()).get();
 
             double v = Math.max(0.0, Math.min(1.0, Double.valueOf(result)));
             return (int) Math.round(v * 255);
-        } catch (NumberFormatException | HaskellException | NoSuchElementException e) {
+        } catch (NumberFormatException | NoSuchElementException | InterruptedException | ExecutionException e) {
             return 0;
         }
     }
