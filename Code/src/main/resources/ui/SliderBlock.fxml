@@ -5,11 +5,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import nl.utwente.viskell.ui.components.SliderBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.SliderBlock" xmlns:fx="http://javafx.com/fxml/">
-	<BorderPane styleClass="value, block" minHeight="75" maxHeight="110" minWidth="150" maxWidth="150">
+	<BorderPane styleClass="value, block" minHeight="100" maxHeight="100" minWidth="150" maxWidth="150">
 		<center>
 			<VBox alignment="CENTER">
-				<Label text="${controller.value}" styleClass="content" />
 				<Slider min="0.0" max="1.0" fx:id="slider"/>
+				<Label text="${controller.value}" styleClass="content" />
 				<!-- silly extra HBox to not break the argumentSpace css -->
 				<HBox alignment="CENTER" styleClass="argumentSpace"> <Label fx:id="valueType" /> </HBox>
 			</VBox>

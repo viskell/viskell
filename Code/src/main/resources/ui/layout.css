@@ -73,14 +73,6 @@ CustomUIPane {
     -fx-font-weight: normal;
 }
 
-.display.block Label {
-    -fx-padding: 4 5 0 5;
-}
-
-.value.block Label {
-    -fx-padding: 0 5 4 5;
-}
-
 #inputSpace, #outputSpace {
 	-fx-alignment: center;
 }
