@@ -1,6 +1,10 @@
 package nl.utwente.viskell.ui.components;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
@@ -9,13 +13,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import nl.utwente.viskell.ghcj.GhciSession;
-import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * DisplayBlock is an extension of {@link Block} that only provides a display of
@@ -90,14 +92,21 @@ public class DisplayBlock extends Block {
         if (inputAnchor.hasConnection()) {
             this.inputType.setText(this.inputAnchor.getStringType());
 
-            try {
-                Optional<GhciSession> ghci = getPane().getGhciSession();
-                if (ghci.isPresent()) {
-                    setOutput(ghci.get().pull(inputAnchor.getFullExpr()));
+            GhciSession ghci = getPane().getGhciSession();
+
+            ListenableFuture<String> result = ghci.pull(inputAnchor.getFullExpr());
+
+            Futures.addCallback(result, new FutureCallback<String>() {
+                public void onSuccess(String s) {
+                    // Can't call setOutput directly - this may not be JavaFX app thread.
+                    // Instead, schedule setOutput to be done some time in the future.
+                    Platform.runLater(() -> setOutput(s));
                 }
-            } catch (HaskellException e) {
-                setOutput("?!?!?!");
-            } 
+
+                public void onFailure(Throwable throwable) {
+                    onSuccess("?!?!?!");
+                }
+            });
         } else {
             this.inputType.setText("  ... ");
             setOutput("??");

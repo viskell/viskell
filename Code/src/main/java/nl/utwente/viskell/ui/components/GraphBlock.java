@@ -11,7 +11,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
-import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
@@ -22,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Block that accepts a (Float -> Float) function to be displayed on a linechart
@@ -94,11 +94,11 @@ public class GraphBlock extends Block {
         double max = x.getUpperBound();
 
         try {
-            GhciSession ghciSession = getPane().getGhciSession().get();
+            GhciSession ghciSession = getPane().getGhciSession();
             String funName = "graph_fun_" + Integer.toHexString(this.hashCode());
             ghciSession.push(funName, this.getFullExpr());
             String range = String.format(Locale.US, " [%f,%f..%f]", min, min+step, max);
-            String results = ghciSession.pullRaw("putStrLn $ unwords $ map show $ map " + funName + range);
+            String results = ghciSession.pullRaw("putStrLn $ unwords $ map show $ map " + funName + range).get();
 
             LineChart.Series<Double, Double> series = new LineChart.Series<>();
             ObservableList<XYChart.Data<Double, Double>> data = series.getData();
@@ -109,7 +109,7 @@ public class GraphBlock extends Block {
             }
 
             lineChartData.add(series);
-        } catch (HaskellException | NoSuchElementException | NumberFormatException ignored) {
+        } catch (NoSuchElementException | NumberFormatException | InterruptedException | ExecutionException ignored) {
             // Pretend we didn't hear anything.
         }
 
