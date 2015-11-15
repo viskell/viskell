@@ -138,8 +138,7 @@ public class OutputAnchor extends ConnectionAnchor {
         
         if (block instanceof MatchBlock) {
             added = exprGraph.addLetBinding(((MatchBlock)block).getPrimaryBinder(), block.getLocalExpr());
-        }
-        else {
+        } else {
             added = exprGraph.addLetBinding(binder, block.getLocalExpr());
         }
         

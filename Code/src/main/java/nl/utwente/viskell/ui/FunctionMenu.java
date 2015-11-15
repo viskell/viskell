@@ -16,7 +16,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.CatalogFunction;
-import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.components.*;
@@ -81,11 +80,11 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                 return new ListCell<CatalogFunction>() {
                     {
                         this.setOnMouseReleased(e -> {
-                            if (e.getButton() == MouseButton.SECONDARY) {
-                                addConstructorBlock(this.getItem());
-                            }
-                            else {
-                                addFunctionBlock(this.getItem());
+                            CatalogFunction entry = this.getItem();
+                            if (e.getButton() == MouseButton.SECONDARY && entry.isConstructor()) {
+                                addBlock(new MatchBlock(entry, parent));
+                            } else {
+                                addBlock(new FunctionBlock(entry, parent));
                             }
                         });
                     }
@@ -136,18 +135,6 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);
         }
 
-    }
-
-    private void addFunctionBlock(FunctionInfo entry) {
-        FunctionBlock fb = new FunctionBlock(entry, parent);
-        addBlock(fb);
-    }
-
-    private void addConstructorBlock(CatalogFunction entry) {
-        if (entry.getConstructor()) {
-            MatchBlock fb = new MatchBlock(entry, parent);
-            addBlock(fb);
-        }
     }
 
     private void addValueBlock() {

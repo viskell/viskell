@@ -13,7 +13,7 @@ public class CatalogFunction extends FunctionInfo implements Comparable<CatalogF
     private final String documentation;
 
     /** Whether this function is a constructor **/
-    private boolean isConstructor;
+    private final boolean isConstructor;
 
     /**
      * @param name The function name.
@@ -47,7 +47,7 @@ public class CatalogFunction extends FunctionInfo implements Comparable<CatalogF
         return this.getName().compareTo(entry.getName());
     }
 
-    public boolean getConstructor() {
+    public boolean isConstructor() {
         return isConstructor;
     }
 

@@ -6,11 +6,9 @@ import java.util.List;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.TilePane;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Binder;
-import nl.utwente.viskell.haskell.expr.OtherMatchBinder;
-import nl.utwente.viskell.haskell.expr.PrimaryMatchBinder;
+import nl.utwente.viskell.haskell.expr.ConstructorBinder;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
@@ -18,38 +16,29 @@ import nl.utwente.viskell.ui.CustomUIPane;
 
 import com.google.common.collect.ImmutableList;
 
-/**
- * 
- *
- */
+/** A block that matches a data constructors and yields all the elements of that constructor. */
 public class MatchBlock extends Block {
-    /**
-     * 
-     */
-    protected List<OutputAnchor> outputs;
-    
-    /**
-     * 
-     */
-    protected InputAnchor input;
-    
-    /** The space containing the input anchor(s). */
-    @FXML protected TilePane inputSpace;
 
-    /** The space containing the output anchor. */
-    @FXML protected TilePane outputSpace;
-
-    /** The space containing the output anchor. */
-    @FXML protected Label name;
-
-    /** The space in which to nest the FunctionBlock's inner parts. */
-    @FXML protected Pane nestSpace;
-    
+    /** Information about the data constructor as if it was a function. */
     protected FunctionInfo info;
 
-    protected PrimaryMatchBinder primaryBinder;
-    
+    /** The InputAnchor of this Matchblock. */
+    protected InputAnchor input;
 
+    /** A list of OutputAnchors for every constructor element. */
+    protected List<OutputAnchor> outputs;
+    
+    /** The space containing the input anchor(s). */
+    @FXML protected Pane inputSpace;
+
+    /** The space containing the output anchor. */
+    @FXML protected Pane outputSpace;
+
+    /** The Label with the constructor name. */
+    @FXML protected Label name;
+
+    protected ConstructorBinder primaryBinder;
+    
     public MatchBlock(FunctionInfo funInfo, CustomUIPane pane) {
         super(pane);
         this.loadFXML("MatchBlock");
@@ -57,21 +46,22 @@ public class MatchBlock extends Block {
         outputs = new ArrayList<>();
         info = funInfo;
         Type type = info.getFreshSignature();
-        primaryBinder = new PrimaryMatchBinder(info.getName());
+        ArrayList<Binder> elemBinders = new ArrayList<>();
         
         int outputCount = 0;
         while (type instanceof FunType) {
             FunType ft = (FunType) type;
             
-            Binder binder = new OtherMatchBinder("res"+outputCount, ft.getArgument());
-            primaryBinder.addBinder(binder);
+            Binder binder = new Binder("res"+outputCount, ft.getArgument());
+            elemBinders.add(binder);
             outputs.add(new OutputAnchor(this, binder));
             type = ft.getResult();
             outputCount++;
         }
+
+        primaryBinder = new ConstructorBinder(info.getName(), elemBinders);
         
-        input = new InputAnchor(this);
-        input.setType(type);
+        input = new InputAnchor(this, type);
         
         name.setText(info.getName());
         
@@ -102,7 +92,7 @@ public class MatchBlock extends Block {
                 anchor.setFreshRequiredType(ftype.getArgument(), scope);
                 type = ftype.getResult();
             } else {
-                new RuntimeException("too many arguments in this functionblock " + name.getText());
+                throw new RuntimeException("too many arguments in this matchblock " + name.getText());
             }
         }
         
