@@ -24,7 +24,7 @@ public class CustomUIPane extends TactilePane {
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
     
-    private Optional<GhciSession> ghci;
+    private GhciSession ghci;
     private InspectorWindow inspector;
     private PreferencesWindow preferences;
 
@@ -51,12 +51,8 @@ public class CustomUIPane extends TactilePane {
         this.catalog = catalog;
         this.envInstance = catalog.asEnvironment();
 
-        try {
-            this.ghci = Optional.of(new GhciSession());
-            this.ghci.get().startAsync();
-        } catch (HaskellException e) {
-            this.ghci = Optional.empty();
-        }
+        this.ghci = new GhciSession();
+        this.ghci.startAsync();
 
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
@@ -201,7 +197,7 @@ public class CustomUIPane extends TactilePane {
         return connectionCreationManager;
     }
 
-    public Optional<GhciSession> getGhciSession() {
+    public GhciSession getGhciSession() {
         return ghci;
     }
 
@@ -243,16 +239,10 @@ public class CustomUIPane extends TactilePane {
      * Waits for the old session to end, but not for the new session to start.
      */
     public void restartBackend() {
-        this.ghci.ifPresent(g -> {
-            g.stopAsync();
-            g.awaitTerminated();
-        });
+        ghci.stopAsync();
+        ghci.awaitTerminated();
 
-        try {
-            this.ghci = Optional.of(new GhciSession());
-            this.ghci.get().startAsync();
-        } catch (HaskellException e) {
-            this.ghci = Optional.empty();
-        }
+        ghci = new GhciSession();
+        ghci.startAsync();
     }
 }

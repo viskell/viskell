@@ -41,10 +41,9 @@ public final class GhciSession extends AbstractExecutionThreadService {
     /**
      * Builds a new communication session with ghci.
      *
-     * @throws HaskellException when ghci can not be found, can not be executed,
-     *         or does not understand our setup sequence.
+     * Starting the backend is delayed until startAsync() is called.
      */
-    public GhciSession() throws HaskellException {
+    public GhciSession() {
         super();
 
         queue = new ArrayBlockingQueue<>(1024);

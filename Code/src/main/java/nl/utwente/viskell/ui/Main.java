@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui;
 
+import com.google.common.util.concurrent.Service;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -8,6 +9,7 @@ import javafx.stage.Stage;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
 import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
 import nl.utwente.viskell.ghcj.GhciEvaluator;
+import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 
@@ -47,10 +49,11 @@ public class Main extends Application {
 
         // Check if GHCI is available
         try {
-            GhciEvaluator testGhci = new GhciEvaluator(); 
-            testGhci.eval("");
-            testGhci.close();
-        } catch (HaskellException e) {
+            GhciSession testGhci = new GhciSession();
+            testGhci.startAsync();
+            testGhci.awaitRunning();
+            testGhci.stopAsync();
+        } catch (RuntimeException e) {
             String msg = "It seems the Glasgow Haskell Compiler, GHC, is not " +
                     "available. Executing programs will not be enabled. We " +
                     "strongly recommend you install GHC, for example by " +
@@ -59,7 +62,7 @@ public class Main extends Application {
 
             e.printStackTrace(); // In case it's not a file-not-found
         }
-        
+
         // Init scene
         Scene scene = new Scene(buttonOverlay);
         scene.getStylesheets().add("/ui/style.css");
