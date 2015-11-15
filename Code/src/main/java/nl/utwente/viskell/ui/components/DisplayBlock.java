@@ -94,23 +94,21 @@ public class DisplayBlock extends Block {
         if (inputAnchor.hasConnection()) {
             this.inputType.setText(this.inputAnchor.getStringType());
 
-            Optional<GhciSession> ghci = getPane().getGhciSession();
+            GhciSession ghci = getPane().getGhciSession();
 
-            if (ghci.isPresent()) {
-                ListenableFuture<String> result = ghci.get().pull(inputAnchor.getFullExpr());
+            ListenableFuture<String> result = ghci.pull(inputAnchor.getFullExpr());
 
-                Futures.addCallback(result, new FutureCallback<String>() {
-                    public void onSuccess(String s) {
-                        // Can't call setOutput directly - this may not be JavaFX app thread.
-                        // Instead, schedule setOutput to be done some time in the future.
-                        Platform.runLater(() -> setOutput(s));
-                    }
+            Futures.addCallback(result, new FutureCallback<String>() {
+                public void onSuccess(String s) {
+                    // Can't call setOutput directly - this may not be JavaFX app thread.
+                    // Instead, schedule setOutput to be done some time in the future.
+                    Platform.runLater(() -> setOutput(s));
+                }
 
-                    public void onFailure(Throwable throwable) {
-                        onSuccess("?!?!?!");
-                    }
-                });
-            }
+                public void onFailure(Throwable throwable) {
+                    onSuccess("?!?!?!");
+                }
+            });
         } else {
             this.inputType.setText("  ... ");
             setOutput("??");

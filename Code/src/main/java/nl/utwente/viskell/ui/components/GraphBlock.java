@@ -96,7 +96,7 @@ public class GraphBlock extends Block {
         double max = x.getUpperBound();
 
         try {
-            GhciSession ghciSession = getPane().getGhciSession().get();
+            GhciSession ghciSession = getPane().getGhciSession();
             String funName = "graph_fun_" + Integer.toHexString(this.hashCode());
             ghciSession.push(funName, this.getFullExpr());
             String range = String.format(Locale.US, " [%f,%f..%f]", min, min+step, max);

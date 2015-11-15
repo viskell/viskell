@@ -12,6 +12,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.CatalogFunction;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
@@ -145,16 +146,16 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         Optional<String> result = dialog.showAndWait();
 
         result.ifPresent(value -> {
-            parent.getGhciSession().ifPresent(ghci -> {
-                try {
-                    Type type = ghci.pullType(value, parent.getEnvInstance());
-                    ValueBlock val = new ValueBlock(this.parent, type, value);
-                    addBlock(val);
-                } catch (HaskellException e) {
-                    // Retry.
-                    addValueBlock();
-                }
-            });
+            GhciSession ghci = parent.getGhciSession();
+
+            try {
+                Type type = ghci.pullType(value, parent.getEnvInstance());
+                ValueBlock val = new ValueBlock(this.parent, type, value);
+                addBlock(val);
+            } catch (HaskellException e) {
+                // Retry.
+                addValueBlock();
+            }
         });
     }
 
