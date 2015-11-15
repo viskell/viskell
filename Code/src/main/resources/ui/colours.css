@@ -113,17 +113,17 @@ MatchBlock.selected {
     -fx-text-fill: white;
 }
 
-.drawwire {
+DrawWire {
     -fx-stroke: #0066FF;
     -fx-fill: null;
 }
 
-.connection {
+Connection {
     -fx-stroke: #FCEBB6;
     -fx-fill: null;
 }
 
-.connection.error {
+Connection.error {
     -fx-stroke: red;
 }
 

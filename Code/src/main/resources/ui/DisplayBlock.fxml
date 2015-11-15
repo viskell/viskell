@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import nl.utwente.viskell.ui.components.DisplayBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.DisplayBlock" xmlns:fx="http://javafx.com/fxml/">
-	<BorderPane fx:id="block" styleClass="display, block" minHeight="75" maxHeight="75" minWidth="150">
+	<BorderPane styleClass="display, block" minHeight="75" maxHeight="75" minWidth="150">
 		<top>
 			<HBox fx:id="inputSpace" maxHeight="0" alignment="CENTER" />
 		</top>

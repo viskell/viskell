@@ -77,11 +77,11 @@ CustomUIPane {
 	-fx-alignment: center;
 }
 
-.drawwire {
+DrawWire {
     -fx-stroke-width: 5px;
 }
 
-.connection {
+Connection {
     -fx-stroke-width: 3px;
 }
 

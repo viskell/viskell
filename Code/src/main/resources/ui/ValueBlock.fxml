@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import nl.utwente.viskell.ui.components.ValueBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.ValueBlock" xmlns:fx="http://javafx.com/fxml/">
-	<BorderPane fx:id="block" styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150">
+	<BorderPane styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150">
 		<center>
 			<VBox alignment="CENTER">
 				<Label text="${controller.value}" styleClass="content" />

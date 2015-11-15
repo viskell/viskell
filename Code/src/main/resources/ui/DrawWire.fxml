@@ -1,3 +1,0 @@
-<?import nl.utwente.viskell.ui.components.DrawWire?>
-<fx:root type="nl.utwente.viskell.ui.components.DrawWire" xmlns:fx="http://javafx.com/fxml/" styleClass="drawwire">
-</fx:root>
