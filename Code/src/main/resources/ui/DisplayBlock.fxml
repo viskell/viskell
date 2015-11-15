@@ -1,29 +1,22 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import nl.utwente.viskell.ui.components.DisplayBlock?>
-<?import javafx.scene.layout.TilePane?>
 <fx:root type="nl.utwente.viskell.ui.components.DisplayBlock" xmlns:fx="http://javafx.com/fxml/">
-	<BorderPane>
+	<BorderPane fx:id="block" styleClass="display, block" minHeight="75" maxHeight="75" minWidth="150">
 		<top>
-			<TilePane fx:id="inputSpace" maxHeight="0" alignment="CENTER" />
+			<HBox fx:id="inputSpace" maxHeight="0" alignment="CENTER" />
 		</top>
 		<center>
-			<BorderPane fx:id="block" styleClass="display, block" minHeight="75" maxHeight="75" minWidth="150">
-				<top>
-					<BorderPane styleClass="argumentSpace">
-						<center>
-							<Label fx:id="inputType"/>
-						</center>
-					</BorderPane>
-				</top>
-				<center>
-					<Label text="${controller.output}" styleClass="content" />
-				</center>
-			</BorderPane>
+			<VBox alignment="CENTER">
+				<!-- silly extra HBox to not break the argumentSpace css -->
+				<HBox alignment="CENTER" styleClass="argumentSpace"> <Label fx:id="inputType" /> </HBox>
+				<Label text="${controller.output}" styleClass="content" />
+			</VBox>
 		</center>
 		<bottom>
-			<Pane fx:id="outputSpace" maxHeight="0" />		
+			<HBox fx:id="outputSpace" maxHeight="0" alignment="CENTER"/>
 		</bottom>
 	</BorderPane>
 </fx:root>

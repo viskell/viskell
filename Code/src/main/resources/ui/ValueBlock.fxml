@@ -1,24 +1,19 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import nl.utwente.viskell.ui.components.ValueBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.ValueBlock" xmlns:fx="http://javafx.com/fxml/">
-	<BorderPane>
+	<BorderPane fx:id="block" styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150">
 		<center>
-			<BorderPane fx:id="block" styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150">
-				<center>
-					<Label text="${controller.value}" styleClass="content" />
-				</center>
-				<bottom>
-					<BorderPane styleClass="argumentSpace">
-						<center>
-							<Label fx:id="valueType"/>
-						</center>
-					</BorderPane>
-				</bottom>
-			</BorderPane>
+			<VBox alignment="CENTER">
+				<Label text="${controller.value}" styleClass="content" />
+				<!-- silly extra HBox to not break the argumentSpace css -->
+				<HBox alignment="CENTER" styleClass="argumentSpace"> <Label fx:id="valueType" /> </HBox>
+			</VBox>
 		</center>
 		<bottom>
-			<BorderPane fx:id="outputSpace" maxHeight="0"/>
+			<HBox fx:id="outputSpace" maxHeight="0" alignment="CENTER"/>
 		</bottom>
 	</BorderPane>
 </fx:root>

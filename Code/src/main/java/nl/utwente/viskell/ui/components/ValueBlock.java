@@ -5,7 +5,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Value;
@@ -33,7 +33,7 @@ public class ValueBlock extends Block {
     protected OutputAnchor output;
 
     /** The space containing the output anchor. */
-    @FXML protected BorderPane outputSpace;
+    @FXML protected Pane outputSpace;
     
     /** The label containing the constrained type of this block */
     @FXML protected Label valueType;
@@ -53,9 +53,7 @@ public class ValueBlock extends Block {
         this.output = new OutputAnchor(this, new Binder("val", type));
 
         this.loadFXML(fxml);
-
-        outputSpace.setCenter(output);
-        outputSpace.toFront();
+        outputSpace.getChildren().add(this.output);
     }
 
     /**
