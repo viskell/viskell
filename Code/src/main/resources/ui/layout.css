@@ -2,26 +2,26 @@ CustomUIPane {
     -fx-background-position: 2500 2500;
 }
 
-.menu.block {
+.menu {
     -fx-font-size: 12px;
+    -fx-font-family: Titillium;
+    -fx-border-width: 2px;
 }
 
-.menu.block .title {
-    -fx-font-size: 12px;
+.menu .title {
     -fx-font-weight: bold;
 }
 
-.menu.block .content {
+.menu .content {
     -fx-font-size: 15px;
     -fx-font-weight: normal;
 }
 
-.menu.block #categorySpace TitledPane {
+.menu #categorySpace TitledPane {
     -fx-padding: 3px;
-    -fx-label-padding: 5px;
 }
 
-.menu.block #utilSpace {
+.menu #utilSpace {
     -fx-padding: 3px;
     -fx-spacing: 6px;
 }
