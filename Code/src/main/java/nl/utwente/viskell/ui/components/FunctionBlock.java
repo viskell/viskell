@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
@@ -50,6 +51,9 @@ public class FunctionBlock extends Block {
     /** The space in which to nest the FunctionBlock's inner parts. */
     @FXML private Pane nestSpace;
     
+    /** The Label in which the information of the function is displayed. */
+    @FXML private Label functionInfo;
+    
     /**
      * Method that creates a newInstance of this class along with it's visual
      * representation
@@ -87,9 +91,13 @@ public class FunctionBlock extends Block {
         output = new OutputAnchor(this, new Binder("res"));
         outputSpace.getChildren().add(output);
         
+        // Make sure the prefWidth is correctly updated.
+        this.prefWidthProperty().bind(functionInfo.widthProperty().add(argumentSpace.prefWidthProperty()));
         
         this.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         this.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        functionInfo.setMinWidth(Region.USE_PREF_SIZE);
+        functionInfo.setMaxWidth(Region.USE_PREF_SIZE);
         
         // Since at this point of the width of the Labels is unknown, we have to ask for another layout pass.
         Platform.runLater(this::updateLayout);

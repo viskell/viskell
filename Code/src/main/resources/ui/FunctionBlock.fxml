@@ -5,7 +5,7 @@
 	<BorderPane>
 		<center>
 			<HBox styleClass="function, block">
-				<Label text="${controller.name}" styleClass="title" />
+				<Label fx:id="functionInfo" text="${controller.name}" styleClass="title" />
 			    <Pane fx:id="nestSpace"/>
 			</HBox>
 		</center>
