@@ -5,35 +5,12 @@
 <fx:root type="nl.utwente.viskell.ui.components.DefinitionBlock" xmlns:fx="http://javafx.com/fxml/">
     <VBox>
         <Label fx:id="signature" styleClass="signature" />
-        <BorderPane styleClass="def">
-            <top>
-                <VBox>
-                    <padding>
-                        <Insets bottom="10.0" left="10.0" right ="10.0" top="10.0"/>
-                    </padding>
-
-                    <FlowPane fx:id="argSpace" prefWrapLength="100" vgap="50" hgap="50" alignment="BOTTOM_LEFT"/>
-                </VBox>
-            </top>
-            <center>
-                <Pane prefWidth="400" prefHeight="400">
-                </Pane>
-            </center>
-            <bottom>
-                <VBox>
-                    <padding>
-                        <Insets bottom="10.0" left="10.0" right ="10.0" top="10.0"/>
-                    </padding>
-
-                    <FlowPane fx:id="resSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="BOTTOM_LEFT"/>
-                </VBox>
-            </bottom>
-        </BorderPane>
+        <!-- The internal LambdaContainer will be inserted here. -->
         <VBox>
             <padding>
                 <Insets bottom="10.0" left="10.0" right ="10.0" top="10.0"/>
             </padding>
-            <FlowPane fx:id="funSpace" prefWrapLength="100" vgap="50" hgap="10" alignment="BOTTOM_LEFT"/>
+            <HBox fx:id="funSpace" spacing="50" alignment="BOTTOM_LEFT"/>
         </VBox>
     </VBox>
 </fx:root>
