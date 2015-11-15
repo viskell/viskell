@@ -37,18 +37,7 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
         ghci.getSelectionModel().select(GhciSession.pickBackend());
         ghci.valueProperty().addListener(x -> {
             preferences.put("ghci", ghci.getValue().toString());
-
-            pane.getGhciSession().ifPresent(ghciSession -> {
-                try {
-                    ghciSession.close();
-                    ghciSession.start();
-                } catch (IOException | HaskellException e) {
-                    // TODO something useful
-                    e.printStackTrace();
-                }
-
-                pane.invalidateAll();
-            });
+            pane.restartBackend();
         });
     }
 
