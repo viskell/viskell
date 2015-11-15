@@ -4,6 +4,7 @@ import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.Type;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,9 +20,17 @@ public class GhciSessionTest {
     public void setUp() throws HaskellException {
         this.env = new Environment();
         this.ghci = new GhciSession();
+        this.ghci.startAsync();
+        this.ghci.awaitRunning();
 
         this.env.addTestSignature("my_pi", "Float");
         this.pi = new Value(Type.con("Float"), "3.14");
+    }
+
+    @After
+    public void tearDown() {
+        this.ghci.stopAsync();
+        this.ghci.awaitTerminated();
     }
 
     @Test
@@ -31,8 +40,8 @@ public class GhciSessionTest {
     }
 
     @Test
-    public void constFunPushPull() throws HaskellException {
+    public void constFunPushPull() throws Exception {
         this.ghci.push("my_pi", this.pi);
-        Assert.assertEquals("3.14", this.ghci.pullRaw("my_pi"));
+        Assert.assertEquals("3.14", this.ghci.pullRaw("my_pi").get());
     }
 }
