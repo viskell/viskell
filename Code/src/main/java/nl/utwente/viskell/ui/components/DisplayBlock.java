@@ -13,13 +13,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import nl.utwente.viskell.ghcj.GhciSession;
-import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * DisplayBlock is an extension of {@link Block} that only provides a display of
