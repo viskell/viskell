@@ -39,6 +39,10 @@ public class ConstantBox extends Box {
         return ImmutableList.of(this.output);
     }
 
+    public Expression getExpr() {
+        return expr;
+    }
+
     @Override
     protected void refreshPortTypes() {
         // TODO Auto-generated method stub
