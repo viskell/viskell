@@ -1,5 +1,6 @@
 package nl.utwente.viskell.haskell.env;
 
+import com.google.common.base.MoreObjects;
 import nl.utwente.viskell.haskell.type.Type;
 
 /**
@@ -45,6 +46,14 @@ public class CatalogFunction extends FunctionInfo implements Comparable<CatalogF
     @Override
     public final int compareTo(final CatalogFunction entry) {
         return this.getName().compareTo(entry.getName());
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("name", getName())
+                .add("category", getCategory())
+                .toString();
     }
 
     public boolean isConstructor() {
