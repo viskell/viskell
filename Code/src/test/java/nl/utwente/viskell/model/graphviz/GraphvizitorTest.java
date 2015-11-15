@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class GraphToGraphvizTest {
+public class GraphvizitorTest {
     @Test
     public void testSimple() throws HaskellTypeError {
         Component component = new Component();
@@ -25,7 +25,10 @@ public class GraphToGraphvizTest {
         Wire.connect(idb.getOutputs().get(0), fb.getInputs().get(0));
         Wire.connect(tb.getOutputs().get(0), fb.getInputs().get(1));
 
-        String result = GraphToGraphviz.convert(fb);
+        Graphvizitor graphvizitor = new Graphvizitor();
+        fb.accept(graphvizitor);
+        String result = graphvizitor.toString();
+
         assertNotNull(result);
         assertNotEquals("", result);
     }

@@ -1,6 +1,6 @@
 package nl.utwente.viskell.model;
 
-public class Wire {
+public class Wire implements ModelElement {
     
     private final SourcePort source;
     
@@ -37,4 +37,9 @@ public class Wire {
         return wire;
     }
 
+    @Override
+    public void accept(ModelVisitor visitor) {
+        visitor.visit(this);
+        source.accept(visitor);
+    }
 }

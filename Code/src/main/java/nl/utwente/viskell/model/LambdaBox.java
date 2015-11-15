@@ -45,4 +45,10 @@ public class LambdaBox extends Box {
         // TODO Auto-generated method stub
     }
 
+    @Override
+    public void accept(ModelVisitor visitor) {
+        visitor.visit(this);
+
+        body.accept(visitor);
+    }
 }

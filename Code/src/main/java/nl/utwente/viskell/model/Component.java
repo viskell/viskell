@@ -26,5 +26,10 @@ public class Component extends BoxGroup {
     public void setWrapper(Box wrapper) {
         this.wrapper = Optional.of(wrapper);
     }
-    
+
+    @Override
+    public void accept(ModelVisitor visitor) {
+        visitor.visit(this);
+        sources.forEach(s -> s.accept(visitor));
+    }
 }

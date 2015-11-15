@@ -2,7 +2,7 @@ package nl.utwente.viskell.model;
 
 import com.google.common.collect.ImmutableList;
 
-public abstract class Box {
+public abstract class Box implements ModelElement {
     
     public abstract BoxGroup getDirectParent();
     

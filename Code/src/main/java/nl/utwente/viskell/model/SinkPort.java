@@ -5,7 +5,7 @@ import java.util.Optional;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 
-public class SinkPort {
+public class SinkPort implements ModelElement {
     
     private Optional<Wire> wire;
     
@@ -38,4 +38,9 @@ public class SinkPort {
         return this.wire.map(w -> w.getSource());
     }
 
+    @Override
+    public void accept(ModelVisitor visitor) {
+        visitor.visit(this);
+        wire.ifPresent(w -> w.accept(visitor));
+    }
 }

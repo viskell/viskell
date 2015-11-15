@@ -52,5 +52,10 @@ public class FunctionBox extends Box {
     protected void updateExpr() {
         // TODO Auto-generated method stub
     }
-    
+
+    @Override
+    public void accept(ModelVisitor visitor) {
+        visitor.visit(this);
+        inputs.forEach(i -> i.accept(visitor));
+    }
 }

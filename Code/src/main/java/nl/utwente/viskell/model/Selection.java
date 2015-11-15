@@ -13,5 +13,8 @@ public class Selection extends BoxGroup {
         return this.parent;
     }
 
-    
+    @Override
+    public void accept(ModelVisitor visitor) {
+        visitor.visit(this);
+    }
 }

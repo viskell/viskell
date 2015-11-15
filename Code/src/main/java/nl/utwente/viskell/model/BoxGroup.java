@@ -3,7 +3,7 @@ package nl.utwente.viskell.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BoxGroup {
+public abstract class BoxGroup implements ModelElement {
     
     private List<Box> parts;
 

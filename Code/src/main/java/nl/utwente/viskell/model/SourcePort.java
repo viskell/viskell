@@ -9,7 +9,7 @@ import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.expr.Variable;
 import nl.utwente.viskell.haskell.type.Type;
 
-public class SourcePort {
+public class SourcePort implements ModelElement {
 
     private final List<Wire> wires;
     
@@ -50,4 +50,8 @@ public class SourcePort {
        return this.wires.stream().map(w -> w.getSink()).collect(Collectors.toList());
    }
 
+    @Override
+    public void accept(ModelVisitor visitor) {
+        visitor.visit(this);
+    }
 }

@@ -11,7 +11,9 @@ public class OutputPort extends SourcePort {
         this.box = box;
     }
 
-    public Box getBox() {
-        return box;
+    @Override
+    public void accept(ModelVisitor visitor) {
+        super.accept(visitor);
+        box.accept(visitor);
     }
 }
