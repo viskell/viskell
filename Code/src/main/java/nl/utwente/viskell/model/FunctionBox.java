@@ -1,7 +1,9 @@
 package nl.utwente.viskell.model;
 
 import com.google.common.collect.ImmutableList;
+import nl.utwente.viskell.haskell.expr.Binder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionBox extends Box {
@@ -16,6 +18,14 @@ public class FunctionBox extends Box {
         super();
         this.parent = parent;
         this.parent.addPart(this);
+
+        inputs = new ArrayList<>();
+        outputs = new ArrayList<>();
+
+        // TODO other arities
+        inputs.add(new InputPort(this));
+        inputs.add(new InputPort(this));
+        outputs.add(new OutputPort(this, new Binder("fn")));
     }
 
     @Override

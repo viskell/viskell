@@ -11,4 +11,7 @@ public class OutputPort extends SourcePort {
         this.box = box;
     }
 
+    public Box getBox() {
+        return box;
+    }
 }
