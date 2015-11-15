@@ -2,9 +2,7 @@ package nl.utwente.viskell.haskell.env;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import nl.utwente.viskell.haskell.type.Type;
-import nl.utwente.viskell.haskell.type.TypeClass;
-import nl.utwente.viskell.haskell.type.TypeCon;
+import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.haskell.typeparser.TypeBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -19,6 +17,8 @@ import javax.xml.validation.SchemaFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * Haskell catalog containing available type classes and functions.
@@ -82,10 +82,46 @@ public class HaskellCatalog {
     }
 
     /**
+     * @return A set of functions that match the given predicate.
+     */
+    public final Collection<CatalogFunction> getByPredicate(final Predicate<CatalogFunction> predicate) {
+        return functions.values().stream().filter(predicate).collect(Collectors.toList());
+    }
+
+    /**
+     * @return A set of functions with names beginning with the given prefix.
+     */
+    public final Collection<CatalogFunction> getByPrefix(final String prefix) {
+        return getByPredicate(fn -> fn.getName().startsWith(prefix));
+    }
+
+    /**
+     * @return A set of functions that match the given type.
+     */
+    public final Collection<CatalogFunction> getByType(final Type type) {
+        return getByPredicate(fn -> {
+            try {
+                TypeChecker.unify("catalog query", fn.getFreshSignature(), type.getFresh());
+            } catch (HaskellTypeError e) {
+                return false;
+            }
+
+            return true;
+        });
+    }
+
+    /**
+     * @return The number of functions in the catalog.
+     */
+    public int size() {
+        return functions.size();
+    }
+
+    /**
      * @return A new environment based on the entries of this catalog.
      */
     public final Environment asEnvironment() {
-        return new Environment(new HashMap<String, FunctionInfo>(this.functions), new HashMap<String, TypeClass>(this.classes));
+        return new Environment(new HashMap<>(this.functions), new HashMap<>(this.classes));
     }
 
     /**
