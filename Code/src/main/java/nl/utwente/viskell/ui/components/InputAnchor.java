@@ -8,8 +8,10 @@ import com.google.common.collect.ImmutableMap;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Hole;
 import nl.utwente.viskell.haskell.expr.LetExpression;
@@ -20,6 +22,16 @@ import nl.utwente.viskell.haskell.type.TypeScope;
  * ConnectionAnchor that specifically functions as an input.
  */
 public class InputAnchor extends ConnectionAnchor {
+
+    /** The visual representation of the InputAnchor. */
+    @FXML private Shape visibleAnchor;
+    
+    /** The invisible part of the InputAnchor (the touch zone). */
+    @FXML private Shape invisibleAnchor;
+
+    /** The thing sticking out of an unconnected InputAnchor. */
+    @FXML private Shape openWire;
+    
     /** The Optional connection this anchor has. */
     private Optional<Connection> connection;
     
@@ -41,12 +53,14 @@ public class InputAnchor extends ConnectionAnchor {
      */
     public InputAnchor(Block block) {
         super(block);
+        this.loadFXML("InputAnchor");
+        
         this.connection = Optional.empty();
         this.type = TypeScope.unique("???");
         
         this.errorImage = new ImageView(ERROR_PICTURE);
-        double height = this.getVisibleAnchor().getBoundsInLocal().getHeight();
-        double width = this.getVisibleAnchor().getBoundsInLocal().getWidth();
+        double height = this.visibleAnchor.getBoundsInLocal().getHeight();
+        double width = this.visibleAnchor.getBoundsInLocal().getWidth();
         this.errorImage.setFitHeight(height);
         this.errorImage.setFitWidth(width);
         this.errorImage.setMouseTransparent(true);
@@ -91,6 +105,7 @@ public class InputAnchor extends ConnectionAnchor {
      */
     protected void setConnection(Connection connection) {
         this.connection = Optional.of(connection);
+        this.openWire.setVisible(false);
     }
     
     @Override
@@ -101,6 +116,7 @@ public class InputAnchor extends ConnectionAnchor {
             conn.remove();
         }
         this.setErrorState(false);
+        this.openWire.setVisible(true);
     }
 
     @Override

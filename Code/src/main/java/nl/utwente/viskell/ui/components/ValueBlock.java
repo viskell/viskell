@@ -1,13 +1,13 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.List;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import nl.utwente.viskell.haskell.expr.Binder;
+import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
@@ -79,13 +79,18 @@ public class ValueBlock extends Block {
     }
     
     @Override
-    public void updateExpr() {
-        this.localExpr = new Value(this.output.getType(), getValue());
+    public Expression getLocalExpr() {
+        return new Value(this.output.getType(), getValue());
     }
 
     @Override
     public void refreshAnchorTypes() {
         this.output.refreshType(new TypeScope());
+    }
+
+    @Override
+    public List<InputAnchor> getAllInputs() {
+        return ImmutableList.of();
     }
 
     @Override

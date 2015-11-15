@@ -9,6 +9,7 @@ import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.ConstructorBinder;
+import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
@@ -100,8 +101,8 @@ public class MatchBlock extends Block {
     }
 
     @Override
-    public void updateExpr() {
-        localExpr = input.getLocalExpr();
+    public Expression getLocalExpr() {
+        return input.getLocalExpr();
     }
 
     @Override

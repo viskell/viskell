@@ -133,6 +133,11 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
 
     @Override
+    public List<InputAnchor> getAllInputs() {
+        return ImmutableList.of();
+    }
+
+    @Override
     public List<OutputAnchor> getAllOutputs() {
         return ImmutableList.of(this.fun);
     }
@@ -171,11 +176,11 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
     
     @Override
-    public final void updateExpr() {
+    public final Expression getLocalExpr() {
         List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         LetExpression body = new LetExpression(this.res.getLocalExpr());
         this.res.extendExprGraph(body);
-        this.localExpr = new Lambda(binders, body);
+        return new Lambda(binders, body);
     }
 
     @Override
@@ -183,4 +188,5 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         // also update the internal blocks connected to the internal anchor 
         this.res.getOppositeAnchor().ifPresent(a -> a.invalidateVisualState());
     }
+
 }

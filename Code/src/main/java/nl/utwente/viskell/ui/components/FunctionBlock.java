@@ -14,6 +14,7 @@ import javafx.scene.layout.TilePane;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Binder;
+import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.FunVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
@@ -134,11 +135,13 @@ public class FunctionBlock extends Block {
     }
 
     @Override
-    public final void updateExpr() {
-        this.localExpr = new FunVar(this.funInfo);
+    public Expression getLocalExpr() {
+        Expression expr = new FunVar(this.funInfo);
         for (InputAnchor in : this.getActiveInputs()) {
-            this.localExpr = new Apply(this.localExpr, in.getLocalExpr());
+            expr = new Apply(expr, in.getLocalExpr());
         }
+        
+        return expr;
     }
     
     @Override

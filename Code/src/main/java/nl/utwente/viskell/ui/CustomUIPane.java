@@ -1,13 +1,11 @@
 package nl.utwente.viskell.ui;
 
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
@@ -28,6 +26,7 @@ public class CustomUIPane extends TactilePane {
     
     private Optional<GhciSession> ghci;
     private InspectorWindow inspector;
+    private PreferencesWindow preferences;
 
     private Point2D dragStart;
     private Point2D offset;
@@ -61,15 +60,7 @@ public class CustomUIPane extends TactilePane {
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
         this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleRelease);
-        this.addEventHandler(ScrollEvent.SCROLL, this::handleScroll);
-
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
-
-        /* Run the Inspector window. */
-        Platform.runLater(() -> {
-            inspector = new InspectorWindow(this);
-            inspector.blockProperty().bind(this.selectedBlock);
-        });
     }
 
     private void handleKey(KeyEvent keyEvent) {
@@ -104,9 +95,19 @@ public class CustomUIPane extends TactilePane {
     }
 
     public void showInspector() {
-        if (inspector != null) {
-            inspector.show();
+        if (inspector == null) {
+            inspector = new InspectorWindow(this);
         }
+
+        inspector.show();
+    }
+
+    public void showPreferences() {
+        if (preferences == null) {
+            preferences = new PreferencesWindow(this);
+        }
+
+        preferences.show();
     }
 
     private void handlePress(MouseEvent e) {
@@ -143,17 +144,6 @@ public class CustomUIPane extends TactilePane {
     private void setScale(double scale) {
         this.setScaleX(scale);
         this.setScaleY(scale);
-    }
-
-    private void handleScroll(ScrollEvent scrollEvent) {
-        /* Ignore (drop) scroll events synthesized from touches. */
-        if (scrollEvent.getTouchCount() > 0) return;
-
-        if (scrollEvent.getDeltaY() > 0) {
-            zoomIn();
-        } else if (scrollEvent.getDeltaY() < 0) {
-            zoomOut();
-        }
     }
 
     /**

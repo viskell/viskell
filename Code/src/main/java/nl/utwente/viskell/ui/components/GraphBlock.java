@@ -12,6 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
+import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
@@ -64,10 +65,15 @@ public class GraphBlock extends Block {
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(input);
     }
+
+    @Override
+    public List<OutputAnchor> getAllOutputs() {
+        return ImmutableList.of();
+    }
     
     @Override
-    public void updateExpr() {
-        this.localExpr = input.getLocalExpr();
+    public Expression getLocalExpr() {
+        return input.getLocalExpr();
     }
 
     @Override
@@ -109,4 +115,5 @@ public class GraphBlock extends Block {
 
         chart.setData(lineChartData);
     }
+
 }
