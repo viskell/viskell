@@ -21,7 +21,6 @@ import java.util.Optional;
  * Extension of TactilePane that keeps state for the user interface.
  */
 public class CustomUIPane extends TactilePane {
-    private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
     
     private GhciSession ghci;
@@ -45,7 +44,6 @@ public class CustomUIPane extends TactilePane {
      */
     public CustomUIPane(HaskellCatalog catalog) {
         this.connectionCreationManager = new ConnectionCreationManager(this);
-        this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
         this.catalog = catalog;
@@ -83,9 +81,6 @@ public class CustomUIPane extends TactilePane {
                 showInspector();
                 break;
 
-            case DELETE:
-                removeSelected();
-                break;
             default:
                 break;
         }
@@ -166,18 +161,6 @@ public class CustomUIPane extends TactilePane {
         }
     }
 
-    public Optional<Block> getSelectedBlock() {
-        return selectedBlock.get();
-    }
-
-    public void setSelectedBlock(Block selectedBlock) {
-        this.selectedBlock.set(Optional.ofNullable(selectedBlock));
-    }
-
-    public ObjectProperty<Optional<Block>> selectedBlockProperty() {
-        return selectedBlock;
-    }
-    
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
         for (InputAnchor in : block.getAllInputs()) {
@@ -186,11 +169,6 @@ public class CustomUIPane extends TactilePane {
         
         block.getAllOutputs().stream().forEach(output -> output.removeConnections());
         this.getChildren().removeAll(block);
-    }
-
-    /** Remove the selected block, if any. */
-    private void removeSelected() {
-        this.getSelectedBlock().ifPresent(this::removeBlock);
     }
 
     public ConnectionCreationManager getConnectionCreationManager() {

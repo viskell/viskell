@@ -11,10 +11,6 @@ CustomUIPane {
     -fx-border-color: red;
 }
 
-.selected .block {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
-}
-
 .block .header {
     -fx-text-fill: black;
 }
@@ -27,16 +23,8 @@ CustomUIPane {
     -fx-text-fill: black;
 }
 
-.selected .function.block {
-    -fx-background-color: #BA6602;
-}
-
 .function.block {
     -fx-background-color: #E97F02;
-}
-
-.selected .value.block {
-    -fx-background-color: #971140;
 }
 
 .value.block {
@@ -45,14 +33,6 @@ CustomUIPane {
 
 MatchBlock {
     -fx-background-color: #8DD0D0;
-}
-
-MatchBlock.selected {
-    -fx-background-color: #42A0A0;
-}
-
-.selected .display.block {
-    -fx-background-color: #6E7C0C;
 }
 
 .display.block {
