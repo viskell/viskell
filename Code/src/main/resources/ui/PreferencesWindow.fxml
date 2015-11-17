@@ -1,9 +1,7 @@
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import nl.utwente.viskell.ui.PreferencesWindow?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <fx:root type="nl.utwente.viskell.ui.PreferencesWindow" xmlns:fx="http://javafx.com/fxml/">
     <center>
         <GridPane hgap="12" vgap="12">
@@ -12,7 +10,10 @@
                 <Label GridPane.columnIndex="0" GridPane.rowIndex="0">GHCi implementation</Label>
                 <ComboBox fx:id="ghci" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                 <Label GridPane.columnIndex="0" GridPane.rowIndex="1">Theme</Label>
-                <ComboBox fx:id="theme" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <ComboBox fx:id="theme"/>
+                    <Button fx:id="reloadTheme" text="Reload"/>
+                </HBox>
             </children>
         </GridPane>
     </center>

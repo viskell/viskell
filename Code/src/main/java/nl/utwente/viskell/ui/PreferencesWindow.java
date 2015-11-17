@@ -4,6 +4,7 @@ import java.util.prefs.Preferences;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -21,6 +22,7 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
 
     @FXML private ComboBox<GhciSession.Backend> ghci;
     @FXML private ComboBox<String> theme;
+    @FXML private Button reloadTheme;
 
     public PreferencesWindow(CustomUIPane customUIPane) {
         super();
@@ -31,7 +33,6 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
         stage = new Stage();
         stage.setTitle("Preferences");
         stage.setScene(new Scene(this, 450, 450));
-        stage.getScene().getStylesheets().add(preferences.get("theme", "/ui/colours.css"));
 
         loadFXML("PreferencesWindow");
 
@@ -47,12 +48,19 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
         theme.getSelectionModel().select(preferences.get("theme", "/ui/colours.css"));
         theme.valueProperty().addListener(event -> {
             preferences.put("theme", theme.getValue());
-            
-            Main.primaryStage.getScene().getStylesheets().clear();
-            Main.primaryStage.getScene().getStylesheets().addAll("/ui/layout.css", theme.getValue());
-            stage.getScene().getStylesheets().clear();
-            stage.getScene().getStylesheets().addAll("/ui/layout.css", theme.getValue());
+            refreshTheme();
         });
+        
+        reloadTheme.setOnAction(event -> refreshTheme());
+        
+        refreshTheme();
+    }
+
+    protected void refreshTheme() {
+        Main.primaryStage.getScene().getStylesheets().clear();
+        Main.primaryStage.getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
+        stage.getScene().getStylesheets().clear();
+        stage.getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
     }
 
     public void show() {
