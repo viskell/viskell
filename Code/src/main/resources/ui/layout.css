@@ -27,10 +27,10 @@ CustomUIPane {
 }
 
 .block {
-	-fx-font-size: 20px;
+    -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-font-family: Titillium;
-	-fx-alignment: center-left;
+    -fx-alignment: center-left;
     -fx-border-width: 2px;
 }
 
@@ -41,8 +41,8 @@ CustomUIPane {
 }
 
 .block .title {
-	-fx-padding: 0 10px 0 10px;
-	-fx-font-size: 20px;
+    -fx-padding: 0 10px 0 10px;
+    -fx-font-size: 20px;
     -fx-font-weight: bolder;
 }
 
@@ -55,16 +55,24 @@ CustomUIPane {
     -fx-padding: 10;
 }
 
-.value.block {
+.value.block, .display.block {
     -fx-padding: 0 20 0 20;
+    -fx-text-alignment: center;
+    -fx-min-height: 75px;
+    -fx-max-height: 75px;
+    -fx-min-width: 150px;
 }
 
-.display.block {
-    -fx-text-alignment: center;
+SliderBlock .value.block {
+	-fx-min-height: 100px;
 }
 
 .graph.block LineChart {
     -fx-font-size: 14px;
+}
+
+.argumentSpace {
+    -fx-alignment: center;
 }
 
 .argumentSpace Label {
@@ -74,7 +82,8 @@ CustomUIPane {
 }
 
 #inputSpace, #outputSpace {
-	-fx-alignment: center;
+    -fx-max-height: 0px;
+    -fx-alignment: center;
 }
 
 DrawWire {

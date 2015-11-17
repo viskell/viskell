@@ -2,18 +2,18 @@
 <?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.FunctionBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
-	<BorderPane>
-		<center>
-			<HBox styleClass="function, block">
-				<Label fx:id="functionInfo" text="${controller.name}" styleClass="title" />
-			    <Pane fx:id="nestSpace"/>
-			</HBox>
-		</center>
-		<top>
-			<TilePane fx:id="inputSpace"/>
-		</top>
-		<bottom>
-			<TilePane fx:id="outputSpace"/>
-		</bottom>
-	</BorderPane>
+    <BorderPane>
+        <center>
+            <HBox styleClass="function, block">
+                <Label fx:id="functionInfo" styleClass="title" />
+                <Pane fx:id="nestSpace"/>
+            </HBox>
+        </center>
+        <top>
+            <TilePane fx:id="inputSpace"/>
+        </top>
+        <bottom>
+            <HBox fx:id="outputSpace"/>
+        </bottom>
+    </BorderPane>
 </fx:root>

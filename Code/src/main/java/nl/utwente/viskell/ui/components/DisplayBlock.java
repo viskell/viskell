@@ -5,17 +5,13 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
-
 import java.util.List;
 
 /**
@@ -26,8 +22,6 @@ import java.util.List;
  * input source using a {@link Connection}.
  */
 public class DisplayBlock extends Block {
-    /** The output String that is displayed on a Label. */
-    protected StringProperty output;
 
     /** The Anchor that is used as input. */
     protected InputAnchor inputAnchor;
@@ -38,8 +32,8 @@ public class DisplayBlock extends Block {
     /** The label on which to display type information. */
     @FXML protected Label inputType;
     
-    /** The space containing the output anchor. */
-    @FXML protected Pane outputSpace;
+    /** The label on which to display the value of this block */
+    @FXML protected Label value;
     
     /**
      * Creates a new instance of DisplayBlock.
@@ -52,38 +46,11 @@ public class DisplayBlock extends Block {
     
     protected DisplayBlock(CustomUIPane pane, String fxml) {
         super(pane);
-        output = new SimpleStringProperty("???");
 
-        this.loadFXML(fxml);
+        loadFXML(fxml);
 
         inputAnchor = new InputAnchor(this);
         inputSpace.getChildren().add(inputAnchor);
-
-        //Make sure inputSpace is drawn on top.
-        BorderPane borderPane = (BorderPane) inputSpace.getParent();
-        borderPane.getChildren().remove(inputSpace);
-        borderPane.setTop(inputSpace);
-    }
-
-    /**
-     * @return The output this Block is displaying.
-     */
-    public String getOutput() {
-        return output.get();
-    }
-
-    /**
-     * Sets the output that is displayed.
-     */
-    public void setOutput(final String value) {
-        output.set(value);
-    }
-
-    /**
-     * @return The StringProperty containing the output.
-     */
-    public StringProperty outputProperty() {
-        return output;
     }
 
     @Override
@@ -98,18 +65,23 @@ public class DisplayBlock extends Block {
             Futures.addCallback(result, new FutureCallback<String>() {
                 public void onSuccess(String s) {
                     // Can't call setOutput directly - this may not be JavaFX app thread.
-                    // Instead, schedule setOutput to be done some time in the future.
-                    Platform.runLater(() -> setOutput(s));
+                    // Instead, schedule setting the output.
+                    Platform.runLater(() -> value.setText(s));
                 }
 
                 public void onFailure(Throwable throwable) {
-                    onSuccess("?!?!?!");
+                    Platform.runLater(() -> value.setText("?!?!?!"));
                 }
             });
         } else {
-            this.inputType.setText("  ... ");
-            setOutput("??");
+            inputType.setText("a");
+            value.setText("?");
         }
+    }
+    
+    //TODO NOTE: only used for a meaningless test
+    public String getOutput() {
+        return value.getText();
     }
     
     @Override
@@ -134,7 +106,7 @@ public class DisplayBlock extends Block {
 
     @Override
     public String toString() {
-        return "DisplayBlock[" + getOutput() + "]";
+        return "DisplayBlock[" + value.getText() + "]";
     }
 
 }

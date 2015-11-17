@@ -20,10 +20,10 @@ public class SliderBlock extends ValueBlock {
         super(pane, pane.getEnvInstance().buildType("Fractional a => a"), "0.0", "SliderBlock");
 
         slider.setValue(0.0);
-        this.setValue("0.0");
+        setValue("0.0");
 
         slider.valueProperty().addListener(ev -> {
-            setValue(String.valueOf(slider.getValue()));
+            setValue(String.format("%.5f", slider.getValue()));
             this.initiateConnectionChanges();
         });
     }

@@ -13,7 +13,7 @@
             <VBox fx:id="utilSpace" />
         </center>
         <bottom>
-        	<VBox fx:id="categorySpace" prefWidth="15" />
+            <VBox fx:id="categorySpace" prefWidth="15" />
         </bottom>
     </BorderPane>
 </fx:root>

@@ -2,22 +2,22 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import nl.utwente.viskell.ui.components.MatchBlock?>
-<fx:root type="nl.utwente.viskell.ui.components.MatchBlock"	xmlns:fx="http://javafx.com/fxml/">
-	<BorderPane>
-		<center>
-			<HBox styleClass="match, block">
-				<Label fx:id="name" styleClass="title" />
-			</HBox>
-		</center>
-		<top>
-			<HBox fx:id="inputSpace"/>
-		</top>
-		<bottom>
-			<HBox fx:id="outputSpace" spacing="50">
-				<padding>
-					<Insets bottom="0" left="20" right="20" top="0" />
-				</padding>
-			</HBox>
-		</bottom>
-	</BorderPane>
+<fx:root type="nl.utwente.viskell.ui.components.MatchBlock"    xmlns:fx="http://javafx.com/fxml/">
+    <BorderPane>
+        <center>
+            <HBox styleClass="match, block">
+                <Label fx:id="name" styleClass="title" />
+            </HBox>
+        </center>
+        <top>
+            <HBox fx:id="inputSpace"/>
+        </top>
+        <bottom>
+            <HBox fx:id="outputSpace" spacing="50">
+                <padding>
+                    <Insets bottom="0" left="20" right="20" top="0" />
+                </padding>
+            </HBox>
+        </bottom>
+    </BorderPane>
 </fx:root>
