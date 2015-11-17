@@ -15,8 +15,6 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
-import nl.utwente.ewi.caes.tactilefx.event.TactilePaneEvent;
-import nl.utwente.ewi.caes.tactilefx.skin.TactilePaneSkin;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

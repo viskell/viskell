@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.utwente.ewi.caes.tactilefx.event;
+package nl.utwente.ewi.caes.tactilefx.control;
 
 import javafx.event.Event;
 import javafx.event.EventType;

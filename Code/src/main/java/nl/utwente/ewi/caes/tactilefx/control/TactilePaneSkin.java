@@ -3,11 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.utwente.ewi.caes.tactilefx.skin;
+package nl.utwente.ewi.caes.tactilefx.control;
 
 import javafx.scene.Node;
 import javafx.scene.control.SkinBase;
-import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 
 public class TactilePaneSkin extends SkinBase<TactilePane> {
     TactilePane pane;
