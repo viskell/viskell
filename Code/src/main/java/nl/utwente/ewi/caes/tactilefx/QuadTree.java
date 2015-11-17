@@ -1,4 +1,4 @@
-package nl.utwente.ewi.caes.tactilefx.control;
+package nl.utwente.ewi.caes.tactilefx;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;

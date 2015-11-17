@@ -1,4 +1,4 @@
-package nl.utwente.ewi.caes.tactilefx.debug;
+package nl.utwente.ewi.caes.tactilefx;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;

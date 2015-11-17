@@ -1,4 +1,4 @@
-package nl.utwente.ewi.caes.tactilefx.debug;
+package nl.utwente.ewi.caes.tactilefx;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
@@ -23,7 +23,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
-import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
 
 import java.util.ArrayList;
 import java.util.List;

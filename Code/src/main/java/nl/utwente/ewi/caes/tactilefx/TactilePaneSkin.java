@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package nl.utwente.ewi.caes.tactilefx.control;
+package nl.utwente.ewi.caes.tactilefx;
 
 import javafx.scene.Node;
 import javafx.scene.control.SkinBase;

@@ -1,4 +1,4 @@
-package nl.utwente.ewi.caes.tactilefx.debug;
+package nl.utwente.ewi.caes.tactilefx;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
