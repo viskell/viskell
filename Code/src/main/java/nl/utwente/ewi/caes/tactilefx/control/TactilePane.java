@@ -8,7 +8,6 @@ import javafx.css.Styleable;
 import javafx.css.StyleableProperty;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
@@ -62,14 +61,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TactilePane extends Control {
     // Attached Properties for Nodes
     static final String IN_USE = "tactile-pane-in-use";
-    static final String ANCHOR = "tactile-pane-anchor";
-    static final String VECTOR = "tactile-pane-vector";
     static final String GO_TO_FOREGROUND_ON_CONTACT = "tactile-pane-go-to-foreground-on-contact";
     static final String DRAGGABLE = "tactile-pane-draggable";
-    static final String SLIDE_ON_RELEASE = "tactile-pane-slide-on-release";
     static final String NODES_COLLIDING = "tactile-pane-nodes-colliding";
     static final String NODES_PROXIMITY = "tactile-pane-nodes-proximity";
-    static final String NODES_BOND = "tactile-pane-nodes-bond";
     static final String TRACKER = "tactile-pane-tracker";
     static final String ON_PROXIMITY_ENTERED = "tactile-pane-on-proximity-entered";
     static final String ON_PROXIMITY_LEFT = "tactile-pane-on-proximity-left";
@@ -115,44 +110,6 @@ public class TactilePane extends Control {
      */
     public static ReadOnlyBooleanProperty inUseProperty(Node node) {
         return inUsePropertyImpl(node);
-    }
-    
-    public static void setAnchor(Node node, Anchor anchor) {
-        anchorProperty(node).set(anchor);
-    }
-    
-    public static Anchor getAnchor(Node node) {
-        return anchorProperty(node).get();
-    }
-    
-    // TODO: Rewrite JavaDoc
-    public static ObjectProperty<Anchor> anchorProperty(Node node) {
-        ObjectProperty<Anchor> property = (ObjectProperty<Anchor>) getConstraint(node, ANCHOR);
-        if (property == null) {
-            property = new SimpleObjectProperty<>(null);
-            setConstraint(node, ANCHOR, property);
-        }
-        return property;
-    }
-    
-    public static void setVector(Node node, Point2D vector) {
-        vectorProperty(node).set(vector);
-    }
-    
-    public static Point2D getVector(Node node) {
-        return vectorProperty(node).get();
-    }
-    
-    /**
-     * The 2D velocity vector for this {@code node}. Primarily intended for physics.
-     */
-    public static ObjectProperty<Point2D> vectorProperty(Node node) {
-        ObjectProperty<Point2D> property = (ObjectProperty<Point2D>) getConstraint(node, VECTOR);
-        if (property == null) {
-            property = new SimpleObjectProperty<>(Point2D.ZERO);
-            setConstraint(node, VECTOR, property);
-        }
-        return property;
     }
     
     public static void setGoToForegroundOnContact(Node node, boolean goToForegroundOnContact) {
@@ -210,29 +167,6 @@ public class TactilePane extends Control {
         return property;
     }
     
-    public static void setSlideOnRelease(Node node, boolean slideOnRelease) {
-        slideOnReleaseProperty(node).set(slideOnRelease);
-    }
-    
-    public static boolean isSlideOnRelease(Node node) {
-        return slideOnReleaseProperty(node).get();
-    }
-    
-    /**
-     * Whether the given {@code Node} will get a vector in the direction it was
-     * moving when the user stops dragging that {@code Node}
-     *
-     * @defaultValue false
-     */
-    public static BooleanProperty slideOnReleaseProperty(Node node) {
-        BooleanProperty property = (BooleanProperty) getConstraint(node, SLIDE_ON_RELEASE);
-        if (property == null) {
-            property = new SimpleBooleanProperty(false);
-            setConstraint(node, SLIDE_ON_RELEASE, property);
-        }
-        return property;
-    }
-    
     /**
      * Returns the set of {@code Nodes} that are registered to the same
      * {@code TactilePane} as the given {@code node}, and are currently
@@ -260,30 +194,6 @@ public class TactilePane extends Control {
         }
         return result;
     }
-    
-    /**
-     * Returns the set of {@code Bonds} associated with the given {@code Node}. If the set
-     * already contains a {@code Bond} with the same {@code bondNode}, the old {@code Bond}
-     * is replaced.
-     */
-    public static ObservableSet<Bond> getBonds(Node node) {
-	ObservableSet<Bond> result = (ObservableSet<Bond>) getConstraint(node, NODES_BOND);
-        if (result == null) {
-            result = FXCollections.observableSet(new HashSet<Bond>() {
-                @Override
-                public boolean add(Bond bond) {
-                    Optional<Bond> opt = stream().filter(b -> b.getBondNode() == bond.getBondNode()).findAny();
-                    if (opt.isPresent()) {
-                        remove(opt.get());
-                    }
-                    return super.add(bond);
-                }
-            });
-            setConstraint(node, NODES_BOND, result);
-        }
-        return result;
-    }
-    
     
     public static void setOnInProximity(Node node, EventHandler<? super TactilePaneEvent> handler) {
         onInProximityProperty(node).set(handler);
@@ -531,56 +441,8 @@ public class TactilePane extends Control {
     
     // STATIC METHODS
     
-    /**
-     * Gives the {@code move} Node a velocity vector with a direction so that it will move
-     * away from the {@code from} Node. The speed with which the Node moves away
-     * depends on {@code force}, which is the magnitude of the vector.
-     * @param move  The Node that should move away
-     * @param from  The Node it should move away from
-     * @param force The magnitude of the vector that the Node gets
-     */
-    public static void moveAwayFrom(Node move, Node from, double force) {
-        if (move.getParent() == null) return;
-
-        Node moveDraggable = move;
-        while(!(moveDraggable.getParent() instanceof TactilePane)) {
-            moveDraggable = moveDraggable.getParent();
-            if (move.getParent() == null) return;
-        }
-        
-        while (getAnchor(moveDraggable) != null) {
-            moveDraggable = getAnchor(moveDraggable).getAnchorNode();
-            
-            while(!(moveDraggable.getParent() instanceof TactilePane)) {
-                moveDraggable = moveDraggable.getParent();
-                if (move.getParent() == null) return;
-            }
-        }
-        
-        Bounds moveBounds = move.getBoundsInLocal();
-        Bounds fromBounds = from.getBoundsInLocal();
-
-        double moveX = moveBounds.getMinX() + moveBounds.getWidth() / 2;
-        double moveY = moveBounds.getMinY() + moveBounds.getHeight() / 2;
-        double fromX = fromBounds.getMinX() + fromBounds.getWidth() / 2;
-        double fromY = fromBounds.getMinY() + fromBounds.getHeight() / 2;
-        
-        Point2D vector = new Point2D(moveX - fromX, moveY - fromY).normalize().multiply(force);
-        TactilePane.setVector(moveDraggable, TactilePane.getVector(move).add(vector));
-    }
-    
-    /**
-     * Gives the {@code move} Node a velocity vector with a direction so that it will move
-     * away from the {@code from} Node. Moves with a default level of force.
-     * @param move  The Node that should move away
-     * @param from  The Node it should move away from
-     */
-    public static void moveAwayFrom(Node move, Node from) {
-    	moveAwayFrom(move, from, 100d);
-    }
     
     // INSTANCE VARIABLES
-    private final PhysicsTimer physics;
     protected final QuadTree quadTree;
     private final ObservableSet<Node> activeNodes;
     
@@ -660,9 +522,6 @@ public class TactilePane extends Control {
             }
         });
         
-        // Initialise Physics
-        physics = new PhysicsTimer(this);
-        physics.start();
     }
     
     /**
@@ -771,9 +630,7 @@ public class TactilePane extends Control {
     
     private void handleTouchPressed(Node node, double localX, double localY) {
         DragContext dragContext = getDragContext(node);
-        setAnchor(node, null);
         setInUse(node, true);
-        setVector(node, Point2D.ZERO);
 
         dragContext.localX = localX;
         dragContext.localY = localY;
@@ -785,31 +642,10 @@ public class TactilePane extends Control {
 
     private void handleTouchMoved(Node node, double sceneX, double sceneY) {
         DragContext dragContext = getDragContext(node);
-        if (getAnchor(node) == null) {
-            double x = sceneX - dragContext.localX - node.getTranslateX();
-            double y = sceneY - dragContext.localY - node.getTranslateY();
-
-            if (isBordersCollide()) {
-                Bounds paneBounds = this.getBoundsInLocal();
-                Bounds nodeBounds = node.getBoundsInParent();
-                
-                double deltaX = node.getLayoutX() - nodeBounds.getMinX();
-                double deltaY = node.getLayoutY() - nodeBounds.getMinY();
-
-                if (x - deltaX < paneBounds.getMinX()) {
-                    x = paneBounds.getMinX() + deltaX;
-                } else if (x - deltaX + nodeBounds.getWidth() > paneBounds.getMaxX()) {
-                    x = paneBounds.getMaxX() - nodeBounds.getWidth() + deltaX;
-                }
-                if (y - deltaY < paneBounds.getMinY()) {
-                    y = paneBounds.getMinY() + deltaY;
-                } else if (y - deltaY + nodeBounds.getHeight() > paneBounds.getMaxY()) {
-                    y = paneBounds.getMaxY() - nodeBounds.getHeight() + deltaY;
-                }
-            }
-            node.setLayoutX(x); 
-            node.setLayoutY(y);
-        }
+        double x = sceneX - dragContext.localX - node.getTranslateX();
+        double y = sceneY - dragContext.localY - node.getTranslateY();
+        node.setLayoutX(x); 
+        node.setLayoutY(y);
     }
 
     private void handleTouchReleased(Node node) {
@@ -869,31 +705,6 @@ public class TactilePane extends Control {
         return dragProcessingMode;
     }
     
-    /**
-     * Whether children will collide with the borders of this
-     * {@code TactilePane}. If set to true the {@code TactilePane} will prevent
-     * children that are moving because of user input or physics to
-     * move outside of the {@code TactilePane's} boundaries.
-     *
-     * @defaultValue false
-     */
-    private BooleanProperty bordersCollide;
-
-    public final void setBordersCollide(boolean value) {
-        bordersCollideProperty().set(value);
-    }
-
-    public final boolean isBordersCollide() {
-        return bordersCollideProperty().get();
-    }
-
-    public final BooleanProperty bordersCollideProperty() {
-        if (bordersCollide == null) {
-            bordersCollide = new SimpleBooleanProperty(false);
-        }
-        return bordersCollide;
-    }
-    
     public final void setProximityThreshold(double threshold) {
         proximityThresholdProperty().set(threshold);
     }
@@ -915,132 +726,6 @@ public class TactilePane extends Control {
      */
     public final DoubleProperty proximityThresholdProperty() {
         return quadTree.proximityThresholdProperty();
-    }
-    
-    /**
-     * A scalar by which a vector is multiplied during every physics calculation.
-     * Must between 0 and 1. Influences how fast a node stops moving after it has
-     * been given a vector.
-     * 
-     * @defaultValue 0.95
-     */
-    private DoubleProperty frictionMultiplier;
-    
-    public final double getFrictionMultiplier() {
-        return frictionMultiplierProperty().get();
-    }
-    
-    public final void setFrictionMultiplier(double frictionMultiplier) {
-        frictionMultiplierProperty().set(frictionMultiplier);
-    }
-    
-    public final DoubleProperty frictionMultiplierProperty() {
-        if (frictionMultiplier == null) {
-            frictionMultiplier = new SimpleDoubleProperty(0.95) {
-                @Override
-                public void set(double value) {
-                    if (value < 0 || value > 1) {
-                        throw new IllegalArgumentException("FrictionMultiplier must be between 0 and 1");
-                    }
-                    super.set(value);
-                }
-            };
-        }
-        return frictionMultiplier;
-    }
-   
-    /**
-     * A scalar by which a node's vector is multiplied whenever it collides with
-     * a border of the TactilePane. Must be a value between 0 and 1. Influences
-     * how much energy it loses retains after bouncing off a border.
-     *
-     * @defaultValue 0.7
-     */
-    private DoubleProperty bounceMultiplier;
-    
-    public final double getBounceMultiplier() {
-        return bounceMultiplierProperty().get();
-    }
-    
-    public final void setBounceMultiplier(double bounceMultiplier) {
-        bounceMultiplierProperty().set(bounceMultiplier);
-    }
-    
-    public final DoubleProperty bounceMultiplierProperty() {
-        if (bounceMultiplier == null) {
-            bounceMultiplier = new SimpleDoubleProperty(0.70) {
-                @Override
-                public void set(double value) {
-                    if (value < 0 || value > 1) {
-                        throw new IllegalArgumentException("BounceMultiplier must be between 0 and 1");
-                    }
-                    super.set(value);
-                }
-            };
-        }
-        return bounceMultiplier;
-    }
-
-    /**
-     * A scalar by which a vector is multiplied if its node is configured to
-     * slide on release. May not be a negative value. Influences how much speed the
-     * node will have when it is released.
-     *
-     * @defaultValue 1.6
-     */
-    private DoubleProperty slideMultiplier;
-    
-    public double getSlideMultiplier() {
-        return slideMultiplierProperty().get();
-    }
-    
-    public void setSlideMultiplier(double slideMultiplier) {
-        slideMultiplierProperty().set(slideMultiplier);
-    }
-    
-    public DoubleProperty slideMultiplierProperty() {
-        if (slideMultiplier == null) {
-            slideMultiplier = new SimpleDoubleProperty(1.6) {
-                @Override
-                public void set(double value) {
-                    if (value < 0) {
-                        throw new IllegalArgumentException("SlideMultiplier may not be a negative number");
-                    }
-                    super.set(value);
-                }
-            };
-        }
-        return slideMultiplier;
-    }
-    
-    /**
-     * The minimum magnitude a vector must have before it is reset to a zero vector.
-     * 
-     * @defaultValue 2.5
-     */
-    private DoubleProperty vectorThreshold;
-    
-    public double getVectorThreshold() {
-        return vectorThresholdProperty().get();
-    }
-    
-    public void setVectorThreshold(double vectorThreshold) {
-        vectorThresholdProperty().set(vectorThreshold);
-    }
-    
-    public DoubleProperty vectorThresholdProperty() {
-        if (vectorThreshold == null) {
-            vectorThreshold = new SimpleDoubleProperty(1.6) {
-                @Override
-                public void set(double value) {
-                    if (value < 0) {
-                        throw new IllegalArgumentException("VectorThreshold may not be a negative number");
-                    }
-                    super.set(value);
-                }
-            };
-        }
-        return vectorThreshold;
     }
     
     // STYLESHEET HANDLING

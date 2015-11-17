@@ -37,7 +37,6 @@ public class DebugParent extends StackPane {
     Map<Integer, TouchDisplay> circleByTouchId = new TreeMap<>();
     Map<Integer, Line> lineByTouchId = new TreeMap<>();
 
-    Map<Node, VectorDisplay> vectorDisplayByDraggable = new ConcurrentHashMap<>();
     Map<Node, ProximityDisplay> proximityDisplayByNode = new ConcurrentHashMap<>();
     Map<Node, BoundsDisplay> boundsDisplayByNode = new ConcurrentHashMap<>();
 
@@ -184,12 +183,6 @@ public class DebugParent extends StackPane {
 
             @Override
             public void handle(long arg0) {
-                for (Node node : vectorDisplayByDraggable.keySet()) {
-                    Bounds bounds = node.localToScene(node.getBoundsInLocal());
-                    VectorDisplay vector = vectorDisplayByDraggable.get(node);
-
-                    vector.relocate(bounds.getMinX(), bounds.getMinY());
-                }
                 for (Node node : proximityDisplayByNode.keySet()) {
                     Bounds bounds = node.localToScene(node.getBoundsInLocal());
                     ProximityDisplay proximityDisplay = proximityDisplayByNode.get(node);
@@ -358,30 +351,16 @@ public class DebugParent extends StackPane {
     }
 
     private void registerDraggable(Node node) {
-        if (!vectorDisplayByDraggable.containsKey(node)) {
-            Bounds bounds = node.localToScene(node.getBoundsInLocal());
-            
-            VectorDisplay v = new VectorDisplay(TactilePane.vectorProperty(node));
-            vectorDisplayByDraggable.put(node, v);
-
-            if (!boundsDisplayByNode.containsKey(node)) {
-                BoundsDisplay bd = new BoundsDisplay(bounds.getWidth(), bounds.getHeight());
-                boundsDisplayByNode.put(node, bd);
-                bd.relocate(bounds.getMinX(), bounds.getMinY());
-                overlay.getChildren().add(bd);
-            }
-            
-            v.relocate(bounds.getMinX(), bounds.getMinY());
-            overlay.getChildren().add(v);
+        Bounds bounds = node.localToScene(node.getBoundsInLocal());
+        if (!boundsDisplayByNode.containsKey(node)) {
+            BoundsDisplay bd = new BoundsDisplay(bounds.getWidth(), bounds.getHeight());
+            boundsDisplayByNode.put(node, bd);
+            bd.relocate(bounds.getMinX(), bounds.getMinY());
+            overlay.getChildren().add(bd);
         }
     }
 
     private void deregisterDraggable(Node node) {
-        VectorDisplay vector = vectorDisplayByDraggable.remove(node);
-        if (vector != null) {
-            overlay.getChildren().remove(vector);
-        }
-        
         if (TactilePane.getTracker(node) == null) {
             BoundsDisplay bd = boundsDisplayByNode.remove(node);
             overlay.getChildren().remove(bd);

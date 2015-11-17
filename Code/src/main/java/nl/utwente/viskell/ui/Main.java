@@ -31,7 +31,6 @@ public class Main extends Application {
 
         // Init TactilePane
         CustomUIPane tactilePane = new CustomUIPane(catalog);
-        tactilePane.setBordersCollide(true);
         tactilePane.setMinWidth(PANE_WIDTH);
         tactilePane.setMinHeight(PANE_HEIGHT);
         tactilePane.setMaxWidth(PANE_WIDTH);
