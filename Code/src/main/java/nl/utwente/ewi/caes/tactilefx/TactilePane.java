@@ -3,8 +3,6 @@ package nl.utwente.ewi.caes.tactilefx;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
 import javafx.collections.*;
-import javafx.css.CssMetaData;
-import javafx.css.Styleable;
 import javafx.css.StyleableProperty;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -24,8 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * like a {@code Pane} in that it only resizes its children to its preferred
  * sizes, and also exposes its children list as public. On top of this however,
  * it allows users to layout the children by means of mouse and/or touch input.
- * It also has some basic "physics"-like features, such as collision detection,
- * and an event structure to go along with that.
  * <p>
  *
  * <h1>Dragging Nodes</h1>
@@ -33,9 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * By default, all of TactilePane's children are draggable, which means that a
  * user can drag them using mouse or touch input. This can be turned off by
  * setting the attached property {@link draggableProperty draggable} to
- * {@code false}. To prevent the user from dragging a node beyond the bounds of
- * the TactilePane, the {@link bordersCollideProperty borderCollide} property
- * can be set to {@code true}.
+ * {@code false}.
  * <p>
  * To implement dragging of Nodes, Mouse/Touch events are handled (and consumed)
  * at the draggable node. In case of multi-touch gestures, only events from the
@@ -51,11 +45,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link dragProcessingModeProperty dragProccesingMode}. This can be set so
  * that handling (and consuming) Mouse/Touch events happens during the filter or
  * the handler stage.
- * <p>
- * <h1>Active nodes and Events</h1>
- * <p>
- * <h1>Physics</h1>
- * <p>
  */
 @DefaultProperty("children")
 public class TactilePane extends Control {
@@ -91,6 +80,10 @@ public class TactilePane extends Control {
         inUsePropertyImpl(node).set(inUse);
     }
     
+    /**
+     * Whether this {@code Node} is being dragged by the user. If the {@code Node}
+     * is not a child of a {@code TactilePane}, it will always return {@code false}.
+     */
     public static boolean isInUse(Node node) {
         return inUsePropertyImpl(node).get();
     }
@@ -102,14 +95,6 @@ public class TactilePane extends Control {
             setConstraint(node, IN_USE, property);
         }
         return property;
-    }
-    
-    /**
-     * Whether this {@code Node} is being dragged by the user. If the {@code Node}
-     * is not a child of a {@code TactilePane}, it will always return {@code false}.
-     */
-    public static ReadOnlyBooleanProperty inUseProperty(Node node) {
-        return inUsePropertyImpl(node);
     }
     
     public static void setGoToForegroundOnContact(Node node, boolean goToForegroundOnContact) {
@@ -394,22 +379,6 @@ public class TactilePane extends Control {
     }
     
     /**
-     * Calls {@code register} on the given TactilePane with {@code node} as
-     * argument. If {@code tactilePane} is {@code null}, {@code node} will be
-     * deregistered at its previous {@code TactilePane}, if one exists.
-     */
-    public static void setTracker(Node node, TactilePane tactilePane) {
-        if (tactilePane == null) {
-            TactilePane oldPane = getTracker(node);
-            if (oldPane != null) {
-                oldPane.getActiveNodes().remove(node);
-            }
-        } else {
-            tactilePane.getActiveNodes().add(node);
-        }
-    }
-    
-    /**
      * The {@code TactilePane} which is currently tracking {@code node}.
      */
     public static TactilePane getTracker(Node node) {
@@ -452,7 +421,6 @@ public class TactilePane extends Control {
      * Creates a TactilePane control 
      */
     public TactilePane() {
-        getStyleClass().setAll(DEFAULT_STYLE_CLASS);
         // Since this Control is more or less a Pane, focusTraversable should be false by default
         ((StyleableProperty<Boolean>)focusTraversableProperty()).applyStyle(null, false);
         
@@ -524,15 +492,6 @@ public class TactilePane extends Control {
         
     }
     
-    /**
-     * Creates a TactilePane control
-     * @param children The initial set of children for this TactilePane
-     */
-    public TactilePane(Node... children) {
-        this();
-        super.getChildren().addAll(children);
-    }
-    
     // MAKING CHILDREN DRAGGABLE
     
     private void addDragEventHandlers(final Node node) {
@@ -546,7 +505,7 @@ public class TactilePane extends Control {
         EventHandler<TouchEvent> touchHandler = event -> {
             if (!isDraggable(node)) return;
             
-            EventType type = event.getEventType();
+            EventType<TouchEvent> type = event.getEventType();
             
             if (type == TouchEvent.TOUCH_PRESSED) {
                 if (dragContext.touchId == DragContext.NULL_ID) {
@@ -571,7 +530,7 @@ public class TactilePane extends Control {
         EventHandler<MouseEvent> mouseHandler = event -> {
             if (!isDraggable(node)) return;
             
-            EventType type = event.getEventType();
+            EventType<? extends MouseEvent> type = event.getEventType();
             
             if (type == MouseEvent.MOUSE_PRESSED) {
                 if (dragContext.touchId == DragContext.NULL_ID) {
@@ -726,35 +685,6 @@ public class TactilePane extends Control {
      */
     public final DoubleProperty proximityThresholdProperty() {
         return quadTree.proximityThresholdProperty();
-    }
-    
-    // STYLESHEET HANDLING
-    
-    // The selector class
-    private static String DEFAULT_STYLE_CLASS = "tactile-pane";
-    
-    private static final class StyleableProperties {
-        // TODO make properties stylable using CSS
-
-        private static final List<CssMetaData<? extends Styleable, ?>> STYLEABLES;
-        static {
-                final List<CssMetaData<? extends Styleable, ?>> styleables = 
-                    new ArrayList<>(Control.getClassCssMetaData());
-
-                STYLEABLES = Collections.unmodifiableList(styleables);
-        }
-    }
-    
-    public static List<CssMetaData<? extends Styleable, ?>> getClassCssMetaData() {
-        return StyleableProperties.STYLEABLES;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<CssMetaData<? extends Styleable, ?>> getControlCssMetaData() {
-        return getClassCssMetaData();
     }
     
     /**

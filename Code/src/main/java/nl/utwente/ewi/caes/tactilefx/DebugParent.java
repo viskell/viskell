@@ -43,11 +43,6 @@ public class DebugParent extends StackPane {
     int touchSetId = 0;
     boolean active = false;
 
-    public DebugParent() {
-        super();
-        initialise();
-    }
-
     public DebugParent(Node node) {
         super(node);
         initialise();
