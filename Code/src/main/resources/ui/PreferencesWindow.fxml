@@ -7,10 +7,12 @@
 <fx:root type="nl.utwente.viskell.ui.PreferencesWindow" xmlns:fx="http://javafx.com/fxml/">
     <center>
         <GridPane hgap="12" vgap="12">
-            <padding><Insets top="12" right="12" bottom="12" left="12" /></padding>
+            <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
             <children>
                 <Label GridPane.columnIndex="0" GridPane.rowIndex="0">GHCi implementation</Label>
-                <ComboBox fx:id="ghci" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <ComboBox fx:id="ghci" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">Theme</Label>
+                <ComboBox fx:id="theme" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
             </children>
         </GridPane>
     </center>
@@ -19,7 +21,7 @@
             <Separator></Separator>
 
             <HBox alignment="CENTER_RIGHT">
-                <padding><Insets top="12" right="12" bottom="12" left="12" /></padding>
+                <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
                 <Button onAction="#close">Close</Button>
             </HBox>
         </VBox>
