@@ -2,8 +2,11 @@ package nl.utwente.viskell.ui;
 
 import java.util.prefs.Preferences;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -21,6 +24,7 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
 
     @FXML private ComboBox<GhciSession.Backend> ghci;
     @FXML private ComboBox<String> theme;
+    @FXML protected CheckBox debugOverlay;
 
     public PreferencesWindow(CustomUIPane customUIPane) {
         super();
@@ -52,6 +56,19 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
             Main.primaryStage.getScene().getStylesheets().addAll("/ui/layout.css", theme.getValue());
             stage.getScene().getStylesheets().clear();
             stage.getScene().getStylesheets().addAll("/ui/layout.css", theme.getValue());
+        });
+        
+        debugOverlay.setOnAction(event -> {
+            Main.debug.setOverlayVisible(debugOverlay.isSelected());
+        });
+        
+        
+        stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean old, Boolean newVal) {
+                if (!newVal) {
+                    close();
+                }
+            }
         });
     }
 

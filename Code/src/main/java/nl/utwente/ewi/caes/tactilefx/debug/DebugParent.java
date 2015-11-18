@@ -141,8 +141,8 @@ public class DebugParent extends StackPane {
             Node target = (Node) event.getTarget();
             Bounds bounds = target.localToScene(target.getBoundsInLocal());
 
-            double x = event.getTouchPoint().getSceneX();
-            double y = event.getTouchPoint().getSceneY();
+            double x = event.getTouchPoint().getX();
+            double y = event.getTouchPoint().getY();
 
             TouchDisplay circle = circleByTouchId.get(touchId);
             circle.relocate(x, y);
