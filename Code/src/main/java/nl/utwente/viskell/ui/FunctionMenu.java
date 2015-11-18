@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -105,6 +106,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
             TitledPane submenu = new TitledPane(category, listView);
             submenu.setAnimated(false);
+            
+            //Prevent dragging the whole menu when dragging inside a category list 
+            submenu.addEventHandler(TouchEvent.ANY, Event::consume);
+            
             categoryContainer.getPanes().addAll(submenu);
         }
 

@@ -24,6 +24,9 @@ public class Main extends Application {
     
     /** A reference to the main window */
     public static Stage primaryStage;
+    
+    /** A reference to the debug overlay */
+    public static DebugParent debug;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -44,7 +47,7 @@ public class Main extends Application {
         tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
 
         // Init Debug
-        DebugParent debug = new DebugParent(tactilePane);
+        debug = new DebugParent(tactilePane);
         debug.registerTactilePane(tactilePane);
         debug.setOverlayVisible(false);
 
