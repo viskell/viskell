@@ -63,37 +63,38 @@ MatchBlock.selected {
     -fx-background-color: #8A9B0F;
 }
 
-.menu.block {
+.menu {
     -fx-background-color: #490A3D;
+    -fx-border-color: black;
 }
 
-.menu.block .title {
+.menu .title {
     -fx-font-color: #FCEBB6;
     -fx-background-color: #A4849E;
 }
 
-.menu.block .title:hover {
+.menu .title:hover {
     -fx-background-color: #926C8B;
 }
 
-.menu.block .title .arrow-button .arrow {
+.menu .title .arrow-button .arrow {
     -fx-background-color: #EDE6EC;
     -fx-focus-color: white;
 }
 
-.menu.block Button {
+.menu Button {
     -fx-background-color: #A4849E;
 }
 
-.menu.block Button:hover {
+.menu Button:hover {
     -fx-background-color: #926C8B;
 }
 
-.menu.block .list-cell:even {
+.menu .list-cell:even {
     -fx-background-color: #DBCED8;
 }
 
-.menu.block .list-cell:odd {
+.menu .list-cell:odd {
     -fx-background-color: #C8B6C5;
 }
 
@@ -113,17 +114,17 @@ MatchBlock.selected {
     -fx-text-fill: white;
 }
 
-.drawwire {
+DrawWire {
     -fx-stroke: #0066FF;
     -fx-fill: null;
 }
 
-.connection {
+Connection {
     -fx-stroke: #FCEBB6;
     -fx-fill: null;
 }
 
-.connection.error {
+Connection.error {
     -fx-stroke: red;
 }
 
@@ -133,23 +134,6 @@ MatchBlock.selected {
 
 .anchorPoint {
     -fx-fill: black;
-}
-
-.alert {
-    -fx-background-color: white;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
-}
-
-.alert .msg {
-    -fx-text-fill: black;
-}
-
-.alert .btn {
-    -fx-background-color: #2980b9;
-}
-
-.alert .btn Label {
-    -fx-text-fill: white;
 }
 
 .overlayButtons Button {

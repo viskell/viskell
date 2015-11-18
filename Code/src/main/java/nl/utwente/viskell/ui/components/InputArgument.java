@@ -1,10 +1,7 @@
 package nl.utwente.viskell.ui.components;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ui.ComponentLoader;
@@ -15,10 +12,7 @@ import nl.utwente.viskell.ui.ComponentLoader;
  */
 public class InputArgument extends Pane implements ComponentLoader {
     /** The label on which to display type information. */
-    @FXML Label inputLabel;
-    
-    /** The property of the text to be displayed on the inputLabel. */
-    private StringProperty inputText;
+    private Label inputLabel;
     
     /** The InputAnchor belonging to this InputArgument */
     private InputAnchor inputAnchor;
@@ -28,8 +22,8 @@ public class InputArgument extends Pane implements ComponentLoader {
      * @param block Block to which this InputArgument belongs.
      */
     public InputArgument(Block block) {
-        this.inputText = new SimpleStringProperty("-");
-        this.loadFXML("InputArgument");
+        this.inputLabel = new Label("-");
+        this.getChildren().add(this.inputLabel);
 
         this.inputAnchor = new InputAnchor(block);
         this.inputAnchor.layoutXProperty().bind(this.inputLabel.widthProperty().divide(2));
@@ -42,19 +36,9 @@ public class InputArgument extends Pane implements ComponentLoader {
         this.getChildren().add(this.inputAnchor);
     }
     
-    /** @return the InputText. */
-    public String getInputText() {
-        return inputText.get();
-    }
-    
     /** Sets the InputText. */
     public void setInputText(String text) {
-        inputText.set(text);
-    }
-    
-    /** @return The inputTextProperty. */
-    public StringProperty inputTextProperty() {
-        return inputText;
+        this.inputLabel.setText(text);
     }
     
     /** @return The InputAnchor belonging to this InputArgument. */

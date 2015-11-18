@@ -1,11 +1,10 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.List;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Value;
@@ -26,66 +25,58 @@ import com.google.common.collect.ImmutableMap;
  * </p>
  */
 public class ValueBlock extends Block {
-    /** The value of this ValueBlock. */
-    protected StringProperty value;
-
     /** The OutputAnchor of this ValueBlock. */
     protected OutputAnchor output;
 
     /** The space containing the output anchor. */
-    @FXML protected BorderPane outputSpace;
+    @FXML protected Pane outputSpace;
     
     /** The label containing the constrained type of this block */
     @FXML protected Label valueType;
 
+    /** The label for placing the value of this block. */
+    @FXML protected Label value;
+
     /**
      * Construct a new ValueBlock.
-     * @param pane
-     *            The parent pane this Block resides on.
+     * @param pane The parent pane this Block resides on.
      */
     public ValueBlock(CustomUIPane pane, Type type, String value) {
         this(pane, type, value, "ValueBlock");
     }
+    
     protected ValueBlock(CustomUIPane pane, Type type, String value, String fxml) {
         super(pane);
+        loadFXML(fxml);
 
-        this.value = new SimpleStringProperty(value);
-        this.output = new OutputAnchor(this, new Binder("val", type));
+        output = new OutputAnchor(this, new Binder("val", type));
 
-        this.loadFXML(fxml);
-
-        outputSpace.setCenter(output);
-        outputSpace.toFront();
+        outputSpace.getChildren().add(output);
+        setValue(value);
     }
 
     /**
-     * @param value
-     *            The value of this block to be used as output.
+     * @param newValue The value of this block to be used as output.
      */
-    public final void setValue(String value) {
-        this.value.set(value);
+    public final void setValue(String newValue) {
+        value.setText(newValue);
     }
 
     /**
      * @return output The value that is outputted by this Block.
      */
     public final String getValue() {
-        return value.get();
+        return value.getText();
     }
 
-    /** Returns the StringProperty for the value of this ValueBlock. */
-    public final StringProperty valueProperty() {
-        return value;
-    }
-    
     @Override
     public Expression getLocalExpr() {
-        return new Value(this.output.getType(), getValue());
+        return new Value(output.getType(), getValue());
     }
 
     @Override
     public void refreshAnchorTypes() {
-        this.output.refreshType(new TypeScope());
+        output.refreshType(new TypeScope());
     }
 
     @Override
@@ -105,11 +96,11 @@ public class ValueBlock extends Block {
     
     @Override
     public void invalidateVisualState() {
-        this.valueType.setText(this.output.getStringType());
+        valueType.setText(output.getStringType());
     }
 
     @Override
     protected ImmutableMap<String, Object> toBundleFragment() {
-        return ImmutableMap.of("value", value.getValue());
+        return ImmutableMap.of("value", getValue());
     }
 }

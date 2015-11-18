@@ -14,8 +14,7 @@ public class DisplayBlockTest extends ComponentTest {
     @Test
     public void inputOutputTest() throws Exception {
         DisplayBlock block = new DisplayBlock(getPane());
-        assertEquals("???", block.getOutput());
-
-        block.setOutput("8");
+        block.invalidateVisualState();
+        assertEquals("?", block.getOutput());
     }
 }

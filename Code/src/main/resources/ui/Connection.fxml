@@ -1,3 +1,0 @@
-<?import nl.utwente.viskell.ui.components.Connection?>
-<fx:root type="nl.utwente.viskell.ui.components.Connection" xmlns:fx="http://javafx.com/fxml/" styleClass="connection">
-</fx:root>

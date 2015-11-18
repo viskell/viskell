@@ -10,7 +10,6 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import nl.utwente.viskell.ghcj.GhciSession;
-import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.List;
