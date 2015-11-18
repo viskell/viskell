@@ -699,7 +699,8 @@ public class TactilePane extends Control {
                 }
             } else if (type == TouchEvent.TOUCH_MOVED) {
                 if (dragContext.touchId == event.getTouchPoint().getId()) {
-                    handleTouchMoved(node, event.getTouchPoint().getX(), event.getTouchPoint().getY());
+                    Point2D local = this.sceneToLocal(event.getTouchPoint().getSceneX(), event.getTouchPoint().getSceneY());
+                    handleTouchMoved(node, local.getX(), local.getY());
                     event.consume();
                 }
             } else if (type == TouchEvent.TOUCH_RELEASED) {
@@ -713,6 +714,11 @@ public class TactilePane extends Control {
         
         EventHandler<MouseEvent> mouseHandler = event -> {
             if (!isDraggable(node)) return;
+            
+            if (event.isSynthesized()) {
+                event.consume();
+                return;
+            }
             
             EventType type = event.getEventType();
             
