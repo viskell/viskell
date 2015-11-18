@@ -1,6 +1,5 @@
 package nl.utwente.ewi.caes.tactilefx;
 
-import javafx.animation.AnimationTimer;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.beans.Observable;
@@ -8,8 +7,6 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.collections.ListChangeListener;
-import javafx.collections.SetChangeListener;
 import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -28,15 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class DebugParent extends StackPane {
     
     Pane overlay = new Pane();
     Map<Integer, TouchDisplay> circleByTouchId = new TreeMap<>();
     Map<Integer, Line> lineByTouchId = new TreeMap<>();
-
-    Map<Node, BoundsDisplay> boundsDisplayByNode = new ConcurrentHashMap<>();
 
     List<TouchPoint> touchPoints = new ArrayList<>();
     int touchSetId = 0;
@@ -172,20 +166,6 @@ public class DebugParent extends StackPane {
             ft.play();
         });
 
-        new AnimationTimer() {
-
-            @Override
-            public void handle(long arg0) {
-                for (Node node : boundsDisplayByNode.keySet()) {
-                    Bounds bounds = node.localToScene(node.getBoundsInLocal());
-                    BoundsDisplay boundsDisplay = boundsDisplayByNode.get(node);
-                    
-                    boundsDisplay.setBoundsWidth(bounds.getWidth());
-                    boundsDisplay.setBoundsHeight(bounds.getHeight());
-                    boundsDisplay.relocate(bounds.getMinX(), bounds.getMinY());
-                }
-            }
-        }.start();
     }
     
     // Returns a TouchPoint for a given MouseEvent
@@ -280,67 +260,4 @@ public class DebugParent extends StackPane {
         overlay.getChildren().removeAll(toRemove);
     }
     
-    public void registerTactilePane(TactilePane pane) {
-        for (Node node : pane.getChildren()) {
-            registerDraggable(node);
-        }
-        
-        pane.getChildren().addListener((ListChangeListener.Change<? extends Node> c) -> {
-            c.next();
-            for (Node node: c.getRemoved()) {
-                deregisterDraggable(node);
-            }
-            for (Node node: c.getAddedSubList()) {
-                registerDraggable(node);
-            }
-        });
-        
-        for (Node node : pane.getActiveNodes()) {
-            registerActiveNode(node, pane);
-        }
-        
-        pane.getActiveNodes().addListener((SetChangeListener.Change<? extends Node> c) -> {
-            if (c.wasAdded()) {
-                registerActiveNode(c.getElementAdded(), pane);
-            } else {
-                deregisterActiveNode(c.getElementRemoved());
-            }
-        });
-    }
-    
-    private void registerActiveNode(Node node, TactilePane pane) {
-        Bounds bounds = node.localToScene(node.getBoundsInLocal());
-        
-        if (!boundsDisplayByNode.containsKey(node)) {
-            BoundsDisplay bd = new BoundsDisplay(bounds.getWidth(), bounds.getHeight());
-            boundsDisplayByNode.put(node, bd);
-            bd.relocate(bounds.getMinX(), bounds.getMinY());
-            overlay.getChildren().add(bd);
-        }
-    }
-    
-    private void deregisterActiveNode(Node node) {
-        if (!(node.getParent() instanceof TactilePane)) {
-            BoundsDisplay bd = boundsDisplayByNode.remove(node);
-            overlay.getChildren().remove(bd);
-        }
-    }
-
-    private void registerDraggable(Node node) {
-        Bounds bounds = node.localToScene(node.getBoundsInLocal());
-        if (!boundsDisplayByNode.containsKey(node)) {
-            BoundsDisplay bd = new BoundsDisplay(bounds.getWidth(), bounds.getHeight());
-            boundsDisplayByNode.put(node, bd);
-            bd.relocate(bounds.getMinX(), bounds.getMinY());
-            overlay.getChildren().add(bd);
-        }
-    }
-
-    private void deregisterDraggable(Node node) {
-        if (TactilePane.getTracker(node) == null) {
-            BoundsDisplay bd = boundsDisplayByNode.remove(node);
-            overlay.getChildren().remove(bd);
-        }
-
-    }
 }

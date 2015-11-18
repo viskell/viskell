@@ -48,7 +48,6 @@ public class Main extends Application {
 
         // Init Debug
         debug = new DebugParent(tactilePane);
-        debug.registerTactilePane(tactilePane);
         debug.setOverlayVisible(false);
 
         // Init zoom overlay

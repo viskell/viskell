@@ -53,9 +53,6 @@ public class TactilePane extends Control {
     static final String GO_TO_FOREGROUND_ON_CONTACT = "tactile-pane-go-to-foreground-on-contact";
     static final String DRAGGABLE = "tactile-pane-draggable";
     static final String TRACKER = "tactile-pane-tracker";
-    static final String ON_AREA_ENTERED = "tactile-pane-on-area-entered";
-    static final String ON_AREA_LEFT = "tactile-pane-on-area-left";
-    static final String ON_IN_AREA = "tactile-pane-on-in-area";
     static final String DRAG_CONTEXT = "tactile-pane-drag-context";
     
     // Attached Properties for Nodes that are only used privately
@@ -143,105 +140,6 @@ public class TactilePane extends Control {
                 }
             };
             setConstraint(node, DRAGGABLE, property);
-        }
-        return property;
-    }
-    
-    public static void setOnInArea(Node node, EventHandler<? super TactilePaneEvent> handler) {
-        onInAreaProperty(node).set(handler);
-    }
-    
-    public static EventHandler<? super TactilePaneEvent> getOnInArea(Node node) {
-        return onInAreaProperty(node).get();
-    }
-    
-    /**
-     * Defines a function to be called continuously when another {@code Node} is
-     * in the bounds of this {@code node}.
-     */
-    public static ObjectProperty<EventHandler<? super TactilePaneEvent>> onInAreaProperty(Node node) {
-        ObjectProperty<EventHandler<? super TactilePaneEvent>> property = (ObjectProperty<EventHandler<? super TactilePaneEvent>>) getConstraint(node, ON_IN_AREA);
-        if (property == null) {
-            property = new SimpleObjectProperty<EventHandler<? super TactilePaneEvent>>(null) {
-                @Override
-                public void set(EventHandler<? super TactilePaneEvent> handler) {
-                    EventHandler<? super TactilePaneEvent> oldHandler = get();
-                    if (oldHandler != null) {
-                        node.removeEventHandler(TactilePaneEvent.IN_AREA, oldHandler);
-                    }
-                    if (handler != null) {
-                        node.addEventHandler(TactilePaneEvent.IN_AREA, handler);
-                    }
-                    super.set(handler);
-                }
-            };
-            setConstraint(node, ON_IN_AREA, property);
-        }
-        return property;
-    }
-    
-    public static void setOnAreaEntered(Node node, EventHandler<? super TactilePaneEvent> handler) {
-        onAreaEnteredProperty(node).set(handler);
-    }
-    
-    public static EventHandler<? super TactilePaneEvent> getOnAreaEntered(Node node) {
-        return onAreaEnteredProperty(node).get();
-    }
-    
-    /**
-     * Defines a function to be called when another {@code Node} enters the
-     * bounds of this {@code node}.
-     */
-    public static ObjectProperty<EventHandler<? super TactilePaneEvent>> onAreaEnteredProperty(Node node) {
-        ObjectProperty<EventHandler<? super TactilePaneEvent>> property = (ObjectProperty<EventHandler<? super TactilePaneEvent>>) getConstraint(node, ON_AREA_ENTERED);
-        if (property == null) {
-            property = new SimpleObjectProperty<EventHandler<? super TactilePaneEvent>>(null) {
-                @Override
-                public void set(EventHandler<? super TactilePaneEvent> handler) {
-                    EventHandler<? super TactilePaneEvent> oldHandler = get();
-                    if (oldHandler != null) {
-                        node.removeEventHandler(TactilePaneEvent.AREA_ENTERED, oldHandler);
-                    }
-                    if (handler != null) {
-                        node.addEventHandler(TactilePaneEvent.AREA_ENTERED, handler);
-                    }
-                    super.set(handler);
-                }
-            };
-            setConstraint(node, ON_AREA_ENTERED, property);
-        }
-        return property;
-    }
-    
-    public static void setOnAreaLeft(Node node, EventHandler<? super TactilePaneEvent> handler) {
-        onAreaLeftProperty(node).set(handler);
-    }
-    
-    public static EventHandler<? super TactilePaneEvent> getOnAreaLeft(Node node) {
-        return onAreaLeftProperty(node).get();
-    }
-    
-    /**
-     * Defines a function to be called when another {@code Node} leaves the
-     * bounds of this {@code node}.
-     */
-    public static ObjectProperty<EventHandler<? super TactilePaneEvent>> onAreaLeftProperty(Node node) {
-        ObjectProperty<EventHandler<? super TactilePaneEvent>> property = (ObjectProperty<EventHandler<? super TactilePaneEvent>>) getConstraint(node, ON_AREA_LEFT);
-        if (property == null) {
-            property = new SimpleObjectProperty<EventHandler<? super TactilePaneEvent>>(null) {
-                @Override
-                public void set(EventHandler<? super TactilePaneEvent> handler) {
-                    EventHandler<? super TactilePaneEvent> oldHandler = get();
-                    if (oldHandler != null) {
-                        node.removeEventHandler(TactilePaneEvent.AREA_LEFT, oldHandler);
-                    }
-                    if (handler != null) {
-                        node.addEventHandler(TactilePaneEvent.AREA_LEFT, handler);
-                    }
-                    super.set(handler);
-                }
-            };
-            setConstraint(node, ON_AREA_LEFT, property);
         }
         return property;
     }
