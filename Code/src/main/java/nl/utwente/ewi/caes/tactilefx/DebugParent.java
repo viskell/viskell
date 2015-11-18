@@ -36,7 +36,6 @@ public class DebugParent extends StackPane {
     Map<Integer, TouchDisplay> circleByTouchId = new TreeMap<>();
     Map<Integer, Line> lineByTouchId = new TreeMap<>();
 
-    Map<Node, ProximityDisplay> proximityDisplayByNode = new ConcurrentHashMap<>();
     Map<Node, BoundsDisplay> boundsDisplayByNode = new ConcurrentHashMap<>();
 
     List<TouchPoint> touchPoints = new ArrayList<>();
@@ -177,14 +176,6 @@ public class DebugParent extends StackPane {
 
             @Override
             public void handle(long arg0) {
-                for (Node node : proximityDisplayByNode.keySet()) {
-                    Bounds bounds = node.localToScene(node.getBoundsInLocal());
-                    ProximityDisplay proximityDisplay = proximityDisplayByNode.get(node);
-                    
-                    proximityDisplay.setBoundsWidth(bounds.getWidth());
-                    proximityDisplay.setBoundsHeight(bounds.getHeight());
-                    proximityDisplay.relocate(bounds.getMinX(), bounds.getMinY());
-                } 
                 for (Node node : boundsDisplayByNode.keySet()) {
                     Bounds bounds = node.localToScene(node.getBoundsInLocal());
                     BoundsDisplay boundsDisplay = boundsDisplayByNode.get(node);
@@ -320,24 +311,15 @@ public class DebugParent extends StackPane {
     private void registerActiveNode(Node node, TactilePane pane) {
         Bounds bounds = node.localToScene(node.getBoundsInLocal());
         
-        ProximityDisplay pd = new ProximityDisplay(bounds.getWidth(), bounds.getHeight(), pane.proximityThresholdProperty());
-        pd.relocate(bounds.getMinX(), bounds.getMinY());
-        
         if (!boundsDisplayByNode.containsKey(node)) {
             BoundsDisplay bd = new BoundsDisplay(bounds.getWidth(), bounds.getHeight());
             boundsDisplayByNode.put(node, bd);
             bd.relocate(bounds.getMinX(), bounds.getMinY());
             overlay.getChildren().add(bd);
         }
-
-        overlay.getChildren().add(pd);
-        proximityDisplayByNode.put(node, pd);
     }
     
     private void deregisterActiveNode(Node node) {
-        ProximityDisplay pd = proximityDisplayByNode.remove(node);
-        overlay.getChildren().remove(pd);
-        
         if (!(node.getParent() instanceof TactilePane)) {
             BoundsDisplay bd = boundsDisplayByNode.remove(node);
             overlay.getChildren().remove(bd);

@@ -52,12 +52,7 @@ public class TactilePane extends Control {
     static final String IN_USE = "tactile-pane-in-use";
     static final String GO_TO_FOREGROUND_ON_CONTACT = "tactile-pane-go-to-foreground-on-contact";
     static final String DRAGGABLE = "tactile-pane-draggable";
-    static final String NODES_COLLIDING = "tactile-pane-nodes-colliding";
-    static final String NODES_PROXIMITY = "tactile-pane-nodes-proximity";
     static final String TRACKER = "tactile-pane-tracker";
-    static final String ON_PROXIMITY_ENTERED = "tactile-pane-on-proximity-entered";
-    static final String ON_PROXIMITY_LEFT = "tactile-pane-on-proximity-left";
-    static final String ON_IN_PROXIMITY = "tactile-pane-on-in-proximity";
     static final String ON_AREA_ENTERED = "tactile-pane-on-area-entered";
     static final String ON_AREA_LEFT = "tactile-pane-on-area-left";
     static final String ON_IN_AREA = "tactile-pane-on-in-area";
@@ -148,133 +143,6 @@ public class TactilePane extends Control {
                 }
             };
             setConstraint(node, DRAGGABLE, property);
-        }
-        return property;
-    }
-    
-    /**
-     * Returns the set of {@code Nodes} that are registered to the same
-     * {@code TactilePane} as the given {@code node}, and are currently
-     * colliding with that {@code node}
-     */
-    public static ObservableSet<Node> getNodesColliding(Node node) {
-        ObservableSet<Node> result = (ObservableSet<Node>) getConstraint(node, NODES_COLLIDING);
-        if (result == null) {
-            result = FXCollections.observableSet(new HashSet<Node>());
-            setConstraint(node, NODES_COLLIDING, result);
-        }
-        return result;
-    }
-    
-    /**
-     * Returns the set of {@code Nodes} that are registered to the same
-     * {@code TactilePane} as the given {@code node}, and are currently in the
-     * proximity of that {@code node}
-     */
-    public static ObservableSet<Node> getNodesInProximity(Node node) {
-        ObservableSet<Node> result = (ObservableSet<Node>) getConstraint(node, NODES_PROXIMITY);
-        if (result == null) {
-            result = FXCollections.observableSet(new HashSet<Node>());
-            setConstraint(node, NODES_PROXIMITY, result);
-        }
-        return result;
-    }
-    
-    public static void setOnInProximity(Node node, EventHandler<? super TactilePaneEvent> handler) {
-        onInProximityProperty(node).set(handler);
-    }
-    
-    public static EventHandler<? super TactilePaneEvent> getOnInProximity(Node node) {
-        return onInProximityProperty(node).get();
-    }
-    
-    /**
-     * Defines a function to be called continuously when another {@code Node} is
-     * in the proximity of this {@code node}.
-     */
-    public static ObjectProperty<EventHandler<? super TactilePaneEvent>> onInProximityProperty(Node node) {
-        ObjectProperty<EventHandler<? super TactilePaneEvent>> property = (ObjectProperty<EventHandler<? super TactilePaneEvent>>) getConstraint(node, ON_IN_PROXIMITY);
-        if (property == null) {
-            property = new SimpleObjectProperty<EventHandler<? super TactilePaneEvent>>(null) {
-                @Override
-                public void set(EventHandler<? super TactilePaneEvent> handler) {
-                    EventHandler<? super TactilePaneEvent> oldHandler = get();
-                    if (oldHandler != null) {
-                        node.removeEventHandler(TactilePaneEvent.IN_PROXIMITY, oldHandler);
-                    }
-                    if (handler != null) {
-                        node.addEventHandler(TactilePaneEvent.IN_PROXIMITY, handler);
-                    }
-                    super.set(handler);
-                }
-            };
-            setConstraint(node, ON_IN_PROXIMITY, property);
-        }
-        return property;
-    }
-    
-    public static void setOnProximityEntered(Node node, EventHandler<? super TactilePaneEvent> handler) {
-        onProximityEnteredProperty(node).set(handler);
-    }
-    
-    public static EventHandler<? super TactilePaneEvent> getOnProximityEntered(Node node) {
-        return onProximityEnteredProperty(node).get();
-    }
-    
-    /**
-     * Defines a function to be called when another {@code Node} enters the
-     * proximity of this {@code node}.
-     */
-    public static ObjectProperty<EventHandler<? super TactilePaneEvent>> onProximityEnteredProperty(Node node) {
-        ObjectProperty<EventHandler<? super TactilePaneEvent>> property = (ObjectProperty<EventHandler<? super TactilePaneEvent>>) getConstraint(node, ON_PROXIMITY_ENTERED);
-        if (property == null) {
-            property = new SimpleObjectProperty<EventHandler<? super TactilePaneEvent>>(null) {
-                @Override
-                public void set(EventHandler<? super TactilePaneEvent> handler) {
-                    EventHandler<? super TactilePaneEvent> oldHandler = get();
-                    if (oldHandler != null) {
-                        node.removeEventHandler(TactilePaneEvent.PROXIMITY_ENTERED, oldHandler);
-                    }
-                    if (handler != null) {
-                        node.addEventHandler(TactilePaneEvent.PROXIMITY_ENTERED, handler);
-                    }
-                    super.set(handler);
-                }
-            };
-            setConstraint(node, ON_PROXIMITY_ENTERED, property);
-        }
-        return property;
-    }
-    
-    public static void setOnProximityLeft(Node node, EventHandler<? super TactilePaneEvent> handler) {
-        onProximityLeftProperty(node).set(handler);
-    }
-    
-    public static EventHandler<? super TactilePaneEvent> getOnProximityLeft(Node node) {
-        return onProximityLeftProperty(node).get();
-    }
-    
-    /**
-     * Defines a function to be called when another {@code Node} leaves the
-     * proximity of this {@code node}.
-     */
-    public static ObjectProperty<EventHandler<? super TactilePaneEvent>> onProximityLeftProperty(Node node) {
-        ObjectProperty<EventHandler<? super TactilePaneEvent>> property = (ObjectProperty<EventHandler<? super TactilePaneEvent>>) getConstraint(node, ON_PROXIMITY_LEFT);
-        if (property == null) {
-            property = new SimpleObjectProperty<EventHandler<? super TactilePaneEvent>>(null) {
-                @Override
-                public void set(EventHandler<? super TactilePaneEvent> handler) {
-                    EventHandler<? super TactilePaneEvent> oldHandler = get();
-                    if (oldHandler != null) {
-                        node.removeEventHandler(TactilePaneEvent.PROXIMITY_LEFT, oldHandler);
-                    }
-                    if (handler != null) {
-                        node.addEventHandler(TactilePaneEvent.PROXIMITY_LEFT, handler);
-                    }
-                    super.set(handler);
-                }
-            };
-            setConstraint(node, ON_PROXIMITY_LEFT, property);
         }
         return property;
     }
@@ -412,7 +280,6 @@ public class TactilePane extends Control {
     
     
     // INSTANCE VARIABLES
-    protected final QuadTree quadTree;
     private final ObservableSet<Node> activeNodes;
     
     // CONSTRUCTORS
@@ -449,15 +316,6 @@ public class TactilePane extends Control {
             }
         });
         
-        // Initialise quadTree
-        quadTree = new QuadTree(this.localToScene(this.getBoundsInLocal()));
-        this.widthProperty().addListener((observableValue, oldWidth, newWidth) -> {
-            quadTree.setBounds(this.localToScene(this.getBoundsInLocal()));
-        });
-        this.heightProperty().addListener((observableValue, oldHeight, newHeight) -> {
-            quadTree.setBounds(this.localToScene(this.getBoundsInLocal()));
-        });
-        
         // Initialise activeNodes
         activeNodes = FXCollections.observableSet(Collections.newSetFromMap(new ConcurrentHashMap<>()));
         activeNodes.addListener((SetChangeListener.Change<? extends Node> change) -> {
@@ -467,24 +325,10 @@ public class TactilePane extends Control {
                 if (oldPane != null) {
                     oldPane.getActiveNodes().remove(node);
                 }
-                quadTree.insert(node);
                 setConstraint(node, TRACKER, TactilePane.this);
             }
             else {
                 Node node = change.getElementRemoved();
-                quadTree.insert(node);
-                
-                for (Node colliding : TactilePane.getNodesColliding(node)) {
-                    node.fireEvent(new TactilePaneEvent(TactilePaneEvent.AREA_LEFT, node, colliding));
-                    colliding.fireEvent(new TactilePaneEvent(TactilePaneEvent.AREA_LEFT, colliding, node));
-                }
-                TactilePane.getNodesColliding(node).clear();
-                
-                for (Node colliding : TactilePane.getNodesInProximity(node)) {
-                    node.fireEvent(new TactilePaneEvent(TactilePaneEvent.PROXIMITY_LEFT, node, colliding));
-                    colliding.fireEvent(new TactilePaneEvent(TactilePaneEvent.PROXIMITY_LEFT, colliding, node));
-                }
-                TactilePane.getNodesInProximity(node).clear();
                 
                 setConstraint(node, TRACKER, null);
             }
@@ -536,7 +380,7 @@ public class TactilePane extends Control {
                 return;
             }
             
-            EventType type = event.getEventType();
+            EventType<? extends MouseEvent> type = event.getEventType();
             
             if (type == MouseEvent.MOUSE_PRESSED) {
                 if (dragContext.touchId == DragContext.NULL_ID) {
@@ -668,29 +512,6 @@ public class TactilePane extends Control {
             };
         }
         return dragProcessingMode;
-    }
-    
-    public final void setProximityThreshold(double threshold) {
-        proximityThresholdProperty().set(threshold);
-    }
-
-    public final double getProximityThreshold() {
-        return proximityThresholdProperty().get();
-    }
-
-    /**
-     * Specifies how close two {@code Nodes} have to be to each other to be
-     * considered in each others proximity. When set to 0, TactilePane won't fire
-     * {@code PROXIMITY_ENTERED} or {@code IN_PROXIMITY} events at all.
-     * {@code PROXIMITY_LEFT} events will still be fired for any pair of
-     * {@code Nodes} that entered each other's proximity before the threshold
-     * was set to 0. When set to a negative value, an IllegalArgumentException
-     * is thrown.
-     *
-     * @defaultValue 25.0
-     */
-    public final DoubleProperty proximityThresholdProperty() {
-        return quadTree.proximityThresholdProperty();
     }
     
     /**

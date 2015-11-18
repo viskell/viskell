@@ -22,12 +22,6 @@ public class TactilePaneEvent extends Event {
                         ANY, "IN_AREA");
 	public static final EventType<TactilePaneEvent> AREA_LEFT = new EventType<>(
 			ANY, "AREA_LEFT");
-	public static final EventType<TactilePaneEvent> PROXIMITY_ENTERED = new EventType<>(
-			ANY, "PROXIMITY_ENTERED");
-        public static final EventType<TactilePaneEvent> IN_PROXIMITY = new EventType<>(
-                        ANY, "IN_PROXIMITY");
-	public static final EventType<TactilePaneEvent> PROXIMITY_LEFT = new EventType<>(
-			ANY, "PROXIMITY_LEFT");
 	
 	private Node other;
 		
