@@ -53,7 +53,6 @@ public class Connection extends CubicCurve implements
      * @param anchor A ConnectionAnchor of this Connection.
      */
     public Connection(CustomUIPane pane, OutputAnchor source, InputAnchor sink) {
-        this.loadFXML("Connection");
         TactilePane.setDraggable(this, false);
         TactilePane.setGoToForegroundOnContact(this, false);
         this.setMouseTransparent(true);

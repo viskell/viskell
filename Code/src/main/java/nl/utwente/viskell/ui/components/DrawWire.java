@@ -26,7 +26,6 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
      * @param anchor The starting anchor of new wire.
      */
     public DrawWire(CustomUIPane pane, ConnectionAnchor anchor) {
-        this.loadFXML("DrawWire");
         TactilePane.setDraggable(this, false);
         TactilePane.setGoToForegroundOnContact(this, false);
         this.setMouseTransparent(true);

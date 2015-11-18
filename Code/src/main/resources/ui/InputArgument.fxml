@@ -1,5 +1,0 @@
-<?import javafx.scene.control.Label?>
-<?import nl.utwente.viskell.ui.components.InputArgument?>
-<fx:root fx:id="controller" type="nl.utwente.viskell.ui.components.InputArgument" xmlns:fx="http://javafx.com/fxml/" styleClass="leftArgument">
-    <Label fx:id="inputLabel" text="${controller.inputText}" styleClass="leftArgument"/>
-</fx:root>

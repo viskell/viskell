@@ -1,16 +1,21 @@
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import nl.utwente.viskell.ui.PreferencesWindow?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <fx:root type="nl.utwente.viskell.ui.PreferencesWindow" xmlns:fx="http://javafx.com/fxml/">
     <center>
         <GridPane hgap="12" vgap="12">
-            <padding><Insets top="12" right="12" bottom="12" left="12" /></padding>
+            <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
             <children>
                 <Label GridPane.columnIndex="0" GridPane.rowIndex="0">GHCi implementation</Label>
-                <ComboBox fx:id="ghci" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <ComboBox fx:id="ghci" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">Theme</Label>
+                <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <ComboBox fx:id="theme"/>
+                    <Button fx:id="reloadTheme" text="Reload"/>
+                </HBox>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="2">Debug overlay</Label>
+                <CheckBox fx:id="debugOverlay" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
             </children>
         </GridPane>
     </center>
@@ -19,7 +24,7 @@
             <Separator></Separator>
 
             <HBox alignment="CENTER_RIGHT">
-                <padding><Insets top="12" right="12" bottom="12" left="12" /></padding>
+                <padding><Insets top="12" right="12" bottom="12" left="12"/></padding>
                 <Button onAction="#close">Close</Button>
             </HBox>
         </VBox>

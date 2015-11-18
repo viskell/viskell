@@ -1,32 +1,21 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.SliderBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.SliderBlock" xmlns:fx="http://javafx.com/fxml/">
-	<BorderPane>
-		<center>
-			<BorderPane styleClass="value, block" minHeight="75" maxHeight="75" minWidth="150" maxWidth="150">
-				<top>
-					<BorderPane>
-						<center>
-							<Label text="${controller.value}" styleClass="content" />
-						</center>
-					</BorderPane>
-				</top>
-            	<bottom>
-					<BorderPane styleClass="argumentSpace">
-						<center>
-							<Label fx:id="valueType"/>
-						</center>
-					</BorderPane>
-            	</bottom>
-            	<center>
-					<Slider min="0.0" max="1.0" fx:id="slider"></Slider>
-            	</center>
-			</BorderPane>
-		</center>
-		<bottom>
-			<BorderPane fx:id="outputSpace" maxHeight="0" />
-		</bottom>
-	</BorderPane>
+    <BorderPane styleClass="value, block">
+        <center>
+            <VBox alignment="CENTER">
+                <Slider min="0.0" max="1.0" fx:id="slider"/>
+                <Label fx:id="value" styleClass="content"/>
+                <!-- silly extra HBox to not break the argumentSpace css -->
+                <HBox styleClass="argumentSpace">
+                    <Label fx:id="valueType"/>
+                </HBox>
+            </VBox>
+        </center>
+        <bottom>
+            <HBox fx:id="outputSpace"/>
+        </bottom>
+    </BorderPane>
 </fx:root>

@@ -3,15 +3,10 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.TilePane;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Binder;
@@ -32,18 +27,15 @@ import com.google.common.collect.ImmutableMap;
 public class FunctionBlock extends Block {
     /** The OutputAnchor of this FunctionBlock. */
     private OutputAnchor output;
-
-    /** The function name. */
-    private StringProperty name;
     
     /** The information about the function. */
     private FunctionInfo funInfo;
 
     /** The space containing the input anchor(s). */
-    @FXML private TilePane inputSpace;
+    @FXML private Pane inputSpace;
 
     /** The space containing the output anchor. */
-    @FXML private TilePane outputSpace;
+    @FXML private Pane outputSpace;
 
     /** The space containing all the arguments of the function. */
     private ArgumentSpace argumentSpace;
@@ -65,7 +57,6 @@ public class FunctionBlock extends Block {
      */
     public FunctionBlock(FunctionInfo funInfo, CustomUIPane pane) {
         super(pane);
-        this.name = new SimpleStringProperty(funInfo.getName());
         this.funInfo = funInfo;
 
         this.loadFXML("FunctionBlock");
@@ -91,16 +82,14 @@ public class FunctionBlock extends Block {
         output = new OutputAnchor(this, new Binder("res"));
         outputSpace.getChildren().add(output);
         
+        functionInfo.setText(funInfo.getName());
+
         // Make sure the prefWidth is correctly updated.
         this.prefWidthProperty().bind(functionInfo.widthProperty().add(argumentSpace.prefWidthProperty()));
         
-        this.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        this.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         functionInfo.setMinWidth(Region.USE_PREF_SIZE);
         functionInfo.setMaxWidth(Region.USE_PREF_SIZE);
         
-        // Since at this point of the width of the Labels is unknown, we have to ask for another layout pass.
-        Platform.runLater(this::updateLayout);
     }
     
     /** Updates the layout, if this Pane has a parent. */
@@ -108,16 +97,6 @@ public class FunctionBlock extends Block {
         if (this.getParent() != null) {
             this.getParent().requestLayout();
         }
-    }
-    
-    /** @return the name of this FunctionBlock. */
-    public final String getName() {
-        return name.get();
-    }
-    
-    /** @return the StringProperty for the name of the function. */
-    public final StringProperty nameProperty() {
-        return name;
     }
 
     /** @return the knot index of this FunctionBlock. */
@@ -162,7 +141,7 @@ public class FunctionBlock extends Block {
                 arg.setFreshRequiredType(ftype.getArgument(), scope);
                 type = ftype.getResult();
             } else {
-                new RuntimeException("too many arguments in this functionblock " + this.getName());
+                new RuntimeException("too many arguments in this functionblock " + funInfo.getName());
             }
         }
         this.output.setFreshRequiredType(type, scope);
@@ -189,11 +168,11 @@ public class FunctionBlock extends Block {
     
     @Override
     public String toString() {
-        return this.getName();
+        return funInfo.getName();
     }
 
     @Override
     protected ImmutableMap<String, Object> toBundleFragment() {
-        return ImmutableMap.of("name", getName(), "knotIndex", getKnotIndex());
+        return ImmutableMap.of("name", funInfo.getName(), "knotIndex", getKnotIndex());
     }
 }

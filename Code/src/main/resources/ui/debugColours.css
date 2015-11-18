@@ -7,44 +7,59 @@
     -fx-fill: null;
 }
 
-.connection {
-    -fx-stroke: #FF0000;
+Connection {
+    -fx-stroke: green;
     -fx-fill: null;
 }
 
-
-
-CustomUIPane * {
-	-fx-border-style: solid;
-	-fx-border-size: 2px;
-	-fx-background-color: rgba(255, 255, 255, 0.3);
+Connection.error {
+    -fx-stroke: red;
 }
 
-CustomUIPane > * {
-	-fx-border-color: yellow;
+
+* {
+    -fx-border-style: solid;
+    -fx-border-size: 2px;
+    -fx-background-color: rgba(255, 255, 255, 0.3);
 }
 
-CustomUIPane > * > * {
-	-fx-border-color: red;
+* > * {
+    -fx-border-color: yellow;
 }
 
-CustomUIPane > * > * > * {
-	-fx-border-color: lime;
+* > * > * {
+    -fx-border-color: red;
 }
 
-CustomUIPane > * > * > * > * {
-	-fx-border-color: fuchsia;
+* > * > * > * {
+    -fx-border-color: lime;
 }
 
-CustomUIPane > * > * > * > * > * {
-	-fx-border-color: orange;
+* > * > * > * > * {
+    -fx-border-color: fuchsia;
 }
 
-CustomUIPane > * > * > * > * > * > * {
-	-fx-border-color: cyan;
+* > * > * > * > * > * {
+    -fx-border-color: orange;
 }
 
-CustomUIPane > * > * > * > * > * > * > * {
-	-fx-border-color: red;
+* > * > * > * > * > * > * {
+    -fx-border-color: cyan;
 }
 
+* > * > * > * > * > * > * > * {
+    -fx-border-color: red;
+}
+
+CustomUIPane, PreferencesWindow {
+    -fx-background-color: #303030;
+}
+
+CheckBox * {
+	-fx-background-color: rgba(255,255,255,0.0);
+	-fx-border-color: rgba(255,255,255,0.0);
+}
+
+CheckBox:selected * {
+	-fx-border-color: rgba(0,0,0,1.0);
+}
