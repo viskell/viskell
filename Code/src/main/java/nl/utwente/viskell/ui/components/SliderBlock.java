@@ -23,7 +23,7 @@ public class SliderBlock extends ValueBlock {
         setValue("0.0");
 
         slider.valueProperty().addListener(ev -> {
-            setValue(String.format("%.5f", slider.getValue()));
+            setValue(String.format(Locale.US, "%.5f", slider.getValue()));
             this.initiateConnectionChanges();
         });
     }
