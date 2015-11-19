@@ -91,9 +91,30 @@ public final class ConstraintSet {
         return;
     }
     
-    protected void mergeConstraintsWith(ConstraintSet other) {
+    /**
+     * Merge this constrain set with another, while also simplifying and checking satisfiability.
+     * @param other constraint set to merge with
+     * @throws HaskellTypeError if the combined constraint set is not satisfiable.
+     */
+    protected void mergeConstraintsWith(ConstraintSet other) throws HaskellTypeError {
         this.constraints = new TreeSet<>(Sets.union(this.constraints, other.constraints));
         this.simplifyConstraints();
+        this.checkSatisfiable();
+    }
+
+    /**
+     * Check if type constructors exist that can satisfy all the constraint in this set.  
+     * @throws HaskellTypeError if this constraint set is not satisfiable.
+     * 
+     */
+    private void checkSatisfiable() throws HaskellTypeError {
+        if (this.constraints.size() <= 1) {
+            return;
+        }
+        
+        if (this.constraints.stream().map(TypeClass::allInstanceTypeCons).reduce(Sets::intersection).get().isEmpty()) {
+            throw new HaskellTypeError("no known type constructor satisfies all of " + this.toString());
+        }
     }
 
     /**

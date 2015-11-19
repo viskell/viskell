@@ -2,6 +2,7 @@ package nl.utwente.viskell.haskell.type;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Haskell TypeClass with its instances and superclasses.
@@ -99,6 +100,10 @@ public class TypeClass implements Comparable<TypeClass> {
         this.supers.add(tc);
         // Also transitively add all the superclasses of this superclass for easier simplification
         this.supers.addAll(tc.supers);
+    }
+
+    protected Set<TypeCon> allInstanceTypeCons() {
+        return this.instances.stream().map(i -> i.typecon).collect(Collectors.toSet());
     }
     
     /**
