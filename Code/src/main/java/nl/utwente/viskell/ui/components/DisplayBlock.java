@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.expr.Expression;
+import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 import java.util.List;
@@ -35,6 +36,9 @@ public class DisplayBlock extends Block {
     /** The label on which to display the value of this block */
     @FXML protected Label value;
     
+    /** Show class constrained type variable for the input anchor */
+    private final Type showConstraint;
+            
     /**
      * Creates a new instance of DisplayBlock.
      * @param pane
@@ -46,7 +50,7 @@ public class DisplayBlock extends Block {
     
     protected DisplayBlock(CustomUIPane pane, String fxml) {
         super(pane);
-
+        this.showConstraint = pane.getEnvInstance().buildType("Show a => a");
         loadFXML(fxml);
 
         inputAnchor = new InputAnchor(this);
@@ -55,9 +59,9 @@ public class DisplayBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
-        if (inputAnchor.hasConnection()) {
-            this.inputType.setText(this.inputAnchor.getStringType());
+        this.inputType.setText(this.inputAnchor.getStringType());
 
+        if (inputAnchor.hasConnection()) {
             GhciSession ghci = getPane().getGhciSession();
 
             ListenableFuture<String> result = ghci.pull(inputAnchor.getFullExpr());
@@ -74,7 +78,6 @@ public class DisplayBlock extends Block {
                 }
             });
         } else {
-            inputType.setText("a");
             value.setText("?");
         }
     }
@@ -101,7 +104,7 @@ public class DisplayBlock extends Block {
     
     @Override
     public void refreshAnchorTypes() {
-        this.inputAnchor.setFreshRequiredType(TypeScope.unique("any"), new TypeScope());        
+        this.inputAnchor.setFreshRequiredType(showConstraint, new TypeScope());        
     }
 
     @Override
