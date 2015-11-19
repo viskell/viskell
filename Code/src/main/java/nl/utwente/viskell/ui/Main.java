@@ -7,8 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import nl.utwente.ewi.caes.tactilefx.control.TactilePane.EventProcessingMode;
-import nl.utwente.ewi.caes.tactilefx.debug.DebugParent;
+import nl.utwente.ewi.caes.tactilefx.DebugParent;
+import nl.utwente.viskell.ghcj.GhciEvaluator;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 
@@ -38,17 +38,13 @@ public class Main extends Application {
 
         // Init TactilePane
         CustomUIPane tactilePane = new CustomUIPane(catalog);
-        tactilePane.setBordersCollide(true);
         tactilePane.setMinWidth(PANE_WIDTH);
         tactilePane.setMinHeight(PANE_HEIGHT);
         tactilePane.setMaxWidth(PANE_WIDTH);
         tactilePane.setMaxHeight(PANE_HEIGHT);
 
-        tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
-
         // Init Debug
         debug = new DebugParent(tactilePane);
-        debug.registerTactilePane(tactilePane);
         debug.setOverlayVisible(false);
 
         // Init zoom overlay

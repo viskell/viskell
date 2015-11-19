@@ -6,7 +6,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import nl.utwente.ewi.caes.tactilefx.control.TactilePane;
+import nl.utwente.ewi.caes.tactilefx.TactilePane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.Environment;
@@ -44,6 +44,7 @@ public class CustomUIPane extends TactilePane {
      * Constructs a new instance.
      */
     public CustomUIPane(HaskellCatalog catalog) {
+        super(EventProcessingMode.HANDLER);
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
