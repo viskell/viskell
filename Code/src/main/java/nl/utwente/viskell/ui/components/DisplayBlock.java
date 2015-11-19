@@ -55,9 +55,9 @@ public class DisplayBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
-        if (inputAnchor.hasConnection()) {
-            this.inputType.setText(this.inputAnchor.getStringType());
+        this.inputType.setText(this.inputAnchor.getStringType());
 
+        if (inputAnchor.hasConnection()) {
             GhciSession ghci = getPane().getGhciSession();
 
             ListenableFuture<String> result = ghci.pull(inputAnchor.getFullExpr());
@@ -74,7 +74,6 @@ public class DisplayBlock extends Block {
                 }
             });
         } else {
-            inputType.setText("a");
             value.setText("?");
         }
     }
@@ -101,7 +100,7 @@ public class DisplayBlock extends Block {
     
     @Override
     public void refreshAnchorTypes() {
-        this.inputAnchor.setFreshRequiredType(TypeScope.unique("any"), new TypeScope());        
+        this.inputAnchor.setFreshRequiredType(this.getPane().getEnvInstance().buildType("Show a => a"), new TypeScope());        
     }
 
     @Override
