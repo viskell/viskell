@@ -82,6 +82,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                 return new ListCell<CatalogFunction>() {
                     {
                         this.setOnMouseReleased(e -> {
+                            if (this.isEmpty()) {
+                                return;
+                            }
+                            
                             CatalogFunction entry = this.getItem();
                             if (e.getButton() == MouseButton.SECONDARY && entry.isConstructor()) {
                                 addBlock(new MatchBlock(entry, parent));
@@ -94,16 +98,12 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                     @Override
                     protected void updateItem(CatalogFunction item, boolean empty) {
                         super.updateItem(item, empty);
-
-                        if (item == null || empty) {
-                            setText(null);
-                        } else {
-                            setText(item.getName());
-                        }
+                        this.setText(item == null ? null : item.getName());
                     }
                 };
             });
 
+            
             TitledPane submenu = new TitledPane(category, listView);
             submenu.setAnimated(false);
             
