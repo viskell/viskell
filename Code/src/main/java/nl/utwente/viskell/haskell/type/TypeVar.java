@@ -92,8 +92,9 @@ public class TypeVar extends Type {
         /**
          * Deeply unifying all aspects of type instances
          * @param the other type instance.
+         * @throws HaskellTypeError if the combined constraint set of the typeva instances is not satisfiable.
          */
-        private void unifyWith(TypeInstance other) {
+        private void unifyWith(TypeInstance other) throws HaskellTypeError {
             other.constraints.mergeConstraintsWith(this.constraints);
             other.unifiedVars.addAll(this.unifiedVars);
             // Go through all type variable associated with both type instances, to make sure all of them are unified to the same instance.
@@ -186,10 +187,10 @@ public class TypeVar extends Type {
 
     /**
      * Use the same type instance for both type variable, effectively unifying them.
-     * 
      * @param the other type variable.
+     * @throws HaskellTypeError @throws HaskellTypeError if the combined constraint set of the type variables is not satisfiable. 
      */
-    public final void unifyWith(TypeVar other) {
+    public final void unifyWith(TypeVar other) throws HaskellTypeError {
         if (this.instance.internal) {
             this.instance.unifyWith(other.instance);
         } else {

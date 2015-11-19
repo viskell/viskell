@@ -84,4 +84,14 @@ public class ClassesTest {
        TypeChecker.unify("test", str, z);
        assertEquals("[Char]", z.prettyPrint());
     }
+    
+    @Test(expected = HaskellTypeError.class)
+    public final void testUnsatisfiable() throws HaskellTypeError {
+        final Environment env = new HaskellCatalog().asEnvironment();
+        TypeScope scope = new TypeScope();
+        TypeVar a = scope.getVarTC("a", env.testLookupClass("Integral"));
+        TypeVar b = scope.getVarTC("b", env.testLookupClass("Fractional"));
+        // throw error because, no type exist that is both instance of integral and fractional
+        TypeChecker.unify("test", a, b);
+    }
 }
