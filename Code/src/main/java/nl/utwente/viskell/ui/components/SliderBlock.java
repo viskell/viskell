@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.Locale;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import nl.utwente.viskell.ui.CustomUIPane;
