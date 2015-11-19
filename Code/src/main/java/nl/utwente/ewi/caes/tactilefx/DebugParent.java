@@ -3,10 +3,6 @@ package nl.utwente.ewi.caes.tactilefx;
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.beans.Observable;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -38,17 +34,14 @@ public class DebugParent extends StackPane {
 
     public DebugParent(Node node) {
         super(node);
-        initialise();
-    }
+        mapMouseToTouch = false;
+        final double touchCircleRadius = 50.0;
 
-    private void initialise() {
         overlay.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
 
         // Overlay shouldn't receive events
         overlay.setDisable(true);
         
-        overlay.visibleProperty().bind(overlayVisibleProperty());
-
         // Makes sure the overlay is always drawn on top of the other child
         getChildren().add(overlay);
         getChildren().addListener((Observable value) -> {
@@ -57,7 +50,7 @@ public class DebugParent extends StackPane {
         
         // Maps mouse events to touch events
         addEventFilter(MouseEvent.ANY, event -> {
-            if (getMapMouseToTouch() && !event.isSynthesized()) {
+            if (mapMouseToTouch && !event.isSynthesized()) {
                 if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
                     TouchPoint tp = createTouchPoint(event);
                     TouchEvent tEvent = new TouchEvent(this, event.getTarget(), TouchEvent.TOUCH_PRESSED,
@@ -98,7 +91,7 @@ public class DebugParent extends StackPane {
             double x = event.getTouchPoint().getSceneX();
             double y = event.getTouchPoint().getSceneY();
 
-            TouchDisplay circle = new TouchDisplay(x, y, getTouchCircleRadius(), touchId);
+            TouchDisplay circle = new TouchDisplay(x, y, touchCircleRadius, touchId);
             circleByTouchId.put(touchId, circle);
             overlay.getChildren().add(circle);
 
@@ -184,80 +177,14 @@ public class DebugParent extends StackPane {
      *
      * @defaultValue false
      */
-    private BooleanProperty mapMouseToTouch;
+    private boolean mapMouseToTouch;
 
     public void setMapMouseToTouch(boolean value) {
-        mapMouseToTouchProperty().set(value);
+        mapMouseToTouch= value;
     }
-
-    public boolean getMapMouseToTouch() {
-        return mapMouseToTouchProperty().get();
-    }
-
-    public BooleanProperty mapMouseToTouchProperty() {
-        if (mapMouseToTouch == null) {
-            mapMouseToTouch = new SimpleBooleanProperty(false);
-        }
-        return mapMouseToTouch;
-    }
-    
-    /**
-     * Whether the overlay is visible or not
-     * 
-     * @defaultValue true
-     */
-    private BooleanProperty overlayVisible;
 
     public void setOverlayVisible(boolean value) {
-        overlayVisibleProperty().set(value);
+        this.overlay.setVisible(value);
     }
-    
-    public boolean isOverlayVisible() {
-        return overlayVisibleProperty().get();
-    }
-    
-    public BooleanProperty overlayVisibleProperty() {
-        if (overlayVisible == null) {
-            overlayVisible = new SimpleBooleanProperty(true);
-        }
-        return overlayVisible;
-    }
-    
-    /**
-     * The radius of the circles that are drawn on touch events.
-     */
-    private DoubleProperty touchCircleRadius;
-
-    public void setTouchCircleRadius(double value) {
-        touchCircleRadiusProperty().set(value);
-    }
-
-    public double getTouchCircleRadius() {
-        return touchCircleRadiusProperty().get();
-    }
-
-    public DoubleProperty touchCircleRadiusProperty() {
-        if (touchCircleRadius == null) {
-            touchCircleRadius = new SimpleDoubleProperty(50.0) {
-                @Override
-                public void set(double value) {
-                    if (value < 0) {
-                        value = 0;
-                    }
-                    super.set(value);
-                }
-            };
-        }
-        return touchCircleRadius;
-    }
-    
-    public void clearTouchPoints() {
-        List<Node> toRemove = new ArrayList<>();
-        for (Node node : overlay.getChildren()) {
-            if (node instanceof TouchDisplay)
-                toRemove.add(node);
-        }
-        overlay.getChildren().removeAll(toRemove);
-    }
-    
+   
 }

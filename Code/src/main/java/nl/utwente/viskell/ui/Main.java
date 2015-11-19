@@ -8,7 +8,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nl.utwente.ewi.caes.tactilefx.DebugParent;
-import nl.utwente.ewi.caes.tactilefx.TactilePane.EventProcessingMode;
 import nl.utwente.viskell.ghcj.GhciEvaluator;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
@@ -43,8 +42,6 @@ public class Main extends Application {
         tactilePane.setMinHeight(PANE_HEIGHT);
         tactilePane.setMaxWidth(PANE_WIDTH);
         tactilePane.setMaxHeight(PANE_HEIGHT);
-
-        tactilePane.dragProcessingModeProperty().set(EventProcessingMode.HANDLER);
 
         // Init Debug
         debug = new DebugParent(tactilePane);

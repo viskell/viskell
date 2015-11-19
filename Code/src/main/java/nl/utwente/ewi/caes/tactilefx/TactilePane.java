@@ -3,18 +3,17 @@ package nl.utwente.ewi.caes.tactilefx;
 import javafx.beans.DefaultProperty;
 import javafx.beans.property.*;
 import javafx.collections.*;
-import javafx.css.StyleableProperty;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
+import javafx.scene.control.SkinBase;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -49,10 +48,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @DefaultProperty("children")
 public class TactilePane extends Control {
     // Attached Properties for Nodes
-    static final String IN_USE = "tactile-pane-in-use";
     static final String GO_TO_FOREGROUND_ON_CONTACT = "tactile-pane-go-to-foreground-on-contact";
     static final String DRAGGABLE = "tactile-pane-draggable";
-    static final String TRACKER = "tactile-pane-tracker";
     static final String DRAG_CONTEXT = "tactile-pane-drag-context";
     
     // Attached Properties for Nodes that are only used privately
@@ -66,27 +63,6 @@ public class TactilePane extends Control {
     
     public static DragContext getDragContext(Node node) {
         return (DragContext) getConstraint(node, DRAG_CONTEXT);
-    }
-    
-    static void setInUse(Node node, boolean inUse) {
-        inUsePropertyImpl(node).set(inUse);
-    }
-    
-    /**
-     * Whether this {@code Node} is being dragged by the user. If the {@code Node}
-     * is not a child of a {@code TactilePane}, it will always return {@code false}.
-     */
-    public static boolean isInUse(Node node) {
-        return inUsePropertyImpl(node).get();
-    }
-    
-    static BooleanProperty inUsePropertyImpl(Node node) {
-        BooleanProperty property = (BooleanProperty) getConstraint(node, IN_USE);
-        if (property == null) {
-            property = new SimpleBooleanProperty(false);
-            setConstraint(node, IN_USE, property);
-        }
-        return property;
     }
     
     public static void setGoToForegroundOnContact(Node node, boolean goToForegroundOnContact) {
@@ -129,26 +105,10 @@ public class TactilePane extends Control {
     public static BooleanProperty draggableProperty(Node node) {
         BooleanProperty property = (BooleanProperty) getConstraint(node, DRAGGABLE);
         if (property == null) {
-            property = new SimpleBooleanProperty(true) {
-                @Override
-                public void set(boolean draggable) {
-                    if (!draggable) {
-                        // A node that is not draggable cannot be in use
-                        setInUse(node, false);
-                    }
-                    super.set(draggable);
-                }
-            };
+            property = new SimpleBooleanProperty(true);
             setConstraint(node, DRAGGABLE, property);
         }
         return property;
-    }
-    
-    /**
-     * The {@code TactilePane} which is currently tracking {@code node}.
-     */
-    public static TactilePane getTracker(Node node) {
-        return (TactilePane) getConstraint(node, TRACKER);
     }
     
     // Used to attach a Property to a Node
@@ -164,30 +124,16 @@ public class TactilePane extends Control {
     }
 
     static Object getConstraint(Node node, Object key) {
-        if (node.hasProperties()) {
-            Object value = node.getProperties().get(key);
-            if (value != null) {
-                return value;
-            }
-        }
-        return null;
+        return node.getProperties().get(key);
     }
-    
-    
-    // STATIC METHODS
-    
-    
-    // INSTANCE VARIABLES
-    private final ObservableSet<Node> activeNodes;
-    
-    // CONSTRUCTORS
     
     /**
      * Creates a TactilePane control 
      */
-    public TactilePane() {
+    public TactilePane(EventProcessingMode dragProcMode) {
+        this.dragProcessingMode = dragProcMode;
         // Since this Control is more or less a Pane, focusTraversable should be false by default
-        ((StyleableProperty<Boolean>)focusTraversableProperty()).applyStyle(null, false);
+        setFocusTraversable(false);
         
         // Add EventHandlers for dragging to children when they are added
         super.getChildren().addListener((ListChangeListener.Change<? extends Node> c) -> {
@@ -213,25 +159,6 @@ public class TactilePane extends Control {
                 }
             }
         });
-        
-        // Initialise activeNodes
-        activeNodes = FXCollections.observableSet(Collections.newSetFromMap(new ConcurrentHashMap<>()));
-        activeNodes.addListener((SetChangeListener.Change<? extends Node> change) -> {
-            if (change.wasAdded()) {
-                Node node = change.getElementAdded();
-                TactilePane oldPane = getTracker(node);
-                if (oldPane != null) {
-                    oldPane.getActiveNodes().remove(node);
-                }
-                setConstraint(node, TRACKER, TactilePane.this);
-            }
-            else {
-                Node node = change.getElementRemoved();
-                
-                setConstraint(node, TRACKER, null);
-            }
-        });
-        
     }
     
     // MAKING CHILDREN DRAGGABLE
@@ -263,7 +190,6 @@ public class TactilePane extends Control {
                 }
             } else if (type == TouchEvent.TOUCH_RELEASED) {
                 if (dragContext.touchId == event.getTouchPoint().getId()) {
-                    handleTouchReleased(node);
                     dragContext.touchId = DragContext.NULL_ID;
                     event.consume();
                 }
@@ -295,7 +221,6 @@ public class TactilePane extends Control {
                 }
             } else if (type == MouseEvent.MOUSE_RELEASED) {
                 if (dragContext.touchId == DragContext.MOUSE_ID) {
-                    handleTouchReleased(node);
                     dragContext.touchId = DragContext.NULL_ID;
                     event.consume();
                 }
@@ -306,7 +231,7 @@ public class TactilePane extends Control {
         setConstraint(node, TOUCH_EVENT_HANDLER, touchHandler);
         setConstraint(node, MOUSE_EVENT_HANDLER, mouseHandler);
         
-        if (getDragProcessingMode() == EventProcessingMode.FILTER) {
+        if (dragProcessingMode == EventProcessingMode.FILTER) {
             node.addEventFilter(TouchEvent.ANY, touchHandler);
             node.addEventFilter(MouseEvent.ANY, mouseHandler);
         } else {
@@ -322,7 +247,7 @@ public class TactilePane extends Control {
         // assuming that mouseHandler will be null if touchHandler is null
         if (touchHandler == null) return;
         
-        if (getDragProcessingMode() == EventProcessingMode.FILTER) {
+        if (dragProcessingMode == EventProcessingMode.FILTER) {
             node.removeEventFilter(TouchEvent.ANY, touchHandler);
             node.removeEventFilter(MouseEvent.ANY, mouseHandler);
         } else {
@@ -337,8 +262,6 @@ public class TactilePane extends Control {
     
     private void handleTouchPressed(Node node, double localX, double localY) {
         DragContext dragContext = getDragContext(node);
-        setInUse(node, true);
-
         dragContext.localX = localX;
         dragContext.localY = localY;
 
@@ -355,10 +278,6 @@ public class TactilePane extends Control {
         node.setLayoutY(y);
     }
 
-    private void handleTouchReleased(Node node) {
-        setInUse(node, false);
-    }
-    
     // INSTANCE PROPERTIES
     
    /**
@@ -370,54 +289,34 @@ public class TactilePane extends Control {
     }
     
     /**
-     * 
-     * @return modifiable list of {@code Nodes} that are tracked by this {@code TactilePane}
-     */
-    public ObservableSet<Node> getActiveNodes() {
-        return activeNodes;
-    }
-    
-    /**
      * Whether Mouse/Touch events at this TactilePane's children should be processed and consumed
      * at the filtering stage or the handling stage.
-     * 
-     * @defaultValue EventProcessingMode.HANDLER
      */
-    private ObjectProperty<EventProcessingMode> dragProcessingMode;
-    
-    public void setDragProcessingMode(EventProcessingMode mode) {
-        dragProcessingModeProperty().set(mode);
-    }
-    
-    public EventProcessingMode getDragProcessingMode() {
-        return dragProcessingModeProperty().get();
-    }
-    
-    public ObjectProperty<EventProcessingMode> dragProcessingModeProperty() {
-        if (dragProcessingMode == null) {
-            dragProcessingMode = new SimpleObjectProperty<EventProcessingMode>(EventProcessingMode.HANDLER) {
-                
-                @Override
-                public void set(EventProcessingMode value) {
-                    for (Node node : TactilePane.this.getChildren()) {
-                        removeDragEventHandlers(node);
-                    }
-                    super.set(value);
-                    for (Node node : TactilePane.this.getChildren()) {
-                        addDragEventHandlers(node);
-                    }
-                }
-            };
-        }
-        return dragProcessingMode;
-    }
+    private final EventProcessingMode dragProcessingMode;
     
     /**
      * {@inheritDoc}
      */
     @Override
     protected Skin<TactilePane> createDefaultSkin() {
-        return new TactilePaneSkin(this);
+        return new SkinBase<TactilePane>(this) {
+            {
+                this.consumeMouseEvents(false);
+            }
+
+            /** Called during the layout pass of the scenegraph. */
+            @Override
+            protected void layoutChildren(final double contentX, final double contentY,
+                    final double contentWidth, final double contentHeight) {
+                
+                // Like a Pane, it will only set the size of managed, resizable content 
+                // to their preferred sizes and does not do any node positioning.
+                this.getSkinnable().getChildren().stream()
+                    .filter(Node::isResizable)
+                    .filter(Node::isManaged)
+                    .forEach(Node::autosize);
+            }
+        };
     }
     
     // ENUMS

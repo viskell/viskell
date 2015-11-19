@@ -44,6 +44,7 @@ public class CustomUIPane extends TactilePane {
      * Constructs a new instance.
      */
     public CustomUIPane(HaskellCatalog catalog) {
+        super(EventProcessingMode.HANDLER);
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
