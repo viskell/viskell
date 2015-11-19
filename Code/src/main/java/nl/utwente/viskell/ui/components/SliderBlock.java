@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.Locale;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import nl.utwente.viskell.ui.CustomUIPane;
@@ -23,7 +24,7 @@ public class SliderBlock extends ValueBlock {
         setValue("0.0");
 
         slider.valueProperty().addListener(ev -> {
-            setValue(String.format("%.5f", slider.getValue()));
+            setValue(String.format(Locale.US, "%.5f", slider.getValue()));
             this.initiateConnectionChanges();
         });
     }
