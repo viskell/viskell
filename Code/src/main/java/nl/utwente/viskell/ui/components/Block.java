@@ -47,6 +47,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.parentPane = pane;
         this.freshAnchorTypes = false;
         this.updateInProgress = false;
+        pane.addDragEventHandlers(this);
         
         // Visually react on selection.
         this.parentPane.selectedBlockProperty().addListener(event -> {

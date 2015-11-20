@@ -5,7 +5,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
-import nl.utwente.ewi.caes.tactilefx.TactilePane;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 
@@ -26,8 +25,6 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
      * @param anchor The starting anchor of new wire.
      */
     public DrawWire(CustomUIPane pane, ConnectionAnchor anchor) {
-        TactilePane.setDraggable(this, false);
-        TactilePane.setGoToForegroundOnContact(this, false);
         this.setMouseTransparent(true);
 
         this.pane = pane;

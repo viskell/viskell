@@ -200,5 +200,6 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     /** Closes this menu by removing it from it's parent. */
     public void close() {
         parent.getChildren().remove(this);
+        parent.removeDragEventHandlers(this);
     }
 }

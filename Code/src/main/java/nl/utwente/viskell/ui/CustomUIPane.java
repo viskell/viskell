@@ -117,6 +117,7 @@ public class CustomUIPane extends TactilePane {
             FunctionMenu menu = new FunctionMenu(catalog, this);
             menu.relocate(e.getX(), e.getY());
             this.getChildren().add(menu);
+            this.addDragEventHandlers(menu);
         }
     }
 
@@ -187,6 +188,7 @@ public class CustomUIPane extends TactilePane {
         
         block.getAllOutputs().stream().forEach(output -> output.removeConnections());
         this.getChildren().removeAll(block);
+        this.removeDragEventHandlers(block);
     }
 
     /** Remove the selected block, if any. */

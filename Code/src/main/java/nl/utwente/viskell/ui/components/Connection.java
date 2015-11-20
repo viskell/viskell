@@ -7,7 +7,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
-import nl.utwente.ewi.caes.tactilefx.TactilePane;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.ui.ComponentLoader;
@@ -53,8 +52,6 @@ public class Connection extends CubicCurve implements
      * @param anchor A ConnectionAnchor of this Connection.
      */
     public Connection(CustomUIPane pane, OutputAnchor source, InputAnchor sink) {
-        TactilePane.setDraggable(this, false);
-        TactilePane.setGoToForegroundOnContact(this, false);
         this.setMouseTransparent(true);
         
         this.pane = pane;
