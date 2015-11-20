@@ -7,11 +7,9 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.control.Control;
-import javafx.scene.control.Skin;
-import javafx.scene.control.SkinBase;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
+import javafx.scene.layout.Region;
 
 import java.util.*;
 
@@ -46,7 +44,7 @@ import java.util.*;
  * the handler stage.
  */
 @DefaultProperty("children")
-public class TactilePane extends Control {
+public class TactilePane extends Region {
     // Attached Properties for Nodes
     static final String GO_TO_FOREGROUND_ON_CONTACT = "tactile-pane-go-to-foreground-on-contact";
     static final String DRAGGABLE = "tactile-pane-draggable";
@@ -132,8 +130,6 @@ public class TactilePane extends Control {
      */
     public TactilePane(EventProcessingMode dragProcMode) {
         this.dragProcessingMode = dragProcMode;
-        // Since this Control is more or less a Pane, focusTraversable should be false by default
-        setFocusTraversable(false);
         
         // Add EventHandlers for dragging to children when they are added
         super.getChildren().addListener((ListChangeListener.Change<? extends Node> c) -> {
@@ -293,31 +289,6 @@ public class TactilePane extends Control {
      * at the filtering stage or the handling stage.
      */
     private final EventProcessingMode dragProcessingMode;
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Skin<TactilePane> createDefaultSkin() {
-        return new SkinBase<TactilePane>(this) {
-            {
-                this.consumeMouseEvents(false);
-            }
-
-            /** Called during the layout pass of the scenegraph. */
-            @Override
-            protected void layoutChildren(final double contentX, final double contentY,
-                    final double contentWidth, final double contentHeight) {
-                
-                // Like a Pane, it will only set the size of managed, resizable content 
-                // to their preferred sizes and does not do any node positioning.
-                this.getSkinnable().getChildren().stream()
-                    .filter(Node::isResizable)
-                    .filter(Node::isManaged)
-                    .forEach(Node::autosize);
-            }
-        };
-    }
     
     // ENUMS
     
