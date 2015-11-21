@@ -24,8 +24,8 @@ public class Main extends Application {
     /** A reference to the main window */
     public static Stage primaryStage;
     
-    /** A reference to the debug overlay */
-    public static DebugParent debug;
+    /** A reference to the overlay */
+    public static MainOverlay overlay;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -42,12 +42,7 @@ public class Main extends Application {
         tactilePane.setMaxWidth(PANE_WIDTH);
         tactilePane.setMaxHeight(PANE_HEIGHT);
 
-        // Init Debug
-        debug = new DebugParent(tactilePane);
-        debug.setOverlayVisible(false);
-
-        // Init zoom overlay
-        ButtonOverlay buttonOverlay = new ButtonOverlay(debug, tactilePane);
+        overlay = new MainOverlay(tactilePane);
 
         // Check if GHCI is available
         try {
@@ -66,7 +61,7 @@ public class Main extends Application {
         }
 
         // Init scene
-        Scene scene = new Scene(buttonOverlay);
+        Scene scene = new Scene(overlay);
 
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
         String theme = prefs.get("theme", "/ui/colours.css");

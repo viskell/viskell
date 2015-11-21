@@ -56,7 +56,7 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
         });
         
         debugOverlay.setOnAction(event -> {
-            Main.debug.setOverlayVisible(debugOverlay.isSelected());
+            Main.overlay.setTouchVisible(debugOverlay.isSelected());
         });
         
         reloadTheme.setOnAction(event -> refreshTheme());
