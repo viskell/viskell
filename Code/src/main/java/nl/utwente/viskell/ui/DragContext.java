@@ -11,41 +11,38 @@ import javafx.scene.input.TouchEvent;
  * Helper class used for event handling of dragging a Node.
  */
 public class DragContext {
-    /**
-     * Defines whether an Event is processed at the filter stage or the handler stage.
-     */
-    public enum EventProcessingMode {
-        /**
-         * Represents processing events at the handler stage
-         */
-        HANDLER, 
-        
-        /**
-         * Represents processing events at the filter stage.
-         */
-        FILTER
-    }
 
-    public static final int NULL_ID = -1;
-    public static final int MOUSE_ID = -2;
+    /** The id of the finger/cursor that is currently dragging the Node */
+    private int touchId;
+
+    /** Touch ID representing the mouse cursor. */
+    private static final int MOUSE_ID = -1;
+    /** An unused touch ID. */
+    private static final int NULL_ID = Integer.MIN_VALUE;
     
+    /** The Node that can be dragged. */
     final Node node;         // Node that is being dragged
-    /* Whether this node will go to the foreground when the user starts a drag gesture with it. */
-    boolean goToForegroundOnContact; //
-    double localOffsetX, localOffsetY;  // The x,y position of the Event in the Node
-    int touchId;            // The id of the finger/cursor that is currently dragging the Node
+
+    /** Whether this node will go to the foreground when the user starts a drag gesture with it. */
+    boolean goToForegroundOnContact;
     
+    /** The x,y position in the Node where the dragging started. */
+    private double localOffsetX, localOffsetY;
+    
+    /** reference to internal touch event handler */
     private final EventHandler<TouchEvent> touchHandler;
+
+    /** reference to internal mouse event handler */
     private final EventHandler<MouseEvent> mouseHandler;
     
+    /**
+     * Creates a DragContext keeping track of touch events, so that a Node is made draggable.
+     * @param draggable the Node that is to be made draggable.
+     */
     public DragContext(Node draggable) {
-        this(draggable, EventProcessingMode.HANDLER);
-    }
-    
-    public DragContext(Node draggable, DragContext.EventProcessingMode dragProcessingMode) {
         this.node = draggable;
         this.goToForegroundOnContact = true;
-        touchId = -1;
+        touchId = NULL_ID;
         
         touchHandler = event -> {
             EventType<TouchEvent> type = event.getEventType();
@@ -97,13 +94,8 @@ public class DragContext {
             }
         };
         
-        if (dragProcessingMode == DragContext.EventProcessingMode.FILTER) {
-            draggable.addEventFilter(TouchEvent.ANY, touchHandler);
-            draggable.addEventFilter(MouseEvent.ANY, mouseHandler);
-        } else {
-            draggable.addEventHandler(TouchEvent.ANY, touchHandler);
-            draggable.addEventHandler(MouseEvent.ANY, mouseHandler);
-        }
+        draggable.addEventHandler(TouchEvent.ANY, touchHandler);
+        draggable.addEventHandler(MouseEvent.ANY, mouseHandler);
     }
     
     private void handleTouchPressed(double localX, double localY) {
@@ -120,9 +112,8 @@ public class DragContext {
         node.relocate(parentPos.getX() - this.localOffsetX, parentPos.getY() - this.localOffsetY);
     }
     
+    /** Make the attached Node stop acting on drag actions by removing drag event handlers */
     public void removeDragEventHandlers() {
-        node.removeEventFilter(TouchEvent.ANY, touchHandler);
-        node.removeEventFilter(MouseEvent.ANY, mouseHandler);
         node.removeEventHandler(TouchEvent.ANY, touchHandler);
         node.removeEventHandler(MouseEvent.ANY, mouseHandler);
     }
@@ -132,15 +123,6 @@ public class DragContext {
      */
     public Node getDraggable() {
         return this.node;
-    }
-    
-    /**
-     * The id of the TouchPoint that is responsible for dragging the Node.
-     * Returns NULL_ID if the Node is not being dragged, or MOUSE_ID if the
-     * Node is dragged by a mouse cursor.
-     */
-    public int getTouchId() {
-        return touchId;
     }
     
     /** Sets whether the attached node will go to foreground on contact.  */

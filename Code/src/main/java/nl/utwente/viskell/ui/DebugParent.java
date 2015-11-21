@@ -55,7 +55,7 @@ public class DebugParent extends StackPane {
             double y = event.getTouchPoint().getY();
 
             TouchDisplay circle = circleByTouchId.get(touchId);
-            circle.relocate(x, y, bounds);
+            circle.moveTouchPoint(x, y, bounds);
         });
 
         addEventFilter(TouchEvent.TOUCH_RELEASED, event -> {

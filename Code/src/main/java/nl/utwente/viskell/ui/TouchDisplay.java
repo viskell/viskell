@@ -44,14 +44,15 @@ class TouchDisplay extends Pane {
         setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, null, null)));
     }
 
-    public void relocate(double x, double y, Bounds bounds) {
+    /** Move this TouchDisplay to a new x-y position and bounds. */
+    protected void moveTouchPoint(double x, double y, Bounds bounds) {
         labelText.set(createLabelText(x, y, touchId));
         line.setStartX(x);
         line.setStartY(y);
         line.setEndX(bounds.getMinX());
         line.setEndY(bounds.getMinY());
         Bounds cb = circle.getBoundsInParent();
-        super.relocate(x - cb.getMinX() - cb.getWidth() / 2, y - cb.getMinY() - cb.getHeight() / 2);
+        this.relocate(x - cb.getMinX() - cb.getWidth() / 2, y - cb.getMinY() - cb.getHeight() / 2);
     }
 
     private String createLabelText(double x, double y, int touchId) {
