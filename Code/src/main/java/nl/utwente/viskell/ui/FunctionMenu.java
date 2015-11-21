@@ -15,8 +15,6 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
-import nl.utwente.ewi.caes.tactilefx.DragContext;
-import nl.utwente.ewi.caes.tactilefx.DragContext.EventProcessingMode;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.CatalogFunction;
@@ -61,7 +59,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     public FunctionMenu(HaskellCatalog catalog, CustomUIPane pane) {
         this.parent = pane;
         this.loadFXML("FunctionMenu");
-        this.dragContext = new DragContext(this, EventProcessingMode.HANDLER);
+        this.dragContext = new DragContext(this);
         /*
          * Consume scroll events to prevent mixing of zooming and list
          * scrolling.

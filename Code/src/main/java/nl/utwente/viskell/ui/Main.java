@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import nl.utwente.ewi.caes.tactilefx.DebugParent;
 import nl.utwente.viskell.ghcj.GhciEvaluator;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;

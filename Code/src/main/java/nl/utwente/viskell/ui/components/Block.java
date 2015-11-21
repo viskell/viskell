@@ -6,13 +6,12 @@ import javafx.application.Platform;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import nl.utwente.ewi.caes.tactilefx.DragContext;
-import nl.utwente.ewi.caes.tactilefx.DragContext.EventProcessingMode;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.ui.CircleMenu;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.DragContext;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
 import java.util.List;
@@ -52,7 +51,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.parentPane = pane;
         this.freshAnchorTypes = false;
         this.updateInProgress = false;
-        this.dragContext = new DragContext(this, EventProcessingMode.HANDLER);
+        this.dragContext = new DragContext(this);
         
         // Visually react on selection.
         this.parentPane.selectedBlockProperty().addListener(event -> {

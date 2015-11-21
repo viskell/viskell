@@ -1,4 +1,4 @@
-package nl.utwente.ewi.caes.tactilefx;
+package nl.utwente.viskell.ui;
 
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -37,6 +37,10 @@ public class DragContext {
     
     private final EventHandler<TouchEvent> touchHandler;
     private final EventHandler<MouseEvent> mouseHandler;
+    
+    public DragContext(Node draggable) {
+        this(draggable, EventProcessingMode.HANDLER);
+    }
     
     public DragContext(Node draggable, DragContext.EventProcessingMode dragProcessingMode) {
         this.node = draggable;

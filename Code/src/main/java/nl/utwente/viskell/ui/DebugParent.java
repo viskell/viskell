@@ -1,4 +1,4 @@
-package nl.utwente.ewi.caes.tactilefx;
+package nl.utwente.viskell.ui;
 
 import javafx.beans.Observable;
 import javafx.geometry.Bounds;
