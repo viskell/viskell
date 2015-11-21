@@ -15,6 +15,8 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import nl.utwente.ewi.caes.tactilefx.DragContext;
+import nl.utwente.ewi.caes.tactilefx.DragContext.EventProcessingMode;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.CatalogFunction;
@@ -44,6 +46,9 @@ import java.util.Optional;
  */
 public class FunctionMenu extends StackPane implements ComponentLoader {
 
+    /** The context that deals with dragging for this Menu */
+    protected DragContext dragContext;
+
     private Accordion categoryContainer = new Accordion();
     private CustomUIPane parent;
     @FXML
@@ -56,6 +61,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     public FunctionMenu(HaskellCatalog catalog, CustomUIPane pane) {
         this.parent = pane;
         this.loadFXML("FunctionMenu");
+        this.dragContext = new DragContext(this, EventProcessingMode.HANDLER);
         /*
          * Consume scroll events to prevent mixing of zooming and list
          * scrolling.
@@ -200,6 +206,5 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     /** Closes this menu by removing it from it's parent. */
     public void close() {
         parent.getChildren().remove(this);
-        parent.removeDragEventHandlers(this);
     }
 }

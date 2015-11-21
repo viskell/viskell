@@ -6,12 +6,26 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
-import nl.utwente.ewi.caes.tactilefx.TactilePane.EventProcessingMode;
 
 /**
  * Helper class used for event handling of dragging a Node.
  */
 public class DragContext {
+    /**
+     * Defines whether an Event is processed at the filter stage or the handler stage.
+     */
+    public enum EventProcessingMode {
+        /**
+         * Represents processing events at the handler stage
+         */
+        HANDLER, 
+        
+        /**
+         * Represents processing events at the filter stage.
+         */
+        FILTER
+    }
+
     public static final int NULL_ID = -1;
     public static final int MOUSE_ID = -2;
     
@@ -24,7 +38,7 @@ public class DragContext {
     private final EventHandler<TouchEvent> touchHandler;
     private final EventHandler<MouseEvent> mouseHandler;
     
-    public DragContext(Node draggable, EventProcessingMode dragProcessingMode) {
+    public DragContext(Node draggable, DragContext.EventProcessingMode dragProcessingMode) {
         this.node = draggable;
         this.goToForegroundOnContact = true;
         touchId = -1;
@@ -79,7 +93,7 @@ public class DragContext {
             }
         };
         
-        if (dragProcessingMode == EventProcessingMode.FILTER) {
+        if (dragProcessingMode == DragContext.EventProcessingMode.FILTER) {
             draggable.addEventFilter(TouchEvent.ANY, touchHandler);
             draggable.addEventFilter(MouseEvent.ANY, mouseHandler);
         } else {
@@ -98,7 +112,6 @@ public class DragContext {
     }
 
     private void handleTouchMoved(double sceneX, double sceneY) {
-        System.err.println(this.node.getScene());
         Point2D parentPos = this.node.getParent().sceneToLocal(sceneX, sceneY);
         node.relocate(parentPos.getX() - this.localOffsetX, parentPos.getY() - this.localOffsetY);
     }
