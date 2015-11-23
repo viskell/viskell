@@ -2,7 +2,6 @@ package nl.utwente.viskell.ui;
 
 import javafx.event.EventHandler;
 import javafx.event.EventType;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
@@ -55,7 +54,7 @@ public class DragContext {
                 }
             } else if (type == TouchEvent.TOUCH_MOVED) {
                 if (this.touchId == event.getTouchPoint().getId()) {
-                    this.handleTouchMoved(event.getTouchPoint().getSceneX(), event.getTouchPoint().getSceneY());
+                    this.handleTouchMoved(event.getTouchPoint().getX(), event.getTouchPoint().getY());
                     event.consume();
                 }
             } else if (type == TouchEvent.TOUCH_RELEASED) {
@@ -83,7 +82,7 @@ public class DragContext {
             } else if (type == MouseEvent.MOUSE_DRAGGED) {
                 
                 if (this.touchId == DragContext.MOUSE_ID) {
-                    this.handleTouchMoved(event.getSceneX(), event.getSceneY());
+                    this.handleTouchMoved(event.getX(), event.getY());
                     event.consume();
                 }
             } else if (type == MouseEvent.MOUSE_RELEASED) {
@@ -107,9 +106,10 @@ public class DragContext {
         }
     }
 
-    private void handleTouchMoved(double sceneX, double sceneY) {
-        Point2D parentPos = this.node.getParent().sceneToLocal(sceneX, sceneY);
-        node.relocate(parentPos.getX() - this.localOffsetX, parentPos.getY() - this.localOffsetY);
+    private void handleTouchMoved(double localX, double localY) {
+        double diffX = localX - this.localOffsetX;
+        double diffY = localY - this.localOffsetY;
+        node.relocate(node.getLayoutX() + diffX, node.getLayoutY() + diffY);
     }
     
     /** Make the attached Node stop acting on drag actions by removing drag event handlers */
