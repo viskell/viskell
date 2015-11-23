@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import nl.utwente.ewi.caes.tactilefx.TactilePane;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
@@ -50,7 +49,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         
         this.fun = new OutputAnchor(this, new Binder("lam"));
         this.funSpace.getChildren().add(this.fun);
-        TactilePane.setGoToForegroundOnContact(this, false);
+        this.dragContext.setGoToForegroundOnContact(false);
     }
             
     /**
@@ -70,7 +69,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         
         this.fun = new OutputAnchor(this, new Binder("lam"));
         this.funSpace.getChildren().add(this.fun);
-        TactilePane.setGoToForegroundOnContact(this, false);
+        this.dragContext.setGoToForegroundOnContact(false);
     }
 
     @Override

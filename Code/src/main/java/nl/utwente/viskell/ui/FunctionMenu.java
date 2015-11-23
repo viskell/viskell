@@ -44,6 +44,9 @@ import java.util.Optional;
  */
 public class FunctionMenu extends StackPane implements ComponentLoader {
 
+    /** The context that deals with dragging for this Menu */
+    protected DragContext dragContext;
+
     private Accordion categoryContainer = new Accordion();
     private CustomUIPane parent;
     @FXML
@@ -56,6 +59,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     public FunctionMenu(HaskellCatalog catalog, CustomUIPane pane) {
         this.parent = pane;
         this.loadFXML("FunctionMenu");
+        this.dragContext = new DragContext(this);
         /*
          * Consume scroll events to prevent mixing of zooming and list
          * scrolling.

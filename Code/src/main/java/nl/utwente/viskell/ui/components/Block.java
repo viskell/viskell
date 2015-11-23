@@ -11,6 +11,7 @@ import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.ui.CircleMenu;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.DragContext;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
 import java.util.List;
@@ -32,7 +33,10 @@ import java.util.Map;
  */
 public abstract class Block extends StackPane implements Bundleable, ComponentLoader {
     /** The pane that is used to hold state and place all components on. */
-    private CustomUIPane parentPane;
+    private final CustomUIPane parentPane;
+    
+    /** The context that deals with dragging and touch event for this Block */
+    protected DragContext dragContext;
     
     /** Whether the anchor types are fresh*/
     private boolean freshAnchorTypes;
@@ -47,6 +51,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.parentPane = pane;
         this.freshAnchorTypes = false;
         this.updateInProgress = false;
+        this.dragContext = new DragContext(this);
         
         // Visually react on selection.
         this.parentPane.selectedBlockProperty().addListener(event -> {
