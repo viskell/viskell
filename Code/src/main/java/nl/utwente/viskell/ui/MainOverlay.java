@@ -57,14 +57,11 @@ public class MainOverlay extends StackPane {
 
         addEventFilter(TouchEvent.TOUCH_MOVED, event -> {
             int touchId = event.getTouchPoint().getId();
-            Node target = (Node) event.getTarget();
-            Bounds bounds = target.localToScene(target.getBoundsInLocal());
-
             double x = event.getTouchPoint().getX();
             double y = event.getTouchPoint().getY();
 
             TouchDisplay circle = circleByTouchId.get(touchId);
-            circle.moveTouchPoint(x, y, bounds);
+            circle.moveTouchPoint(x, y);
         });
 
         addEventFilter(TouchEvent.TOUCH_RELEASED, event -> {
