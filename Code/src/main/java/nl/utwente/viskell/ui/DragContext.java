@@ -1,7 +1,10 @@
 package nl.utwente.viskell.ui;
 
+import java.util.function.Consumer;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
@@ -34,6 +37,24 @@ public class DragContext {
     /** reference to internal mouse event handler */
     private final EventHandler<MouseEvent> mouseHandler;
     
+    /** the method to be called when a drag action has started, may be null */
+    private Consumer<DragContext> dragInitAction;
+
+    /** the method to be called when a drag action has finished, may be null */
+    private Consumer<DragContext> dragFinishAction;
+    
+    /** bounds to wherein the dragging is constrained */
+    private Bounds dragLimits;  
+    
+    /** the initial drag distance before it is considered a proper drag action */
+    private double dragThreshold;
+    
+    /** whether a thresholded drag action has started */
+    private boolean dragStarted;
+    
+    /** minimal movement offset before a node relocation is triggered, to reduce wasteful redraws */
+    private double relocateThreshold;
+    
     /**
      * Creates a DragContext keeping track of touch events, so that a Node is made draggable.
      * @param draggable the Node that is to be made draggable.
@@ -41,7 +62,14 @@ public class DragContext {
     public DragContext(Node draggable) {
         this.node = draggable;
         this.goToForegroundOnContact = true;
-        touchId = NULL_ID;
+        this.touchId = NULL_ID;
+        this.dragLimits = new BoundingBox(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        this.dragThreshold = 3.0;
+        this.dragStarted = false;
+        this.relocateThreshold = 1.0;
+        
+        this.dragInitAction = null;
+        this.dragFinishAction = null;
         
         touchHandler = event -> {
             EventType<TouchEvent> type = event.getEventType();
@@ -59,7 +87,7 @@ public class DragContext {
                 }
             } else if (type == TouchEvent.TOUCH_RELEASED) {
                 if (this.touchId == event.getTouchPoint().getId()) {
-                    this.touchId = DragContext.NULL_ID;
+                    this.handleTouchReleased();
                     event.consume();
                 }
             }
@@ -87,7 +115,7 @@ public class DragContext {
                 }
             } else if (type == MouseEvent.MOUSE_RELEASED) {
                 if (this.touchId == DragContext.MOUSE_ID) {
-                    this.touchId = DragContext.NULL_ID;
+                    handleTouchReleased();
                     event.consume();
                 }
             }
@@ -109,7 +137,34 @@ public class DragContext {
     private void handleTouchMoved(double localX, double localY) {
         double diffX = localX - this.localOffsetX;
         double diffY = localY - this.localOffsetY;
-        node.relocate(node.getLayoutX() + diffX, node.getLayoutY() + diffY);
+        // check if the movement distance surpassed the threshold
+        if (this.dragStarted || (diffX*diffX + diffY*diffY > this.dragThreshold*this.dragThreshold)) {
+            if (! this.dragStarted) {
+                this.dragStarted = true;
+                // first call the drag initiation action if available 
+                if (this.dragInitAction != null) {
+                    this.dragInitAction.accept(this);
+                }
+            }
+            
+            // skip actual node relocation if the movement is too small 
+            if ((Math.abs(diffX) > this.relocateThreshold) || (Math.abs(diffY) > this.relocateThreshold)) {
+                double moveX = node.getLayoutX() + diffX;
+                double moveY = node.getLayoutY() + diffY;
+                // limit the movement by clamping on the drag boundaries
+                double newX = Math.min(Math.max(moveX, this.dragLimits.getMinX()), this.dragLimits.getMaxX());
+                double newY = Math.min(Math.max(moveY, this.dragLimits.getMinY()), this.dragLimits.getMaxY());
+                node.relocate(newX, newY);
+            }
+        }
+    }
+
+    private void handleTouchReleased() {
+        this.touchId = DragContext.NULL_ID;
+        this.dragStarted = false;
+        if (this.dragFinishAction != null) {
+            this.dragFinishAction.accept(this);
+        }
     }
     
     /** Make the attached Node stop acting on drag actions by removing drag event handlers */
@@ -128,6 +183,41 @@ public class DragContext {
     /** Sets whether the attached node will go to foreground on contact.  */
     public void setGoToForegroundOnContact(boolean goToForegroundOnContact) {
         this.goToForegroundOnContact = goToForegroundOnContact;
+    }
+
+    /**
+     * @param bounds to wherein the dragging is constrained.
+     */
+    public void setDragLimits(Bounds bounds) {
+        this.dragLimits = bounds;
+    }
+    
+    /**
+     * @param threshold the initial drag distance before it is considered a proper drag action
+     */
+    public void setDragThreshold(double threshold) {
+        this.dragThreshold = threshold;
+    }
+
+    /**
+     * @param threshold minimal movement offset before a node relocation is triggered, to reduce wasteful redraws
+     */
+    public void setRelocateThreshold(double threshold) {
+        this.relocateThreshold = threshold;
+    }
+
+    /**
+     * @param action the method to be called when a drag action has started, may be null 
+     */
+    public void setDragInitAction(Consumer<DragContext> action) {
+        this.dragInitAction = action;
+    }
+
+    /**
+     * @param action the method to be called when a drag action has finished, may be null
+     */
+    public void setDragFinishAction(Consumer<DragContext> action) {
+        this.dragFinishAction = action;
     }
 
     /**
