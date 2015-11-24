@@ -114,6 +114,16 @@ MatchBlock.selected {
     -fx-text-fill: white;
 }
 
+.resultType {
+    -fx-text-fill: white;
+    -fx-background-color: black;
+}
+
+.inputType {
+    -fx-text-fill: black;
+    -fx-background-color: white;
+}
+
 DrawWire {
     -fx-stroke: #0066FF;
     -fx-fill: null;

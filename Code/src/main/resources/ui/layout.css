@@ -81,6 +81,18 @@ SliderBlock .value.block {
     -fx-font-weight: normal;
 }
 
+.resultType {
+    -fx-padding: 0 5 0 5;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.inputType {
+    -fx-padding: 0 5 0 5;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
 #inputSpace, #outputSpace {
     -fx-max-height: 0px;
     -fx-alignment: center;
