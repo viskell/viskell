@@ -4,18 +4,10 @@
 <?import nl.utwente.viskell.ui.components.FunApplyBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.FunApplyBlock" xmlns:fx="http://javafx.com/fxml/1">
     <HBox styleClass="function, block">
+		<padding>
+			<Insets bottom="0" left="5" right="5" top="0" />
+		</padding>
     	<Label fx:id="functionInfo" styleClass="title" />
-    	<VBox fx:id="bodySpace">
-			<HBox fx:id="inputSpace" spacing="10">
-				<padding>
-					<Insets bottom="0" left="5" right="10" top="0" />
-			</padding>
-			</HBox>
-			<HBox fx:id="outputSpace">
-				<padding>
-					<Insets bottom="0" left="5" right="10" top="0" />
-				</padding>
-			</HBox>
-        </VBox>
+		<Pane fx:id="bodySpace" />
     </HBox>
 </fx:root>

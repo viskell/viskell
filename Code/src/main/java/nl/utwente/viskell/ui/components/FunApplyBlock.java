@@ -5,13 +5,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
@@ -27,30 +29,22 @@ import nl.utwente.viskell.ui.DragContext;
 
 public class FunApplyBlock extends Block {
     
-    private static class FunResAnchor extends VBox {
-
-        private final Label resType;
-        private final OutputAnchor anchor;
-        
-        public FunResAnchor(Block block) {
-            this.anchor = new OutputAnchor(block, new Binder("res"));
-            this.resType = new Label(".....");
-            this.resType.setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
-            this.resType.getStyleClass().add("resultType");
-            this.setAlignment(Pos.CENTER);
-            this.getChildren().addAll(this.resType, this.anchor);
-        }
-    }
-
+    /** Function input anchor that can be dragged down for currying. */
     private static class FunInputAnchor extends Pane {
 
+        /** The connection anchor for this input argument. */
         private final InputAnchor anchor;
         
+        /** The draggable input type label. */
         private final Label inputType;
 
+        /** Whether this input argument is in curried state. */
         private boolean curried;
         
-        public FunInputAnchor(Block block, ChangeListener<Number> curryListener) {
+        /** The drag handler for this. */
+        private final DragContext dragContext;
+        
+        public FunInputAnchor(FunApplyBlock block, ChangeListener<Number> curryListener) {
             this.curried = false;
             this.anchor = new InputAnchor(block);
             this.inputType = new Label(".....") {
@@ -58,28 +52,34 @@ public class FunApplyBlock extends Block {
                 public void relocate(double x, double y) {
                     super.relocate(x, y);
                     FunInputAnchor.this.anchor.setLayoutY(y);
-                    FunInputAnchor.this.anchor.setOpacity(1 - (y/this.getHeight()));
+                    FunInputAnchor.this.anchor.setOpacity(1 - (y/(this.getHeight()*1.5)));
                     FunInputAnchor.this.anchor.setVisible(y < this.getHeight());
                 }
             };
             this.inputType.setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
             this.inputType.getStyleClass().add("inputType");
-            this.anchor.setLayoutY(0);
             this.anchor.layoutXProperty().bind(this.inputType.widthProperty().divide(2));
             this.getChildren().addAll(this.anchor, this.inputType);
-            this.setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
-            this.prefHeightProperty().bind(this.inputType.heightProperty().multiply(2));
-            DragContext dc = new DragContext(this.inputType);
-            dc.setDragInitAction(c -> {this.curried = false;});
-            dc.setDragFinishAction(c -> {
+            dragContext = new DragContext(this.inputType);
+            dragContext.setDragInitAction(c -> {this.curried = false;});
+            dragContext.setDragFinishAction(c -> {
                 double inputY = this.inputType.getLayoutY();
                 double height = this.inputType.getHeight();
                 this.curried = inputY > height;
                 this.inputType.relocate(0, this.curried ? 2*height : 0);
+                block.initiateConnectionChanges();
             });
-            Platform.runLater(() -> {dc.setDragLimits(new BoundingBox(0, 0, 0, this.inputType.getHeight()*2));});
+
             this.inputType.layoutYProperty().subtract(this.inputType.heightProperty()).addListener(curryListener);
         }
+
+        @Override
+        public double computePrefHeight(double width) {
+            double height = this.inputType.prefHeight(width)*2;
+            this.dragContext.setDragLimits(new BoundingBox(0, 0, 0, height));
+            return height;
+        }
+
     }
     
     /** The information about the function. */
@@ -87,15 +87,18 @@ public class FunApplyBlock extends Block {
 
     private List<FunInputAnchor> inputs;
     
-    /** The result anchor of this function. */
-    private FunResAnchor output;
+    /** Text label for the output type */
+    private final Label resTypeLabel;
     
-    /** The space containing the input anchor(s). */
-    @FXML private Pane inputSpace;
+    /** The uncurried output type */
+    private Type resType;
+    
+    /** The result anchor of this function. */
+    private final OutputAnchor output;
 
-    /** The space containing the output anchor. */
-    @FXML private Pane outputSpace;
-
+    /** The space containing anchors and type labels. */
+    @FXML private Pane bodySpace;
+    
     /** The Label in which the information of the function is displayed. */
     @FXML private Label functionInfo;
     
@@ -107,17 +110,19 @@ public class FunApplyBlock extends Block {
         this.loadFXML("FunApplyBlock");
 
         functionInfo.setText(funInfo.getName());
-        
-        output = new FunResAnchor(this);
-        outputSpace.getChildren().add(output);
+        this.output = new OutputAnchor(this, new Binder("res"));
+        this.resTypeLabel = new Label(".....");
+        this.resTypeLabel.setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
+        this.resTypeLabel.getStyleClass().add("resultType");
+        VBox outputSpace = new VBox(this.resTypeLabel, this.output);
+        outputSpace.setAlignment(Pos.CENTER);
         
         ChangeListener<Number> curryListener = (observable, oldvalue, newValue) -> {
             double shift = Math.max(0, newValue.doubleValue());
             if (this.inputs.stream().map(i -> i.curried).filter(c -> c).count() == 0) { 
-                this.output.setTranslateY(shift);
+                outputSpace.setTranslateY(shift);
             }
         };
-        
         
         Type t = funInfo.getFreshSignature();
         while (t instanceof FunType) {
@@ -127,7 +132,10 @@ public class FunApplyBlock extends Block {
             t = ft.getResult();
         }
 
-        inputSpace.getChildren().addAll(this.inputs);
+        Pane inputSpace = new HBox(10, this.inputs.toArray(new Node[this.inputs.size()]));
+        this.bodySpace.getChildren().addAll(inputSpace, outputSpace);
+        outputSpace.layoutYProperty().bind(inputSpace.heightProperty());
+        outputSpace.layoutXProperty().bind(inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2)));
     }
 
     @Override
@@ -137,23 +145,33 @@ public class FunApplyBlock extends Block {
 
     @Override
     public List<OutputAnchor> getAllOutputs() {
-        return ImmutableList.of(output.anchor);
+        return ImmutableList.of(this.output);
     }
 
     @Override
     protected void refreshAnchorTypes() {
         Type type = this.funInfo.getFreshSignature();
         TypeScope scope = new TypeScope();
-        for (InputAnchor arg : this.getAllInputs()) {
+        for (FunInputAnchor arg : this.inputs) {
             if (type instanceof FunType) {
                 FunType ftype = (FunType)type;
-                arg.setFreshRequiredType(ftype.getArgument(), scope);
+                arg.anchor.setFreshRequiredType(ftype.getArgument(), scope);
                 type = ftype.getResult();
             } else {
                 new RuntimeException("too many arguments in this functionblock " + funInfo.getName());
             }
         }
-        this.output.anchor.setFreshRequiredType(type, scope);
+        
+        this.resType = type.getFresh(scope);
+        
+        Type curriedType = this.resType;
+        for (FunInputAnchor arg : Lists.reverse(this.inputs)) {
+            if (arg.curried) {
+                curriedType = new FunType (arg.anchor.getType(), curriedType);
+            }
+        }
+        
+        this.output.setExactRequiredType(curriedType);
     }
 
     @Override
@@ -168,7 +186,7 @@ public class FunApplyBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
-        this.output.resType.setText(this.output.anchor.getStringType());
+        this.resTypeLabel.setText(this.resType.prettyPrint());
 
         for (FunInputAnchor arg : this.inputs) {
             arg.inputType.setText(arg.anchor.getStringType());
