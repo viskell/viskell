@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -20,6 +22,7 @@ import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.DragContext;
 
 public class FunApplyBlock extends Block {
     
@@ -38,18 +41,36 @@ public class FunApplyBlock extends Block {
         }
     }
 
-    private static class FunInputAnchor extends VBox {
+    private static class FunInputAnchor extends Pane {
 
         private final Label inputType;
         private final InputAnchor anchor;
         
         public FunInputAnchor(Block block) {
             this.anchor = new InputAnchor(block);
-            this.inputType = new Label(".....");
+            this.inputType = new Label(".....") {
+                @Override
+                public void relocate(double x, double y) {
+                    super.relocate(x, y);
+                    FunInputAnchor.this.anchor.setLayoutY(y);
+                    FunInputAnchor.this.anchor.setOpacity(1 - (y/this.getHeight()));
+                    FunInputAnchor.this.anchor.setVisible(y < this.getHeight());
+                }
+            };
             this.inputType.setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
             this.inputType.getStyleClass().add("inputType");
-            this.setAlignment(Pos.CENTER);
+            this.anchor.setLayoutY(0);
+            this.anchor.layoutXProperty().bind(this.inputType.widthProperty().divide(2));
             this.getChildren().addAll(this.anchor, this.inputType);
+            this.setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
+            this.prefHeightProperty().bind(this.inputType.heightProperty().multiply(2));
+            DragContext dc = new DragContext(this.inputType);
+            dc.setDragFinishAction(c -> {
+                double inputY = this.inputType.getLayoutY();
+                double height = this.inputType.getHeight();
+                this.inputType.relocate(0, inputY < height ? 0 : 2*height);
+            });
+            Platform.runLater(() -> {dc.setDragLimits(new BoundingBox(0, 0, 0, this.inputType.getHeight()*2));});
         }
     }
     
