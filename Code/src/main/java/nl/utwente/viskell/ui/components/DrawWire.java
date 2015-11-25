@@ -78,7 +78,8 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
 
     /** Update the UI position of the anchor. */
     private void invalidateAnchorPosition() {
-        Point2D point = pane.sceneToLocal(this.anchor.localToScene(new Point2D(0, 0)));
+        Point2D center = (this.anchor instanceof InputAnchor) ? new Point2D(0, -4) : new Point2D(0, 4);
+        Point2D point = pane.sceneToLocal(this.anchor.localToScene(center));
         this.setStartX(point.getX());
         this.setStartY(point.getY());
         this.updateBezierControlPoints();
