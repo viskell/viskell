@@ -5,21 +5,17 @@
 <fx:root type="nl.utwente.viskell.ui.components.FunApplyBlock" xmlns:fx="http://javafx.com/fxml/1">
     <HBox styleClass="function, block">
     	<Label fx:id="functionInfo" styleClass="title" />
-    	<BorderPane>
-        	<top>
-            	<HBox fx:id="inputSpace" spacing="10">
-                	<padding>
-                    	<Insets bottom="0" left="5" right="10" top="0" />
-                	</padding>
-               	</HBox>
-        	</top>
-        	<bottom>
-            	<HBox fx:id="outputSpace">
-                	<padding>
-                    	<Insets bottom="0" left="5" right="10" top="0" />
-                	</padding>
-               	</HBox>
-        	</bottom>
-        </BorderPane>
+    	<VBox fx:id="bodySpace">
+			<HBox fx:id="inputSpace" spacing="10">
+				<padding>
+					<Insets bottom="0" left="5" right="10" top="0" />
+			</padding>
+			</HBox>
+			<HBox fx:id="outputSpace">
+				<padding>
+					<Insets bottom="0" left="5" right="10" top="0" />
+				</padding>
+			</HBox>
+        </VBox>
     </HBox>
 </fx:root>

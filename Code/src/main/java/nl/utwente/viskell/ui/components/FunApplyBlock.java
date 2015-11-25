@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableList;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Pos;
@@ -43,10 +44,14 @@ public class FunApplyBlock extends Block {
 
     private static class FunInputAnchor extends Pane {
 
-        private final Label inputType;
         private final InputAnchor anchor;
         
-        public FunInputAnchor(Block block) {
+        private final Label inputType;
+
+        private boolean curried;
+        
+        public FunInputAnchor(Block block, ChangeListener<Number> curryListener) {
+            this.curried = false;
             this.anchor = new InputAnchor(block);
             this.inputType = new Label(".....") {
                 @Override
@@ -65,12 +70,15 @@ public class FunApplyBlock extends Block {
             this.setMinSize(USE_PREF_SIZE, USE_PREF_SIZE);
             this.prefHeightProperty().bind(this.inputType.heightProperty().multiply(2));
             DragContext dc = new DragContext(this.inputType);
+            dc.setDragInitAction(c -> {this.curried = false;});
             dc.setDragFinishAction(c -> {
                 double inputY = this.inputType.getLayoutY();
                 double height = this.inputType.getHeight();
-                this.inputType.relocate(0, inputY < height ? 0 : 2*height);
+                this.curried = inputY > height;
+                this.inputType.relocate(0, this.curried ? 2*height : 0);
             });
             Platform.runLater(() -> {dc.setDragLimits(new BoundingBox(0, 0, 0, this.inputType.getHeight()*2));});
+            this.inputType.layoutYProperty().subtract(this.inputType.heightProperty()).addListener(curryListener);
         }
     }
     
@@ -97,21 +105,29 @@ public class FunApplyBlock extends Block {
         this.inputs = new ArrayList<>();
         
         this.loadFXML("FunApplyBlock");
+
+        functionInfo.setText(funInfo.getName());
+        
+        output = new FunResAnchor(this);
+        outputSpace.getChildren().add(output);
+        
+        ChangeListener<Number> curryListener = (observable, oldvalue, newValue) -> {
+            double shift = Math.max(0, newValue.doubleValue());
+            if (this.inputs.stream().map(i -> i.curried).filter(c -> c).count() == 0) { 
+                this.output.setTranslateY(shift);
+            }
+        };
+        
         
         Type t = funInfo.getFreshSignature();
         while (t instanceof FunType) {
             FunType ft = (FunType) t;
-            FunInputAnchor ia = new FunInputAnchor(this);
+            FunInputAnchor ia = new FunInputAnchor(this, curryListener);
             this.inputs.add(ia);
             t = ft.getResult();
         }
 
         inputSpace.getChildren().addAll(this.inputs);
-        
-        output = new FunResAnchor(this);
-        outputSpace.getChildren().add(output);
-        
-        functionInfo.setText(funInfo.getName());
     }
 
     @Override
