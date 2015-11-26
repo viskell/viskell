@@ -58,7 +58,7 @@ public class Connection extends CubicCurve implements
         this.startAnchor = source;
         this.endAnchor = sink;
         this.errorState = false;
-        pane.getChildren().add(0, this);
+        pane.addConnection(this);
         this.invalidateAnchorPositions();
         this.startAnchor.addConnection(this);
         this.startAnchor.localToSceneTransformProperty().addListener(this);
@@ -139,7 +139,7 @@ public class Connection extends CubicCurve implements
         this.endAnchor.localToSceneTransformProperty().removeListener(this);
         this.startAnchor.dropConnection(this);
         this.endAnchor.removeConnections();
-        this.pane.getChildren().remove(this);
+        this.pane.removeConnection(this);
         // propagate the connection changes of both anchors simultaneously in two phases to avoid duplicate work 
         this.startAnchor.handleConnectionChanges(false);
         this.endAnchor.handleConnectionChanges(false);

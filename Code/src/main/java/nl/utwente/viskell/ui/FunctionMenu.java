@@ -195,7 +195,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     }
     
     private void addBlock(Block block) {
-        parent.getChildren().add(block);
+        parent.addBlock(block);
         Point2D pos = this.localToParent(0, 0);
         block.relocate(pos.getX() - 200, pos.getY());
         block.initiateConnectionChanges();
@@ -203,6 +203,6 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
     /** Closes this menu by removing it from it's parent. */
     public void close() {
-        parent.getChildren().remove(this);
+        parent.removeMenu(this);
     }
 }

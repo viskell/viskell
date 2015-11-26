@@ -2,14 +2,12 @@ package nl.utwente.viskell.ui;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import nl.utwente.viskell.ghcj.GhciSession;
-import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.ui.components.Block;
@@ -17,6 +15,7 @@ import nl.utwente.viskell.ui.components.InputAnchor;
 
 import java.io.File;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Extension of TactilePane that keeps state for the user interface.
@@ -62,12 +61,6 @@ public class CustomUIPane extends Region {
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
     }
 
-    /** @return modifiable list of children. */
-    @Override 
-    public ObservableList<Node> getChildren() {
-        return super.getChildren();
-    }
-    
     private void handleKey(KeyEvent keyEvent) {
         int dist = 100;
 
@@ -123,7 +116,7 @@ public class CustomUIPane extends Region {
         } else if (e.isSecondaryButtonDown()) {
             FunctionMenu menu = new FunctionMenu(catalog, this);
             menu.relocate(e.getX(), e.getY());
-            this.getChildren().add(menu);
+            this.addMenu(menu);
         }
     }
 
@@ -158,22 +151,6 @@ public class CustomUIPane extends Region {
         return envInstance;
     }
 
-    /**
-     * Re-evaluate all display blocks.
-     * This is inefficient.
-     */
-    public final void invalidateAll() {
-        for (Node node : getChildren()) {
-            if (node instanceof Block) {
-                ((Block) node).invalidateVisualState();
-            }
-        }
-
-        if (inspector != null) {
-            inspector.update();
-        }
-    }
-
     public Optional<Block> getSelectedBlock() {
         return selectedBlock.get();
     }
@@ -193,7 +170,7 @@ public class CustomUIPane extends Region {
         }
         
         block.getAllOutputs().stream().forEach(output -> output.removeConnections());
-        this.getChildren().removeAll(block);
+        this.getChildren().remove(block);
     }
 
     /** Remove the selected block, if any. */
@@ -253,4 +230,41 @@ public class CustomUIPane extends Region {
         ghci = new GhciSession();
         ghci.startAsync();
     }
+
+    public void addBlock(Block block) {
+        this.getChildren().add(block);
+    }
+
+    public void addMenu(Node menu) {
+        this.getChildren().add(menu);
+    }
+    
+    public void removeMenu(Node menu) {
+        this.getChildren().remove(menu);
+    }
+
+    public void addConnection(Node connection) {
+        this.getChildren().add(0, connection);
+    }
+
+    public void removeConnection(Node connection) {
+       this.getChildren().remove(connection);
+    }
+
+    public void addWire(Node drawWire) {
+        this.getChildren().add(drawWire);
+    }
+
+    public void removeWire(Node drawWire) {
+        this.getChildren().remove(drawWire);
+    }
+    
+    public void clearChildren() {
+        this.getChildren().clear();
+    }
+
+    public Stream<Node> streamChildren() {
+        return this.getChildren().stream();
+    }
+    
 }
