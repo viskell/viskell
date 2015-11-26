@@ -21,6 +21,8 @@ import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.FunVar;
+import nl.utwente.viskell.haskell.expr.Lambda;
+import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
@@ -181,10 +183,22 @@ public class FunApplyBlock extends Block {
     @Override
     public Expression getLocalExpr() {
         Expression expr = new FunVar(this.funInfo);
-        for (InputAnchor in : this.getAllInputs()) {
-            expr = new Apply(expr, in.getLocalExpr());
+        List<Binder> curriedArgs = new ArrayList<>();
+        for (FunInputAnchor arg : this.inputs) {
+            if (arg.curried) {
+                Binder ca = new Binder("ca");
+                curriedArgs.add(ca);
+                expr = new Apply(expr, new LocalVar(ca));
+            } else {
+                expr = new Apply(expr, arg.anchor.getLocalExpr());
+            }
         }
-        return expr;
+        
+        if (curriedArgs.isEmpty()) {
+            return expr;
+        } else {
+            return new Lambda(curriedArgs, expr);
+        }
     }
 
     @Override
