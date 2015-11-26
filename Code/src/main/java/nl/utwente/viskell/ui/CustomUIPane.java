@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
@@ -18,9 +19,12 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * Extension of TactilePane that keeps state for the user interface.
+ * The core Pane that also keeps state for the user interface.
  */
 public class CustomUIPane extends Region {
+    private final Pane blockLayer;
+    private final Pane wireLayer;
+    
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
     
@@ -45,6 +49,15 @@ public class CustomUIPane extends Region {
      */
     public CustomUIPane(HaskellCatalog catalog) {
         super();
+        this.blockLayer = new Pane();
+        this.blockLayer.prefHeightProperty().bind(this.heightProperty());
+        this.blockLayer.prefWidthProperty().bind(this.widthProperty());
+        this.wireLayer = new Pane();
+        this.wireLayer.prefHeightProperty().bind(this.heightProperty());
+        this.wireLayer.prefWidthProperty().bind(this.widthProperty());
+        this.wireLayer.setMouseTransparent(true);
+        this.getChildren().addAll(this.blockLayer, this.wireLayer);
+        
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
@@ -170,7 +183,7 @@ public class CustomUIPane extends Region {
         }
         
         block.getAllOutputs().stream().forEach(output -> output.removeConnections());
-        this.getChildren().remove(block);
+        this.blockLayer.getChildren().remove(block);
     }
 
     /** Remove the selected block, if any. */
@@ -232,7 +245,7 @@ public class CustomUIPane extends Region {
     }
 
     public void addBlock(Block block) {
-        this.getChildren().add(block);
+        this.blockLayer.getChildren().add(block);
     }
 
     public void addMenu(Node menu) {
@@ -244,11 +257,11 @@ public class CustomUIPane extends Region {
     }
 
     public void addConnection(Node connection) {
-        this.getChildren().add(0, connection);
+        this.wireLayer.getChildren().add(connection);
     }
 
     public void removeConnection(Node connection) {
-       this.getChildren().remove(connection);
+       this.wireLayer.getChildren().remove(connection);
     }
 
     public void addWire(Node drawWire) {
@@ -260,11 +273,12 @@ public class CustomUIPane extends Region {
     }
     
     public void clearChildren() {
-        this.getChildren().clear();
+        this.blockLayer.getChildren().clear();
+        this.wireLayer.getChildren().clear();
     }
 
     public Stream<Node> streamChildren() {
-        return this.getChildren().stream();
+        return Stream.concat(this.blockLayer.getChildren().stream(), this.wireLayer.getChildren().stream());
     }
     
 }
