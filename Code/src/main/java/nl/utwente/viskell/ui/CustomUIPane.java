@@ -12,6 +12,7 @@ import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.ui.components.Block;
+import nl.utwente.viskell.ui.components.DefinitionBlock;
 import nl.utwente.viskell.ui.components.InputAnchor;
 
 import java.io.File;
@@ -22,7 +23,13 @@ import java.util.stream.Stream;
  * The core Pane that also keeps state for the user interface.
  */
 public class CustomUIPane extends Region {
+    /** bottom pane layer intended for block container such as lambda's */
+    private final Pane bottomLayer;
+    
+    /** middle pane layer for ordinary blocks */
     private final Pane blockLayer;
+    
+    /** higher pane layer for connections wires */
     private final Pane wireLayer;
     
     private ObjectProperty<Optional<Block>> selectedBlock;
@@ -49,14 +56,10 @@ public class CustomUIPane extends Region {
      */
     public CustomUIPane(HaskellCatalog catalog) {
         super();
-        this.blockLayer = new Pane();
-        this.blockLayer.prefHeightProperty().bind(this.heightProperty());
-        this.blockLayer.prefWidthProperty().bind(this.widthProperty());
-        this.wireLayer = new Pane();
-        this.wireLayer.prefHeightProperty().bind(this.heightProperty());
-        this.wireLayer.prefWidthProperty().bind(this.widthProperty());
-        this.wireLayer.setMouseTransparent(true);
-        this.getChildren().addAll(this.blockLayer, this.wireLayer);
+        this.bottomLayer = new Pane();
+        this.blockLayer = new Pane(this.bottomLayer);
+        this.wireLayer = new Pane(this.blockLayer);
+        this.getChildren().add(this.wireLayer);
         
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
@@ -183,7 +186,12 @@ public class CustomUIPane extends Region {
         }
         
         block.getAllOutputs().stream().forEach(output -> output.removeConnections());
-        this.blockLayer.getChildren().remove(block);
+        
+        if (block instanceof DefinitionBlock) {
+            this.bottomLayer.getChildren().remove(block);
+        } else {
+            this.blockLayer.getChildren().remove(block);
+        }
     }
 
     /** Remove the selected block, if any. */
@@ -245,7 +253,11 @@ public class CustomUIPane extends Region {
     }
 
     public void addBlock(Block block) {
-        this.blockLayer.getChildren().add(block);
+        if (block instanceof DefinitionBlock) {
+            this.bottomLayer.getChildren().add(block);
+        } else {
+            this.blockLayer.getChildren().add(block);
+        }
     }
 
     public void addMenu(Node menu) {
@@ -273,12 +285,14 @@ public class CustomUIPane extends Region {
     }
     
     public void clearChildren() {
-        this.blockLayer.getChildren().clear();
-        this.wireLayer.getChildren().clear();
+        this.bottomLayer.getChildren().clear();
+        this.blockLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
+        this.wireLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
     }
 
     public Stream<Node> streamChildren() {
-        return Stream.concat(this.blockLayer.getChildren().stream(), this.wireLayer.getChildren().stream());
+        return Stream.concat(this.bottomLayer.getChildren().stream(), Stream.concat(
+                this.blockLayer.getChildren().stream().skip(1), this.wireLayer.getChildren().stream().skip(1)));
     }
     
 }
