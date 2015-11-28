@@ -12,7 +12,6 @@ import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.ui.components.Block;
-import nl.utwente.viskell.ui.components.DefinitionBlock;
 import nl.utwente.viskell.ui.components.InputAnchor;
 
 import java.io.File;
@@ -187,7 +186,7 @@ public class CustomUIPane extends Region {
         
         block.getAllOutputs().stream().forEach(output -> output.removeConnections());
         
-        if (block instanceof DefinitionBlock) {
+        if (block.belongsOnBottom()) {
             this.bottomLayer.getChildren().remove(block);
         } else {
             this.blockLayer.getChildren().remove(block);
@@ -253,7 +252,7 @@ public class CustomUIPane extends Region {
     }
 
     public void addBlock(Block block) {
-        if (block instanceof DefinitionBlock) {
+        if (block.belongsOnBottom()) {
             this.bottomLayer.getChildren().add(block);
         } else {
             this.blockLayer.getChildren().add(block);

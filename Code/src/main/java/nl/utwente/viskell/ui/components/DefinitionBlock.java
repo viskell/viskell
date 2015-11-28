@@ -108,5 +108,10 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         this.body.invalidateVisualState();
         // TODO update fun anchor when it gets a type label
     }
+    
+    @Override
+    public boolean belongsOnBottom() {
+        return true;
+    }
 
 }
