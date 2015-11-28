@@ -20,7 +20,6 @@ Connection.error {
 * {
     -fx-border-style: solid;
     -fx-border-size: 2px;
-    -fx-background-color: rgba(255, 255, 255, 0.3);
 }
 
 * > * {
@@ -29,6 +28,7 @@ Connection.error {
 
 * > * > * {
     -fx-border-color: red;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
 }
 
 * > * > * > * {

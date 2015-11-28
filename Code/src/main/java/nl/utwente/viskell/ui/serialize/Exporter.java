@@ -23,7 +23,7 @@ public class Exporter {
     public static String export(CustomUIPane pane) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        return gson.toJson(pane.getChildren().stream()
+        return gson.toJson(pane.streamChildren()
                 .filter(n -> n instanceof Bundleable)
                 .sorted(Comparator.comparing(u -> u.getClass().getName()).thenComparing(Object::hashCode))
                 .map(n -> ((Bundleable) n).toBundle())

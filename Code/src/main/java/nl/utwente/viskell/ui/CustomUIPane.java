@@ -2,14 +2,13 @@ package nl.utwente.viskell.ui;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
-import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.ui.components.Block;
@@ -17,11 +16,21 @@ import nl.utwente.viskell.ui.components.InputAnchor;
 
 import java.io.File;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
- * Extension of TactilePane that keeps state for the user interface.
+ * The core Pane that also keeps state for the user interface.
  */
 public class CustomUIPane extends Region {
+    /** bottom pane layer intended for block container such as lambda's */
+    private final Pane bottomLayer;
+    
+    /** middle pane layer for ordinary blocks */
+    private final Pane blockLayer;
+    
+    /** higher pane layer for connections wires */
+    private final Pane wireLayer;
+    
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
     
@@ -46,6 +55,11 @@ public class CustomUIPane extends Region {
      */
     public CustomUIPane(HaskellCatalog catalog) {
         super();
+        this.bottomLayer = new Pane();
+        this.blockLayer = new Pane(this.bottomLayer);
+        this.wireLayer = new Pane(this.blockLayer);
+        this.getChildren().add(this.wireLayer);
+        
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
@@ -62,12 +76,6 @@ public class CustomUIPane extends Region {
         this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
     }
 
-    /** @return modifiable list of children. */
-    @Override 
-    public ObservableList<Node> getChildren() {
-        return super.getChildren();
-    }
-    
     private void handleKey(KeyEvent keyEvent) {
         int dist = 100;
 
@@ -123,7 +131,7 @@ public class CustomUIPane extends Region {
         } else if (e.isSecondaryButtonDown()) {
             FunctionMenu menu = new FunctionMenu(catalog, this);
             menu.relocate(e.getX(), e.getY());
-            this.getChildren().add(menu);
+            this.addMenu(menu);
         }
     }
 
@@ -158,22 +166,6 @@ public class CustomUIPane extends Region {
         return envInstance;
     }
 
-    /**
-     * Re-evaluate all display blocks.
-     * This is inefficient.
-     */
-    public final void invalidateAll() {
-        for (Node node : getChildren()) {
-            if (node instanceof Block) {
-                ((Block) node).invalidateVisualState();
-            }
-        }
-
-        if (inspector != null) {
-            inspector.update();
-        }
-    }
-
     public Optional<Block> getSelectedBlock() {
         return selectedBlock.get();
     }
@@ -193,7 +185,12 @@ public class CustomUIPane extends Region {
         }
         
         block.getAllOutputs().stream().forEach(output -> output.removeConnections());
-        this.getChildren().removeAll(block);
+        
+        if (block.belongsOnBottom()) {
+            this.bottomLayer.getChildren().remove(block);
+        } else {
+            this.blockLayer.getChildren().remove(block);
+        }
     }
 
     /** Remove the selected block, if any. */
@@ -253,4 +250,48 @@ public class CustomUIPane extends Region {
         ghci = new GhciSession();
         ghci.startAsync();
     }
+
+    public void addBlock(Block block) {
+        if (block.belongsOnBottom()) {
+            this.bottomLayer.getChildren().add(block);
+        } else {
+            this.blockLayer.getChildren().add(block);
+        }
+    }
+
+    public void addMenu(Node menu) {
+        this.getChildren().add(menu);
+    }
+    
+    public void removeMenu(Node menu) {
+        this.getChildren().remove(menu);
+    }
+
+    public void addConnection(Node connection) {
+        this.wireLayer.getChildren().add(connection);
+    }
+
+    public void removeConnection(Node connection) {
+       this.wireLayer.getChildren().remove(connection);
+    }
+
+    public void addWire(Node drawWire) {
+        this.getChildren().add(drawWire);
+    }
+
+    public void removeWire(Node drawWire) {
+        this.getChildren().remove(drawWire);
+    }
+    
+    public void clearChildren() {
+        this.bottomLayer.getChildren().clear();
+        this.blockLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
+        this.wireLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
+    }
+
+    public Stream<Node> streamChildren() {
+        return Stream.concat(this.bottomLayer.getChildren().stream(), Stream.concat(
+                this.blockLayer.getChildren().stream().skip(1), this.wireLayer.getChildren().stream().skip(1)));
+    }
+    
 }

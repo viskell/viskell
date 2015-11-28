@@ -186,6 +186,13 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      * Called when the VisualState changed.
      */
     public abstract void invalidateVisualState();
+
+    /** 
+     * @return whether this block is visually shown below common blocks (is constant per instance).
+     */
+    public boolean belongsOnBottom() {
+        return false;
+    }
     
     /**
      * @return class-specific properties of this Block.
