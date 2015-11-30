@@ -2,6 +2,9 @@
 <?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.LambdaContainer?>
 <fx:root type="nl.utwente.viskell.ui.components.LambdaContainer" xmlns:fx="http://javafx.com/fxml/" styleClass="def">
+	<center>
+		<Pane/>
+	</center>
 	<top>
 		<VBox>
 			<padding>
@@ -10,9 +13,6 @@
 			<HBox fx:id="argSpace" spacing="50" alignment="CENTER_LEFT" />
 		</VBox>
 	</top>
-	<center>
-		<Pane/>
-	</center>
 	<bottom>
 		<VBox>
 			<padding>

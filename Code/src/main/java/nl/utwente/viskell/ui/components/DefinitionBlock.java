@@ -49,7 +49,6 @@ public class DefinitionBlock extends Block implements ComponentLoader {
 
         this.signature.setText("");
         this.signature.setVisible(false);
-        this.signature.applyCss();
         
         this.body = new LambdaContainer(this, arity);
         ((VBox)this.getChildren().get(0)).getChildren().add(1, this.body);
@@ -84,7 +83,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     /** Add and initializes a resizer element to this block */
     private void setupResizer() {
         resizer = new Polygon();
-        resizer.getPoints().addAll(new Double[]{0.0, 0.0, 0.0, -20.0, -20.0, 0.0});
+        resizer.getPoints().addAll(new Double[]{20.0, 20.0, 20.0, 0.0, 0.0, 20.0});
         resizer.setFill(Color.BLUE);
 
         resizer.setManaged(false);
@@ -92,18 +91,18 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         resizer.relocate(400, 400);
 
         DragContext sizeDrag = new DragContext(resizer);
-        sizeDrag.setDragLimits(new BoundingBox(100, 100, Integer.MAX_VALUE, Integer.MAX_VALUE));
+        sizeDrag.setDragLimits(new BoundingBox(200, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));
     }
     
     @Override
     protected double computePrefWidth(double height) {
-        this.body.setPrefWidth(this.resizer.getLayoutX());
+        this.body.setPrefWidth(this.resizer.getBoundsInParent().getMaxX());
         return super.computePrefWidth(height);
     }
     
     @Override 
     protected double computePrefHeight(double width) {
-        this.body.setPrefHeight(this.resizer.getLayoutY() - this.signature.prefHeight(width));
+        this.body.setPrefHeight(this.resizer.getBoundsInParent().getMaxY() - this.signature.prefHeight(width));
         return super.computePrefHeight(width);
     }
     
