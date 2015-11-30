@@ -1,5 +1,8 @@
 package nl.utwente.viskell.ui.components;
 
+/**
+ * A generic interface for block containers with possible outputs and inputs.
+ */
 public interface BlockContainer {
 
     /** Set fresh types in all anchors of this lambda for the next typechecking cycle. */
