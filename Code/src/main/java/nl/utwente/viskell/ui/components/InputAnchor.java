@@ -156,7 +156,7 @@ public class InputAnchor extends ConnectionAnchor {
      * @return The full expression carried by the connection connected to this anchor.
      */
     public Expression getFullExpr() {
-        LetExpression expr = new LetExpression(this.getLocalExpr());
+        LetExpression expr = new LetExpression(this.getLocalExpr(), false);
         this.extendExprGraph(expr);
         return expr;
     }

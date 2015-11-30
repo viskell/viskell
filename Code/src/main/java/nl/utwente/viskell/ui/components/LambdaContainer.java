@@ -217,7 +217,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader {
     /** @return The local expression this LambdaContainer represents. */
     public Expression getLocalExpr() {
         List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
-        LetExpression body = new LetExpression(this.res.getLocalExpr());
+        LetExpression body = new LetExpression(this.res.getLocalExpr(), false);
         this.res.extendExprGraph(body);
         return new Lambda(binders, body);
     }

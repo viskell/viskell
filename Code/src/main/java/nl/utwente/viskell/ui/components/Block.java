@@ -167,7 +167,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      * @return A complete expression of this block and all its dependencies.
      */
     public final Expression getFullExpr() {
-        LetExpression fullExpr = new LetExpression(this.getLocalExpr());
+        LetExpression fullExpr = new LetExpression(this.getLocalExpr(), false);
         this.extendExprGraph(fullExpr);
         return fullExpr;
     }
