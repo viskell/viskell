@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import javafx.fxml.FXML;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import nl.utwente.viskell.haskell.expr.Annotated;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Lambda;
@@ -19,76 +18,8 @@ import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 
 /** Represent a lambda construct with internal anchor and blocks */
-public class LambdaContainer extends BorderPane implements ComponentLoader {
+public class LambdaContainer extends BorderPane implements ComponentLoader, BlockContainer {
 
-    // TODO make this an independent class if other blocks (case?) need this too 
-    /** An internal output anchor for an argument binder. */
-    public class BinderAnchor extends OutputAnchor {
-
-        // FIXME BinderAnchor should not have or use the DefinitionBlock parent
-        public BinderAnchor(DefinitionBlock parent, Binder binder) {
-            super(parent, binder);
-        }
-
-        @Override
-        protected void extendExprGraph(LetExpression exprGraph) {
-            return; // the scope of graph is limited its parent
-        }
-        
-        @Override
-        public void initiateConnectionChanges() {
-            // Starts a new (2 phase) change propagation process from this lambda.
-            LambdaContainer.this.handleConnectionChanges(false);
-            LambdaContainer.this.handleConnectionChanges(true);
-        }
-
-        @Override
-        public void prepareConnectionChanges() {
-            LambdaContainer.this.refreshAnchorTypes();
-        }
-
-        @Override
-        protected void handleConnectionChanges(boolean finalPhase) {
-            LambdaContainer.this.handleConnectionChanges(finalPhase);
-        }
-    }
-
-    // TODO make this an independent class if other blocks (case?) need this too
-    /** An internal input anchor for a local result. */
-    public class ResultAnchor extends InputAnchor {
-        /** The optional type of the result of the function (the last part of the signature). */
-        private final Optional<Type> resType;
-        
-        // FIXME ResultAnchor should not have or use the DefinitionBlock parent
-        public ResultAnchor(DefinitionBlock parent, Optional<Type> resType) {
-            super(parent);
-            this.resType = resType;
-        }
-        
-        @Override
-        public Expression getLocalExpr() {
-            if (this.resType.isPresent()) {
-                return new Annotated(super.getLocalExpr(), this.resType.get());
-            }
-           
-            return super.getLocalExpr();
-        }
-        
-        /** Set fresh type for the next typechecking cycle.*/
-        private void refreshAnchorType(TypeScope scope) {
-            if (this.resType.isPresent()) {
-                this.setFreshRequiredType(this.resType.get(), scope);
-            } else {
-                this.setFreshRequiredType(TypeScope.unique("y"), scope);
-            }
-        }
-
-        @Override
-        protected void handleConnectionChanges(boolean finalPhase) {
-            LambdaContainer.this.handleConnectionChanges(finalPhase);
-        }
-    }
-    
     /* area containing argument anchors */
     @FXML private Pane argSpace;
     
@@ -121,9 +52,9 @@ public class LambdaContainer extends BorderPane implements ComponentLoader {
         
         this.args = new ArrayList<>();
         for (int i = 0; i < arity; i++) {
-            this.args.add(this.new BinderAnchor(wrapper, new Binder("x_" + i)));
+            this.args.add(new BinderAnchor(this, wrapper, new Binder("x_" + i)));
         }
-        this.res = this.new ResultAnchor(wrapper, Optional.empty());
+        this.res = new ResultAnchor(this, wrapper, Optional.empty());
         
         this.argSpace.getChildren().addAll(this.args);
         this.resSpace.getChildren().add(this.res);
@@ -145,18 +76,18 @@ public class LambdaContainer extends BorderPane implements ComponentLoader {
         int i = 0;
         while (t instanceof FunType) {
             FunType ft = (FunType) t;
-            args.add(this.new BinderAnchor(wrapper, new Binder(name + "_x" + i, ft.getArgument())));
+            args.add(new BinderAnchor(this, wrapper, new Binder(name + "_x" + i, ft.getArgument())));
             i++;
             t = ft.getResult();
         }
-        this.res = this.new ResultAnchor(wrapper, Optional.of(t));
+        this.res = new ResultAnchor(this, wrapper, Optional.of(t));
 
         this.argSpace.getChildren().addAll(this.args);
         this.resSpace.getChildren().add(this.res);
     }
 
-    /** Set fresh types in all anchors of this lambda for the next typechecking cycle. */
-    protected void refreshAnchorTypes() {
+    @Override
+    public void refreshAnchorTypes() {
         if (this.updateInProgress || this.freshAnchorTypes) {
             return; // refresh anchor types only once
         }
@@ -179,12 +110,8 @@ public class LambdaContainer extends BorderPane implements ComponentLoader {
 
         return Type.fun(types.toArray(new Type[this.args.size()+1]));
     }
-    
-    /**
-     * Handle the expression and types changes caused by modified connections or values.
-     * Also propagate the changes through internal connected blocks, and then outwards.
-     * @param finalPhase whether the change propagation is in the second (final) phase.
-     */
+
+    @Override
     public final void handleConnectionChanges(boolean finalPhase) {
         if (this.updateInProgress != finalPhase) {
             return; // avoid doing extra work and infinite recursion
