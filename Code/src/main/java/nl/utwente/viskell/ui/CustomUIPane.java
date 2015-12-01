@@ -10,7 +10,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
-import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.ui.components.Block;
 import nl.utwente.viskell.ui.components.InputAnchor;
 
@@ -44,9 +43,6 @@ public class CustomUIPane extends Region {
     /** Boolean to indicate that a drag (pan) action has started, yet not finished. */
     private boolean dragging;
 
-    private HaskellCatalog catalog;
-    private Environment envInstance;
-
     /** The File we're currently working on, if any. */
     private Optional<File> currentFile;
 
@@ -67,9 +63,6 @@ public class CustomUIPane extends Region {
 
         this.ghci = new GhciSession();
         this.ghci.startAsync();
-
-        catalog = this.ghci.getCatalog();
-        envInstance = catalog.asEnvironment();
 
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
@@ -130,7 +123,8 @@ public class CustomUIPane extends Region {
             dragStart = new Point2D(e.getScreenX(), e.getScreenY());
             dragging = true;
         } else if (e.isSecondaryButtonDown()) {
-            FunctionMenu menu = new FunctionMenu(catalog, this);
+            ghci.awaitRunning();
+            FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this);
             menu.relocate(e.getX(), e.getY());
             this.addMenu(menu);
         }
@@ -164,7 +158,8 @@ public class CustomUIPane extends Region {
      * @return The Env instance to be used within this CustomUIPane.
      */
     public Environment getEnvInstance() {
-        return envInstance;
+        ghci.awaitRunning();
+        return ghci.getCatalog().asEnvironment();
     }
 
     public Optional<Block> getSelectedBlock() {

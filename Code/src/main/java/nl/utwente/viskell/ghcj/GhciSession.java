@@ -34,6 +34,9 @@ public final class GhciSession extends AbstractExecutionThreadService {
     /** The evaluator this GhciSession will communicate with. */
     private Evaluator ghci;
 
+    /** Gets filled with a HaskellCatalog instance when ghci is ready. */
+    private HaskellCatalog catalog;
+
     public enum Backend {
         GHCi,
         Clash,
@@ -161,6 +164,7 @@ public final class GhciSession extends AbstractExecutionThreadService {
         }
 
         this.ghci = evaluatorFactory(pickBackend());
+        this.catalog = new HaskellCatalog(this.ghci.getCatalogPath());
     }
 
     /** Build the Evaluator that corresponds to the given Backend identifier. */
@@ -186,6 +190,6 @@ public final class GhciSession extends AbstractExecutionThreadService {
 
     public HaskellCatalog getCatalog() {
         awaitRunning();
-        return new HaskellCatalog(this.ghci.getCatalogPath());
+        return catalog;
     }
 }
