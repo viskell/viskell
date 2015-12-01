@@ -10,7 +10,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
-import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.ui.components.Block;
 import nl.utwente.viskell.ui.components.InputAnchor;
 
@@ -24,13 +23,13 @@ import java.util.stream.Stream;
 public class CustomUIPane extends Region {
     /** bottom pane layer intended for block container such as lambda's */
     private final Pane bottomLayer;
-    
+
     /** middle pane layer for ordinary blocks */
     private final Pane blockLayer;
-    
+
     /** higher pane layer for connections wires */
     private final Pane wireLayer;
-    
+
     private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
     
@@ -44,28 +43,23 @@ public class CustomUIPane extends Region {
     /** Boolean to indicate that a drag (pan) action has started, yet not finished. */
     private boolean dragging;
 
-    private HaskellCatalog catalog;
-    private Environment envInstance;
-
     /** The File we're currently working on, if any. */
     private Optional<File> currentFile;
 
     /**
      * Constructs a new instance.
      */
-    public CustomUIPane(HaskellCatalog catalog) {
+    public CustomUIPane() {
         super();
         this.bottomLayer = new Pane();
         this.blockLayer = new Pane(this.bottomLayer);
         this.wireLayer = new Pane(this.blockLayer);
         this.getChildren().add(this.wireLayer);
-        
+
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
-        this.catalog = catalog;
-        this.envInstance = catalog.asEnvironment();
 
         this.ghci = new GhciSession();
         this.ghci.startAsync();
@@ -129,7 +123,8 @@ public class CustomUIPane extends Region {
             dragStart = new Point2D(e.getScreenX(), e.getScreenY());
             dragging = true;
         } else if (e.isSecondaryButtonDown()) {
-            FunctionMenu menu = new FunctionMenu(catalog, this);
+            ghci.awaitRunning();
+            FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this);
             menu.relocate(e.getX(), e.getY());
             this.addMenu(menu);
         }
@@ -163,7 +158,8 @@ public class CustomUIPane extends Region {
      * @return The Env instance to be used within this CustomUIPane.
      */
     public Environment getEnvInstance() {
-        return envInstance;
+        ghci.awaitRunning();
+        return ghci.getCatalog().asEnvironment();
     }
 
     public Optional<Block> getSelectedBlock() {
@@ -185,7 +181,7 @@ public class CustomUIPane extends Region {
         }
         
         block.getAllOutputs().stream().forEach(output -> output.removeConnections());
-        
+
         if (block.belongsOnBottom()) {
             this.bottomLayer.getChildren().remove(block);
         } else {
@@ -262,7 +258,7 @@ public class CustomUIPane extends Region {
     public void addMenu(Node menu) {
         this.getChildren().add(menu);
     }
-    
+
     public void removeMenu(Node menu) {
         this.getChildren().remove(menu);
     }
@@ -282,7 +278,7 @@ public class CustomUIPane extends Region {
     public void removeWire(Node drawWire) {
         this.getChildren().remove(drawWire);
     }
-    
+
     public void clearChildren() {
         this.bottomLayer.getChildren().clear();
         this.blockLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
@@ -293,5 +289,5 @@ public class CustomUIPane extends Region {
         return Stream.concat(this.bottomLayer.getChildren().stream(), Stream.concat(
                 this.blockLayer.getChildren().stream().skip(1), this.wireLayer.getChildren().stream().skip(1)));
     }
-    
+
 }

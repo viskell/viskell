@@ -37,6 +37,6 @@ public class ComponentTest {
     }
 
     protected CustomUIPane getPane() {
-        return new CustomUIPane(new HaskellCatalog());
+        return new CustomUIPane();
     }
 }
