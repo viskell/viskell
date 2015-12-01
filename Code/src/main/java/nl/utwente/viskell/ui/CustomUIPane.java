@@ -68,6 +68,9 @@ public class CustomUIPane extends Region {
         this.ghci = new GhciSession();
         this.ghci.startAsync();
 
+        catalog = this.ghci.getCatalog();
+        envInstance = catalog.asEnvironment();
+
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
         this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleRelease);

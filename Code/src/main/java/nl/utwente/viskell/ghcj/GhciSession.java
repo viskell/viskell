@@ -185,6 +185,7 @@ public final class GhciSession extends AbstractExecutionThreadService {
     }
 
     public HaskellCatalog getCatalog() {
+        awaitRunning();
         return new HaskellCatalog(this.ghci.getCatalogPath());
     }
 }
