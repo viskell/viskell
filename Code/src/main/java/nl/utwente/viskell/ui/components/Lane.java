@@ -1,48 +1,112 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Case;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.components.LambdaContainer.BinderAnchor;
-import javafx.scene.layout.Pane;
+import nl.utwente.viskell.ui.ComponentLoader;
 
-public class Lane extends Pane {
+public class Lane extends Pane implements BlockContainer, ComponentLoader {
     
-    //protected List<>
+    /** The argument anchors of this alternative */
+    protected List<BinderAnchor> arguments;
+    
+    /** The result anchor of this alternative */
+    protected ResultAnchor result;
 
     /** Whether the anchor types are fresh*/
-    private boolean freshAnchorTypes;
+    protected boolean freshAnchorTypes;
     
     /** Status of change updating process in this block. */
-    private boolean updateInProgress;
+    protected boolean firstPhaseInProgress;
+    
+    /** Status of change updating process in this block. */
+    protected boolean finalPhaseInProgress;
+    
+    boolean updateInProgress;
+    
+    /** The wrapper to which this alternative belongs */
+    protected ChoiceBlock parent;
+
+    public Lane(ChoiceBlock wrapper) {
+        super();
+        loadFXML("Lane");
+        parent = wrapper;
+        arguments = new ArrayList<>();
+    }
 
     public Case.Alternative getAlternative() {
-        return null;
+        //TODO generate the pattern and guard for this lane
+        return new Case.Alternative(null, null);
     }
 
-    public OutputAnchor getOutput() {
-        // TODO Auto-generated method stub
-        return null;
+    public ResultAnchor getOutput() {
+        return result;
     }
 
-    /** Set fresh types in all anchors of this lambda for the next typechecking cycle. */
-    protected void refreshAnchorTypes() {
+    /*@Override
+    public void refreshAnchorTypes() {
+        // refresh anchor types only once at the start
+        if (!firstPhaseInProgress && !freshAnchorTypes) {
+            freshAnchorTypes = true;
+            
+            TypeScope scope = new TypeScope();
+            arguments.forEach(argument -> argument.refreshType(scope));
+            result.refreshAnchorType(scope);
+        }
+    }
+    
+    /*@Override
+    public final void handleConnectionChanges(boolean finalPhase) {
+        // avoid doing extra work and infinite recursion
+        if ((!finalPhase && !firstPhaseInProgress) || (finalPhase && !finalPhaseInProgress)) {
+            if (!finalPhase) {
+                // in first phase ensure that anchor types are refreshed if propagating from the outside
+                refreshAnchorTypes();
+
+                firstPhaseInProgress = true;
+                finalPhaseInProgress = false;
+            }
+            else {
+                firstPhaseInProgress = false;
+                finalPhaseInProgress = true;
+            }
+
+            freshAnchorTypes = false;
+            
+            // first propagate up from the result anchor
+            result.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards(finalPhase));
+            
+            // also propagate in from above in case the lambda is partially connected 
+            arguments.forEach(argument -> {
+                argument.getOppositeAnchors().forEach(anchor -> {
+                    anchor.handleConnectionChanges(finalPhase);
+                    // take the type of argument connections in account even if the connected block is being processed
+                    anchor.getConnection().ifPresent(connection -> connection.handleConnectionChangesUpwards(finalPhase));
+                });
+            });
+    
+            // propagate internal type changes outwards
+            parent.handleConnectionChanges(finalPhase);
+        }
+    }*/
+    @Override
+    public void refreshAnchorTypes() {
         if (this.updateInProgress || this.freshAnchorTypes) {
             return; // refresh anchor types only once
         }
         this.freshAnchorTypes = true;
         
         TypeScope scope = new TypeScope();
-        for (BinderAnchor arg : this.args) {
+        for (BinderAnchor arg : arguments) {
             arg.refreshType(scope);
         }
-        this.res.refreshAnchorType(scope);
+        result.refreshAnchorType(scope);
     }
     
-    /**
-     * Handle the expression and types changes caused by modified connections or values.
-     * Also propagate the changes through internal connected blocks, and then outwards.
-     * @param finalPhase whether the change propagation is in the second (final) phase.
-     */
+    @Override
     public final void handleConnectionChanges(boolean finalPhase) {
         if (this.updateInProgress != finalPhase) {
             return; // avoid doing extra work and infinite recursion
@@ -57,10 +121,10 @@ public class Lane extends Pane {
         this.freshAnchorTypes = false;
         
         // first propagate up from the result anchor
-        this.res.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards(finalPhase));
+        result.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards(finalPhase));
 
         // also propagate in from above in case the lambda is partially connected 
-        for (BinderAnchor arg : this.args) {
+        for (BinderAnchor arg : arguments) {
             for (InputAnchor anchor : arg.getOppositeAnchors()) {
                 anchor.handleConnectionChanges(finalPhase);
                 // take the type of argument connections in account even if the connected block is being processed
@@ -69,6 +133,12 @@ public class Lane extends Pane {
         }
 
         // propagate internal type changes outwards
-        this.wrapper.handleConnectionChanges(finalPhase);
+        parent.handleConnectionChanges(finalPhase);
+    }
+    
+
+    /** Called when the VisualState changed. */
+    public void invalidateVisualState() {
+        // TODO update anchors when they get a type label       
     }
 }

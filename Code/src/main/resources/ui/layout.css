@@ -107,3 +107,12 @@ Connection {
     -fx-background-insets: 0, 0;
     -fx-background-radius: 0, 0;
 }
+
+Lane {
+	-fx-width: 150px;
+	-fx-height: 300px;
+}
+
+Lane SplitPane {
+	-fx-orientation: vertical;
+}

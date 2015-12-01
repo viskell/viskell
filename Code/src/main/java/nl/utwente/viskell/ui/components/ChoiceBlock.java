@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
-
 import nl.utwente.viskell.haskell.expr.Case;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Value;
@@ -14,11 +12,29 @@ import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.haskell.type.TypeVar;
+import nl.utwente.viskell.ui.CustomUIPane;
 
+import com.google.common.collect.ImmutableList;
+
+/**
+ * An evaluation block with multiple guarded alternatives.
+ *
+ */
 public class ChoiceBlock extends Block {
     
+    /** The alternatives inside this block */
     protected List<Lane> lanes;
+    
+    /** The output anchor of this block */
     protected OutputAnchor output;
+
+    public ChoiceBlock(CustomUIPane pane) {
+        super(pane);
+        this.loadFXML("ChoiceBlock");
+        
+        lanes = new ArrayList<>();
+        addLane();
+    }
 
     @Override
     public List<InputAnchor> getAllInputs() {
@@ -61,7 +77,18 @@ public class ChoiceBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
-        
+        //TODO fill in
+        lanes.forEach(lane -> lane.invalidateVisualState());
     }
 
+    
+    public void addLane() {
+        lanes.add(new Lane(this));
+    }
+    
+    public void removeLane(int index) {
+        lanes.remove(index);
+        handleConnectionChanges(false);
+        handleConnectionChanges(true);
+    }
 }

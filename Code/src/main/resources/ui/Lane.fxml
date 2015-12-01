@@ -1,0 +1,11 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import nl.utwente.viskell.ui.components.Lane?>
+<fx:root type="nl.utwente.viskell.ui.components.Lane" xmlns:fx="http://javafx.com/fxml/" styleClass="def">
+    <VBox>
+        <HBox fx:id="argumentSpace"/>
+        <SplitPane fx:id="pane"/>
+        <HBox fx:id="resultSpace"/>
+    </VBox>
+</fx:root>
