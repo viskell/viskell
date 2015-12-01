@@ -144,6 +144,16 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             utilSpace.getChildren().addAll(sliderBlockButton, rgbBlockButton, graphBlockButton);
         }
 
+        if (GhciSession.pickBackend() == GhciSession.Backend.Clash) {
+            // These blocks are specifically for Clash
+
+            Button simulateBlockButton = new Button("Simulate Block");
+            simulateBlockButton.setOnAction(event -> addBlock(new SimulateBlock(parent)));
+
+            utilSpace.getChildren().addAll(simulateBlockButton);
+        }
+
+
         for (Node button : utilSpace.getChildren()) {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);
         }

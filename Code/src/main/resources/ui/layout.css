@@ -107,3 +107,10 @@ Connection {
     -fx-background-insets: 0, 0;
     -fx-background-radius: 0, 0;
 }
+
+.subtle {
+    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
