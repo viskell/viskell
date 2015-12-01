@@ -132,5 +132,91 @@
     </classes>
 
     <functions>
+        <category name="Comparison and logic">
+            <function name="(==)" signature="Eq a => a -> a -> Bool"/>
+            <function name="(/=)" signature="Eq a => a -> a -> Bool"/>
+            <function name="(&lt;)" signature="Ord a => a -> a -> Bool"/>
+            <function name="(&lt;=)" signature="Ord a => a -> a -> Bool"/>
+            <function name="(&gt;)" signature="Ord a => a -> a -> Bool"/>
+            <function name="(&gt;=)" signature="Ord a => a -> a -> Bool"/>
+            <function name="max" signature="Ord a => a -> a -> a"/>
+            <function name="min" signature="Ord a => a -> a -> a"/>
+            <function name="(&amp;&amp;)" signature="Bool -> Bool -> Bool">
+                and
+            </function>
+            <function name="(||)" signature="Bool -> Bool -> Bool">
+                or
+            </function>
+            <function name="not" signature="Bool -> Bool">
+                not
+            </function>
+            <function name="True" signature="Bool">
+                A true value.
+            </function>
+            <function name="False" signature="Bool">
+                A false value.
+            </function>
+            <function name="LT" signature="Ordering">
+                Less than
+            </function>
+            <function name="EQ" signature="Ordering">
+                Equal to
+            </function>
+            <function name="GT" signature="Ordering">
+                Greater than
+            </function>
+        </category>
+        <category name="Arithmetic">
+            <function name="(+)" signature="Num a => a -> a -> a">
+                Mathematical addition.
+            </function>
+            <function name="(*)" signature="Num a => a -> a -> a">
+                Mathematical multiplication.
+            </function>
+            <function name="(-)" signature="Num a => a -> a -> a">
+                Mathematical subtraction.
+            </function>
+            <function name="negate" signature="Num a => a -> a">
+                Unary negation.
+            </function>
+            <function name="abs" signature="Num a => a -> a">
+                Absolute value.
+            </function>
+            <function name="signum" signature="Num a => a -> a">
+                Sign of a number.
+            </function>
+            <function name="quot" signature="Integral a => a -> a -> a">
+                integer division truncated toward zero.
+            </function>
+            <function name="rem" signature="Integral a => a -> a -> a">
+                integer remainder, satisfying (x 'quot' y)*y + (x 'rem' y) == x.
+            </function>
+            <function name="div" signature="Integral a => a -> a -> a">
+                integer division truncated toward negative infinity.
+            </function>
+            <function name="mod" signature="Integral a => a -> a -> a">
+                integer modulus, satisfying (x 'div' y)*y + (x 'mod y) == x.
+            </function>
+            <function name="quotRem" signature="Integral a => a -> a -> (a, a)">
+                simultaneous quot and rem.
+            </function>
+            <function name="divMod" signature="Integral a => a -> a -> (a, a)">
+                simultaneous div and mod.
+            </function>
+            <function name="even" signature="Integral a => a -> Bool"/>
+            <function name="odd" signature="Integral a => a -> Bool"/>
+            <function name="gcd" signature="Integral a => a -> a -> a">
+                gcd x y is the non-negative factor of both x and y of which every common factor of x and
+                y is also a factor; for example gcd 4 2 = 2, gcd (-4) 6 = 2, gcd 0 4 = 4. gcd 0 0
+                = 0. (That is, the common divisor that is "greatest" in the divisibility preordering.)
+
+                Note: Since for signed fixed-width integer types, abs minBound &lt; 0, the result may be
+                negative if one of the arguments is minBound (and necessarily is if the other is 0 or
+                minBound) for such types.
+            </function>
+            <function name="lcm" signature="Integral a => a -> a -> a">
+                lcm x y is the smallest positive integer that both x and y divide.
+            </function>
+        </category>
     </functions>
 </catalog>
