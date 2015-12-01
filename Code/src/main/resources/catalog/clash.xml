@@ -10,6 +10,7 @@
             <instance name="[]" constrainedArgs="1"/>
             <instance name="Maybe" constrainedArgs="1"/>
             <instance name="Either" constrainedArgs="2"/>
+            <instance name="BitVector"/>
             <instance name="(,)" constrainedArgs="2"/>
             <instance name="(,,)" constrainedArgs="3"/>
             <instance name="(,,,)" constrainedArgs="4"/>
@@ -26,6 +27,7 @@
             <instance name="[]" constrainedArgs="1"/>
             <instance name="Maybe" constrainedArgs="1"/>
             <instance name="Either" constrainedArgs="2"/>
+            <instance name="BitVector"/>
             <instance name="(,)" constrainedArgs="2"/>
             <instance name="(,,)" constrainedArgs="3"/>
             <instance name="(,,,)" constrainedArgs="4"/>
@@ -39,14 +41,16 @@
             <instance name="Int"/>
             <instance name="Char"/>
             <instance name="Bool"/>
+            <instance name="BitVector"/>
         </class>
         <class name="Num">
             <instance name="Int"/>
             <instance name="Integer"/>
+            <instance name="Signal" constrainedArgs="1"/>
+            <instance name="BitVector"/>
         </class>
         <class name="Integral">
             <superClass name="Enum"/>
-            <superClass name="Real"/>
             <instance name="Int"/>
             <instance name="Integer"/>
         </class>
@@ -59,6 +63,7 @@
             <instance name="[]" constrainedArgs="1"/>
             <instance name="Maybe" constrainedArgs="1"/>
             <instance name="Either" constrainedArgs="2"/>
+            <instance name="BitVector"/>
             <instance name="(,)" constrainedArgs="2"/>
             <instance name="(,,)" constrainedArgs="3"/>
             <instance name="(,,,)" constrainedArgs="4"/>
@@ -86,6 +91,14 @@
             <instance name="Maybe"/>
             <instance name="IO"/>
             <instance name="[]"/>
+            <instance name="Signal"/>
+        </class>
+        <class name="Applicative">
+            <superClass name="Functor"/>
+            <instance name="Signal"/>
+        </class>
+        <class name="Bits">
+            <instance name="BitVector"/>
         </class>
     </classes>
 
@@ -175,6 +188,40 @@
             <function name="lcm" signature="Integral a => a -> a -> a">
                 lcm x y is the smallest positive integer that both x and y divide.
             </function>
+        </category>
+        <category name="Signals">
+            <function name="signal" signature="Applicative f => a -> f a"/>
+        </category>
+        <category name="Vectors">
+        </category>
+        <category name="Bits">
+            <function name="high" signature="BitVector n">logic '1'</function>
+            <function name="low" signature="BitVector n">logic '0'</function>
+            <function name="(.&amp;.)" signature="Bits a => a -> a -> a"/>
+            <function name="(.|.)" signature="Bits a => a -> a -> a"/>
+            <function name="xor" signature="Bits a => a -> a -> a"/>
+            <function name="complement" signature="Bits a => a -> a"/>
+            <function name="shift" signature="Bits a => a -> Int -> a"/>
+            <function name="rotate" signature="Bits a => a -> Int -> a"/>
+            <function name="zeroBits" signature="Bits a => a"/>
+            <function name="bit" signature="Bits a => Int -> a"/>
+            <function name="setBit" signature="Bits a => a -> Int -> a"/>
+            <function name="clearBit" signature="Bits a => a -> Int -> a"/>
+            <function name="complementBit" signature="Bits a => a -> Int -> a"/>
+            <function name="testBit" signature="Bits a => a -> Int -> Bool"/>
+            <function name="bitSizeMaybe" signature="Bits a => a -> Maybe Int"/>
+            <function name="bitSize" signature="Bits a => a -> Int"/>
+            <function name="isSigned" signature="Bits a => a -> Bool"/>
+            <function name="shiftL" signature="Bits a => a -> Int -> a"/>
+            <function name="unsafeShiftL" signature="Bits a => a -> Int -> a"/>
+            <function name="shiftR" signature="Bits a => a -> Int -> a"/>
+            <function name="unsafeShiftR" signature="Bits a => a -> Int -> a"/>
+            <function name="rotateL" signature="Bits a => a -> Int -> a"/>
+            <function name="rotateR" signature="Bits a => a -> Int -> a"/>
+            <function name="popCount" signature="Bits a => a -> Int"/>
+        </category>
+        <category name="Simulation">
+            <function name="simulate" signature="(Signal a -> Signal b) -> [a] -> [b]"/>
         </category>
     </functions>
 </catalog>
