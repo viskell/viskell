@@ -27,14 +27,14 @@ public class Case extends Expression {
 
     @Override
     public Type inferType() throws HaskellTypeError {
-        return null;
+        return expression.inferType();
     }
 
     @Override
     public String toHaskell() {
         StringBuilder sb = new StringBuilder();
         sb.append("case "+expression.toHaskell()+" of {");
-        alternatives.stream().forEach(alternative -> {
+        alternatives.forEach(alternative -> {
             sb.append(alternative.pattern.getUniqueName()+" | "+alternative.guards.toHaskell()+"; ");
         });
         sb.append("}");

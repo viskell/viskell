@@ -5,7 +5,10 @@
 <fx:root type="nl.utwente.viskell.ui.components.Lane" xmlns:fx="http://javafx.com/fxml/" styleClass="def">
     <VBox>
         <HBox fx:id="argumentSpace"/>
-        <SplitPane fx:id="pane"/>
+        <SplitPane fx:id="divider">
+            <Pane fx:id="guardSpace"/>
+            <Pane fx:id="body"/>
+        </SplitPane>
         <HBox fx:id="resultSpace"/>
     </VBox>
 </fx:root>

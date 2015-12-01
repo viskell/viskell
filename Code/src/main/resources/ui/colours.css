@@ -162,5 +162,13 @@ ImageView.hoverMenu {
     -fx-text-fill: white;
     -fx-background-insets: 0, 0;
     -fx-background-radius: 0, 0;
-    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-background-color: transparent;
+}
+
+ChoiceBlock SplitPane {
+	-fx-background-color: transparent;
+}
+
+ChoiceBlock #guardSpace {
+	-fx-background-color: rgba(0, 0, 255, 0.3);
 }

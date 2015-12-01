@@ -2,7 +2,7 @@
     -fx-fill: rgba(0,255,0,0.1);
 }
 
-.drawwire {
+DrawWire {
     -fx-stroke: #0066FF;
     -fx-fill: null;
 }

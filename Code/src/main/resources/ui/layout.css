@@ -108,11 +108,32 @@ Connection {
     -fx-background-radius: 0, 0;
 }
 
-Lane {
-	-fx-width: 150px;
-	-fx-height: 300px;
+ChoiceBlock {
+	-fx-padding: 0 20 0 20;
+	-fx-min-width: 200px;
+	-fx-min-height: 150px;
+}
+
+ChoiceBlock #altSpace {
+	-fx-padding: 20 20 20 20;
 }
 
 Lane SplitPane {
+	-fx-pref-width: 300px;
+	-fx-pref-height: 450px;
 	-fx-orientation: vertical;
+}
+
+Lane #guardSpace {
+	-fx-pref-width: 9999px;
+	-fx-pref-height: 9999px;
+}
+
+Lane #body {
+	-fx-pref-width: 9999px;
+	-fx-pref-height: 9999px;
+}
+
+Lane #resultSpace {
+	-fx-alignment: center;
 }

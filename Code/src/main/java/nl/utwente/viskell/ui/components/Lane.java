@@ -1,10 +1,17 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.SplitPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Case;
+import nl.utwente.viskell.haskell.expr.ConstructorBinder;
+import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 
@@ -29,17 +36,30 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
     
     /** The wrapper to which this alternative belongs */
     protected ChoiceBlock parent;
+    
+    @FXML protected Pane argumentSpace;
+    
+    @FXML protected Pane resultSpace;
+    
+    @FXML protected SplitPane divider;
 
     public Lane(ChoiceBlock wrapper) {
         super();
         loadFXML("Lane");
         parent = wrapper;
         arguments = new ArrayList<>();
+        result = new ResultAnchor(this, wrapper, Optional.empty());
+        
+        argumentSpace.getChildren().addAll(arguments);
+        resultSpace.getChildren().add(result);
+        
+        //TODO make the choiceblock draggable from within a lane
+        divider.getItems().forEach(element -> element.setMouseTransparent(true));
     }
 
     public Case.Alternative getAlternative() {
         //TODO generate the pattern and guard for this lane
-        return new Case.Alternative(null, null);
+        return new Case.Alternative(new ConstructorBinder("()", Collections.EMPTY_LIST), new LetExpression(result.getLocalExpr(), true));
     }
 
     public ResultAnchor getOutput() {

@@ -1,9 +1,14 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javafx.fxml.FXML;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Case;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Value;
@@ -13,8 +18,6 @@ import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.haskell.type.TypeVar;
 import nl.utwente.viskell.ui.CustomUIPane;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * An evaluation block with multiple guarded alternatives.
@@ -27,23 +30,29 @@ public class ChoiceBlock extends Block {
     
     /** The output anchor of this block */
     protected OutputAnchor output;
+    
+    @FXML protected Pane altSpace;
+    
+    @FXML protected Pane funSpace;
 
     public ChoiceBlock(CustomUIPane pane) {
         super(pane);
         this.loadFXML("ChoiceBlock");
         
         lanes = new ArrayList<>();
+        output = new OutputAnchor(this, new Binder("choiceoutput"));
+        funSpace.getChildren().add(output);
         addLane();
     }
 
     @Override
     public List<InputAnchor> getAllInputs() {
-        return ImmutableList.of();
+        return lanes.stream().map(Lane::getOutput).collect(Collectors.toList());
     }
 
     @Override
     public List<OutputAnchor> getAllOutputs() {
-        return ImmutableList.of(output);
+        return Collections.singletonList(output);
     }
 
     @Override
@@ -64,7 +73,7 @@ public class ChoiceBlock extends Block {
     }
 
     public void handleConnectionChanges(boolean finalPhase) {
-        lanes.stream().forEach(lane -> handleConnectionChanges(finalPhase));
+        lanes.stream().forEach(lane -> lane.handleConnectionChanges(finalPhase));
 
         // continue as normal with propagating changes on the outside
         super.handleConnectionChanges(finalPhase);
@@ -83,11 +92,14 @@ public class ChoiceBlock extends Block {
 
     
     public void addLane() {
-        lanes.add(new Lane(this));
+        Lane lane = new Lane(this);
+        lanes.add(lane);
+        altSpace.getChildren().add(lane);
     }
     
     public void removeLane(int index) {
         lanes.remove(index);
+        altSpace.getChildren().remove(index);
         handleConnectionChanges(false);
         handleConnectionChanges(true);
     }
