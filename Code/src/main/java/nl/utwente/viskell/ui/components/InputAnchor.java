@@ -161,7 +161,6 @@ public class InputAnchor extends ConnectionAnchor {
         style.removeAll("error");
         if (newValue) {
             style.add("error");
-            System.err.println(this.visibleAnchor.toString());
         }
     }
 
