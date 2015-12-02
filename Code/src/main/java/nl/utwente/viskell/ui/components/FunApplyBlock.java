@@ -103,6 +103,9 @@ public class FunApplyBlock extends Block {
     /** The result anchor of this function. */
     private final OutputAnchor output;
 
+    /** The background for curriedType labels */
+    private final Pane curriedOutput;
+    
     /** The space containing anchors and type labels. */
     @FXML private Pane bodySpace;
     
@@ -133,9 +136,22 @@ public class FunApplyBlock extends Block {
         }
 
         Pane inputSpace = new HBox(10, this.inputs.toArray(new Node[this.inputs.size()]));
-        this.bodySpace.getChildren().addAll(inputSpace, outputSpace);
+        this.curriedOutput = new Pane() {
+                @Override
+                public double computePrefWidth(double heigth) {
+                    return Math.max(inputSpace.prefWidth(heigth), outputSpace.getLayoutX()+resTypeLabel.prefWidth(heigth));
+                }
+            };
+        this.curriedOutput.setVisible(false);
+        this.curriedOutput.getStyleClass().add("curriedOutput");
+            
+        this.bodySpace.getChildren().addAll(this.curriedOutput, inputSpace, outputSpace);
         outputSpace.layoutYProperty().bind(inputSpace.heightProperty());
         outputSpace.layoutXProperty().bind(inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2)));
+        
+        this.curriedOutput.layoutYProperty().bind(inputSpace.heightProperty().divide(2));
+        this.curriedOutput.prefHeightProperty().bind(inputSpace.heightProperty());
+        this.curriedOutput.translateYProperty().bind(outputSpace.translateYProperty());
     }
 
     /** Shift the output type/anchor down to some distance. */
@@ -143,6 +159,10 @@ public class FunApplyBlock extends Block {
         double shift = Math.max(0, y);
         if (this.inputs.stream().map(i -> i.curried).filter(c -> c).count() == 0) { 
             this.output.getParent().setTranslateY(shift);
+            this.curriedOutput.setVisible(false);
+        } else {
+            this.curriedOutput.setVisible(true);
+            this.curriedOutput.requestLayout();
         }
     }
     
@@ -206,7 +226,7 @@ public class FunApplyBlock extends Block {
         this.resTypeLabel.setText(this.resType.prettyPrint());
 
         for (FunInputAnchor arg : this.inputs) {
-            arg.inputType.setText(arg.anchor.getStringType());
+            arg.inputType.setText(arg.anchor.getStringType() + (arg.curried ? " ->" : ""));
             arg.inputType.setVisible(arg.anchor.errorStateProperty().get() || ! arg.anchor.hasConnection());
         }
     }
