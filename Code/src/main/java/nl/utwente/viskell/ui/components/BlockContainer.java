@@ -1,5 +1,7 @@
 package nl.utwente.viskell.ui.components;
 
+import javafx.geometry.Bounds;
+
 /**
  * A generic interface for block containers with possible outputs and inputs.
  */
@@ -15,4 +17,15 @@ public interface BlockContainer {
      */
     public void handleConnectionChanges(boolean finalPhase);
 
+    /** Gets the value of the property boundsInLocal. */
+    public Bounds getBoundsInLocal();
+    
+    /** Transforms a point from the local coordinate space of this Node into the coordinate space of its scene. */
+    public Bounds localToScene(Bounds bounds);
+    
+    /** Attach a block to this container */
+    public void attachBlock(Block block);
+    
+    /** Detach a block from this container */
+    public boolean detachBlock(Block block);
 }

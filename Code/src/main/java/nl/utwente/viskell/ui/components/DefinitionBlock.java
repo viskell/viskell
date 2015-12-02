@@ -147,5 +147,9 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     public boolean belongsOnBottom() {
         return true;
     }
+    
+    public LambdaContainer getBody() {
+        return body;
+    }
 
 }

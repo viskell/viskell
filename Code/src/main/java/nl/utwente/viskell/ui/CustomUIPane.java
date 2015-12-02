@@ -1,22 +1,25 @@
 package nl.utwente.viskell.ui;
 
+import java.io.File;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.ui.components.Block;
+import nl.utwente.viskell.ui.components.BlockContainer;
+import nl.utwente.viskell.ui.components.ChoiceBlock;
+import nl.utwente.viskell.ui.components.DefinitionBlock;
 import nl.utwente.viskell.ui.components.InputAnchor;
-
-import java.io.File;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * The core Pane that also keeps state for the user interface.
@@ -294,4 +297,15 @@ public class CustomUIPane extends Region {
                 this.blockLayer.getChildren().stream().skip(1), this.wireLayer.getChildren().stream().skip(1)));
     }
     
+    public Stream<BlockContainer> getBlockContainers() {
+        return bottomLayer.getChildrenUnmodifiable().stream().flatMap(node -> {
+            if (node instanceof ChoiceBlock) {
+                return ((ChoiceBlock)node).getLanes().stream();
+            }
+            if (node instanceof DefinitionBlock) {
+                return Stream.of(((DefinitionBlock)node).getBody());
+            }
+            return Stream.empty();
+        });
+    }
 }

@@ -1,8 +1,10 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
@@ -40,6 +42,9 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     
     /** Status of change updating process in this block. */
     private boolean updateInProgress;
+    
+    /** A set of blocks that belong to this container */
+    protected Set<Block> attachedBlocks;
 
     /**
      * Constructs a LambdaContainer for an untyped lambda of n arguments.
@@ -49,6 +54,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
         super();
         this.loadFXML("LambdaContainer");
         this.wrapper = wrapper;
+        attachedBlocks = new HashSet<>();
         
         this.args = new ArrayList<>();
         for (int i = 0; i < arity; i++) {
@@ -69,6 +75,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
         super();
         this.loadFXML("LambdaContainer");
         this.wrapper = wrapper;
+        attachedBlocks = new HashSet<>();
 
         // Collect argument types and result type
         this.args = new ArrayList<>();
@@ -153,5 +160,14 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     public void invalidateVisualState() {
         // TODO update anchors when they get a type label       
     }
-    
+
+    @Override
+    public void attachBlock(Block block) {
+        attachedBlocks.add(block);
+    }
+
+    @Override
+    public boolean detachBlock(Block block) {
+        return attachedBlocks.remove(block);
+    }
 }

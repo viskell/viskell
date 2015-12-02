@@ -1,8 +1,11 @@
 package nl.utwente.viskell.ui.components;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -14,8 +17,7 @@ import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.DragContext;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.
@@ -52,6 +54,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.freshAnchorTypes = false;
         this.updateInProgress = false;
         this.dragContext = new DragContext(this);
+        
+        dragContext.setDragInitAction(event -> getContainer().ifPresent(container -> container.detachBlock(this)));
+        dragContext.setDragFinishAction(event -> getContainer().ifPresent(container -> container.attachBlock(this)));
         
         // Visually react on selection.
         this.parentPane.selectedBlockProperty().addListener(event -> {
@@ -200,7 +205,15 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     protected ImmutableMap<String, Object> toBundleFragment() {
         return ImmutableMap.of();
     }
-
+    
+    public Optional<BlockContainer> getContainer() {
+        Bounds myBounds = localToScene(getBoundsInLocal());
+        
+        return parentPane.getBlockContainers().
+            filter(container -> container.localToScene(container.getBoundsInLocal()).contains(myBounds)).
+                reduce((a, b) -> !a.getBoundsInLocal().contains(b.getBoundsInLocal()) ? a : b);
+    }
+    
     @Override
     public Map<String, Object> toBundle() {
         return ImmutableMap.of(

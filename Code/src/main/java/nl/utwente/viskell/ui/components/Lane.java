@@ -1,18 +1,11 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import nl.utwente.viskell.haskell.expr.Case;
-import nl.utwente.viskell.haskell.expr.ConstructorBinder;
-import nl.utwente.viskell.haskell.expr.LetExpression;
-import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.haskell.expr.*;
 import nl.utwente.viskell.ui.ComponentLoader;
 
 public class Lane extends Pane implements BlockContainer, ComponentLoader {
@@ -43,12 +36,16 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
     
     @FXML protected SplitPane divider;
 
+    /** A set of blocks that belong to this container */
+    protected Set<Block> attachedBlocks;
+
     public Lane(ChoiceBlock wrapper) {
         super();
         loadFXML("Lane");
         parent = wrapper;
         arguments = new ArrayList<>();
         result = new ResultAnchor(this, wrapper, Optional.empty());
+        attachedBlocks = new HashSet<>();
         
         argumentSpace.getChildren().addAll(arguments);
         resultSpace.getChildren().add(result);
@@ -160,5 +157,15 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
     /** Called when the VisualState changed. */
     public void invalidateVisualState() {
         // TODO update anchors when they get a type label       
+    }
+    
+    @Override
+    public void attachBlock(Block block) {
+        attachedBlocks.add(block);
+    }
+
+    @Override
+    public boolean detachBlock(Block block) {
+        return attachedBlocks.remove(block);
     }
 }

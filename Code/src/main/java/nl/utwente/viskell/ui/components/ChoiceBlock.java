@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Case;
@@ -89,6 +88,11 @@ public class ChoiceBlock extends Block {
         //TODO fill in
         lanes.forEach(lane -> lane.invalidateVisualState());
     }
+    
+    @Override
+    public boolean belongsOnBottom() {
+        return true;
+    }
 
     
     public void addLane() {
@@ -102,5 +106,9 @@ public class ChoiceBlock extends Block {
         altSpace.getChildren().remove(index);
         handleConnectionChanges(false);
         handleConnectionChanges(true);
+    }
+
+    public List<Lane> getLanes() {
+        return lanes;
     }
 }
