@@ -124,26 +124,29 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         this.categorySpace.getChildren().add(categoryContainer);
 
         /* Create content for utilSpace. */
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(event -> close());
         Button valBlockButton = new Button("Value Block");
         valBlockButton.setOnAction(event -> addValueBlock());
         Button disBlockButton = new Button("Display Block");
         disBlockButton.setOnAction(event -> addBlock(new DisplayBlock(parent)));
-        Button sliderBlockButton = new Button("Slider Block");
-        sliderBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent)));
-        Button rgbBlockButton = new Button("RGB Block");
-        rgbBlockButton.setOnAction(event -> addBlock(new RGBBlock(parent)));
-        Button graphBlockButton = new Button("Graph Block");
-        graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
         Button defBlockButton = new Button("Definition Block");
         defBlockButton.setOnAction(event -> addDefinitionBlock());
         Button lambdaBlockButton = new Button("Lambda Block");
         lambdaBlockButton.setOnAction(event -> addLambdaBlock());
+        utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton, defBlockButton, lambdaBlockButton);
 
-        Button closeButton = new Button("Close");
-        closeButton.setOnAction(event -> close());
+        if (GhciSession.pickBackend() == GhciSession.Backend.GHCi) {
+            // These blocks are specifically for GHCi
+            Button sliderBlockButton = new Button("Slider Block");
+            sliderBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent)));
+            Button rgbBlockButton = new Button("RGB Block");
+            rgbBlockButton.setOnAction(event -> addBlock(new RGBBlock(parent)));
+            Button graphBlockButton = new Button("Graph Block");
+            graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
 
-        utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton,
-                defBlockButton, lambdaBlockButton, sliderBlockButton, rgbBlockButton, graphBlockButton);
+            utilSpace.getChildren().addAll(sliderBlockButton, rgbBlockButton, graphBlockButton);
+        }
 
         for (Node button : utilSpace.getChildren()) {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);
@@ -199,7 +202,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     }
     
     private void addBlock(Block block) {
-        parent.getChildren().add(block);
+        parent.addBlock(block);
         Point2D pos = this.localToParent(0, 0);
         block.relocate(pos.getX() - 200, pos.getY());
         block.initiateConnectionChanges();
@@ -207,6 +210,6 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
     /** Closes this menu by removing it from it's parent. */
     public void close() {
-        parent.getChildren().remove(this);
+        parent.removeMenu(this);
     }
 }

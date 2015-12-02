@@ -5,6 +5,7 @@ import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import nl.utwente.viskell.haskell.env.Environment;
+import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.Main;
@@ -32,6 +33,9 @@ public final class GhciSession extends AbstractExecutionThreadService {
 
     /** The evaluator this GhciSession will communicate with. */
     private Evaluator ghci;
+
+    /** Gets filled with a HaskellCatalog instance when ghci is ready. */
+    private HaskellCatalog catalog;
 
     public enum Backend {
         GHCi,
@@ -160,6 +164,7 @@ public final class GhciSession extends AbstractExecutionThreadService {
         }
 
         this.ghci = evaluatorFactory(pickBackend());
+        this.catalog = new HaskellCatalog(this.ghci.getCatalogPath());
     }
 
     /** Build the Evaluator that corresponds to the given Backend identifier. */
@@ -181,5 +186,10 @@ public final class GhciSession extends AbstractExecutionThreadService {
     /** @return the available backend identifiers. */
     public static List<Backend> getBackends() {
         return Lists.newArrayList(EnumSet.allOf(Backend.class));
+    }
+
+    public HaskellCatalog getCatalog() {
+        awaitRunning();
+        return catalog;
     }
 }

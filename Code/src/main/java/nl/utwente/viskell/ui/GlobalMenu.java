@@ -49,7 +49,7 @@ public class GlobalMenu extends ContextMenu {
     }
 
     private void onNew(ActionEvent actionEvent) {
-        pane.getChildren().clear();
+        this.pane.clearChildren();
     }
 
     private void onOpen(ActionEvent actionEvent) {

@@ -108,12 +108,6 @@ MatchBlock.selected {
     -fx-background-color: black;
 }
 
-.argumentSpace .error Label{
-    -fx-background-color:red;
-    -fx-border-color: red;
-    -fx-text-fill: white;
-}
-
 .resultType {
     -fx-text-fill: white;
     -fx-background-color: black;
@@ -144,6 +138,10 @@ Connection.error {
 
 .anchorPoint {
     -fx-fill: black;
+}
+
+.anchorPoint.error {
+    -fx-fill: red;
 }
 
 .overlayButtons Button {

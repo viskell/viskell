@@ -31,7 +31,7 @@ public class HaskellCatalog {
     private Multimap<String, CatalogFunction> categories;
 
     /** Default path to the XML file. */
-    public static final String XML_PATH = "/catalog/catalog.xml";
+    public static final String XML_PATH = "/catalog/haskell.xml";
 
     /** Default path to the XSD file. */
     public static final String XSD_PATH = "/catalog/catalog.xsd";

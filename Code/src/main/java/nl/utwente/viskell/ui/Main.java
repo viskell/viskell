@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import nl.utwente.viskell.ghcj.GhciEvaluator;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 
@@ -20,23 +19,21 @@ public class Main extends Application {
     
     /** The Height of the TactilePane used within Viskell. */
     public static final int PANE_HEIGHT = 4500;
-    
+
     /** A reference to the main window */
     public static Stage primaryStage;
-    
+
     /** A reference to the overlay */
     public static MainOverlay overlay;
 
     @Override
     public void start(Stage stage) throws Exception {
         primaryStage = stage;
-        
+
         Font.loadFont(this.getClass().getResourceAsStream("/ui/fonts/titillium.otf"), 20);
 
-        HaskellCatalog catalog = new HaskellCatalog();
-
         // Init TactilePane
-        CustomUIPane tactilePane = new CustomUIPane(catalog);
+        CustomUIPane tactilePane = new CustomUIPane();
         tactilePane.setMinWidth(PANE_WIDTH);
         tactilePane.setMinHeight(PANE_HEIGHT);
         tactilePane.setMaxWidth(PANE_WIDTH);
@@ -74,9 +71,6 @@ public class Main extends Application {
         stage.setScene(scene);
 
         stage.show();
-
-        // Invalidate
-        tactilePane.invalidateAll();
         tactilePane.requestFocus();
     }
 

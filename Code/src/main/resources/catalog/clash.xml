@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="catalog.xsl" ?>
+<catalog version="0.4">
+    <classes>
+        <class name="Eq">
+            <instance name="Int"/>
+            <instance name="Ordering"/>
+            <instance name="Char"/>
+            <instance name="Bool"/>
+            <instance name="[]" constrainedArgs="1"/>
+            <instance name="Maybe" constrainedArgs="1"/>
+            <instance name="Either" constrainedArgs="2"/>
+            <instance name="BitVector"/>
+            <instance name="(,)" constrainedArgs="2"/>
+            <instance name="(,,)" constrainedArgs="3"/>
+            <instance name="(,,,)" constrainedArgs="4"/>
+            <instance name="(,,,,)" constrainedArgs="5"/>
+            <instance name="(,,,,,)" constrainedArgs="6"/>
+            <instance name="(,,,,,,)" constrainedArgs="7"/>
+        </class>
+        <class name="Ord">
+            <superClass name="Eq"/>
+            <instance name="Ordering"/>
+            <instance name="Bool"/>
+            <instance name="Char"/>
+            <instance name="Int"/>
+            <instance name="[]" constrainedArgs="1"/>
+            <instance name="Maybe" constrainedArgs="1"/>
+            <instance name="Either" constrainedArgs="2"/>
+            <instance name="BitVector"/>
+            <instance name="(,)" constrainedArgs="2"/>
+            <instance name="(,,)" constrainedArgs="3"/>
+            <instance name="(,,,)" constrainedArgs="4"/>
+            <instance name="(,,,,)" constrainedArgs="5"/>
+            <instance name="(,,,,,)" constrainedArgs="6"/>
+            <instance name="(,,,,,,)" constrainedArgs="7"/>
+        </class>
+        <class name="Enum">
+            <instance name="Ordering"/>
+            <instance name="Integer"/>
+            <instance name="Int"/>
+            <instance name="Char"/>
+            <instance name="Bool"/>
+            <instance name="BitVector"/>
+        </class>
+        <class name="Num">
+            <instance name="Int"/>
+            <instance name="Integer"/>
+            <instance name="Signal" constrainedArgs="1"/>
+            <instance name="BitVector"/>
+        </class>
+        <class name="Integral">
+            <superClass name="Enum"/>
+            <instance name="Int"/>
+            <instance name="Integer"/>
+        </class>
+        <class name="Show">
+            <instance name="Ordering"/>
+            <instance name="Integer"/>
+            <instance name="Int"/>
+            <instance name="Char"/>
+            <instance name="Bool"/>
+            <instance name="[]" constrainedArgs="1"/>
+            <instance name="Maybe" constrainedArgs="1"/>
+            <instance name="Either" constrainedArgs="2"/>
+            <instance name="BitVector"/>
+            <instance name="(,)" constrainedArgs="2"/>
+            <instance name="(,,)" constrainedArgs="3"/>
+            <instance name="(,,,)" constrainedArgs="4"/>
+            <instance name="(,,,,)" constrainedArgs="5"/>
+            <instance name="(,,,,,)" constrainedArgs="6"/>
+            <instance name="(,,,,,,)" constrainedArgs="7"/>
+        </class>
+        <class name="Read">
+            <instance name="Ordering"/>
+            <instance name="Integer"/>
+            <instance name="Int"/>
+            <instance name="Char"/>
+            <instance name="Bool"/>
+            <instance name="[]" constrainedArgs="1"/>
+            <instance name="Maybe" constrainedArgs="1"/>
+            <instance name="Either" constrainedArgs="2"/>
+            <instance name="(,)" constrainedArgs="2"/>
+            <instance name="(,,)" constrainedArgs="3"/>
+            <instance name="(,,,)" constrainedArgs="4"/>
+            <instance name="(,,,,)" constrainedArgs="5"/>
+            <instance name="(,,,,,)" constrainedArgs="6"/>
+            <instance name="(,,,,,,)" constrainedArgs="7"/>
+        </class>
+        <class name="Functor">
+            <instance name="Maybe"/>
+            <instance name="IO"/>
+            <instance name="[]"/>
+            <instance name="Signal"/>
+        </class>
+        <class name="Applicative">
+            <superClass name="Functor"/>
+            <instance name="Signal"/>
+        </class>
+        <class name="Bits">
+            <instance name="BitVector"/>
+        </class>
+    </classes>
+
+    <functions>
+        <category name="Comparison and logic">
+            <function name="(==)" signature="Eq a => a -> a -> Bool"/>
+            <function name="(/=)" signature="Eq a => a -> a -> Bool"/>
+            <function name="(&lt;)" signature="Ord a => a -> a -> Bool"/>
+            <function name="(&lt;=)" signature="Ord a => a -> a -> Bool"/>
+            <function name="(&gt;)" signature="Ord a => a -> a -> Bool"/>
+            <function name="(&gt;=)" signature="Ord a => a -> a -> Bool"/>
+            <function name="max" signature="Ord a => a -> a -> a"/>
+            <function name="min" signature="Ord a => a -> a -> a"/>
+            <function name="(&amp;&amp;)" signature="Bool -> Bool -> Bool">
+                and
+            </function>
+            <function name="(||)" signature="Bool -> Bool -> Bool">
+                or
+            </function>
+            <function name="not" signature="Bool -> Bool">
+                not
+            </function>
+            <function name="True" signature="Bool">
+                A true value.
+            </function>
+            <function name="False" signature="Bool">
+                A false value.
+            </function>
+            <function name="LT" signature="Ordering">
+                Less than
+            </function>
+            <function name="EQ" signature="Ordering">
+                Equal to
+            </function>
+            <function name="GT" signature="Ordering">
+                Greater than
+            </function>
+        </category>
+        <category name="Arithmetic">
+            <function name="(+)" signature="Num a => a -> a -> a">
+                Mathematical addition.
+            </function>
+            <function name="(*)" signature="Num a => a -> a -> a">
+                Mathematical multiplication.
+            </function>
+            <function name="(-)" signature="Num a => a -> a -> a">
+                Mathematical subtraction.
+            </function>
+            <function name="negate" signature="Num a => a -> a">
+                Unary negation.
+            </function>
+            <function name="abs" signature="Num a => a -> a">
+                Absolute value.
+            </function>
+            <function name="signum" signature="Num a => a -> a">
+                Sign of a number.
+            </function>
+            <function name="quot" signature="Integral a => a -> a -> a">
+                integer division truncated toward zero.
+            </function>
+            <function name="rem" signature="Integral a => a -> a -> a">
+                integer remainder, satisfying (x 'quot' y)*y + (x 'rem' y) == x.
+            </function>
+            <function name="div" signature="Integral a => a -> a -> a">
+                integer division truncated toward negative infinity.
+            </function>
+            <function name="mod" signature="Integral a => a -> a -> a">
+                integer modulus, satisfying (x 'div' y)*y + (x 'mod y) == x.
+            </function>
+            <function name="quotRem" signature="Integral a => a -> a -> (a, a)">
+                simultaneous quot and rem.
+            </function>
+            <function name="divMod" signature="Integral a => a -> a -> (a, a)">
+                simultaneous div and mod.
+            </function>
+            <function name="even" signature="Integral a => a -> Bool"/>
+            <function name="odd" signature="Integral a => a -> Bool"/>
+            <function name="gcd" signature="Integral a => a -> a -> a">
+                gcd x y is the non-negative factor of both x and y of which every common factor of x and
+                y is also a factor; for example gcd 4 2 = 2, gcd (-4) 6 = 2, gcd 0 4 = 4. gcd 0 0
+                = 0. (That is, the common divisor that is "greatest" in the divisibility preordering.)
+
+                Note: Since for signed fixed-width integer types, abs minBound &lt; 0, the result may be
+                negative if one of the arguments is minBound (and necessarily is if the other is 0 or
+                minBound) for such types.
+            </function>
+            <function name="lcm" signature="Integral a => a -> a -> a">
+                lcm x y is the smallest positive integer that both x and y divide.
+            </function>
+        </category>
+        <category name="Signals">
+            <function name="signal" signature="Applicative f => a -> f a"/>
+        </category>
+        <category name="Vectors">
+        </category>
+        <category name="Bits">
+            <function name="high" signature="BitVector n">logic '1'</function>
+            <function name="low" signature="BitVector n">logic '0'</function>
+            <function name="(.&amp;.)" signature="Bits a => a -> a -> a"/>
+            <function name="(.|.)" signature="Bits a => a -> a -> a"/>
+            <function name="xor" signature="Bits a => a -> a -> a"/>
+            <function name="complement" signature="Bits a => a -> a"/>
+            <function name="shift" signature="Bits a => a -> Int -> a"/>
+            <function name="rotate" signature="Bits a => a -> Int -> a"/>
+            <function name="zeroBits" signature="Bits a => a"/>
+            <function name="bit" signature="Bits a => Int -> a"/>
+            <function name="setBit" signature="Bits a => a -> Int -> a"/>
+            <function name="clearBit" signature="Bits a => a -> Int -> a"/>
+            <function name="complementBit" signature="Bits a => a -> Int -> a"/>
+            <function name="testBit" signature="Bits a => a -> Int -> Bool"/>
+            <function name="bitSizeMaybe" signature="Bits a => a -> Maybe Int"/>
+            <function name="bitSize" signature="Bits a => a -> Int"/>
+            <function name="isSigned" signature="Bits a => a -> Bool"/>
+            <function name="shiftL" signature="Bits a => a -> Int -> a"/>
+            <function name="unsafeShiftL" signature="Bits a => a -> Int -> a"/>
+            <function name="shiftR" signature="Bits a => a -> Int -> a"/>
+            <function name="unsafeShiftR" signature="Bits a => a -> Int -> a"/>
+            <function name="rotateL" signature="Bits a => a -> Int -> a"/>
+            <function name="rotateR" signature="Bits a => a -> Int -> a"/>
+            <function name="popCount" signature="Bits a => a -> Int"/>
+        </category>
+        <category name="Simulation">
+            <function name="simulate" signature="(Signal a -> Signal b) -> [a] -> [b]"/>
+        </category>
+    </functions>
+</catalog>
