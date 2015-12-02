@@ -1,7 +1,5 @@
 package nl.utwente.viskell.ui.components;
 
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ui.ComponentLoader;
@@ -27,7 +25,6 @@ public class InputArgument extends Pane implements ComponentLoader {
 
         this.inputAnchor = new InputAnchor(block);
         this.inputAnchor.layoutXProperty().bind(this.inputLabel.widthProperty().divide(2));
-        this.inputAnchor.errorStateProperty().addListener(this::checkError);
         
         // Vertically center the label
         this.inputLabel.layoutYProperty().bind(this.heightProperty().divide(2).subtract(this.inputLabel.heightProperty().divide(2)));
@@ -50,14 +47,4 @@ public class InputArgument extends Pane implements ComponentLoader {
         return inputLabel;
     }
     
-    /**
-     * ChangeListener that will set the error state according to the error state property.
-     */
-    private void checkError(ObservableValue<? extends Boolean> value, Boolean oldValue, Boolean newValue) {
-        ObservableList<String> styleClass = this.getStyleClass();
-        styleClass.removeAll("error");
-        if (newValue) {
-            styleClass.add("error");
-        }
-    }
 }
