@@ -14,12 +14,6 @@ import nl.utwente.viskell.haskell.env.HaskellCatalog;
  * Main application class for the GUI.
  */
 public class Main extends Application {
-    /** The Width of the TactilePane used within Viskell. */
-    public static final int PANE_WIDTH = 8000;
-    
-    /** The Height of the TactilePane used within Viskell. */
-    public static final int PANE_HEIGHT = 4500;
-    
     /** A reference to the main window */
     public static Stage primaryStage;
     
@@ -36,10 +30,6 @@ public class Main extends Application {
 
         // Init TactilePane
         CustomUIPane tactilePane = new CustomUIPane(catalog);
-        tactilePane.setMinWidth(PANE_WIDTH);
-        tactilePane.setMinHeight(PANE_HEIGHT);
-        tactilePane.setMaxWidth(PANE_WIDTH);
-        tactilePane.setMaxHeight(PANE_HEIGHT);
 
         overlay = new MainOverlay(tactilePane);
 
