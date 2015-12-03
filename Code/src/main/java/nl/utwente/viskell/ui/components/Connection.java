@@ -194,7 +194,8 @@ public class Connection extends CubicCurve implements
     /** Returns the current bezier offset based on the current start and end positions. */
     private double getBezierYOffset() {
         double distX = Math.abs(this.getEndX() - this.getStartX());
-        double distY = Math.abs(this.getEndY() - this.getStartY());
+        double diffY = this.getEndY() - this.getStartY();
+        double distY = diffY > 0 ? diffY/2 : -diffY; 
         if (distY < BEZIER_CONTROL_OFFSET) {
             if (distX < BEZIER_CONTROL_OFFSET) {
                 // short lines are extra flexible
