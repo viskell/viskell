@@ -154,8 +154,8 @@ public class Connection extends CubicCurve implements
 
     /** Update the UI positions of both start and end anchors. */
     private void invalidateAnchorPositions() {
-        this.setStartPosition(this.pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 0))));
-        this.setEndPosition(this.pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, 0))));
+        this.setStartPosition(this.pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 4))));
+        this.setEndPosition(this.pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, -4))));
     }
 
     @Override
