@@ -149,7 +149,7 @@ Connection.error {
 }
 
 ImageView.hoverMenu {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,1), 20, 0, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, black, 20, 0, 0, 0);
 }
 
 .def {
@@ -160,5 +160,5 @@ ImageView.hoverMenu {
     -fx-text-fill: white;
     -fx-background-insets: 0, 0;
     -fx-background-radius: 0, 0;
-    -fx-background-color: rgba(0, 0, 0, 0);
+    -fx-background-color: transparent;
 }

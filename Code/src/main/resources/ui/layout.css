@@ -2,6 +2,13 @@ CustomUIPane {
     -fx-background-position: 2500 2500;
 }
 
+CustomUIPane, CustomUIPane > Pane > Pane > Pane {
+    -fx-min-width: 8000;
+    -fx-min-height: 4500;
+    -fx-max-width: 8000;
+    -fx-max-height: 4500;
+}
+
 .menu {
     -fx-font-size: 12px;
     -fx-font-family: Titillium;
@@ -64,7 +71,7 @@ CustomUIPane {
 }
 
 SliderBlock .value.block {
-	-fx-min-height: 100px;
+    -fx-min-height: 100px;
 }
 
 .graph.block LineChart {
