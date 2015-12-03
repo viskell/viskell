@@ -3,10 +3,10 @@ CustomUIPane {
 }
 
 CustomUIPane, CustomUIPane > Pane > Pane > Pane {
-	-fx-min-width: 8000;
-	-fx-min-height: 4500;
-	-fx-max-width: 8000;
-	-fx-max-height: 4500;
+    -fx-min-width: 8000;
+    -fx-min-height: 4500;
+    -fx-max-width: 8000;
+    -fx-max-height: 4500;
 }
 
 .menu {
@@ -71,7 +71,7 @@ CustomUIPane, CustomUIPane > Pane > Pane > Pane {
 }
 
 SliderBlock .value.block {
-	-fx-min-height: 100px;
+    -fx-min-height: 100px;
 }
 
 .graph.block LineChart {

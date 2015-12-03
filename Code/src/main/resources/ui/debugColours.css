@@ -55,10 +55,10 @@ CustomUIPane, PreferencesWindow, CustomUIPane > Pane > Pane > * {
 }
 
 CheckBox * {
-	-fx-background-color: rgba(255,255,255,0.0);
-	-fx-border-color: rgba(255,255,255,0.0);
+    -fx-background-color: rgba(255,255,255,0.0);
+    -fx-border-color: rgba(255,255,255,0.0);
 }
 
 CheckBox:selected * {
-	-fx-border-color: rgba(0,0,0,1.0);
+    -fx-border-color: rgba(0,0,0,1.0);
 }
