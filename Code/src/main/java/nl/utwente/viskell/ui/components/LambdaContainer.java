@@ -152,7 +152,9 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     public Expression getLocalExpr() {
         List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         LetExpression body = new LetExpression(this.res.getLocalExpr(), false);
-        this.res.extendExprGraph(body);
+        Set<Block> surroundingBlocks = new HashSet<>();
+        this.res.extendExprGraph(body, this, surroundingBlocks);
+        //TODO somehow add surrounding blocks
         return new Lambda(binders, body);
     }
 
@@ -169,5 +171,10 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     @Override
     public boolean detachBlock(Block block) {
         return attachedBlocks.remove(block);
+    }
+    
+    @Override
+    public boolean containsBlock(Block block) {
+        return attachedBlocks.contains(block);
     }
 }

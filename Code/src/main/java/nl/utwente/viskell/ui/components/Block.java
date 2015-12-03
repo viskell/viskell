@@ -1,8 +1,10 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
@@ -173,17 +175,21 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      */
     public final Expression getFullExpr() {
         LetExpression fullExpr = new LetExpression(this.getLocalExpr(), false);
-        this.extendExprGraph(fullExpr);
+        Set<Block> surroundingBlocks = new HashSet<>();
+        this.extendExprGraph(fullExpr, null, surroundingBlocks);
+        //TODO somehow add surrounding blocks
         return fullExpr;
     }
 
     /**
      * Extends the expression graph to include all subexpression required
      * @param exprGraph the let expression representing the current expression graph
+     * @param container the container to which this expression graph is constrained
+     * @param addLater a mutable list of blocks that have to be added by a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph) {
+    protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<Block> addLater) {
          for (InputAnchor input : this.getAllInputs()) {
-             input.extendExprGraph(exprGraph);
+             input.extendExprGraph(exprGraph, container, addLater);
          }
     }
     

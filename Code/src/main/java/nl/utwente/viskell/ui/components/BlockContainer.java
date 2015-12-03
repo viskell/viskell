@@ -28,4 +28,8 @@ public interface BlockContainer {
     
     /** Detach a block from this container */
     public boolean detachBlock(Block block);
+    
+    /** Check whether this container contains the specified block */
+    public boolean containsBlock(Block block);
+    
 }

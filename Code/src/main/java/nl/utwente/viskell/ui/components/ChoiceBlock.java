@@ -42,6 +42,7 @@ public class ChoiceBlock extends Block {
         output = new OutputAnchor(this, new Binder("choiceoutput"));
         funSpace.getChildren().add(output);
         addLane();
+        addLane();
     }
 
     @Override

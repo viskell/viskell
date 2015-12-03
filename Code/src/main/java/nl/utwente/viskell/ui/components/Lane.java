@@ -1,11 +1,19 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
-import nl.utwente.viskell.haskell.expr.*;
+import nl.utwente.viskell.haskell.expr.Case;
+import nl.utwente.viskell.haskell.expr.ConstructorBinder;
+import nl.utwente.viskell.haskell.expr.LetExpression;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 
 public class Lane extends Pane implements BlockContainer, ComponentLoader {
@@ -24,8 +32,6 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
     
     /** Status of change updating process in this block. */
     protected boolean finalPhaseInProgress;
-    
-    boolean updateInProgress;
     
     /** The wrapper to which this alternative belongs */
     protected ChoiceBlock parent;
@@ -56,14 +62,20 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
 
     public Case.Alternative getAlternative() {
         //TODO generate the pattern and guard for this lane
-        return new Case.Alternative(new ConstructorBinder("()", Collections.EMPTY_LIST), new LetExpression(result.getLocalExpr(), true));
+        LetExpression guards = new LetExpression(result.getLocalExpr(), true);
+        Set<Block> surroundingBlocks = new HashSet<>();
+        result.extendExprGraph(guards, this, surroundingBlocks);
+        //TODO somehow add surrounding blocks
+        attachedBlocks.stream().forEach(block -> block.extendExprGraph(guards, this, surroundingBlocks));
+        //attachedBlocks.stream().map(block -> block.getAllOutputs().get(0).binder).forEach(binder -> guards.addLetBinding(binder, guards));;
+        return new Case.Alternative(new ConstructorBinder("()", Collections.EMPTY_LIST), guards);
     }
 
     public ResultAnchor getOutput() {
         return result;
     }
 
-    /*@Override
+    @Override
     public void refreshAnchorTypes() {
         // refresh anchor types only once at the start
         if (!firstPhaseInProgress && !freshAnchorTypes) {
@@ -75,7 +87,7 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
         }
     }
     
-    /*@Override
+    @Override
     public final void handleConnectionChanges(boolean finalPhase) {
         // avoid doing extra work and infinite recursion
         if ((!finalPhase && !firstPhaseInProgress) || (finalPhase && !finalPhaseInProgress)) {
@@ -96,11 +108,11 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
             // first propagate up from the result anchor
             result.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards(finalPhase));
             
-            // also propagate in from above in case the lambda is partially connected 
+            // also propagate in from above in case the lane is partially connected 
             arguments.forEach(argument -> {
                 argument.getOppositeAnchors().forEach(anchor -> {
                     anchor.handleConnectionChanges(finalPhase);
-                    // take the type of argument connections in account even if the connected block is being processed
+                    // take the type of argument connections into account even if the connected block is being processed
                     anchor.getConnection().ifPresent(connection -> connection.handleConnectionChangesUpwards(finalPhase));
                 });
             });
@@ -108,51 +120,7 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
             // propagate internal type changes outwards
             parent.handleConnectionChanges(finalPhase);
         }
-    }*/
-    @Override
-    public void refreshAnchorTypes() {
-        if (this.updateInProgress || this.freshAnchorTypes) {
-            return; // refresh anchor types only once
-        }
-        this.freshAnchorTypes = true;
-        
-        TypeScope scope = new TypeScope();
-        for (BinderAnchor arg : arguments) {
-            arg.refreshType(scope);
-        }
-        result.refreshAnchorType(scope);
     }
-    
-    @Override
-    public final void handleConnectionChanges(boolean finalPhase) {
-        if (this.updateInProgress != finalPhase) {
-            return; // avoid doing extra work and infinite recursion
-        }
-        
-        if (! finalPhase) {
-            // in first phase ensure that anchor types are refreshed
-            this.refreshAnchorTypes();
-        }
-        
-        this.updateInProgress = !finalPhase;
-        this.freshAnchorTypes = false;
-        
-        // first propagate up from the result anchor
-        result.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards(finalPhase));
-
-        // also propagate in from above in case the lambda is partially connected 
-        for (BinderAnchor arg : arguments) {
-            for (InputAnchor anchor : arg.getOppositeAnchors()) {
-                anchor.handleConnectionChanges(finalPhase);
-                // take the type of argument connections in account even if the connected block is being processed
-                anchor.getConnection().ifPresent(c -> c.handleConnectionChangesUpwards(finalPhase));
-            }
-        }
-
-        // propagate internal type changes outwards
-        parent.handleConnectionChanges(finalPhase);
-    }
-    
 
     /** Called when the VisualState changed. */
     public void invalidateVisualState() {
@@ -167,5 +135,10 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
     @Override
     public boolean detachBlock(Block block) {
         return attachedBlocks.remove(block);
+    }
+    
+    @Override
+    public boolean containsBlock(Block block) {
+        return attachedBlocks.contains(block);
     }
 }

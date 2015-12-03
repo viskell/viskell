@@ -1,7 +1,9 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -157,16 +159,20 @@ public class InputAnchor extends ConnectionAnchor {
      */
     public Expression getFullExpr() {
         LetExpression expr = new LetExpression(this.getLocalExpr(), false);
-        this.extendExprGraph(expr);
+        Set<Block> surroundingBlocks = new HashSet<>();
+        this.extendExprGraph(expr, null, surroundingBlocks);
+        //TODO somehow add surrounding blocks
         return expr;
     }
     
     /**
      * Extends the expression graph to include all subexpression required
      * @param exprGraph the let expression representing the current expression graph
+     * @param container the container to which this expression graph is constrained
+     * @param addLater a mutable list of blocks that have to be added by a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph) {
-        this.connection.ifPresent(c -> c.getStartAnchor().extendExprGraph(exprGraph));
+    protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<Block> addLater) {
+        this.connection.ifPresent(connection -> connection.extendExprGraph(exprGraph, container, addLater));
     }
 
     /**
