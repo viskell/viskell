@@ -1,6 +1,8 @@
 package nl.utwente.viskell.ui.components;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -15,10 +17,7 @@ import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import com.google.common.collect.ImmutableMap;
 
 
 /**
@@ -227,7 +226,7 @@ public class Connection extends CubicCurve implements
      * @param addLater a mutable list of blocks that have to be added by a surrounding container
      */
     protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<Block> addLater) {
-        if ((container == null && !getStartAnchor().block.getContainer().isPresent()) || container.containsBlock(getStartAnchor().block))
+        if ((container == null && !getStartAnchor().block.getContainer().isPresent()) || (container != null && container.containsBlock(getStartAnchor().block)))
             getStartAnchor().extendExprGraph(exprGraph, container, addLater);
         else
             addLater.add(getStartAnchor().block);

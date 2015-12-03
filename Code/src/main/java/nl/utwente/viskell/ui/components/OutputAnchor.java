@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import javafx.fxml.FXML;
 import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.expr.Binder;
+import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.expr.Variable;
@@ -149,12 +150,15 @@ public class OutputAnchor extends ConnectionAnchor {
      */
     protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<Block> addLater) {
         boolean added = false;
+        Pair<Expression, Set<Block>> pair = block.getLocalExpr();
         
         if (block instanceof MatchBlock) {
-            added = exprGraph.addLetBinding(((MatchBlock)block).getPrimaryBinder(), block.getLocalExpr());
+            added = exprGraph.addLetBinding(((MatchBlock)block).getPrimaryBinder(), pair.a);
         } else {
-            added = exprGraph.addLetBinding(binder, block.getLocalExpr());
+            added = exprGraph.addLetBinding(binder, pair.a);
         }
+        
+        addLater.addAll(pair.b);
         
         if (added) {
             // for a new let binding everything from the subexpression in this block needs to be included

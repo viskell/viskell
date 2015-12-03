@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -13,7 +14,9 @@ import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
+
 import java.util.List;
+import java.util.Set;
 
 /**
  * DisplayBlock is an extension of {@link Block} that only provides a display of
@@ -98,7 +101,7 @@ public class DisplayBlock extends Block {
     }
     
     @Override
-    public Expression getLocalExpr() {
+    public Pair<Expression, Set<Block>> getLocalExpr() {
         return inputAnchor.getLocalExpr();
     }
     

@@ -12,7 +12,10 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Case;
 import nl.utwente.viskell.haskell.expr.ConstructorBinder;
+import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
+import nl.utwente.viskell.haskell.expr.Value;
+import nl.utwente.viskell.haskell.type.TypeCon;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 
@@ -60,15 +63,20 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
         divider.getItems().forEach(element -> element.setMouseTransparent(true));
     }
 
-    public Case.Alternative getAlternative() {
+    public Pair<Case.Alternative,Set<Block>> getAlternative() {
         //TODO generate the pattern and guard for this lane
-        LetExpression guards = new LetExpression(result.getLocalExpr(), true);
-        Set<Block> surroundingBlocks = new HashSet<>();
+        Pair<Expression, Set<Block>> pair = result.getLocalExpr();
+        LetExpression guards = new LetExpression(pair.a, true);
+        Set<Block> surroundingBlocks = pair.b;
         result.extendExprGraph(guards, this, surroundingBlocks);
-        //TODO somehow add surrounding blocks
-        attachedBlocks.stream().forEach(block -> block.extendExprGraph(guards, this, surroundingBlocks));
-        //attachedBlocks.stream().map(block -> block.getAllOutputs().get(0).binder).forEach(binder -> guards.addLetBinding(binder, guards));;
-        return new Case.Alternative(new ConstructorBinder("()", Collections.EMPTY_LIST), guards);
+        attachedBlocks.stream().forEach(block -> {
+            block.extendExprGraph(guards, this, surroundingBlocks);
+            if (block instanceof MatchBlock && !block.getAllOutputs().stream().anyMatch(anchor -> anchor.hasConnection())) {
+                Expression expr = block.getAllInputs().stream().findFirst().map(InputAnchor::getFullExpr).orElse(new Value(TypeCon.con("()"),"()"));
+                guards.addLetBinding(((MatchBlock)block).primaryBinder, expr);
+            }
+        });
+        return new Pair<>(new Case.Alternative(new ConstructorBinder("()", Collections.EMPTY_LIST), guards), surroundingBlocks);
     }
 
     public ResultAnchor getOutput() {
@@ -130,11 +138,16 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
     @Override
     public void attachBlock(Block block) {
         attachedBlocks.add(block);
+        handleConnectionChanges(false);
+        handleConnectionChanges(true);
     }
 
     @Override
     public boolean detachBlock(Block block) {
-        return attachedBlocks.remove(block);
+        boolean removed = attachedBlocks.remove(block);
+        handleConnectionChanges(false);
+        handleConnectionChanges(true);
+        return removed;
     }
     
     @Override

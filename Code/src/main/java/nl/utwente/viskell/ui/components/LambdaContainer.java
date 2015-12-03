@@ -149,13 +149,14 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     }
     
     /** @return The local expression this LambdaContainer represents. */
-    public Expression getLocalExpr() {
-        List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
-        LetExpression body = new LetExpression(this.res.getLocalExpr(), false);
-        Set<Block> surroundingBlocks = new HashSet<>();
-        this.res.extendExprGraph(body, this, surroundingBlocks);
-        //TODO somehow add surrounding blocks
-        return new Lambda(binders, body);
+    public Pair<Expression,Set<Block>> getLocalExpr() {
+        Pair<Expression, Set<Block>> pair = res.getLocalExpr();
+        List<Binder> binders = args.stream().map(arg -> arg.binder).collect(Collectors.toList());
+        LetExpression body = new LetExpression(pair.a, false);
+        Set<Block> surroundingBlocks = pair.b;
+        res.extendExprGraph(body, this, surroundingBlocks);
+        
+        return new Pair<>(new Lambda(binders, body), surroundingBlocks);
     }
 
     /** Called when the VisualState changed. */
@@ -166,11 +167,16 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     @Override
     public void attachBlock(Block block) {
         attachedBlocks.add(block);
+        handleConnectionChanges(false);
+        handleConnectionChanges(true);
     }
 
     @Override
     public boolean detachBlock(Block block) {
-        return attachedBlocks.remove(block);
+        boolean removed = attachedBlocks.remove(block);
+        handleConnectionChanges(false);
+        handleConnectionChanges(true);
+        return removed;
     }
     
     @Override

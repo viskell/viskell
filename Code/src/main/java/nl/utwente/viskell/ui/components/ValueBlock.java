@@ -1,6 +1,8 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -70,8 +72,8 @@ public class ValueBlock extends Block {
     }
 
     @Override
-    public Expression getLocalExpr() {
-        return new Value(output.getType(), getValue());
+    public Pair<Expression, Set<Block>> getLocalExpr() {
+        return new Pair<>(new Value(output.getType(), getValue()), new HashSet<>());
     }
 
     @Override

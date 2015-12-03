@@ -168,16 +168,20 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /**
      * @return The local expression this Block represents.
      */
-    public abstract Expression getLocalExpr();
+    public abstract Pair<Expression,Set<Block>> getLocalExpr();
     
     /**
      * @return A complete expression of this block and all its dependencies.
      */
     public final Expression getFullExpr() {
-        LetExpression fullExpr = new LetExpression(this.getLocalExpr(), false);
-        Set<Block> surroundingBlocks = new HashSet<>();
-        this.extendExprGraph(fullExpr, null, surroundingBlocks);
-        //TODO somehow add surrounding blocks
+        Pair<Expression, Set<Block>> localExpr = getLocalExpr();
+        
+        LetExpression fullExpr = new LetExpression(localExpr.a, false);
+        Set<Block> surroundingBlocks = localExpr.b;
+        extendExprGraph(fullExpr, null, surroundingBlocks);
+        
+        surroundingBlocks.forEach(block -> block.extendExprGraph(fullExpr, null, new HashSet<>()));
+        
         return fullExpr;
     }
 

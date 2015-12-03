@@ -1,7 +1,12 @@
 package nl.utwente.viskell.ui.components;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,11 +22,8 @@ import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.NoSuchElementException;
-import java.util.concurrent.ExecutionException;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Block that accepts a (Float -> Float) function to be displayed on a linechart
@@ -72,7 +74,7 @@ public class GraphBlock extends Block {
     }
     
     @Override
-    public Expression getLocalExpr() {
+    public Pair<Expression, Set<Block>> getLocalExpr() {
         return input.getLocalExpr();
     }
 

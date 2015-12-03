@@ -2,6 +2,7 @@ package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -101,7 +102,7 @@ public class MatchBlock extends Block {
     }
 
     @Override
-    public Expression getLocalExpr() {
+    public Pair<Expression, Set<Block>> getLocalExpr() {
         return input.getLocalExpr();
     }
 

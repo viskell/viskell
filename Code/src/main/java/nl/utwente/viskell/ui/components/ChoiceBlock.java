@@ -3,12 +3,14 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Case;
+import nl.utwente.viskell.haskell.expr.Case.Alternative;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
@@ -80,8 +82,11 @@ public class ChoiceBlock extends Block {
     }
     
     @Override
-    public Expression getLocalExpr() {
-        return new Case(new Value(Type.tupleOf(), "()"), lanes.stream().map(Lane::getAlternative).collect(Collectors.toList()));
+    public Pair<Expression, Set<Block>> getLocalExpr() {
+        List<Alternative> bindings = lanes.stream().map(Lane::getAlternative).map(pair -> pair.a).collect(Collectors.toList());
+        Set<Block> surroundingBlocks = lanes.stream().map(Lane::getAlternative).flatMap(pair -> pair.b.stream()).collect(Collectors.toSet());
+        
+        return new Pair<>(new Case(new Value(Type.tupleOf(), "()"), bindings), surroundingBlocks);
     }
 
     @Override

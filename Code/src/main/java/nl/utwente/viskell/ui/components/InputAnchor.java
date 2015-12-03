@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableMap;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -19,6 +17,8 @@ import nl.utwente.viskell.haskell.expr.Hole;
 import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * ConnectionAnchor that specifically functions as an input.
@@ -150,19 +150,21 @@ public class InputAnchor extends ConnectionAnchor {
     /**
      * @return The local expression carried by the connection connected to this anchor.
      */
-    public Expression getLocalExpr() {
-        return this.connection.map(c -> c.getStartAnchor().getVariable()).orElse(new Hole());
+    public Pair<Expression, Set<Block>> getLocalExpr() {
+        return new Pair<>(this.connection.map(c -> c.getStartAnchor().getVariable()).orElse(new Hole()), new HashSet<>());
     }
     
     /**
      * @return The full expression carried by the connection connected to this anchor.
      */
     public Expression getFullExpr() {
-        LetExpression expr = new LetExpression(this.getLocalExpr(), false);
-        Set<Block> surroundingBlocks = new HashSet<>();
-        this.extendExprGraph(expr, null, surroundingBlocks);
-        //TODO somehow add surrounding blocks
-        return expr;
+        Pair<Expression, Set<Block>> pair = this.getLocalExpr();
+        LetExpression fullExpr = new LetExpression(pair.a, false);
+        Set<Block> surroundingBlocks = pair.b;
+        this.extendExprGraph(fullExpr, null, surroundingBlocks);
+        
+        surroundingBlocks.forEach(block -> block.extendExprGraph(fullExpr, null, new HashSet<>()));
+        return fullExpr;
     }
     
     /**
