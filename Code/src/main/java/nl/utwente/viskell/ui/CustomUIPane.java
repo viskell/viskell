@@ -65,35 +65,6 @@ public class CustomUIPane extends Region {
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
         this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleRelease);
-        this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
-    }
-
-    private void handleKey(KeyEvent keyEvent) {
-        int dist = 100;
-
-        switch (keyEvent.getCode()) {
-            case UP:     this.setTranslateY(this.getTranslateY() + dist); break;
-            case DOWN:   this.setTranslateY(this.getTranslateY() - dist); break;
-            case LEFT:   this.setTranslateX(this.getTranslateX() + dist); break;
-            case RIGHT:  this.setTranslateX(this.getTranslateX() - dist); break;
-
-            case H: // C&C-style
-            case BACK_SPACE: // SC-style
-                this.setTranslateX(0);
-                this.setTranslateY(0);
-                break;
-
-            case EQUALS: this.setScale(this.getScaleX() * 1.25); break;
-            case MINUS:  this.setScale(this.getScaleX() * 0.8); break;
-            case DIGIT1: this.setScale(1); break;
-
-            case Z:
-                showInspector();
-                break;
-
-            default:
-                break;
-        }
     }
 
     public void showInspector() {
