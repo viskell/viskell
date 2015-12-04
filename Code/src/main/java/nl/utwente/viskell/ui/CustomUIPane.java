@@ -14,6 +14,7 @@ import nl.utwente.viskell.ui.components.Block;
 import nl.utwente.viskell.ui.components.Connection;
 import nl.utwente.viskell.ui.components.DrawWire;
 import nl.utwente.viskell.ui.components.InputAnchor;
+import nl.utwente.viskell.ui.components.OutputAnchor;
 
 import java.io.File;
 import java.util.Optional;
@@ -178,11 +179,8 @@ public class CustomUIPane extends Region {
     
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
-        for (InputAnchor in : block.getAllInputs()) {
-            in.removeConnections();
-        }
-        
-        block.getAllOutputs().stream().forEach(output -> output.removeConnections());
+        block.getAllInputs().forEach(InputAnchor::removeConnections);
+        block.getAllOutputs().forEach(OutputAnchor::removeConnections);
 
         if (block.belongsOnBottom()) {
             this.bottomLayer.getChildren().remove(block);
