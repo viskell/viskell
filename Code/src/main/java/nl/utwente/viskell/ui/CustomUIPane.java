@@ -1,10 +1,7 @@
 package nl.utwente.viskell.ui;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Pane;
@@ -30,7 +27,6 @@ public class CustomUIPane extends Region {
     /** higher pane layer for connections wires */
     private final Pane wireLayer;
 
-    private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
     
     private GhciSession ghci;
@@ -57,7 +53,6 @@ public class CustomUIPane extends Region {
         this.getChildren().add(this.wireLayer);
 
         this.connectionCreationManager = new ConnectionCreationManager(this);
-        this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
 
@@ -67,38 +62,6 @@ public class CustomUIPane extends Region {
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
         this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleRelease);
-        this.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKey);
-    }
-
-    private void handleKey(KeyEvent keyEvent) {
-        int dist = 100;
-
-        switch (keyEvent.getCode()) {
-            case UP:     this.setTranslateY(this.getTranslateY() + dist); break;
-            case DOWN:   this.setTranslateY(this.getTranslateY() - dist); break;
-            case LEFT:   this.setTranslateX(this.getTranslateX() + dist); break;
-            case RIGHT:  this.setTranslateX(this.getTranslateX() - dist); break;
-
-            case H: // C&C-style
-            case BACK_SPACE: // SC-style
-                this.setTranslateX(0);
-                this.setTranslateY(0);
-                break;
-
-            case EQUALS: this.setScale(this.getScaleX() * 1.25); break;
-            case MINUS:  this.setScale(this.getScaleX() * 0.8); break;
-            case DIGIT1: this.setScale(1); break;
-
-            case Z:
-                showInspector();
-                break;
-
-            case DELETE:
-                removeSelected();
-                break;
-            default:
-                break;
-        }
     }
 
     public void showInspector() {
@@ -162,18 +125,6 @@ public class CustomUIPane extends Region {
         return ghci.getCatalog().asEnvironment();
     }
 
-    public Optional<Block> getSelectedBlock() {
-        return selectedBlock.get();
-    }
-
-    public void setSelectedBlock(Block selectedBlock) {
-        this.selectedBlock.set(Optional.ofNullable(selectedBlock));
-    }
-
-    public ObjectProperty<Optional<Block>> selectedBlockProperty() {
-        return selectedBlock;
-    }
-    
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
         for (InputAnchor in : block.getAllInputs()) {
@@ -187,11 +138,6 @@ public class CustomUIPane extends Region {
         } else {
             this.blockLayer.getChildren().remove(block);
         }
-    }
-
-    /** Remove the selected block, if any. */
-    private void removeSelected() {
-        this.getSelectedBlock().ifPresent(this::removeBlock);
     }
 
     public ConnectionCreationManager getConnectionCreationManager() {

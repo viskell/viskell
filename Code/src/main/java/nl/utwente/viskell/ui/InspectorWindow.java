@@ -9,6 +9,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.Expression;
+import nl.utwente.viskell.ui.components.Block;
 import nl.utwente.viskell.ui.serialize.Exporter;
 
 /**
@@ -32,12 +33,11 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
         stage.setScene(new Scene(this, 450, 450));
         stage.setX(Main.primaryStage.getX()+Main.primaryStage.getWidth());
         stage.setY(Main.primaryStage.getY());
-
-        pane.selectedBlockProperty().addListener(e -> this.update());
     }
 
     public void show() {
         stage.show();
+        this.update();
     }
 
     public void hide() {
@@ -45,20 +45,29 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
     }
 
     public void update() {
-        pane.getSelectedBlock().ifPresent(block -> {
-            Expression expr = block.getFullExpr();
-            String haskell = expr.toHaskell();
+        json.setText(Exporter.export(pane));
+        TreeItem<String> root = new TreeItem<>("all blocks");
+        root.setExpanded(true);
 
-            json.setText(Exporter.export(pane));
+        // show information on all bottom most blocks
+        StringBuilder haskell = new StringBuilder();
+        this.pane.streamChildren().forEach(node -> {
+            if (node instanceof Block && ((Block)node).isBottomMost()) {
+                Block block = (Block)node;
+                Expression expr = block.getFullExpr();
+                haskell.append(expr.toHaskell());
+                haskell.append("\n\n");
 
-            String label = String.format("%s: %s", block.getClass().getSimpleName(), haskell);
-            TreeItem<String> root = new TreeItem<>(label);
-            root.setExpanded(true);
-            walk(root, expr);
-
-            tree.setRoot(root);
-            hs.setText(haskell);
+                String label = String.format("%s: %s", block.getClass().getSimpleName(), haskell).trim();
+                TreeItem<String> part = new TreeItem<>(label);
+                part.setExpanded(true);
+                this.walk(part, expr);
+                root.getChildren().add(part);
+            }
         });
+
+        tree.setRoot(root);
+        hs.setText(haskell.toString());
     }
 
     /**
