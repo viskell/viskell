@@ -1,5 +1,7 @@
 package nl.utwente.viskell.ghcj;
 
+import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -37,6 +39,12 @@ public final class GhciSession extends AbstractExecutionThreadService {
     /** Gets filled with a HaskellCatalog instance when ghci is ready. */
     private HaskellCatalog catalog;
 
+    /** Gets filled with up to LOG_SIZE errors. */
+    private EvictingQueue<String> errors;
+
+    /** The number of errors to keep. */
+    private final static int LOG_SIZE = 16;
+
     public enum Backend {
         GHCi,
         Clash,
@@ -51,6 +59,7 @@ public final class GhciSession extends AbstractExecutionThreadService {
         super();
 
         queue = new ArrayBlockingQueue<>(1024);
+        errors = EvictingQueue.create(LOG_SIZE);
     }
 
     @Override
@@ -70,6 +79,7 @@ public final class GhciSession extends AbstractExecutionThreadService {
                     future.set(result.trim());
                 } catch (HaskellException e) {
                     future.setException(e);
+                    errors.add(e.getMessage());
                 }
             }
         }
@@ -191,5 +201,10 @@ public final class GhciSession extends AbstractExecutionThreadService {
     public HaskellCatalog getCatalog() {
         awaitRunning();
         return catalog;
+    }
+
+    /** @return an immutable list of the last LOG_SIZE runtime errors. */
+    public List<String> getErrors() {
+        return ImmutableList.copyOf(errors);
     }
 }
