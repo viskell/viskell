@@ -286,8 +286,11 @@ public class CustomUIPane extends Region {
     }
 
     public Stream<Node> streamChildren() {
-        return Stream.concat(this.bottomLayer.getChildren().stream(), Stream.concat(
-                this.blockLayer.getChildren().stream().skip(1), this.wireLayer.getChildren().stream().skip(1)));
+        Stream<Node> bottom = this.bottomLayer.getChildren().stream();
+        Stream<Node> blocks = this.blockLayer.getChildren().stream().skip(1);
+        Stream<Node> wires  = this.wireLayer.getChildren().stream().skip(1);
+
+        return Stream.concat(bottom, Stream.concat(blocks, wires));
     }
 
 }
