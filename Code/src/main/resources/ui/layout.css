@@ -75,7 +75,7 @@ SliderBlock .value.block {
     -fx-alignment: center;
 }
 
-.argumentSpace Label {
+.argumentSpace Label, .argumentLabel {
     -fx-padding: 0 5 0 5;
     -fx-font-size: 14px;
     -fx-font-weight: normal;

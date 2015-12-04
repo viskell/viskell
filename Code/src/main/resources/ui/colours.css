@@ -98,7 +98,7 @@ MatchBlock.selected {
     -fx-background-color: #C8B6C5;
 }
 
-.argumentSpace Label {
+.argumentSpace Label, .argumentLabel {
     -fx-text-fill: black;
     -fx-background-color: white;
 }

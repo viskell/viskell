@@ -153,7 +153,6 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             utilSpace.getChildren().addAll(simulateBlockButton);
         }
 
-
         for (Node button : utilSpace.getChildren()) {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);
         }

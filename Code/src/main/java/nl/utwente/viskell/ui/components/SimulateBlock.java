@@ -42,6 +42,9 @@ public class SimulateBlock extends Block implements ComponentLoader {
 
     @FXML protected Button iterationLabel;
 
+    /** Constrained type variable for the input anchor */
+    private final Type funConstraint;
+
     public SimulateBlock(CustomUIPane pane) {
         super(pane);
         loadFXML("SimulateBlock");
@@ -52,6 +55,9 @@ public class SimulateBlock extends Block implements ComponentLoader {
         iteration = new SimpleIntegerProperty(0);
         iteration.addListener(e -> this.invalidateVisualState());
         iteration.addListener(e -> iterationLabel.setText(String.valueOf(iteration.get())));
+
+        String signature = "(Num a, Show b) => Signal a -> Signal b";
+        funConstraint = getPane().getEnvInstance().buildType(signature);
     }
 
     @Override
@@ -101,8 +107,6 @@ public class SimulateBlock extends Block implements ComponentLoader {
 
     @Override
     public void refreshAnchorTypes() {
-        String signature = "(Num a, Show b) => Signal a -> Signal b";
-        Type type = getPane().getEnvInstance().buildType(signature);
-        inputAnchor.setFreshRequiredType(type, new TypeScope());
+        inputAnchor.setFreshRequiredType(funConstraint, new TypeScope());
     }
 }

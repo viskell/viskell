@@ -6,18 +6,13 @@
     <BorderPane styleClass="display, block">
         <center>
             <VBox alignment="CENTER">
-                <!-- silly extra HBox to not break the argumentSpace css -->
-                <HBox styleClass="argumentSpace">
-                    <Label fx:id="inputType"/>
+                <Label fx:id="inputType" styleClass="argumentLabel" />
+                <Label fx:id="value" styleClass="content"/>
+                <HBox alignment="CENTER">
+                    <Button styleClass="subtle" fx:id="iterationLabel" onAction="#invalidateVisualState">0</Button>
+                    <Button styleClass="subtle" fx:id="step" onAction="#step">Step</Button>
+                    <Button styleClass="subtle" fx:id="restart" onAction="#reset">Reset</Button>
                 </HBox>
-                <VBox>
-                    <Label fx:id="value" styleClass="content"/>
-                    <HBox alignment="CENTER">
-                        <Button styleClass="subtle" fx:id="iterationLabel" onAction="#invalidateVisualState">0</Button>
-                        <Button styleClass="subtle" fx:id="step" onAction="#step">Step</Button>
-                        <Button styleClass="subtle" fx:id="restart" onAction="#reset">Reset</Button>
-                    </HBox>
-                </VBox>
             </VBox>
         </center>
         <top>
