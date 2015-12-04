@@ -8,7 +8,10 @@ import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.ui.components.Block;
+import nl.utwente.viskell.ui.components.Connection;
+import nl.utwente.viskell.ui.components.DrawWire;
 import nl.utwente.viskell.ui.components.InputAnchor;
+import nl.utwente.viskell.ui.components.OutputAnchor;
 
 import java.io.File;
 import java.util.Optional;
@@ -127,11 +130,8 @@ public class CustomUIPane extends Region {
 
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
-        for (InputAnchor in : block.getAllInputs()) {
-            in.removeConnections();
-        }
-        
-        block.getAllOutputs().stream().forEach(output -> output.removeConnections());
+        block.getAllInputs().forEach(InputAnchor::removeConnections);
+        block.getAllOutputs().forEach(OutputAnchor::removeConnections);
 
         if (block.belongsOnBottom()) {
             this.bottomLayer.getChildren().remove(block);
@@ -201,28 +201,28 @@ public class CustomUIPane extends Region {
         }
     }
 
-    public void addMenu(Node menu) {
-        this.getChildren().add(menu);
+    public boolean addMenu(FunctionMenu menu) {
+        return this.getChildren().add(menu);
     }
 
-    public void removeMenu(Node menu) {
-        this.getChildren().remove(menu);
+    public boolean removeMenu(FunctionMenu menu) {
+        return this.getChildren().remove(menu);
     }
 
-    public void addConnection(Node connection) {
-        this.wireLayer.getChildren().add(connection);
+    public boolean addConnection(Connection connection) {
+        return this.wireLayer.getChildren().add(connection);
     }
 
-    public void removeConnection(Node connection) {
-       this.wireLayer.getChildren().remove(connection);
+    public boolean removeConnection(Connection connection) {
+        return this.wireLayer.getChildren().remove(connection);
     }
 
-    public void addWire(Node drawWire) {
-        this.getChildren().add(drawWire);
+    public boolean addWire(DrawWire drawWire) {
+        return this.getChildren().add(drawWire);
     }
 
-    public void removeWire(Node drawWire) {
-        this.getChildren().remove(drawWire);
+    public boolean removeWire(DrawWire drawWire) {
+        return this.getChildren().remove(drawWire);
     }
 
     public void clearChildren() {
@@ -232,8 +232,11 @@ public class CustomUIPane extends Region {
     }
 
     public Stream<Node> streamChildren() {
-        return Stream.concat(this.bottomLayer.getChildren().stream(), Stream.concat(
-                this.blockLayer.getChildren().stream().skip(1), this.wireLayer.getChildren().stream().skip(1)));
+        Stream<Node> bottom = this.bottomLayer.getChildren().stream();
+        Stream<Node> blocks = this.blockLayer.getChildren().stream().skip(1);
+        Stream<Node> wires  = this.wireLayer.getChildren().stream().skip(1);
+
+        return Stream.concat(bottom, Stream.concat(blocks, wires));
     }
 
 }
