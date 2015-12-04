@@ -13,9 +13,9 @@
                 <VBox>
                     <Label fx:id="value" styleClass="content"/>
                     <HBox alignment="CENTER">
-                        <Label styleClass="subtle" fx:id="iterationLabel">0</Label>
+                        <Button styleClass="subtle" fx:id="iterationLabel" onAction="#invalidateVisualState">0</Button>
                         <Button styleClass="subtle" fx:id="step" onAction="#step">Step</Button>
-                        <Button styleClass="subtle" fx:id="restart" onAction="#reset">Restart</Button>
+                        <Button styleClass="subtle" fx:id="restart" onAction="#reset">Reset</Button>
                     </HBox>
                 </VBox>
             </VBox>
