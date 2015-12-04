@@ -257,28 +257,28 @@ public class CustomUIPane extends Region {
         }
     }
 
-    public void addMenu(FunctionMenu menu) {
-        this.getChildren().add(menu);
+    public boolean addMenu(FunctionMenu menu) {
+        return this.getChildren().add(menu);
     }
 
-    public void removeMenu(FunctionMenu menu) {
-        this.getChildren().remove(menu);
+    public boolean removeMenu(FunctionMenu menu) {
+        return this.getChildren().remove(menu);
     }
 
-    public void addConnection(Connection connection) {
-        this.wireLayer.getChildren().add(connection);
+    public boolean addConnection(Connection connection) {
+        return this.wireLayer.getChildren().add(connection);
     }
 
-    public void removeConnection(Connection connection) {
-       this.wireLayer.getChildren().remove(connection);
+    public boolean removeConnection(Connection connection) {
+        return this.wireLayer.getChildren().remove(connection);
     }
 
-    public void addWire(DrawWire drawWire) {
-        this.getChildren().add(drawWire);
+    public boolean addWire(DrawWire drawWire) {
+        return this.getChildren().add(drawWire);
     }
 
-    public void removeWire(DrawWire drawWire) {
-        this.getChildren().remove(drawWire);
+    public boolean removeWire(DrawWire drawWire) {
+        return this.getChildren().remove(drawWire);
     }
 
     public void clearChildren() {
