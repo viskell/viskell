@@ -11,6 +11,8 @@ import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.ui.components.Block;
+import nl.utwente.viskell.ui.components.Connection;
+import nl.utwente.viskell.ui.components.DrawWire;
 import nl.utwente.viskell.ui.components.InputAnchor;
 
 import java.io.File;
@@ -255,27 +257,27 @@ public class CustomUIPane extends Region {
         }
     }
 
-    public void addMenu(Node menu) {
+    public void addMenu(FunctionMenu menu) {
         this.getChildren().add(menu);
     }
 
-    public void removeMenu(Node menu) {
+    public void removeMenu(FunctionMenu menu) {
         this.getChildren().remove(menu);
     }
 
-    public void addConnection(Node connection) {
+    public void addConnection(Connection connection) {
         this.wireLayer.getChildren().add(connection);
     }
 
-    public void removeConnection(Node connection) {
+    public void removeConnection(Connection connection) {
        this.wireLayer.getChildren().remove(connection);
     }
 
-    public void addWire(Node drawWire) {
+    public void addWire(DrawWire drawWire) {
         this.getChildren().add(drawWire);
     }
 
-    public void removeWire(Node drawWire) {
+    public void removeWire(DrawWire drawWire) {
         this.getChildren().remove(drawWire);
     }
 
