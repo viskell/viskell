@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.SplitPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Case;
 import nl.utwente.viskell.haskell.expr.ConstructorBinder;
@@ -19,7 +19,7 @@ import nl.utwente.viskell.haskell.type.TypeCon;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 
-public class Lane extends Pane implements BlockContainer, ComponentLoader {
+public class Lane extends BorderPane implements BlockContainer, ComponentLoader {
     
     /** The argument anchors of this alternative */
     protected List<BinderAnchor> arguments;
@@ -42,8 +42,6 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
     @FXML protected Pane argumentSpace;
     
     @FXML protected Pane resultSpace;
-    
-    @FXML protected SplitPane divider;
 
     /** A set of blocks that belong to this container */
     protected Set<Block> attachedBlocks;
@@ -58,9 +56,6 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
         
         argumentSpace.getChildren().addAll(arguments);
         resultSpace.getChildren().add(result);
-        
-        //TODO make the choiceblock draggable from within a lane
-        divider.getItems().forEach(element -> element.setMouseTransparent(true));
     }
 
     public Pair<Case.Alternative,Set<Block>> getAlternative() {
@@ -69,11 +64,19 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
         LetExpression guards = new LetExpression(pair.a, true);
         Set<Block> surroundingBlocks = pair.b;
         result.extendExprGraph(guards, this, surroundingBlocks);
+        System.out.println(this+": "+guards.toHaskell());
         attachedBlocks.stream().forEach(block -> {
-            block.extendExprGraph(guards, this, surroundingBlocks);
             if (block instanceof MatchBlock && !block.getAllOutputs().stream().anyMatch(anchor -> anchor.hasConnection())) {
                 Expression expr = block.getAllInputs().stream().findFirst().map(InputAnchor::getFullExpr).orElse(new Value(TypeCon.con("()"),"()"));
                 guards.addLetBinding(((MatchBlock)block).primaryBinder, expr);
+                System.out.println("non-connected matchblock: "+guards.toHaskell());
+            }
+            block.extendExprGraph(guards, this, surroundingBlocks);
+            if (block instanceof MatchBlock) {
+                System.out.println("matchblock "+((MatchBlock)block).primaryBinder.getUniqueName()+": "+guards.toHaskell());
+            }
+            else {
+                System.out.println("non-match "+block+": "+guards.toHaskell());
             }
         });
         return new Pair<>(new Case.Alternative(new ConstructorBinder("()", Collections.EMPTY_LIST), guards), surroundingBlocks);
@@ -153,5 +156,10 @@ public class Lane extends Pane implements BlockContainer, ComponentLoader {
     @Override
     public boolean containsBlock(Block block) {
         return attachedBlocks.contains(block);
+    }
+
+    @Override
+    public void moveNodes(double dx, double dy) {
+        attachedBlocks.forEach(node -> node.relocate(node.getLayoutX()+dx, node.getLayoutY()+dy));
     }
 }

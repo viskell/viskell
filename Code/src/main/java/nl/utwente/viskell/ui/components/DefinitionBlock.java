@@ -153,4 +153,11 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         return body;
     }
 
+    @Override
+    public void relocate(double x, double y) {
+        double dx = x-getLayoutX(), dy = y-getLayoutY();
+        super.relocate(x, y);
+        
+        body.moveNodes(dx, dy);
+    }
 }

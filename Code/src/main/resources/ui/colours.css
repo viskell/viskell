@@ -165,10 +165,10 @@ ImageView.hoverMenu {
     -fx-background-color: transparent;
 }
 
-ChoiceBlock SplitPane {
+ChoiceBlock * {
 	-fx-background-color: transparent;
 }
 
 ChoiceBlock #guardSpace {
-	-fx-background-color: rgba(0, 0, 255, 0.3);
+	-fx-background-color: rgba(127, 127, 255, 0.3);
 }

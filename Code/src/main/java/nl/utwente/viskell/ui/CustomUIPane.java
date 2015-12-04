@@ -183,11 +183,9 @@ public class CustomUIPane extends Region {
     
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
-        for (InputAnchor in : block.getAllInputs()) {
-            in.removeConnections();
-        }
-        
-        block.getAllOutputs().stream().forEach(output -> output.removeConnections());
+        block.getAllInputs().forEach(input -> input.removeConnections());
+        block.getAllOutputs().forEach(output -> output.removeConnections());
+        block.getContainer().ifPresent(container -> container.detachBlock(block));
         
         if (block.belongsOnBottom()) {
             this.bottomLayer.getChildren().remove(block);

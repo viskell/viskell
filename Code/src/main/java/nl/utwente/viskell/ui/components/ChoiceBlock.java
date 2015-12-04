@@ -117,4 +117,12 @@ public class ChoiceBlock extends Block {
     public List<Lane> getLanes() {
         return lanes;
     }
+    
+    @Override
+    public void relocate(double x, double y) {
+        double dx = x-getLayoutX(), dy = y-getLayoutY();
+        super.relocate(x, y);
+        
+        lanes.forEach(lane -> lane.moveNodes(dx, dy));
+    }
 }

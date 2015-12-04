@@ -183,4 +183,9 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     public boolean containsBlock(Block block) {
         return attachedBlocks.contains(block);
     }
+
+    @Override
+    public void moveNodes(double dx, double dy) {
+        attachedBlocks.forEach(node -> node.relocate(node.getLayoutX()+dx, node.getLayoutY()+dy));
+    }
 }
