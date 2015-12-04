@@ -1,7 +1,6 @@
 package nl.utwente.viskell.ui;
 
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
