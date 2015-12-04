@@ -2,6 +2,7 @@ package nl.utwente.viskell.ui;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -21,6 +22,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
     private CustomUIPane pane;
 
     @FXML private TreeView<String> tree;
+    @FXML private ListView<String> errors;
     @FXML private TextArea hs;
     @FXML private TextArea json;
 
@@ -68,6 +70,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
 
         tree.setRoot(root);
         hs.setText(haskell.toString());
+        errors.getItems().setAll(pane.getGhciSession().getErrors());
     }
 
     /**

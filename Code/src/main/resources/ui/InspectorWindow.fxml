@@ -5,14 +5,17 @@
 <fx:root type="nl.utwente.viskell.ui.InspectorWindow" xmlns:fx="http://javafx.com/fxml/">
     <center>
         <TabPane>
-            <Tab closable="false" text="Expression tree">
+            <Tab closable="false" text="Tree">
                 <TreeView fx:id="tree" />
             </Tab>
-            <Tab closable="false" text="Haskell source">
+            <Tab closable="false" text="Source">
                 <TextArea fx:id="hs" />
             </Tab>
-            <Tab closable="false" text="JSON serialization">
+            <Tab closable="false" text="JSON">
                 <TextArea fx:id="json" />
+            </Tab>
+            <Tab closable="false" text="Errors">
+                <ListView fx:id="errors" />
             </Tab>
         </TabPane>
     </center>
