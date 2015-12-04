@@ -38,12 +38,13 @@ public class SimulateBlock extends Block implements ComponentLoader {
     /** The label on which to display the value of this block */
     @FXML protected Label value;
 
-    @FXML protected SimpleIntegerProperty iteration;
-
     @FXML protected Button iterationLabel;
 
     /** Constrained type variable for the input anchor */
     private final Type funConstraint;
+
+    /** The number of results to calculate and show */
+    private int iteration;
 
     public SimulateBlock(CustomUIPane pane) {
         super(pane);
@@ -52,9 +53,7 @@ public class SimulateBlock extends Block implements ComponentLoader {
         inputAnchor = new InputAnchor(this);
         inputSpace.getChildren().add(inputAnchor);
 
-        iteration = new SimpleIntegerProperty(0);
-        iteration.addListener(e -> this.invalidateVisualState());
-        iteration.addListener(e -> iterationLabel.setText(String.valueOf(iteration.get())));
+        iteration = 0;
 
         String signature = "(Num a, Show b) => Signal a -> Signal b";
         funConstraint = getPane().getEnvInstance().buildType(signature);
@@ -67,7 +66,7 @@ public class SimulateBlock extends Block implements ComponentLoader {
         if (inputAnchor.hasConnection()) {
             GhciSession ghciSession = getPane().getGhciSession();
             String format = "Data.List.take %d $ simulate (%s) [1..]";
-            String expr = String.format(format, iteration.get(), inputAnchor.getFullExpr().toHaskell());
+            String expr = String.format(format, iteration, inputAnchor.getFullExpr().toHaskell());
             ListenableFuture<String> result = ghciSession.pullRaw(expr);
 
             // See DisplayBlock.invalidateVisualState
@@ -81,13 +80,19 @@ public class SimulateBlock extends Block implements ComponentLoader {
     }
 
     /** Step to the next iteration. */
-    @FXML private void step() {
-        iteration.set(iteration.get() + 1);
+    public void step() {
+        setIteration(iteration + 1);
     }
 
     /** Reset to the first iteration. */
-    @FXML private void reset() {
-        iteration.set(0);
+    public void reset() {
+        setIteration(0);
+    }
+
+    private void setIteration(int i) {
+        iteration = i;
+        iterationLabel.setText(String.valueOf(iteration));
+        this.invalidateVisualState();
     }
 
     @Override
