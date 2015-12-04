@@ -30,7 +30,6 @@ public class CustomUIPane extends Region {
     /** higher pane layer for connections wires */
     private final Pane wireLayer;
 
-    private ObjectProperty<Optional<Block>> selectedBlock;
     private ConnectionCreationManager connectionCreationManager;
     
     private GhciSession ghci;
@@ -57,7 +56,6 @@ public class CustomUIPane extends Region {
         this.getChildren().add(this.wireLayer);
 
         this.connectionCreationManager = new ConnectionCreationManager(this);
-        this.selectedBlock = new SimpleObjectProperty<>(Optional.empty());
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
 
@@ -93,9 +91,6 @@ public class CustomUIPane extends Region {
                 showInspector();
                 break;
 
-            case DELETE:
-                removeSelected();
-                break;
             default:
                 break;
         }
@@ -162,18 +157,6 @@ public class CustomUIPane extends Region {
         return ghci.getCatalog().asEnvironment();
     }
 
-    public Optional<Block> getSelectedBlock() {
-        return selectedBlock.get();
-    }
-
-    public void setSelectedBlock(Block selectedBlock) {
-        this.selectedBlock.set(Optional.ofNullable(selectedBlock));
-    }
-
-    public ObjectProperty<Optional<Block>> selectedBlockProperty() {
-        return selectedBlock;
-    }
-    
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
         for (InputAnchor in : block.getAllInputs()) {
@@ -187,11 +170,6 @@ public class CustomUIPane extends Region {
         } else {
             this.blockLayer.getChildren().remove(block);
         }
-    }
-
-    /** Remove the selected block, if any. */
-    private void removeSelected() {
-        this.getSelectedBlock().ifPresent(this::removeBlock);
     }
 
     public ConnectionCreationManager getConnectionCreationManager() {
