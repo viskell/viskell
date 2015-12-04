@@ -223,5 +223,32 @@
         <category name="Simulation">
             <function name="simulate" signature="(Signal a -> Signal b) -> [a] -> [b]"/>
         </category>
+        <category name="Utility functions">
+            <function name="id" signature="a -> a">
+                identity function.
+            </function>
+            <function name="const" signature="a -> b -> a">
+                constant function.
+            </function>
+            <function name="(.)" signature="(b -> c) -> (a -> b) -> a -> c">
+                Function composition
+            </function>
+            <function name="flip" signature="(a -> b -> c) -> b -> a -> c">
+                flip f takes its (first) two arguments in the reverse order of f.
+            </function>
+            <function name="($)" signature="(a -> b) -> a -> b">
+                Application operator. This operator is used to apply user defined functions, since ordinary application (f x) means
+                the same as (f $ x). However, $ has low, right-associative binding precedence, so it
+                sometimes allows parentheses to be omitted.
+            </function>
+            <function name="undefined" signature="a">
+                A special case of error. It is expected that compilers will recognize this and insert error
+                messages which are more appropriate to the context in which undefined appears.
+            </function>
+            <function name="seq" signature="a -> b -> b">
+                The value of seq a b is bottom if a is bottom, and otherwise equal to b. seq is usually
+                introduced to improve performance by avoiding unneeded laziness.
+            </function>
+        </category>
     </functions>
 </catalog>

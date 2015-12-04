@@ -1,0 +1,22 @@
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import nl.utwente.viskell.ui.components.SimulateBlock?>
+<?import javafx.scene.control.Button?>
+<fx:root type="nl.utwente.viskell.ui.components.SimulateBlock" xmlns:fx="http://javafx.com/fxml/">
+    <BorderPane styleClass="display, block">
+        <center>
+            <VBox alignment="CENTER">
+                <Label fx:id="inputType" styleClass="argumentLabel" />
+                <Label fx:id="value" styleClass="content"/>
+                <HBox alignment="CENTER">
+                    <Button styleClass="subtle" fx:id="iterationLabel" onAction="#invalidateVisualState">0</Button>
+                    <Button styleClass="subtle" fx:id="step" onAction="#step">Step</Button>
+                    <Button styleClass="subtle" fx:id="restart" onAction="#reset">Reset</Button>
+                </HBox>
+            </VBox>
+        </center>
+        <top>
+            <HBox fx:id="inputSpace"/>
+        </top>
+    </BorderPane>
+</fx:root>
