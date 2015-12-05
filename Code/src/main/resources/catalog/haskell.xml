@@ -44,11 +44,11 @@
      <datatype name="(,,,,)" typeArity="5">
        <constructor name="(,,,,)" signature="a -> b -> c -> d -> e ->(a,b,c,d,e)"/>
      </datatype>
-     <datatype name="(,,,,)" typeArity="6">
-       <constructor name="(,,,,)" signature="a -> b -> c -> d -> e -> f -> (a,b,c,d,e,f)"/>
+     <datatype name="(,,,,,)" typeArity="6">
+       <constructor name="(,,,,,)" signature="a -> b -> c -> d -> e -> f -> (a,b,c,d,e,f)"/>
      </datatype>
-     <datatype name="(,,,,)" typeArity="7">
-       <constructor name="(,,,,)" signature="a -> b -> c -> d -> e -> f -> g -> (a,b,c,d,e,f,g)"/>
+     <datatype name="(,,,,,,)" typeArity="7">
+       <constructor name="(,,,,,,)" signature="a -> b -> c -> d -> e -> f -> g -> (a,b,c,d,e,f,g)"/>
      </datatype>
      <datatype name="IO" builtin="true" typeArity="1"/>
   </datatypes>
