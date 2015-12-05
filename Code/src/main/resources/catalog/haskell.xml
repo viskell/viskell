@@ -50,7 +50,9 @@
      <datatype name="(,,,,)" typeArity="7">
        <constructor name="(,,,,)" signature="a -> b -> c -> d -> e -> f -> g -> (a,b,c,d,e,f,g)"/>
      </datatype>
+     <datatype name="IO" builtin="true" typeArity="1"/>
   </datatypes>
+  
   <classes>
     <class name="Eq">
       <instance name="Int"/>
