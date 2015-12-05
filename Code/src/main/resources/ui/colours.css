@@ -94,7 +94,7 @@ DrawWire {
 }
 
 Connection {
-    -fx-stroke: #FCEBB6;
+    -fx-stroke: black;
     -fx-fill: null;
 }
 
