@@ -3,8 +3,6 @@ package nl.utwente.viskell.ui.components;
 import com.google.common.collect.ImmutableMap;
 
 import javafx.application.Platform;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
@@ -52,18 +50,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.freshAnchorTypes = false;
         this.updateInProgress = false;
         this.dragContext = new DragContext(this);
-        
-        this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseEvent);
-    }
-
-    /**
-     * Sets this block as the selected block.
-     * A right click also opens the CircleMenu.
-     */
-    private void handleMouseEvent(MouseEvent t) {
-        if (t.getButton() == MouseButton.SECONDARY) {
-            CircleMenu.showFor(this, t);
-        }
+        this.dragContext.setSecondaryClickAction(p -> CircleMenu.showFor(this, this.localToScreen(p)));
     }
 
     /** @return the parent CustomUIPane of this component. */

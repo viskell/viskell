@@ -2,6 +2,7 @@ package nl.utwente.viskell.ui;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.Pane;
@@ -88,11 +89,6 @@ public class CustomUIPane extends Region {
             offset = new Point2D(this.getTranslateX(), this.getTranslateY());
             dragStart = new Point2D(e.getScreenX(), e.getScreenY());
             dragging = true;
-        } else if (e.isSecondaryButtonDown()) {
-            ghci.awaitRunning();
-            FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this);
-            menu.relocate(e.getX(), e.getY());
-            this.addMenu(menu);
         }
     }
 
@@ -112,7 +108,14 @@ public class CustomUIPane extends Region {
     }
     
     private void handleRelease(MouseEvent e) {
-        dragging = false;
+        if (e.getButton() == MouseButton.PRIMARY) {
+            dragging = false;
+        } else {
+            ghci.awaitRunning();
+            FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this);
+            menu.relocate(e.getX(), e.getY());
+            this.addMenu(menu);
+        }
     }
 
     private void setScale(double scale) {

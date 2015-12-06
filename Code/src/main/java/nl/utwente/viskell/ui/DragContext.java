@@ -1,11 +1,14 @@
 package nl.utwente.viskell.ui;
 
 import java.util.function.Consumer;
+
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 
@@ -42,6 +45,9 @@ public class DragContext {
 
     /** the method to be called when a drag action has finished, may be null */
     private Consumer<DragContext> dragFinishAction;
+
+    /** the method to be called when a secondary action is performed, may be null. */
+    private Consumer<Point2D> secondaryClickAction;
     
     /** bounds to wherein the dragging is constrained */
     private Bounds dragLimits;  
@@ -89,6 +95,11 @@ public class DragContext {
                 if (this.touchId == event.getTouchPoint().getId()) {
                     this.handleTouchReleased();
                     event.consume();
+                } else if (! this.dragStarted) {
+                    event.consume();
+                    if (this.secondaryClickAction != null) {
+                        this.secondaryClickAction.accept(new Point2D(event.getTouchPoint().getX(), event.getTouchPoint().getY()));
+                    }
                 }
             }
         };
@@ -114,7 +125,12 @@ public class DragContext {
                     event.consume();
                 }
             } else if (type == MouseEvent.MOUSE_RELEASED) {
-                if (this.touchId == DragContext.MOUSE_ID) {
+                if (event.getButton() == MouseButton.SECONDARY && !this.dragStarted) {
+                    event.consume();
+                    if (this.secondaryClickAction != null) {
+                        this.secondaryClickAction.accept(new Point2D(event.getX(), event.getY()));
+                    }
+                } else if (this.touchId == DragContext.MOUSE_ID) {
                     handleTouchReleased();
                     event.consume();
                 }
@@ -211,6 +227,14 @@ public class DragContext {
      */
     public void setDragInitAction(Consumer<DragContext> action) {
         this.dragInitAction = action;
+    }
+
+    /**
+     * @param action the method to be called when a secondary action is performed, may be null.
+     * Secondary actions are either a right click on the mouse or a tap on the same node by a second finger
+     */
+    public void setSecondaryClickAction(Consumer<Point2D> action) {
+        this.secondaryClickAction = action;
     }
 
     /**
