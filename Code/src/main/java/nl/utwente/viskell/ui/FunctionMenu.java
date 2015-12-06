@@ -19,6 +19,7 @@ import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.CatalogFunction;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
+import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.components.*;
 
@@ -97,6 +98,8 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                                 } else {
                                     addBlock(new FunApplyBlock(entry, parent));
                                 }
+                            } else if (!(entry.getFreshSignature() instanceof FunType)) {
+                                addBlock(new ValueBlock(pane, entry.getFreshSignature(), entry.getName()));
                             } else {
                                 addBlock(new FunctionBlock(entry, parent));
                             }
