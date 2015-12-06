@@ -65,8 +65,11 @@ public class FunApplyBlock extends Block {
             dragContext.setDragInitAction(c -> {this.curried = false;});
             dragContext.setDragFinishAction(c -> {
                 double height = this.inputType.getHeight();
-                this.curried = this.inputType.getLayoutY() > height;
-                this.inputType.relocate(0, this.curried ? 2*height : 0);
+                boolean mostlyDown = this.inputType.getLayoutY() > height;
+                double newY = mostlyDown ? 2*height : 0;
+                this.inputType.relocate(0, newY);
+                this.curried = mostlyDown;
+                FunApplyBlock.this.dragShiftOuput(newY - height);
                 FunApplyBlock.this.initiateConnectionChanges();
             });
         }
