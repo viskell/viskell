@@ -1,9 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="catalog.xsl" ?>
 <catalog version="0.4">
+  <datatypes>
+     <datatype name="Bool">
+       <constructor name="False" signature="Bool"/>
+       <constructor name="True" signature="Bool"/>
+     </datatype>
+     <datatype name="Ordering">
+       <constructor name="LT" signature="Ordering"/>
+       <constructor name="EQ" signature="Ordering"/>
+       <constructor name="GT" signature="Ordering"/>
+     </datatype>
+     <datatype name="Maybe" typeArity="1">
+       <constructor name="Nothing" signature="Maybe a"/>
+       <constructor name="Just" signature="a -> Maybe a"/>
+     </datatype>
+     <datatype name="Either" typeArity="2">
+       <constructor name="Left" signature="a -> Either a b"/>
+       <constructor name="Right" signature="b -> Either a b"/>
+     </datatype>
+     <datatype name="[]" typeArity="1">
+       <constructor name="[]" signature="[a]"/>
+       <constructor name="(:)" signature="a -> [a] -> [a]"/>
+     </datatype>
+     <datatype name="Int" builtin="true"/>
+     <datatype name="Integer" builtin="true"/>
+     <datatype name="Char" builtin="true"/>
+     <datatype name="Float" builtin="true"/>
+     <datatype name="Int" builtin="true"/>
+     <datatype name="Double" builtin="true"/>
+     <datatype name="()" typeArity="0">
+       <constructor name="()" signature="()"/>
+     </datatype>
+     <datatype name="(,)" typeArity="2">
+       <constructor name="(,)" signature="a -> b -> (a,b)"/>
+     </datatype>
+     <datatype name="(,,)" typeArity="3">
+       <constructor name="(,,)" signature="a -> b -> c -> (a,b,c)"/>
+     </datatype>
+     <datatype name="(,,,)" typeArity="4">
+       <constructor name="(,,,)" signature="a -> b -> c -> d -> (a,b,c,d)"/>
+     </datatype>
+     <datatype name="(,,,,)" typeArity="5">
+       <constructor name="(,,,,)" signature="a -> b -> c -> d -> e ->(a,b,c,d,e)"/>
+     </datatype>
+     <datatype name="(,,,,,)" typeArity="6">
+       <constructor name="(,,,,,)" signature="a -> b -> c -> d -> e -> f -> (a,b,c,d,e,f)"/>
+     </datatype>
+     <datatype name="(,,,,,,)" typeArity="7">
+       <constructor name="(,,,,,,)" signature="a -> b -> c -> d -> e -> f -> g -> (a,b,c,d,e,f,g)"/>
+     </datatype>
+     <datatype name="IO" builtin="true" typeArity="1"/>
+  </datatypes>
+  
   <classes>
     <class name="Eq">
       <instance name="Int"/>
+      <instance name="Integer"/>
       <instance name="Ordering"/>
       <instance name="Float"/>
       <instance name="Double"/>
@@ -28,6 +81,7 @@
       <instance name="Double"/>
       <instance name="Float"/>
       <instance name="Int"/>
+      <instance name="Integer"/>
       <instance name="[]" constrainedArgs="1"/>
       <instance name="Maybe" constrainedArgs="1"/>
       <instance name="Either" constrainedArgs="2"/>

@@ -6,10 +6,16 @@
   <xs:element name="catalog" type="catalogType"/>
   <xs:complexType name="catalogType">
     <xs:sequence>
+      <xs:element type="datatypesType" name="datatypes" maxOccurs="1" minOccurs="0"/>
       <xs:element type="classesType" name="classes" maxOccurs="1" minOccurs="0"/>
       <xs:element type="functionsType" name="functions" maxOccurs="1" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:token" name="version" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="datatypesType">
+    <xs:sequence>
+      <xs:element type="datatypeType" name="datatype" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
   </xs:complexType>
   <xs:complexType name="classesType">
     <xs:sequence>
@@ -20,6 +26,15 @@
     <xs:sequence>
       <xs:element type="categoryType" name="category" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="datatypeType">
+  	<xs:sequence>
+  		<xs:element type="constructorType" name="constructor"
+  			maxOccurs="unbounded" minOccurs="0" />
+  	</xs:sequence>
+  	<xs:attribute type="xs:token" name="name" use="required" />
+  	<xs:attribute type="xs:int" name="typeArity" default="0" />
+  	<xs:attribute type="xs:boolean" name="builtin" default="false" />
   </xs:complexType>
   <xs:complexType name="classType">
     <xs:sequence>
@@ -33,6 +48,14 @@
       <xs:element type="functionType" name="function" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:token" name="name" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="constructorType">
+  	<xs:simpleContent>
+  		<xs:extension base="xs:token">
+  			<xs:attribute type="xs:token" name="name" use="required" />
+  			<xs:attribute type="xs:token" name="signature" use="required" />
+  		</xs:extension>
+  	</xs:simpleContent>
   </xs:complexType>
   <xs:complexType name="instanceType">
     <xs:simpleContent>
