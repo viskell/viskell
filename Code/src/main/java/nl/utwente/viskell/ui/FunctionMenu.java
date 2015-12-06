@@ -91,8 +91,12 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             }
                             
                             CatalogFunction entry = this.getItem();
-                            if (e.getButton() == MouseButton.SECONDARY && entry.isConstructor()) {
-                                addBlock(new MatchBlock(entry, parent));
+                            if (e.getButton() == MouseButton.SECONDARY) {
+                                if (entry.isConstructor()) {
+                                    addBlock(new MatchBlock(entry, parent));
+                                } else {
+                                    addBlock(new FunApplyBlock(entry, parent));
+                                }
                             } else {
                                 addBlock(new FunctionBlock(entry, parent));
                             }

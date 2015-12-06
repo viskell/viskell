@@ -1,0 +1,13 @@
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import nl.utwente.viskell.ui.components.FunApplyBlock?>
+<fx:root type="nl.utwente.viskell.ui.components.FunApplyBlock" xmlns:fx="http://javafx.com/fxml/1">
+    <HBox styleClass="function, block">
+		<padding>
+			<Insets bottom="0" left="5" right="5" top="0" />
+		</padding>
+    	<Label fx:id="functionInfo" styleClass="title" />
+		<Pane fx:id="bodySpace" />
+    </HBox>
+</fx:root>
