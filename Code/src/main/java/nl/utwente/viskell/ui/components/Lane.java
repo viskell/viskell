@@ -1,7 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -91,17 +90,16 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
         attachedBlocks.stream().filter(Block::isBottomMost).forEach(block -> {
             if (block instanceof MatchBlock) {
                 guards.addLetBinding(((MatchBlock)block).getPrimaryBinder(), block.getAllInputs().get(0).getFullExpr());
-            }
-            else {
+            } else {
                 block.getAllOutputs().forEach(anchor -> {
-                    guards.addLetBinding(new ConstructorBinder("True", Collections.EMPTY_LIST), anchor.getVariable());
+                    guards.addLetBinding(new ConstructorBinder("True"), anchor.getVariable());
                     anchor.extendExprGraph(guards, Optional.of(this), surroundingBlocks);
                 });
             }
             block.extendExprGraph(guards, Optional.of(this), surroundingBlocks);
         });
         
-        return new Pair<>(new Case.Alternative(new ConstructorBinder("()", Collections.EMPTY_LIST), guards), surroundingBlocks);
+        return new Pair<>(new Case.Alternative(new ConstructorBinder("()"), guards), surroundingBlocks);
     }
 
     /** Returns the result anchor of this Lane */
@@ -111,7 +109,7 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
 
     @Override
     public void refreshAnchorTypes() {
-        // refresh anchor types only once at the start
+        // refresh anchor types only once at the start of the typechecking process
         if (!firstPhaseInProgress && !freshAnchorTypes) {
             freshAnchorTypes = true;
             
@@ -131,8 +129,7 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
 
                 firstPhaseInProgress = true;
                 finalPhaseInProgress = false;
-            }
-            else {
+            } else {
                 firstPhaseInProgress = false;
                 finalPhaseInProgress = true;
             }

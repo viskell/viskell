@@ -4,6 +4,6 @@
 <fx:root type="nl.utwente.viskell.ui.components.ChoiceBlock" xmlns:fx="http://javafx.com/fxml/">
     <VBox styleClass="def">
     	<HBox fx:id="altSpace"/>
-        <HBox fx:id="funSpace" spacing="50" alignment="BOTTOM_CENTER"/>
+        <HBox fx:id="resultSpace" spacing="50" alignment="BOTTOM_CENTER"/>
     </VBox>
 </fx:root>

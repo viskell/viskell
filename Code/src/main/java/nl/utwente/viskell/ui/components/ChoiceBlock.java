@@ -36,7 +36,7 @@ public class ChoiceBlock extends Block {
     @FXML protected Pane altSpace;
     
     /** The container Node for the OutputAnchor */
-    @FXML protected Pane funSpace;
+    @FXML protected Pane resultSpace;
 
     public ChoiceBlock(CustomUIPane pane) {
         super(pane);
@@ -44,7 +44,7 @@ public class ChoiceBlock extends Block {
         
         lanes = new ArrayList<>();
         output = new OutputAnchor(this, new Binder("choiceoutput"));
-        funSpace.getChildren().add(output);
+        resultSpace.getChildren().add(output);
         dragContext.setGoToForegroundOnContact(false);
         
         addLane();
