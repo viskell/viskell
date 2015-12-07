@@ -1,22 +1,25 @@
 package nl.utwente.viskell.ui;
 
+import java.io.File;
+import java.util.Optional;
+import java.util.stream.Stream;
+
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.ui.components.Block;
+import nl.utwente.viskell.ui.components.BlockContainer;
+import nl.utwente.viskell.ui.components.ChoiceBlock;
 import nl.utwente.viskell.ui.components.Connection;
+import nl.utwente.viskell.ui.components.DefinitionBlock;
 import nl.utwente.viskell.ui.components.DrawWire;
 import nl.utwente.viskell.ui.components.InputAnchor;
 import nl.utwente.viskell.ui.components.OutputAnchor;
-
-import java.io.File;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 /**
  * The core Pane that also keeps state for the user interface.
@@ -135,7 +138,8 @@ public class CustomUIPane extends Region {
     public void removeBlock(Block block) {
         block.getAllInputs().forEach(InputAnchor::removeConnections);
         block.getAllOutputs().forEach(OutputAnchor::removeConnections);
-
+        block.detachFromContainer();
+        
         if (block.belongsOnBottom()) {
             this.bottomLayer.getChildren().remove(block);
         } else {
@@ -242,4 +246,15 @@ public class CustomUIPane extends Region {
         return Stream.concat(bottom, Stream.concat(blocks, wires));
     }
 
+    public Stream<BlockContainer> getBlockContainers() {
+        return bottomLayer.getChildrenUnmodifiable().stream().flatMap(node -> {
+            if (node instanceof ChoiceBlock) {
+                return ((ChoiceBlock)node).getLanes().stream();
+            }
+            if (node instanceof DefinitionBlock) {
+                return Stream.of(((DefinitionBlock)node).getBody());
+            }
+            return Stream.empty();
+        });
+    }
 }

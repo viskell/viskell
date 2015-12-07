@@ -1,5 +1,6 @@
 package nl.utwente.viskell.haskell.expr;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** A binder that decompose a data constructor into a list of subbinders. */
@@ -14,6 +15,12 @@ public class ConstructorBinder extends Binder {
     public ConstructorBinder(String constr, List<Binder> binders) {
         super("none", null);
         this.binders = binders;
+        this.constructor = constr;
+    }
+
+    public ConstructorBinder(String constr) {
+        super("none", null);
+        this.binders = new ArrayList<>();
         this.constructor = constr;
     }
     

@@ -1,8 +1,14 @@
 package nl.utwente.viskell.ui.components;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
@@ -11,9 +17,6 @@ import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.DragContext;
 import nl.utwente.viskell.ui.serialize.Bundleable;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.
@@ -41,6 +44,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     
     /** Status of change updating process in this block. */
     private boolean updateInProgress;
+    
+    /** The container to which this Block currently belongs */
+    protected Optional<BlockContainer> container;
 
     /**
      * @param pane The pane this block belongs to.
@@ -51,6 +57,11 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.updateInProgress = false;
         this.dragContext = new DragContext(this);
         this.dragContext.setSecondaryClickAction(p -> CircleMenu.showFor(this, this.localToScreen(p)));
+
+        this.container = Optional.empty();
+        
+        dragContext.setDragInitAction(event -> detachFromContainer());
+        dragContext.setDragFinishAction(event -> refreshContainer());
     }
 
     /** @return the parent CustomUIPane of this component. */
@@ -129,55 +140,87 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         // propagate changes down from the output anchor to connected inputs
         this.getAllOutputs().stream().forEach(output -> output.getOppositeAnchors().forEach(input -> input.handleConnectionChanges(finalPhase)));
         
+        // propagate changes to the outside of a choiceblock
+        container.ifPresent(container -> {
+            if (container instanceof Lane) {
+                ((Lane)container).handleConnectionChanges(finalPhase);
+            }
+        });
+        
         if (finalPhase) {
             // Now that the expressions and types are fully updated, initiate a visual refresh.
             Platform.runLater(() -> this.invalidateVisualState());
         }
     }
     
-    /**
-     * @return The local expression this Block represents.
-     */
-    public abstract Expression getLocalExpr();
+    /** @return A pair containing the expression this block represents and a set of required blocks. */
+    public abstract Pair<Expression,Set<Block>> getLocalExpr();
     
     /**
      * @return A complete expression of this block and all its dependencies.
      */
     public final Expression getFullExpr() {
-        LetExpression fullExpr = new LetExpression(this.getLocalExpr());
-        this.extendExprGraph(fullExpr);
+        Pair<Expression, Set<Block>> localExpr = getLocalExpr();
+        
+        LetExpression fullExpr = new LetExpression(localExpr.a, false);
+        Set<Block> surroundingBlocks = localExpr.b;
+        extendExprGraph(fullExpr, Optional.empty(), surroundingBlocks);
+        
+        surroundingBlocks.forEach(block -> block.extendExprGraph(fullExpr, Optional.empty(), new HashSet<>()));
+        
         return fullExpr;
     }
 
     /**
      * Extends the expression graph to include all subexpression required
      * @param exprGraph the let expression representing the current expression graph
+     * @param container the container to which this expression graph is constrained
+     * @param addLater a mutable list of blocks that have to be added by a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph) {
+    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<Block> addLater) {
          for (InputAnchor input : this.getAllInputs()) {
-             input.extendExprGraph(exprGraph);
+             input.extendExprGraph(exprGraph, container, addLater);
          }
     }
     
-    /**
-     * Called when the VisualState changed.
-     */
+    /** Called when the VisualState changed. */
     public abstract void invalidateVisualState();
 
-    /** 
-     * @return whether this block is visually shown below common blocks (is constant per instance).
-     */
+    /** @return whether this block is visually shown below common blocks (is constant per instance). */
     public boolean belongsOnBottom() {
         return false;
     }
     
-    /**
-     * @return class-specific properties of this Block.
-     */
+    /** @return class-specific properties of this Block. */
     protected ImmutableMap<String, Object> toBundleFragment() {
         return ImmutableMap.of();
     }
+    
+    /** @return the container to which this block belongs, if any */
+    public Optional<BlockContainer> getContainer() {
+        return container;
+    }
+    
+    /** Removes the block from its container */
+    public void detachFromContainer() {
+        container.ifPresent(container -> {
+            this.container = Optional.empty();
+            container.detachBlock(this);
+        });
+    }
 
+    /** Scans for and attaches to a new container, if any */
+    public void refreshContainer() {
+        Bounds myBounds = localToScene(getBoundsInLocal());
+        detachFromContainer();
+        
+        container = parentPane.getBlockContainers().
+            filter(container -> container.localToScene(container.getBoundsInLocal()).contains(myBounds)).
+                reduce((a, b) -> !a.localToScene(a.getBoundsInLocal()).contains(b.localToScene(b.getBoundsInLocal())) ? a : b);
+        
+        container.ifPresent(container -> container.attachBlock(this));
+    }
+    
     @Override
     public Map<String, Object> toBundle() {
         return ImmutableMap.of(

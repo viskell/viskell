@@ -19,6 +19,7 @@ import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.CatalogFunction;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
+import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.components.*;
 
@@ -91,8 +92,14 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             }
                             
                             CatalogFunction entry = this.getItem();
-                            if (e.getButton() == MouseButton.SECONDARY && entry.isConstructor()) {
-                                addBlock(new MatchBlock(entry, parent));
+                            if (e.getButton() == MouseButton.SECONDARY) {
+                                if (entry.isConstructor()) {
+                                    addBlock(new MatchBlock(entry, parent));
+                                } else {
+                                    addBlock(new FunApplyBlock(entry, parent));
+                                }
+                            } else if (!(entry.getFreshSignature() instanceof FunType)) {
+                                addBlock(new ValueBlock(pane, entry.getFreshSignature(), entry.getName()));
                             } else {
                                 addBlock(new FunctionBlock(entry, parent));
                             }
@@ -130,7 +137,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         defBlockButton.setOnAction(event -> addDefinitionBlock());
         Button lambdaBlockButton = new Button("Lambda Block");
         lambdaBlockButton.setOnAction(event -> addLambdaBlock());
-        utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton, defBlockButton, lambdaBlockButton);
+        Button choiceBlockButton = new Button("Choice Block");
+        choiceBlockButton.setOnAction(event -> addChoiceBlock());
+
+        utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton, defBlockButton, lambdaBlockButton, choiceBlockButton);
 
         if (GhciSession.pickBackend() == GhciSession.Backend.GHCi) {
             // These blocks are specifically for GHCi
@@ -152,6 +162,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
             utilSpace.getChildren().addAll(simulateBlockButton);
         }
+
 
         for (Node button : utilSpace.getChildren()) {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);
@@ -203,6 +214,11 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
     private void addLambdaBlock() {
         DefinitionBlock def = new DefinitionBlock(this.parent, 1);
+        addBlock(def);
+    }
+    
+    private void addChoiceBlock() {
+        ChoiceBlock def = new ChoiceBlock(this.parent);
         addBlock(def);
     }
     

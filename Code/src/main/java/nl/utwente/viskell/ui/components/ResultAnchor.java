@@ -1,6 +1,7 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.Optional;
+import java.util.Set;
 
 import nl.utwente.viskell.haskell.expr.Annotated;
 import nl.utwente.viskell.haskell.expr.Expression;
@@ -23,9 +24,10 @@ public class ResultAnchor extends InputAnchor {
     }
     
     @Override
-    public Expression getLocalExpr() {
+    public Pair<Expression, Set<Block>> getLocalExpr() {
         if (resType.isPresent()) {
-            return new Annotated(super.getLocalExpr(), resType.get());
+            Pair<Expression, Set<Block>> pair = super.getLocalExpr();
+            return new Pair<>(new Annotated(pair.a, resType.get()), pair.b);
         }
        
         return super.getLocalExpr();

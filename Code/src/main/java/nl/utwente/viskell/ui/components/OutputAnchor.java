@@ -3,12 +3,15 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
 
 import javafx.fxml.FXML;
 import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.expr.Binder;
+import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.expr.Variable;
@@ -143,19 +146,24 @@ public class OutputAnchor extends ConnectionAnchor {
     /**
      * Extends the expression graph to include all subexpression required
      * @param exprGraph the let expression representing the current expression graph
+     * @param container the container to which this expression graph is constrained
+     * @param addLater a mutable list of blocks that have to be added by a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph) {
+    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<Block> addLater) {
         boolean added = false;
+        Pair<Expression, Set<Block>> pair = block.getLocalExpr();
         
         if (block instanceof MatchBlock) {
-            added = exprGraph.addLetBinding(((MatchBlock)block).getPrimaryBinder(), block.getLocalExpr());
+            added = exprGraph.addLetBinding(((MatchBlock)block).getPrimaryBinder(), pair.a);
         } else {
-            added = exprGraph.addLetBinding(binder, block.getLocalExpr());
+            added = exprGraph.addLetBinding(binder, pair.a);
         }
+        
+        addLater.addAll(pair.b);
         
         if (added) {
             // for a new let binding everything from the subexpression in this block needs to be included
-            block.extendExprGraph(exprGraph);
+            block.extendExprGraph(exprGraph, container, addLater);
         }
     }
     

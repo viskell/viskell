@@ -88,6 +88,18 @@ SliderBlock .value.block {
     -fx-font-weight: normal;
 }
 
+.resultType {
+    -fx-padding: 0 5 0 5;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
+.inputType {
+    -fx-padding: 0 5 0 5;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+}
+
 #inputSpace, #outputSpace {
     -fx-max-height: 0px;
     -fx-alignment: center;
@@ -113,6 +125,25 @@ Connection {
 .signature {
     -fx-background-insets: 0, 0;
     -fx-background-radius: 0, 0;
+}
+
+ChoiceBlock {
+	-fx-min-width: 200px;
+	-fx-min-height: 150px;
+}
+
+ChoiceBlock #altSpace {
+	-fx-padding: 20 20 20 20;
+	-fx-spacing: 20;
+}
+
+Lane #guardSpace {
+	-fx-pref-width: 300px;
+	-fx-pref-height: 400px;
+}
+
+Lane #resultSpace {
+	-fx-alignment: center;
 }
 
 .subtle {

@@ -88,6 +88,20 @@ MatchBlock {
     -fx-background-color: black;
 }
 
+.curriedOutput {
+    -fx-background-color: sandybrown;
+}
+
+.resultType {
+    -fx-text-fill: black;
+    -fx-background-color: white;
+}
+
+.inputType {
+    -fx-text-fill: black;
+    -fx-background-color: white;
+}
+
 DrawWire {
     -fx-stroke: #0066FF;
     -fx-fill: null;
@@ -141,4 +155,12 @@ ImageView.hoverMenu {
     -fx-background-insets: 0, 0;
     -fx-background-radius: 0, 0;
     -fx-background-color: transparent;
+}
+
+ChoiceBlock * {
+	-fx-background-color: transparent;
+}
+
+ChoiceBlock #guardSpace {
+	-fx-background-color: rgba(127, 127, 255, 0.3);
 }
