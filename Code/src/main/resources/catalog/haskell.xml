@@ -210,19 +210,19 @@
       <function name="not" signature="Bool -> Bool">
         not
       </function>
-      <function name="True" signature="Bool">
+      <function name="True" signature="Bool" isConstructor="true">
         A true value.
       </function>
-      <function name="False" signature="Bool">
+      <function name="False" signature="Bool" isConstructor="true">
         A false value.
       </function>
-      <function name="LT" signature="Ordering">
+      <function name="LT" signature="Ordering" isConstructor="true">
         Less than
       </function>
-      <function name="EQ" signature="Ordering">
+      <function name="EQ" signature="Ordering" isConstructor="true">
         Equal to
       </function>
-      <function name="GT" signature="Ordering">
+      <function name="GT" signature="Ordering" isConstructor="true">
         Greater than
       </function>
     </category>
