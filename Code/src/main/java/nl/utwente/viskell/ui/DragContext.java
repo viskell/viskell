@@ -70,7 +70,7 @@ public class DragContext {
         this.goToForegroundOnContact = true;
         this.touchId = NULL_ID;
         this.dragLimits = new BoundingBox(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
-        this.dragThreshold = 3.0;
+        this.dragThreshold = 10.0;
         this.dragStarted = false;
         this.relocateThreshold = 1.0;
         
