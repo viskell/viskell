@@ -1,9 +1,9 @@
 package nl.utwente.viskell.ui;
 
+import javafx.geometry.Point2D;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import jfxtras.scene.layout.CircularPane;
 import jfxtras.scene.menu.CirclePopupMenu;
@@ -26,9 +26,9 @@ public class CircleMenu extends CirclePopupMenu {
     private Block block;
 
     /** Show the Circle menu for a specific block. */
-    public static void showFor(Block block, MouseEvent t) {
+    public static void showFor(Block block, Point2D pos) {
         CircleMenu menu = new CircleMenu(block);
-        menu.show(t);
+        menu.show(pos.getX(), pos.getY());
     }
     
     public CircleMenu(Block block) {
