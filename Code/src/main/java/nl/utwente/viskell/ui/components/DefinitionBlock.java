@@ -15,6 +15,7 @@ import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.DragContext;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
@@ -133,7 +134,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
     
     @Override
-    public final Expression getLocalExpr() {
+    public final Pair<Expression,Set<Block>> getLocalExpr() {
         return this.body.getLocalExpr();
     }
 
@@ -147,5 +148,16 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     public boolean belongsOnBottom() {
         return true;
     }
+    
+    public LambdaContainer getBody() {
+        return body;
+    }
 
+    @Override
+    public void relocate(double x, double y) {
+        double dx = x-getLayoutX(), dy = y-getLayoutY();
+        super.relocate(x, y);
+        
+        body.moveNodes(dx, dy);
+    }
 }

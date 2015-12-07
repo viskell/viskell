@@ -1,20 +1,23 @@
 package nl.utwente.viskell.ui.components;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
+import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
-import java.util.Map;
-import java.util.Optional;
+import com.google.common.collect.ImmutableMap;
 
 
 /**
@@ -215,6 +218,19 @@ public class Connection extends CubicCurve implements
         this.setControlY1(this.getStartY() + yOffset);
         this.setControlX2(this.getEndX());
         this.setControlY2(this.getEndY() - yOffset);
+    }
+    
+    /**
+     * Extends the expression graph to include all subexpression required
+     * @param exprGraph the let expression representing the current expression graph
+     * @param container the container to which this expression graph is constrained
+     * @param addLater a mutable list of blocks that have to be added by a surrounding container
+     */
+    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<Block> addLater) {
+        if (container.map(c -> c.containsBlock(getStartAnchor().block)).orElse(!getStartAnchor().block.getContainer().isPresent()))
+            getStartAnchor().extendExprGraph(exprGraph, container, addLater);
+        else
+            addLater.add(getStartAnchor().block);
     }
 
 }

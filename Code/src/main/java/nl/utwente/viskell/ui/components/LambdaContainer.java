@@ -1,8 +1,10 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
@@ -40,6 +42,9 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     
     /** Status of change updating process in this block. */
     private boolean updateInProgress;
+    
+    /** A set of blocks that belong to this container */
+    protected Set<Block> attachedBlocks;
 
     /**
      * Constructs a LambdaContainer for an untyped lambda of n arguments.
@@ -49,6 +54,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
         super();
         this.loadFXML("LambdaContainer");
         this.wrapper = wrapper;
+        attachedBlocks = new HashSet<>();
         
         this.args = new ArrayList<>();
         for (int i = 0; i < arity; i++) {
@@ -69,6 +75,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
         super();
         this.loadFXML("LambdaContainer");
         this.wrapper = wrapper;
+        attachedBlocks = new HashSet<>();
 
         // Collect argument types and result type
         this.args = new ArrayList<>();
@@ -142,16 +149,49 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     }
     
     /** @return The local expression this LambdaContainer represents. */
-    public Expression getLocalExpr() {
-        List<Binder> binders = this.args.stream().map(arg -> arg.binder).collect(Collectors.toList());
-        LetExpression body = new LetExpression(this.res.getLocalExpr());
-        this.res.extendExprGraph(body);
-        return new Lambda(binders, body);
+    public Pair<Expression,Set<Block>> getLocalExpr() {
+        Pair<Expression, Set<Block>> pair = res.getLocalExpr();
+        List<Binder> binders = args.stream().map(arg -> arg.binder).collect(Collectors.toList());
+        LetExpression body = new LetExpression(pair.a, false);
+        Set<Block> surroundingBlocks = pair.b;
+        res.extendExprGraph(body, Optional.of(this), surroundingBlocks);
+        
+        return new Pair<>(new Lambda(binders, body), surroundingBlocks);
     }
 
     /** Called when the VisualState changed. */
     public void invalidateVisualState() {
         // TODO update anchors when they get a type label       
     }
+
+    @Override
+    public void attachBlock(Block block) {
+        attachedBlocks.add(block);
+        handleConnectionChanges(false);
+        handleConnectionChanges(true);
+    }
+
+    @Override
+    public boolean detachBlock(Block block) {
+        boolean removed = attachedBlocks.remove(block);
+        block.detachFromContainer();
+        handleConnectionChanges(false);
+        handleConnectionChanges(true);
+        return removed;
+    }
     
+    @Override
+    public void detachAllBlocks() {
+        attachedBlocks.forEach(Block::detachFromContainer);
+    }
+    
+    @Override
+    public boolean containsBlock(Block block) {
+        return attachedBlocks.contains(block);
+    }
+
+    @Override
+    public void moveNodes(double dx, double dy) {
+        attachedBlocks.forEach(node -> node.relocate(node.getLayoutX()+dx, node.getLayoutY()+dy));
+    }
 }

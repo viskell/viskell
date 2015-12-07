@@ -1,11 +1,9 @@
 package nl.utwente.viskell.ui.components;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.List;
+import java.util.Set;
+
 import javafx.application.Platform;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,7 +15,10 @@ import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 
-import java.util.List;
+import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * A CLaSH-specific block that is a counterpart to the `simulate` function in Clash. Expects a function that turns a
@@ -106,7 +107,7 @@ public class SimulateBlock extends Block implements ComponentLoader {
     }
 
     @Override
-    public Expression getLocalExpr() {
+    public Pair<Expression, Set<Block>> getLocalExpr() {
         return inputAnchor.getLocalExpr();
     }
 

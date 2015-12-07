@@ -1,8 +1,11 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -122,13 +125,17 @@ public class FunctionBlock extends Block {
     }
 
     @Override
-    public Expression getLocalExpr() {
+    public Pair<Expression, Set<Block>> getLocalExpr() {
         Expression expr = new FunVar(this.funInfo);
+        Set<Block> addLater = new HashSet<>();
+        
         for (InputAnchor in : this.getActiveInputs()) {
-            expr = new Apply(expr, in.getLocalExpr());
+            Pair<Expression, Set<Block>> pair = in.getLocalExpr();
+            expr = new Apply(expr, pair.a);
+            addLater.addAll(pair.b);
         }
         
-        return expr;
+        return new Pair<>(expr, addLater);
     }
     
     @Override

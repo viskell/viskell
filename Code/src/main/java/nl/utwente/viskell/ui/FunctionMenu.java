@@ -137,7 +137,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         defBlockButton.setOnAction(event -> addDefinitionBlock());
         Button lambdaBlockButton = new Button("Lambda Block");
         lambdaBlockButton.setOnAction(event -> addLambdaBlock());
-        utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton, defBlockButton, lambdaBlockButton);
+        Button choiceBlockButton = new Button("Choice Block");
+        choiceBlockButton.setOnAction(event -> addChoiceBlock());
+
+        utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton, defBlockButton, lambdaBlockButton, choiceBlockButton);
 
         if (GhciSession.pickBackend() == GhciSession.Backend.GHCi) {
             // These blocks are specifically for GHCi
@@ -159,6 +162,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
             utilSpace.getChildren().addAll(simulateBlockButton);
         }
+
 
         for (Node button : utilSpace.getChildren()) {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);
@@ -210,6 +214,11 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
     private void addLambdaBlock() {
         DefinitionBlock def = new DefinitionBlock(this.parent, 1);
+        addBlock(def);
+    }
+    
+    private void addChoiceBlock() {
+        ChoiceBlock def = new ChoiceBlock(this.parent);
         addBlock(def);
     }
     

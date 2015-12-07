@@ -15,15 +15,19 @@ public class LetExpression extends Expression {
     
     /** The expression forming the body of this let expression*/
     private final Expression body;
+
+    protected boolean isGuard;
     
     /**
      * Constructs an empty let expression (with no local bindings).
      * @param body the main expression of this let.
+     * @param isGuard whether this expression must be compiled as a pattern guard
      */
-    public LetExpression(Expression body) {
+    public LetExpression(Expression body, boolean isGuard) {
         super();
         this.body = body;
         this.binders = new LinkedHashMap<>();
+        this.isGuard = isGuard;
     }
 
     /** @return The body of this let expression */
@@ -59,21 +63,23 @@ public class LetExpression extends Expression {
     @Override
     public String toHaskell() {
         StringBuilder builder = new StringBuilder();
-        this.binders.forEach((binder, expr) -> builder.insert(0, binder.getUniqueName() + " = " + expr.toHaskell() + "; "));
-        builder.insert(0, "let {");
-        builder.append("} in ");
-        builder.append(this.body.toHaskell());
+        if (isGuard) {
+            binders.forEach((binder, expr) -> builder.insert(0, binder.getUniqueName() + " <- " + expr.toHaskell() + ", "));
+            builder.append("True -> ");
+            builder.append(this.body.toHaskell());
+        }
+        else {
+            binders.forEach((binder, expr) -> builder.insert(0, binder.getUniqueName() + " = " + expr.toHaskell() + "; "));
+            builder.insert(0, "let {");
+            builder.append("} in ");
+            builder.append(this.body.toHaskell());
+        }
         return builder.toString();
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        this.binders.forEach((binder, expr) -> builder.insert(0, binder.getUniqueName() + " = " + expr.toHaskell() + "; "));
-        builder.insert(0, "let {\n");
-        builder.append("  }\n in ");
-        builder.append(this.body.toHaskell());
-        return builder.toString();
+        return toHaskell();
     }
 
     @Override

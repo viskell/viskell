@@ -1,7 +1,9 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
@@ -204,23 +206,27 @@ public class FunApplyBlock extends Block {
     }
 
     @Override
-    public Expression getLocalExpr() {
+    public Pair<Expression, Set<Block>> getLocalExpr() {
         Expression expr = new FunVar(this.funInfo);
         List<Binder> curriedArgs = new ArrayList<>();
+        Set<Block> surroundingBlocks = new HashSet<>();
+        
         for (FunInputAnchor arg : this.inputs) {
             if (arg.curried) {
                 Binder ca = new Binder("ca");
                 curriedArgs.add(ca);
                 expr = new Apply(expr, new LocalVar(ca));
             } else {
-                expr = new Apply(expr, arg.anchor.getLocalExpr());
+                Pair<Expression, Set<Block>> pair = arg.anchor.getLocalExpr();
+                expr = new Apply(expr, pair.a);
+                surroundingBlocks.addAll(pair.b);
             }
         }
         
         if (curriedArgs.isEmpty()) {
-            return expr;
+            return new Pair<>(expr, surroundingBlocks);
         } else {
-            return new Lambda(curriedArgs, expr);
+            return new Pair<>(new Lambda(curriedArgs, expr), surroundingBlocks);
         }
     }
 
