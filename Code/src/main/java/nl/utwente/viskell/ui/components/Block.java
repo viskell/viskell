@@ -47,6 +47,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     
     /** Status of change updating process in this block. */
     private boolean updateInProgress;
+    
+    /** The container to which this Block currently belongs */
+    protected Optional<BlockContainer> container;
 
     /**
      * @param pane The pane this block belongs to.
@@ -56,9 +59,10 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.freshAnchorTypes = false;
         this.updateInProgress = false;
         this.dragContext = new DragContext(this);
+        this.container = Optional.empty();
         
-        dragContext.setDragInitAction(event -> getContainer().ifPresent(container -> container.detachBlock(this)));
-        dragContext.setDragFinishAction(event -> getContainer().ifPresent(container -> container.attachBlock(this)));
+        dragContext.setDragInitAction(event -> detachFromContainer());
+        dragContext.setDragFinishAction(event -> refreshContainer());
         
         // Visually react on selection.
         this.parentPane.selectedBlockProperty().addListener(event -> {
@@ -197,31 +201,42 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
          }
     }
     
-    /**
-     * Called when the VisualState changed.
-     */
+    /** Called when the VisualState changed. */
     public abstract void invalidateVisualState();
 
-    /** 
-     * @return whether this block is visually shown below common blocks (is constant per instance).
-     */
+    /** @return whether this block is visually shown below common blocks (is constant per instance). */
     public boolean belongsOnBottom() {
         return false;
     }
     
-    /**
-     * @return class-specific properties of this Block.
-     */
+    /** @return class-specific properties of this Block. */
     protected ImmutableMap<String, Object> toBundleFragment() {
         return ImmutableMap.of();
     }
     
+    /** @return the container to which this block belongs, if any */
     public Optional<BlockContainer> getContainer() {
+        return container;
+    }
+    
+    /** Removes the block from its container */
+    public void detachFromContainer() {
+        container.ifPresent(container -> {
+            this.container = Optional.empty();
+            container.detachBlock(this);
+        });
+    }
+
+    /** Scans for and attaches to a new container, if any */
+    public void refreshContainer() {
         Bounds myBounds = localToScene(getBoundsInLocal());
+        detachFromContainer();
         
-        return parentPane.getBlockContainers().
+        container = parentPane.getBlockContainers().
             filter(container -> container.localToScene(container.getBoundsInLocal()).contains(myBounds)).
-                reduce((a, b) -> !a.getBoundsInLocal().contains(b.getBoundsInLocal()) ? a : b);
+                reduce((a, b) -> !a.localToScene(a.getBoundsInLocal()).contains(b.localToScene(b.getBoundsInLocal())) ? a : b);
+        
+        container.ifPresent(container -> container.attachBlock(this));
     }
     
     @Override

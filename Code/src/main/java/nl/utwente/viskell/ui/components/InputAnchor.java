@@ -161,7 +161,8 @@ public class InputAnchor extends ConnectionAnchor {
         Pair<Expression, Set<Block>> pair = this.getLocalExpr();
         LetExpression fullExpr = new LetExpression(pair.a, false);
         Set<Block> surroundingBlocks = pair.b;
-        this.extendExprGraph(fullExpr, null, surroundingBlocks);
+        block.container.ifPresent(container -> extendExprGraph(fullExpr, container, surroundingBlocks));
+        extendExprGraph(fullExpr, null, surroundingBlocks);
         
         surroundingBlocks.forEach(block -> block.extendExprGraph(fullExpr, null, new HashSet<>()));
         return fullExpr;

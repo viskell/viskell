@@ -174,9 +174,15 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     @Override
     public boolean detachBlock(Block block) {
         boolean removed = attachedBlocks.remove(block);
+        block.detachFromContainer();
         handleConnectionChanges(false);
         handleConnectionChanges(true);
         return removed;
+    }
+    
+    @Override
+    public void detachAllBlocks() {
+        attachedBlocks.forEach(Block::detachFromContainer);
     }
     
     @Override

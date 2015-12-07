@@ -32,8 +32,10 @@ public class ChoiceBlock extends Block {
     /** The output anchor of this block */
     protected OutputAnchor output;
     
+    /** The container Node for the Lanes */
     @FXML protected Pane altSpace;
     
+    /** The container Node for the OutputAnchor */
     @FXML protected Pane funSpace;
 
     public ChoiceBlock(CustomUIPane pane) {
@@ -43,6 +45,8 @@ public class ChoiceBlock extends Block {
         lanes = new ArrayList<>();
         output = new OutputAnchor(this, new Binder("choiceoutput"));
         funSpace.getChildren().add(output);
+        dragContext.setGoToForegroundOnContact(false);
+        
         addLane();
         addLane();
     }
@@ -75,7 +79,7 @@ public class ChoiceBlock extends Block {
     }
 
     public void handleConnectionChanges(boolean finalPhase) {
-        lanes.stream().forEach(lane -> lane.handleConnectionChanges(finalPhase));
+        lanes.forEach(lane -> lane.handleConnectionChanges(finalPhase));
 
         // continue as normal with propagating changes on the outside
         super.handleConnectionChanges(finalPhase);
@@ -91,7 +95,7 @@ public class ChoiceBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
-        //TODO fill in
+        // TODO update anchors when they get a type label       
         lanes.forEach(lane -> lane.invalidateVisualState());
     }
     
@@ -100,20 +104,28 @@ public class ChoiceBlock extends Block {
         return true;
     }
 
-    
+    /** Adds an alternative to this block */
     public void addLane() {
         Lane lane = new Lane(this);
         lanes.add(lane);
         altSpace.getChildren().add(lane);
     }
     
+    /** Removes an alternative from this block */
     public void removeLane(int index) {
-        lanes.remove(index);
-        altSpace.getChildren().remove(index);
+        removeLane(lanes.get(index));
+    }
+    
+    /** Removes an alternative from this block */
+    public void removeLane(Lane lane) {
+        lane.detachAllBlocks();
+        lanes.remove(lane);
+        altSpace.getChildren().remove(lane);
         handleConnectionChanges(false);
         handleConnectionChanges(true);
     }
-
+    
+    /** Returns the alternatives in this block */
     public List<Lane> getLanes() {
         return lanes;
     }

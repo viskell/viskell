@@ -8,17 +8,23 @@ import java.util.Optional;
 import java.util.Set;
 
 import javafx.fxml.FXML;
+import javafx.geometry.BoundingBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Polygon;
 import nl.utwente.viskell.haskell.expr.Case;
 import nl.utwente.viskell.haskell.expr.ConstructorBinder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
-import nl.utwente.viskell.haskell.expr.Value;
-import nl.utwente.viskell.haskell.type.TypeCon;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
+import nl.utwente.viskell.ui.DragContext;
 
+/**
+ * A single alternative within a ChoiceBlock
+ *
+ */
 public class Lane extends BorderPane implements BlockContainer, ComponentLoader {
     
     /** The argument anchors of this alternative */
@@ -39,8 +45,16 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
     /** The wrapper to which this alternative belongs */
     protected ChoiceBlock parent;
     
+    /** The draggable resizer in the bottom right corner */
+    private Polygon resizer;
+
+    /** The container Node for binder anchors */
     @FXML protected Pane argumentSpace;
     
+    /** The resizable area on which blocks can be placed */
+    @FXML protected Pane guardSpace;
+    
+    /** The container Node for result anchors */
     @FXML protected Pane resultSpace;
 
     /** A set of blocks that belong to this container */
@@ -56,32 +70,41 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
         
         argumentSpace.getChildren().addAll(arguments);
         resultSpace.getChildren().add(result);
+        setupResizer();
     }
 
+    /**
+     * Returns the pattern and guard expression for this lane as well as a set of required blocks.
+     * 
+     * Firstly, the expression is generated from the result anchor.
+     * Secondly, the expression is extended with bottom-most blocks within this lane.
+     * Bottom-most blocks are *assumed* to be either deconstructors or expressions resulting in a Bool.
+     * 
+     * @return a pair containing this lane's Alternative and a set of required blocks
+     */
     public Pair<Case.Alternative,Set<Block>> getAlternative() {
-        //TODO generate the pattern and guard for this lane
         Pair<Expression, Set<Block>> pair = result.getLocalExpr();
         LetExpression guards = new LetExpression(pair.a, true);
         Set<Block> surroundingBlocks = pair.b;
         result.extendExprGraph(guards, this, surroundingBlocks);
-        System.out.println(this+": "+guards.toHaskell());
-        attachedBlocks.stream().forEach(block -> {
-            if (block instanceof MatchBlock && !block.getAllOutputs().stream().anyMatch(anchor -> anchor.hasConnection())) {
-                Expression expr = block.getAllInputs().stream().findFirst().map(InputAnchor::getFullExpr).orElse(new Value(TypeCon.con("()"),"()"));
-                guards.addLetBinding(((MatchBlock)block).primaryBinder, expr);
-                System.out.println("non-connected matchblock: "+guards.toHaskell());
-            }
-            block.extendExprGraph(guards, this, surroundingBlocks);
+        
+        attachedBlocks.stream().filter(Block::isBottomMost).forEach(block -> {
             if (block instanceof MatchBlock) {
-                System.out.println("matchblock "+((MatchBlock)block).primaryBinder.getUniqueName()+": "+guards.toHaskell());
+                guards.addLetBinding(((MatchBlock)block).getPrimaryBinder(), block.getAllInputs().get(0).getFullExpr());
             }
             else {
-                System.out.println("non-match "+block+": "+guards.toHaskell());
+                block.getAllOutputs().forEach(anchor -> {
+                    guards.addLetBinding(new ConstructorBinder("True", Collections.EMPTY_LIST), anchor.getVariable());
+                    anchor.extendExprGraph(guards, this, surroundingBlocks);
+                });
             }
+            block.extendExprGraph(guards, this, surroundingBlocks);
         });
+        
         return new Pair<>(new Case.Alternative(new ConstructorBinder("()", Collections.EMPTY_LIST), guards), surroundingBlocks);
     }
 
+    /** Returns the result anchor of this Lane */
     public ResultAnchor getOutput() {
         return result;
     }
@@ -138,19 +161,47 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
         // TODO update anchors when they get a type label       
     }
     
+    /** Add and initializes a resizer element to this block */
+    private void setupResizer() {
+        resizer = new Polygon();
+        resizer.getPoints().addAll(new Double[]{20.0, 20.0, 20.0, 0.0, 0.0, 20.0});
+        resizer.setFill(Color.BLUE);
+
+        resizer.setManaged(false);
+        this.getChildren().add(resizer);
+        resizer.relocate(300-20, 400-20);
+
+        DragContext sizeDrag = new DragContext(resizer);
+        sizeDrag.setDragLimits(new BoundingBox(200, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));
+    }
+    
     @Override
     public void attachBlock(Block block) {
         attachedBlocks.add(block);
         handleConnectionChanges(false);
         handleConnectionChanges(true);
+        block.handleConnectionChanges(false);
+        block.handleConnectionChanges(true);
     }
 
     @Override
     public boolean detachBlock(Block block) {
-        boolean removed = attachedBlocks.remove(block);
-        handleConnectionChanges(false);
-        handleConnectionChanges(true);
-        return removed;
+        if (attachedBlocks.remove(block)) {
+            block.detachFromContainer();
+            handleConnectionChanges(false);
+            handleConnectionChanges(true);
+            block.handleConnectionChanges(false);
+            block.handleConnectionChanges(true);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    
+    @Override
+    public void detachAllBlocks() {
+        attachedBlocks.forEach(Block::detachFromContainer);
     }
     
     @Override
@@ -161,5 +212,19 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
     @Override
     public void moveNodes(double dx, double dy) {
         attachedBlocks.forEach(node -> node.relocate(node.getLayoutX()+dx, node.getLayoutY()+dy));
+    }
+    
+    @Override
+    protected double computePrefWidth(double height) {
+        guardSpace.setPrefWidth(resizer.getBoundsInParent().getMaxX());
+        return super.computePrefWidth(height);
+    }
+    
+    @Override 
+    protected double computePrefHeight(double width) {
+        double resizerY = resizer.getLayoutY();
+        parent.getLanes().stream().filter(lane -> lane.resizer.getLayoutY() != resizerY).forEach(lane -> lane.resizer.setLayoutY(resizerY));
+        guardSpace.setPrefHeight(resizer.getBoundsInParent().getMaxY());
+        return super.computePrefHeight(width);
     }
 }

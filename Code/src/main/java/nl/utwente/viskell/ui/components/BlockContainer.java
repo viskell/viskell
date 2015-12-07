@@ -29,10 +29,13 @@ public interface BlockContainer {
     /** Detach a block from this container */
     public boolean detachBlock(Block block);
     
+    /** Detach all blocks from this container */
+    void detachAllBlocks();
+    
     /** Check whether this container contains the specified block */
     public boolean containsBlock(Block block);
 
     /** Move the attached blocks with the specified offset */
     void moveNodes(double dx, double dy);
-    
+
 }

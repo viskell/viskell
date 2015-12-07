@@ -114,18 +114,13 @@ ChoiceBlock {
 }
 
 ChoiceBlock #altSpace {
-	-fx-padding: 20 0 20 0;
-}
-
-Lane {
-	-fx-padding: 0 20 0 20;
-	-fx-pref-width: 300px;
-	-fx-pref-height: 450px;
+	-fx-padding: 20 20 20 20;
+	-fx-spacing: 20;
 }
 
 Lane #guardSpace {
-	-fx-pref-width: 9999px;
-	-fx-pref-height: 9999px;
+	-fx-pref-width: 300px;
+	-fx-pref-height: 400px;
 }
 
 Lane #resultSpace {

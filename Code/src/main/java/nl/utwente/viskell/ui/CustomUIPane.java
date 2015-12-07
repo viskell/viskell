@@ -185,7 +185,7 @@ public class CustomUIPane extends Region {
     public void removeBlock(Block block) {
         block.getAllInputs().forEach(input -> input.removeConnections());
         block.getAllOutputs().forEach(output -> output.removeConnections());
-        block.getContainer().ifPresent(container -> container.detachBlock(block));
+        block.refreshContainer();
         
         if (block.belongsOnBottom()) {
             this.bottomLayer.getChildren().remove(block);
