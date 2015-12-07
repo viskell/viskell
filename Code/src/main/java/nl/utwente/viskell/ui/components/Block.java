@@ -64,15 +64,6 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         dragContext.setDragInitAction(event -> detachFromContainer());
         dragContext.setDragFinishAction(event -> refreshContainer());
         
-        // Visually react on selection.
-        this.parentPane.selectedBlockProperty().addListener(event -> {
-            if (parentPane.getSelectedBlock().isPresent() && this.equals(parentPane.getSelectedBlock().get())) {
-                this.getStyleClass().add("selected");
-            } else {
-                this.getStyleClass().removeAll("selected");
-            }
-        });
-        // Add selection trigger.
         this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseEvent);
     }
 
@@ -81,7 +72,6 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      * A right click also opens the CircleMenu.
      */
     private void handleMouseEvent(MouseEvent t) {
-        parentPane.setSelectedBlock(this);
         if (t.getButton() == MouseButton.SECONDARY) {
             CircleMenu.showFor(this, t);
         }

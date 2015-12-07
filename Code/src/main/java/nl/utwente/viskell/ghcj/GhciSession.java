@@ -1,10 +1,13 @@
 package nl.utwente.viskell.ghcj;
 
+import com.google.common.collect.EvictingQueue;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AbstractExecutionThreadService;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import nl.utwente.viskell.haskell.env.Environment;
+import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.Main;
@@ -33,6 +36,15 @@ public final class GhciSession extends AbstractExecutionThreadService {
     /** The evaluator this GhciSession will communicate with. */
     private Evaluator ghci;
 
+    /** Gets filled with a HaskellCatalog instance when ghci is ready. */
+    private HaskellCatalog catalog;
+
+    /** Gets filled with up to LOG_SIZE errors. */
+    private EvictingQueue<String> errors;
+
+    /** The number of errors to keep. */
+    private final static int LOG_SIZE = 16;
+
     public enum Backend {
         GHCi,
         Clash,
@@ -47,6 +59,7 @@ public final class GhciSession extends AbstractExecutionThreadService {
         super();
 
         queue = new ArrayBlockingQueue<>(1024);
+        errors = EvictingQueue.create(LOG_SIZE);
     }
 
     @Override
@@ -66,6 +79,7 @@ public final class GhciSession extends AbstractExecutionThreadService {
                     future.set(result.trim());
                 } catch (HaskellException e) {
                     future.setException(e);
+                    errors.add(e.getMessage());
                 }
             }
         }
@@ -160,6 +174,7 @@ public final class GhciSession extends AbstractExecutionThreadService {
         }
 
         this.ghci = evaluatorFactory(pickBackend());
+        this.catalog = new HaskellCatalog(this.ghci.getCatalogPath());
     }
 
     /** Build the Evaluator that corresponds to the given Backend identifier. */
@@ -181,5 +196,15 @@ public final class GhciSession extends AbstractExecutionThreadService {
     /** @return the available backend identifiers. */
     public static List<Backend> getBackends() {
         return Lists.newArrayList(EnumSet.allOf(Backend.class));
+    }
+
+    public HaskellCatalog getCatalog() {
+        awaitRunning();
+        return catalog;
+    }
+
+    /** @return an immutable list of the last LOG_SIZE runtime errors. */
+    public List<String> getErrors() {
+        return ImmutableList.copyOf(errors);
     }
 }

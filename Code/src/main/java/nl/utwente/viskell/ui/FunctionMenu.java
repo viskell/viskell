@@ -19,6 +19,7 @@ import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.CatalogFunction;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
+import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.components.*;
 
@@ -91,8 +92,14 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             }
                             
                             CatalogFunction entry = this.getItem();
-                            if (e.getButton() == MouseButton.SECONDARY && entry.isConstructor()) {
-                                addBlock(new MatchBlock(entry, parent));
+                            if (e.getButton() == MouseButton.SECONDARY) {
+                                if (entry.isConstructor()) {
+                                    addBlock(new MatchBlock(entry, parent));
+                                } else {
+                                    addBlock(new FunApplyBlock(entry, parent));
+                                }
+                            } else if (!(entry.getFreshSignature() instanceof FunType)) {
+                                addBlock(new ValueBlock(pane, entry.getFreshSignature(), entry.getName()));
                             } else {
                                 addBlock(new FunctionBlock(entry, parent));
                             }
@@ -120,29 +127,42 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         this.categorySpace.getChildren().add(categoryContainer);
 
         /* Create content for utilSpace. */
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(event -> close());
         Button valBlockButton = new Button("Value Block");
         valBlockButton.setOnAction(event -> addValueBlock());
         Button disBlockButton = new Button("Display Block");
         disBlockButton.setOnAction(event -> addBlock(new DisplayBlock(parent)));
-        Button sliderBlockButton = new Button("Slider Block");
-        sliderBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent)));
-        Button rgbBlockButton = new Button("RGB Block");
-        rgbBlockButton.setOnAction(event -> addBlock(new RGBBlock(parent)));
-        Button graphBlockButton = new Button("Graph Block");
-        graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
         Button defBlockButton = new Button("Definition Block");
         defBlockButton.setOnAction(event -> addDefinitionBlock());
         Button lambdaBlockButton = new Button("Lambda Block");
         lambdaBlockButton.setOnAction(event -> addLambdaBlock());
-
         Button choiceBlockButton = new Button("Choice Block");
         choiceBlockButton.setOnAction(event -> addChoiceBlock());
 
-        Button closeButton = new Button("Close");
-        closeButton.setOnAction(event -> close());
+        utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton, defBlockButton, lambdaBlockButton, choiceBlockButton);
 
-        utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton,
-                defBlockButton, lambdaBlockButton, sliderBlockButton, rgbBlockButton, graphBlockButton, choiceBlockButton);
+        if (GhciSession.pickBackend() == GhciSession.Backend.GHCi) {
+            // These blocks are specifically for GHCi
+            Button sliderBlockButton = new Button("Slider Block");
+            sliderBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent)));
+            Button rgbBlockButton = new Button("RGB Block");
+            rgbBlockButton.setOnAction(event -> addBlock(new RGBBlock(parent)));
+            Button graphBlockButton = new Button("Graph Block");
+            graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
+
+            utilSpace.getChildren().addAll(sliderBlockButton, rgbBlockButton, graphBlockButton);
+        }
+
+        if (GhciSession.pickBackend() == GhciSession.Backend.Clash) {
+            // These blocks are specifically for Clash
+
+            Button simulateBlockButton = new Button("Simulate Block");
+            simulateBlockButton.setOnAction(event -> addBlock(new SimulateBlock(parent)));
+
+            utilSpace.getChildren().addAll(simulateBlockButton);
+        }
+
 
         for (Node button : utilSpace.getChildren()) {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);

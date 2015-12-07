@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
  * Haskell catalog containing available type classes and functions.
  */
 public class HaskellCatalog {
+    private Map<String, DataTypeInfo> datatypes;
+    
     private Map<String, TypeClass> classes;
 
     private Map<String, CatalogFunction> functions;
@@ -31,7 +33,7 @@ public class HaskellCatalog {
     private Multimap<String, CatalogFunction> categories;
 
     /** Default path to the XML file. */
-    public static final String XML_PATH = "/catalog/catalog.xml";
+    public static final String XML_PATH = "/catalog/haskell.xml";
 
     /** Default path to the XSD file. */
     public static final String XSD_PATH = "/catalog/catalog.xsd";
@@ -46,9 +48,11 @@ public class HaskellCatalog {
 
         Document doc = getDocument(path, HaskellCatalog.XSD_PATH);
 
+        NodeList dataNodes = doc.getElementsByTagName("datatype");
         NodeList classNodes = doc.getElementsByTagName("class");
         NodeList functionNodes = doc.getElementsByTagName("function");
 
+        this.datatypes = this.parseDataType(dataNodes);
         this.classes = this.parseClasses(classNodes);
 
         Set<CatalogFunction> entries = this.parseFunctions(functionNodes, this.classes);
@@ -111,6 +115,14 @@ public class HaskellCatalog {
     }
 
     /**
+     * @param name of the data type
+     * @return the haskell datatype if known, otherwise null
+     */
+    public DataTypeInfo getDataType(String name) {
+        return this.datatypes.get(name);
+    }
+    
+    /**
      * @return The number of functions in the catalog.
      */
     public int size() {
@@ -124,6 +136,42 @@ public class HaskellCatalog {
         return new Environment(new HashMap<>(this.functions), new HashMap<>(this.classes));
     }
 
+    /**
+     * Parses a list of class nodes into DataTypeInfo objects.
+     * @param nodes The nodes to parse.
+     * @return A mapping of DataTypeInfo objects for the given nodes.
+     */
+    private Map<String, DataTypeInfo> parseDataType(NodeList nodes) {
+        Map<String, DataTypeInfo> entries = new HashMap<>();
+        TypeBuilder builder = new TypeBuilder(new HashMap<>());
+        
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node node = nodes.item(i);
+
+            String name = node.getAttributes().getNamedItem("name").getTextContent();
+            TypeCon typecon = TypeCon.con(name);
+            String arity = node.getAttributes().getNamedItem("typeArity").getTextContent();
+            int typeArity = Integer.parseInt(arity);
+            String prim = node.getAttributes().getNamedItem("builtin").getTextContent();
+            boolean builtin = Boolean.parseBoolean(prim);
+            DataTypeInfo datatype = new DataTypeInfo(typecon, typeArity, builtin);
+            
+            NodeList cnodes = node.getChildNodes();
+            for (int j = 0; j < cnodes.getLength(); j++) {
+                Node inode = cnodes.item(j);
+                NamedNodeMap attrs = inode.getAttributes();
+                String cname = attrs.getNamedItem("name").getTextContent();
+                String signature = attrs.getNamedItem("signature").getTextContent();
+                Type ctype = builder.build(signature);
+                datatype.addConstructor(cname, ctype);
+            }
+            
+            entries.put(name, datatype);
+        }
+        
+        return entries;
+    }
+    
     /**
      * Parses a list of class nodes into ClassEntry objects.
      * @param nodes The nodes to parse.

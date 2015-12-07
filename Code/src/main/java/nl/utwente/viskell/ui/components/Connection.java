@@ -157,8 +157,8 @@ public class Connection extends CubicCurve implements
 
     /** Update the UI positions of both start and end anchors. */
     private void invalidateAnchorPositions() {
-        this.setStartPosition(this.pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 0))));
-        this.setEndPosition(this.pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, 0))));
+        this.setStartPosition(this.pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 4))));
+        this.setEndPosition(this.pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, -4))));
     }
 
     @Override
@@ -197,7 +197,8 @@ public class Connection extends CubicCurve implements
     /** Returns the current bezier offset based on the current start and end positions. */
     private double getBezierYOffset() {
         double distX = Math.abs(this.getEndX() - this.getStartX());
-        double distY = Math.abs(this.getEndY() - this.getStartY());
+        double diffY = this.getEndY() - this.getStartY();
+        double distY = diffY > 0 ? diffY/2 : -diffY; 
         if (distY < BEZIER_CONTROL_OFFSET) {
             if (distX < BEZIER_CONTROL_OFFSET) {
                 // short lines are extra flexible
