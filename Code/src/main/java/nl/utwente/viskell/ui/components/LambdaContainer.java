@@ -154,7 +154,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
         List<Binder> binders = args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         LetExpression body = new LetExpression(pair.a, false);
         Set<Block> surroundingBlocks = pair.b;
-        res.extendExprGraph(body, this, surroundingBlocks);
+        res.extendExprGraph(body, Optional.of(this), surroundingBlocks);
         
         return new Pair<>(new Lambda(binders, body), surroundingBlocks);
     }

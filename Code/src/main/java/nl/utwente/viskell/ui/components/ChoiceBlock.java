@@ -65,7 +65,9 @@ public class ChoiceBlock extends Block {
     protected void refreshAnchorTypes() {
         lanes.stream().forEach(lane -> lane.handleConnectionChanges(false));
         
-        // TODO make sure the last edited lane gets unified last
+        // TODO make sure the last edited lane gets unified last to prevent
+        // that large parts of a program become invalid in case of a type error,
+        // but rather only the lane in which the edit took place.
         TypeVar type = TypeScope.unique("lanetype");
         for (Lane lane : lanes) {
             try {

@@ -86,7 +86,7 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
         Pair<Expression, Set<Block>> pair = result.getLocalExpr();
         LetExpression guards = new LetExpression(pair.a, true);
         Set<Block> surroundingBlocks = pair.b;
-        result.extendExprGraph(guards, this, surroundingBlocks);
+        result.extendExprGraph(guards, Optional.of(this), surroundingBlocks);
         
         attachedBlocks.stream().filter(Block::isBottomMost).forEach(block -> {
             if (block instanceof MatchBlock) {
@@ -95,10 +95,10 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
             else {
                 block.getAllOutputs().forEach(anchor -> {
                     guards.addLetBinding(new ConstructorBinder("True", Collections.EMPTY_LIST), anchor.getVariable());
-                    anchor.extendExprGraph(guards, this, surroundingBlocks);
+                    anchor.extendExprGraph(guards, Optional.of(this), surroundingBlocks);
                 });
             }
-            block.extendExprGraph(guards, this, surroundingBlocks);
+            block.extendExprGraph(guards, Optional.of(this), surroundingBlocks);
         });
         
         return new Pair<>(new Case.Alternative(new ConstructorBinder("()", Collections.EMPTY_LIST), guards), surroundingBlocks);

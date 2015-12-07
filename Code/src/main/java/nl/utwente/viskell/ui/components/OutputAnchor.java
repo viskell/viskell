@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
@@ -148,7 +149,7 @@ public class OutputAnchor extends ConnectionAnchor {
      * @param container the container to which this expression graph is constrained
      * @param addLater a mutable list of blocks that have to be added by a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<Block> addLater) {
+    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<Block> addLater) {
         boolean added = false;
         Pair<Expression, Set<Block>> pair = block.getLocalExpr();
         

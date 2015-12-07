@@ -145,10 +145,10 @@ public class InputAnchor extends ConnectionAnchor {
         Pair<Expression, Set<Block>> pair = this.getLocalExpr();
         LetExpression fullExpr = new LetExpression(pair.a, false);
         Set<Block> surroundingBlocks = pair.b;
-        block.container.ifPresent(container -> extendExprGraph(fullExpr, container, surroundingBlocks));
-        extendExprGraph(fullExpr, null, surroundingBlocks);
+        block.container.ifPresent(c -> extendExprGraph(fullExpr, block.container, surroundingBlocks));
+        extendExprGraph(fullExpr, Optional.empty(), surroundingBlocks);
         
-        surroundingBlocks.forEach(block -> block.extendExprGraph(fullExpr, null, new HashSet<>()));
+        surroundingBlocks.forEach(block -> block.extendExprGraph(fullExpr, Optional.empty(), new HashSet<>()));
         return fullExpr;
     }
     
@@ -158,8 +158,8 @@ public class InputAnchor extends ConnectionAnchor {
      * @param container the container to which this expression graph is constrained
      * @param addLater a mutable list of blocks that have to be added by a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<Block> addLater) {
-        this.connection.ifPresent(connection -> connection.extendExprGraph(exprGraph, container, addLater));
+    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<Block> addLater) {
+        connection.ifPresent(connection -> connection.extendExprGraph(exprGraph, container, addLater));
     }
 
     /**

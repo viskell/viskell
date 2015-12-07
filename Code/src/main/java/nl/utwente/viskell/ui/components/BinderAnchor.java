@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.Optional;
 import java.util.Set;
 
 import nl.utwente.viskell.haskell.expr.Binder;
@@ -17,7 +18,7 @@ public class BinderAnchor extends OutputAnchor {
     }
 
     @Override
-    protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<Block> addLater) {
+    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<Block> addLater) {
         return; // the scope of this graph is limited to its parent container
     }
     
