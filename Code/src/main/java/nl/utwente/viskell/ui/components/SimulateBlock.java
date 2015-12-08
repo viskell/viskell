@@ -107,7 +107,7 @@ public class SimulateBlock extends Block implements ComponentLoader {
     }
 
     @Override
-    public Pair<Expression, Set<Block>> getLocalExpr() {
+    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
         return inputAnchor.getLocalExpr();
     }
 

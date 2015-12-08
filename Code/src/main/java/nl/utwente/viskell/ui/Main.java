@@ -8,7 +8,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nl.utwente.viskell.ghcj.GhciSession;
-import nl.utwente.viskell.haskell.env.HaskellCatalog;
 
 /**
  * Main application class for the GUI.

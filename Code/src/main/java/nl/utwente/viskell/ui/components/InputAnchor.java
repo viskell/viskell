@@ -134,7 +134,7 @@ public class InputAnchor extends ConnectionAnchor {
     /**
      * @return The local expression carried by the connection connected to this anchor.
      */
-    public Pair<Expression, Set<Block>> getLocalExpr() {
+    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
         return new Pair<>(this.connection.map(c -> c.getStartAnchor().getVariable()).orElse(new Hole()), new HashSet<>());
     }
     
@@ -142,13 +142,13 @@ public class InputAnchor extends ConnectionAnchor {
      * @return The full expression carried by the connection connected to this anchor.
      */
     public Expression getFullExpr() {
-        Pair<Expression, Set<Block>> pair = this.getLocalExpr();
+        Pair<Expression, Set<OutputAnchor>> pair = this.getLocalExpr();
         LetExpression fullExpr = new LetExpression(pair.a, false);
-        Set<Block> surroundingBlocks = pair.b;
-        block.container.ifPresent(c -> extendExprGraph(fullExpr, block.container, surroundingBlocks));
-        extendExprGraph(fullExpr, Optional.empty(), surroundingBlocks);
+        Set<OutputAnchor> outsideAnchors = pair.b;
+        block.container.ifPresent(c -> extendExprGraph(fullExpr, block.container, outsideAnchors));
+        extendExprGraph(fullExpr, Optional.empty(), outsideAnchors);
         
-        surroundingBlocks.forEach(block -> block.extendExprGraph(fullExpr, Optional.empty(), new HashSet<>()));
+        outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, Optional.empty(), new HashSet<>()));
         return fullExpr;
     }
     
@@ -156,10 +156,10 @@ public class InputAnchor extends ConnectionAnchor {
      * Extends the expression graph to include all subexpression required
      * @param exprGraph the let expression representing the current expression graph
      * @param container the container to which this expression graph is constrained
-     * @param addLater a mutable list of blocks that have to be added by a surrounding container
+     * @param outsideAnchors a mutable set of required OutputAnchors from a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<Block> addLater) {
-        connection.ifPresent(connection -> connection.extendExprGraph(exprGraph, container, addLater));
+    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<OutputAnchor> outsideAnchors) {
+        connection.ifPresent(connection -> connection.extendExprGraph(exprGraph, container, outsideAnchors));
     }
 
     /**

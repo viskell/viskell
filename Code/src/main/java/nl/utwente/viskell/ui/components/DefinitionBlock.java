@@ -1,21 +1,25 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import nl.utwente.viskell.haskell.env.DefinitionFunction;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.DragContext;
-
-import java.util.List;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
@@ -39,6 +43,9 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     /** The draggable resizer in the bottom right corner */
     private Polygon resizer;
 
+    /** The function info corresponding to this block */
+    protected Optional<DefinitionFunction> funInfo;
+
     /**
      * Constructs a DefinitionBlock that is an untyped lambda of n arguments.
      * @param pane the parent ui pane.
@@ -58,6 +65,8 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         this.funSpace.getChildren().add(this.fun);
         this.dragContext.setGoToForegroundOnContact(false);
         this.setupResizer();
+        
+        funInfo = Optional.empty();
     }
             
     /**
@@ -79,6 +88,10 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         this.funSpace.getChildren().add(this.fun);
         this.dragContext.setGoToForegroundOnContact(false);
         this.setupResizer();
+        
+        funInfo = Optional.of(new DefinitionFunction(this, name, type));
+        
+        signature.addEventHandler(MouseEvent.MOUSE_RELEASED, this::createFunctionBlock);
     }
 
     /** Add and initializes a resizer element to this block */
@@ -93,6 +106,27 @@ public class DefinitionBlock extends Block implements ComponentLoader {
 
         DragContext sizeDrag = new DragContext(resizer);
         sizeDrag.setDragLimits(new BoundingBox(200, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));
+    }
+    
+    /** 
+     * Construct a function block performing this block's actions
+     * @param event the mouse event triggering this creation
+     */
+    protected void createFunctionBlock(MouseEvent event) {
+        funInfo.ifPresent(info -> {
+            Block block = (event.isControlDown()) ? new FunApplyBlock(info, getPane()) : new FunctionBlock(info, getPane());
+            getPane().addBlock(block);
+            Point2D pos = this.localToParent(0, 0);
+            block.relocate(pos.getX(), pos.getY());
+            block.initiateConnectionChanges();
+            
+            event.consume();
+        });
+    }
+    
+    /** @return The output binder of this block */
+    public Binder getBinder() {
+        return fun.binder;
     }
     
     @Override
@@ -134,7 +168,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
     
     @Override
-    public final Pair<Expression,Set<Block>> getLocalExpr() {
+    public final Pair<Expression,Set<OutputAnchor>> getLocalExpr() {
         return this.body.getLocalExpr();
     }
 

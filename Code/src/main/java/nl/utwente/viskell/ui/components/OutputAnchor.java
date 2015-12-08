@@ -147,11 +147,11 @@ public class OutputAnchor extends ConnectionAnchor {
      * Extends the expression graph to include all subexpression required
      * @param exprGraph the let expression representing the current expression graph
      * @param container the container to which this expression graph is constrained
-     * @param addLater a mutable list of blocks that have to be added by a surrounding container
+     * @param outsideAnchors a mutable set of required OutputAnchors from a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<Block> addLater) {
+    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<OutputAnchor> outsideAnchors) {
         boolean added = false;
-        Pair<Expression, Set<Block>> pair = block.getLocalExpr();
+        Pair<Expression, Set<OutputAnchor>> pair = block.getLocalExpr();
         
         if (block instanceof MatchBlock) {
             added = exprGraph.addLetBinding(((MatchBlock)block).getPrimaryBinder(), pair.a);
@@ -159,11 +159,11 @@ public class OutputAnchor extends ConnectionAnchor {
             added = exprGraph.addLetBinding(binder, pair.a);
         }
         
-        addLater.addAll(pair.b);
+        outsideAnchors.addAll(pair.b);
         
         if (added) {
             // for a new let binding everything from the subexpression in this block needs to be included
-            block.extendExprGraph(exprGraph, container, addLater);
+            block.extendExprGraph(exprGraph, container, outsideAnchors);
         }
     }
     

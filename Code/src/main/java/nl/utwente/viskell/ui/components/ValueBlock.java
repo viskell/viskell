@@ -72,7 +72,7 @@ public class ValueBlock extends Block {
     }
 
     @Override
-    public Pair<Expression, Set<Block>> getLocalExpr() {
+    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
         return new Pair<>(new Value(output.getType(), getValue()), new HashSet<>());
     }
 

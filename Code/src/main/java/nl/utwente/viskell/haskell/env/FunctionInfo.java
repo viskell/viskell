@@ -6,6 +6,7 @@ public abstract class FunctionInfo {
 
     /** The function name. */
     private final String name;
+    
     /** The type signature the corresponding function. */
     private final Type signature;
 
@@ -18,16 +19,17 @@ public abstract class FunctionInfo {
         this.signature = signature;
     }
 
-    /**
-     * @return The name of this function.
-     */
+    /** @return The internal name of this function. */
     public final String getName() {
         return this.name;
     }
 
-    /**
-     * @return The a fresh copy of type signature of this function.
-     */
+    /** @return The name of this function used for the front-end. */
+    public String getDisplayName() {
+        return this.name;
+    }
+
+    /** @return The a fresh copy of type signature of this function. */
     public final Type getFreshSignature() {
         return this.signature.getFresh();
     }

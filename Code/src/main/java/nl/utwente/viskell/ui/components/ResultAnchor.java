@@ -24,9 +24,9 @@ public class ResultAnchor extends InputAnchor {
     }
     
     @Override
-    public Pair<Expression, Set<Block>> getLocalExpr() {
+    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
         if (resType.isPresent()) {
-            Pair<Expression, Set<Block>> pair = super.getLocalExpr();
+            Pair<Expression, Set<OutputAnchor>> pair = super.getLocalExpr();
             return new Pair<>(new Annotated(pair.a, resType.get()), pair.b);
         }
        

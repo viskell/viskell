@@ -18,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import nl.utwente.viskell.haskell.env.DefinitionFunction;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Binder;
@@ -122,7 +123,7 @@ public class FunApplyBlock extends Block {
         this.loadFXML("FunApplyBlock");
 
         this.funInfo = funInfo;
-        this.functionInfo.setText(funInfo.getName());
+        this.functionInfo.setText(funInfo.getDisplayName());
         this.inputs = new ArrayList<>();
         this.output = new OutputAnchor(this, new Binder("res"));
         
@@ -206,10 +207,10 @@ public class FunApplyBlock extends Block {
     }
 
     @Override
-    public Pair<Expression, Set<Block>> getLocalExpr() {
+    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
         Expression expr = new FunVar(this.funInfo);
         List<Binder> curriedArgs = new ArrayList<>();
-        Set<Block> surroundingBlocks = new HashSet<>();
+        Set<OutputAnchor> outsideAnchors = new HashSet<>();
         
         for (FunInputAnchor arg : this.inputs) {
             if (arg.curried) {
@@ -217,16 +218,20 @@ public class FunApplyBlock extends Block {
                 curriedArgs.add(ca);
                 expr = new Apply(expr, new LocalVar(ca));
             } else {
-                Pair<Expression, Set<Block>> pair = arg.anchor.getLocalExpr();
+                Pair<Expression, Set<OutputAnchor>> pair = arg.anchor.getLocalExpr();
                 expr = new Apply(expr, pair.a);
-                surroundingBlocks.addAll(pair.b);
+                outsideAnchors.addAll(pair.b);
             }
         }
         
+        if (funInfo instanceof DefinitionFunction) {
+            outsideAnchors.addAll(((DefinitionFunction)funInfo).getSource().getAllOutputs());
+        }
+        
         if (curriedArgs.isEmpty()) {
-            return new Pair<>(expr, surroundingBlocks);
+            return new Pair<>(expr, outsideAnchors);
         } else {
-            return new Pair<>(new Lambda(curriedArgs, expr), surroundingBlocks);
+            return new Pair<>(new Lambda(curriedArgs, expr), outsideAnchors);
         }
     }
 

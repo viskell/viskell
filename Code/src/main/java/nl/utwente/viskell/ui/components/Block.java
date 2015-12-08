@@ -153,20 +153,20 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         }
     }
     
-    /** @return A pair containing the expression this block represents and a set of required blocks. */
-    public abstract Pair<Expression,Set<Block>> getLocalExpr();
+    /** @return A pair containing the expression this block represents and a set of out-of-reach OutputAnchors. */
+    public abstract Pair<Expression,Set<OutputAnchor>> getLocalExpr();
     
     /**
      * @return A complete expression of this block and all its dependencies.
      */
     public final Expression getFullExpr() {
-        Pair<Expression, Set<Block>> localExpr = getLocalExpr();
+        Pair<Expression, Set<OutputAnchor>> localExpr = getLocalExpr();
         
         LetExpression fullExpr = new LetExpression(localExpr.a, false);
-        Set<Block> surroundingBlocks = localExpr.b;
-        extendExprGraph(fullExpr, Optional.empty(), surroundingBlocks);
+        Set<OutputAnchor> outerAnchors = localExpr.b;
+        extendExprGraph(fullExpr, Optional.empty(), outerAnchors);
         
-        surroundingBlocks.forEach(block -> block.extendExprGraph(fullExpr, Optional.empty(), new HashSet<>()));
+        outerAnchors.forEach(block -> block.extendExprGraph(fullExpr, Optional.empty(), new HashSet<>()));
         
         return fullExpr;
     }
@@ -175,11 +175,11 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      * Extends the expression graph to include all subexpression required
      * @param exprGraph the let expression representing the current expression graph
      * @param container the container to which this expression graph is constrained
-     * @param addLater a mutable list of blocks that have to be added by a surrounding container
+     * @param outsideAnchors a mutable set of required OutputAnchors from a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<Block> addLater) {
+    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<OutputAnchor> outsideAnchors) {
          for (InputAnchor input : this.getAllInputs()) {
-             input.extendExprGraph(exprGraph, container, addLater);
+             input.extendExprGraph(exprGraph, container, outsideAnchors);
          }
     }
     
