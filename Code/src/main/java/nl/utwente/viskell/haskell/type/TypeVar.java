@@ -130,7 +130,7 @@ public class TypeVar extends Type {
             
             other.constraints.mergeConstraintsWith(this.constraints);
             
-            if (this.isRigid && ! this.constraints.equals(other.constraints)) {
+            if ((this.isRigid || other.isRigid) && ! this.constraints.equals(other.constraints)) {
                 throw new HaskellTypeError("Can not add extra constraints to a rigid type variable " + this.name);
             }
             
@@ -230,7 +230,9 @@ public class TypeVar extends Type {
      * @throws HaskellTypeError if the combined constraint set of the type variables is not satisfiable. 
      */
     public final void unifyWith(TypeVar other) throws HaskellTypeError {
-        if (this.instance.isRigid || this.instance.internal) {
+        if (this.instance.isRigid) {
+            other.instance.unifyWith(this.instance);
+        } else if (other.instance.isRigid || this.instance.internal) {
             this.instance.unifyWith(other.instance);
         } else {
             other.instance.unifyWith(this.instance);

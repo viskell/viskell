@@ -90,4 +90,10 @@ public class TypeScope {
         type.getFresh(scope);
         return new ArrayList<>(scope.staleToFresh.keySet());
     }
+
+    @Override
+    public String toString() {
+        return "TypeScope [vars=" + vars + ", staleToFresh=" + staleToFresh + "]";
+    }
+    
 }
