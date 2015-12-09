@@ -198,7 +198,7 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
     
     @Override
     public void detachAllBlocks() {
-        attachedBlocks.forEach(Block::detachFromContainer);
+        new ArrayList<>(attachedBlocks).forEach(Block::detachFromContainer);
     }
     
     @Override

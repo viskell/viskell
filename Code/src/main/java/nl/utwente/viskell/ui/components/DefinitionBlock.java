@@ -195,4 +195,11 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         
         body.moveNodes(dx, dy);
     }
+
+    @Override
+    public void removeAllLinks() {
+        this.body.removeAllLinks();
+        super.removeAllLinks();
+    }
+
 }
