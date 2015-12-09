@@ -22,9 +22,7 @@ public abstract class FunctionInfo {
      * @param signature The type signature the corresponding function.
      */
     public FunctionInfo(String name, Type signature) {
-        this.name = name;
-        this.signature = signature;
-        this.requiredBlocks = Collections.EMPTY_LIST;
+        this(name, signature, Collections.EMPTY_LIST);
     }
 
     /**
@@ -45,7 +43,7 @@ public abstract class FunctionInfo {
 
     /** @return The name of this function used for the front-end. */
     public String getDisplayName() {
-        return this.name;
+        return getName();
     }
 
     /** @return The a fresh copy of type signature of this function. */
