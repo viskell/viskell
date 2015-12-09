@@ -6,10 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Pos;
@@ -18,7 +14,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import nl.utwente.viskell.haskell.env.DefinitionFunction;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Binder;
@@ -31,6 +26,10 @@ import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.DragContext;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 public class FunApplyBlock extends Block {
     
@@ -224,9 +223,7 @@ public class FunApplyBlock extends Block {
             }
         }
         
-        if (funInfo instanceof DefinitionFunction) {
-            outsideAnchors.addAll(((DefinitionFunction)funInfo).getSource().getAllOutputs());
-        }
+        outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
         
         if (curriedArgs.isEmpty()) {
             return new Pair<>(expr, outsideAnchors);

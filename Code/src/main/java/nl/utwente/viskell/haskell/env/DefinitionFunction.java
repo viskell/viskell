@@ -1,5 +1,7 @@
 package nl.utwente.viskell.haskell.env;
 
+import java.util.Collections;
+
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.components.DefinitionBlock;
 
@@ -11,18 +13,15 @@ public class DefinitionFunction extends FunctionInfo {
     /** The name to show to the user */
     protected String displayName;
     
-    /** The DefinitionBlock to which this info belongs */
-    protected DefinitionBlock source;
-
+    /**
+     * Constructs the function info for a definition block.
+     * @param source the accompanying definition block
+     * @param displayName the visual name for this function
+     * @param signature the type signature of the function
+     */
     public DefinitionFunction(DefinitionBlock source, String displayName, Type signature) {
-        super(source.getBinder().getUniqueName(), signature);
+        super(source.getBinder().getUniqueName(), signature, Collections.singleton(source));
         this.displayName = displayName;
-        this.source = source;
-    }
-    
-    /** @return The DefinitionBlock to which this info belongs */
-    public DefinitionBlock getSource() {
-        return source;
     }
     
     @Override

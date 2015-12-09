@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import nl.utwente.viskell.haskell.env.DefinitionFunction;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Binder;
@@ -136,9 +135,7 @@ public class FunctionBlock extends Block {
             outsideAnchors.addAll(pair.b);
         }
         
-        if (funInfo instanceof DefinitionFunction) {
-            outsideAnchors.addAll(((DefinitionFunction)funInfo).getSource().getAllOutputs());
-        }
+        outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
         
         return new Pair<>(expr, outsideAnchors);
     }
