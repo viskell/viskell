@@ -18,7 +18,7 @@ public class FunVar extends Variable {
      * @param funInfo The information about the function being used.
      */
     public FunVar(FunctionInfo funInfo) {
-        super(funInfo.getName());
+        super(funInfo.getDisplayName());
         this.funInfo = funInfo;
     }
 
@@ -30,6 +30,11 @@ public class FunVar extends Variable {
     @Override
     public String toString() {
         return this.name;
+    }
+    
+    @Override
+    public String toHaskell() {
+        return funInfo.getName();
     }
 
 }

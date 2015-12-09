@@ -79,13 +79,13 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
      * Secondly, the expression is extended with bottom-most blocks within this lane.
      * Bottom-most blocks are *assumed* to be either deconstructors or expressions resulting in a Bool.
      * 
-     * @return a pair containing this lane's Alternative and a set of required blocks
+     * @return a pair containing this lane's Alternative and a set of out-of-reach OutputAnchors
      */
-    public Pair<Case.Alternative,Set<Block>> getAlternative() {
-        Pair<Expression, Set<Block>> pair = result.getLocalExpr();
+    public Pair<Case.Alternative,Set<OutputAnchor>> getAlternative() {
+        Pair<Expression, Set<OutputAnchor>> pair = result.getLocalExpr();
         LetExpression guards = new LetExpression(pair.a, true);
-        Set<Block> surroundingBlocks = pair.b;
-        result.extendExprGraph(guards, Optional.of(this), surroundingBlocks);
+        Set<OutputAnchor> outsideAnchors = pair.b;
+        result.extendExprGraph(guards, Optional.of(this), outsideAnchors);
         
         attachedBlocks.stream().filter(Block::isBottomMost).forEach(block -> {
             if (block instanceof MatchBlock) {
@@ -93,13 +93,13 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
             } else {
                 block.getAllOutputs().forEach(anchor -> {
                     guards.addLetBinding(new ConstructorBinder("True"), anchor.getVariable());
-                    anchor.extendExprGraph(guards, Optional.of(this), surroundingBlocks);
+                    anchor.extendExprGraph(guards, Optional.of(this), outsideAnchors);
                 });
             }
-            block.extendExprGraph(guards, Optional.of(this), surroundingBlocks);
+            block.extendExprGraph(guards, Optional.of(this), outsideAnchors);
         });
         
-        return new Pair<>(new Case.Alternative(new ConstructorBinder("()"), guards), surroundingBlocks);
+        return new Pair<>(new Case.Alternative(new ConstructorBinder("()"), guards), outsideAnchors);
     }
 
     /** Returns the result anchor of this Lane */
@@ -206,6 +206,11 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
         return attachedBlocks.contains(block);
     }
 
+    @Override
+    public Optional<BlockContainer> getContainer() {
+        return parent.getContainer();
+    }
+    
     @Override
     public void moveNodes(double dx, double dy) {
         attachedBlocks.forEach(node -> node.relocate(node.getLayoutX()+dx, node.getLayoutY()+dy));

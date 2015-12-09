@@ -149,14 +149,14 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     }
     
     /** @return The local expression this LambdaContainer represents. */
-    public Pair<Expression,Set<Block>> getLocalExpr() {
-        Pair<Expression, Set<Block>> pair = res.getLocalExpr();
+    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
+        Pair<Expression, Set<OutputAnchor>> pair = res.getLocalExpr();
         List<Binder> binders = args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         LetExpression body = new LetExpression(pair.a, false);
-        Set<Block> surroundingBlocks = pair.b;
-        res.extendExprGraph(body, Optional.of(this), surroundingBlocks);
+        Set<OutputAnchor> outsideAnchors = pair.b;
+        res.extendExprGraph(body, Optional.of(this), outsideAnchors);
         
-        return new Pair<>(new Lambda(binders, body), surroundingBlocks);
+        return new Pair<>(new Lambda(binders, body), outsideAnchors);
     }
 
     /** Called when the VisualState changed. */
@@ -188,6 +188,11 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     @Override
     public boolean containsBlock(Block block) {
         return attachedBlocks.contains(block);
+    }
+    
+    @Override
+    public Optional<BlockContainer> getContainer() {
+        return wrapper.getContainer();
     }
 
     @Override

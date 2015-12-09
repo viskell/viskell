@@ -52,24 +52,43 @@ public class Lambda extends Expression {
         for (Binder x : this.binders) {
             out.append(" ").append(x.getUniqueName());
         }
+        
+        if (this.binders.isEmpty()) {
+            out.append("_");
+        }
 
         out.append(" -> ");
         out.append(this.body.toHaskell());
         out.append(")");
+        
+        if (this.binders.isEmpty()) {
+            out.append(" ()");
+        }
+
         return out.toString();
     }
 
     @Override
     public String toString() {
         StringBuilder out = new StringBuilder();
-        out.append("\\");
+        out.append("(\\");
 
         for (Binder x : this.binders) {
             out.append(" ").append(x.getBaseName());
         }
+        
+        if (this.binders.isEmpty()) {
+            out.append("_");
+        }
 
         out.append(" -> ");
         out.append(this.body.toString());
+        out.append(")");
+        
+        if (this.binders.isEmpty()) {
+            out.append(" ()");
+        }
+
         return out.toString();
     }
 

@@ -74,7 +74,7 @@ public class GraphBlock extends Block {
     }
     
     @Override
-    public Pair<Expression, Set<Block>> getLocalExpr() {
+    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
         return input.getLocalExpr();
     }
 

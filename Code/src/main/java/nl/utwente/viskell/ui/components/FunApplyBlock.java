@@ -6,10 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Pos;
@@ -30,6 +26,10 @@ import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.DragContext;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
 public class FunApplyBlock extends Block {
     
@@ -122,7 +122,7 @@ public class FunApplyBlock extends Block {
         this.loadFXML("FunApplyBlock");
 
         this.funInfo = funInfo;
-        this.functionInfo.setText(funInfo.getName());
+        this.functionInfo.setText(funInfo.getDisplayName());
         this.inputs = new ArrayList<>();
         this.output = new OutputAnchor(this, new Binder("res"));
         
@@ -206,10 +206,10 @@ public class FunApplyBlock extends Block {
     }
 
     @Override
-    public Pair<Expression, Set<Block>> getLocalExpr() {
+    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
         Expression expr = new FunVar(this.funInfo);
         List<Binder> curriedArgs = new ArrayList<>();
-        Set<Block> surroundingBlocks = new HashSet<>();
+        Set<OutputAnchor> outsideAnchors = new HashSet<>();
         
         for (FunInputAnchor arg : this.inputs) {
             if (arg.curried) {
@@ -217,16 +217,18 @@ public class FunApplyBlock extends Block {
                 curriedArgs.add(ca);
                 expr = new Apply(expr, new LocalVar(ca));
             } else {
-                Pair<Expression, Set<Block>> pair = arg.anchor.getLocalExpr();
+                Pair<Expression, Set<OutputAnchor>> pair = arg.anchor.getLocalExpr();
                 expr = new Apply(expr, pair.a);
-                surroundingBlocks.addAll(pair.b);
+                outsideAnchors.addAll(pair.b);
             }
         }
         
+        outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
+        
         if (curriedArgs.isEmpty()) {
-            return new Pair<>(expr, surroundingBlocks);
+            return new Pair<>(expr, outsideAnchors);
         } else {
-            return new Pair<>(new Lambda(curriedArgs, expr), surroundingBlocks);
+            return new Pair<>(new Lambda(curriedArgs, expr), outsideAnchors);
         }
     }
 

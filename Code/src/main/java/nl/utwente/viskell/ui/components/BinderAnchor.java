@@ -18,7 +18,7 @@ public class BinderAnchor extends OutputAnchor {
     }
 
     @Override
-    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<Block> addLater) {
+    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<OutputAnchor> outsideAnchors) {
         return; // the scope of this graph is limited to its parent container
     }
     

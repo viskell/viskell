@@ -92,14 +92,12 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             }
                             
                             CatalogFunction entry = this.getItem();
-                            if (e.getButton() == MouseButton.SECONDARY) {
-                                if (entry.isConstructor()) {
-                                    addBlock(new MatchBlock(entry, parent));
-                                } else {
-                                    addBlock(new FunApplyBlock(entry, parent));
-                                }
+                            if (e.getButton() == MouseButton.SECONDARY && entry.isConstructor()) {
+                                addBlock(new MatchBlock(entry, parent));
                             } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                 addBlock(new ValueBlock(pane, entry.getFreshSignature(), entry.getName()));
+                            } else if (e.isControlDown()) {
+                                addBlock(new FunApplyBlock(entry, parent));
                             } else {
                                 addBlock(new FunctionBlock(entry, parent));
                             }
@@ -109,7 +107,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                     @Override
                     protected void updateItem(CatalogFunction item, boolean empty) {
                         super.updateItem(item, empty);
-                        this.setText(item == null ? null : item.getName());
+                        this.setText(item == null ? null : item.getDisplayName());
                     }
                 };
             });

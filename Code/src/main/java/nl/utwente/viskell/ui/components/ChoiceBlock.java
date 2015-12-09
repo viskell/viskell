@@ -88,11 +88,11 @@ public class ChoiceBlock extends Block {
     }
     
     @Override
-    public Pair<Expression, Set<Block>> getLocalExpr() {
+    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
         List<Alternative> bindings = lanes.stream().map(Lane::getAlternative).map(pair -> pair.a).collect(Collectors.toList());
-        Set<Block> surroundingBlocks = lanes.stream().map(Lane::getAlternative).flatMap(pair -> pair.b.stream()).collect(Collectors.toSet());
+        Set<OutputAnchor> outsideAnchors = lanes.stream().map(Lane::getAlternative).flatMap(pair -> pair.b.stream()).collect(Collectors.toSet());
         
-        return new Pair<>(new Case(new Value(Type.tupleOf(), "()"), bindings), surroundingBlocks);
+        return new Pair<>(new Case(new Value(Type.tupleOf(), "()"), bindings), outsideAnchors);
     }
 
     @Override

@@ -85,7 +85,7 @@ public class FunctionBlock extends Block {
         output = new OutputAnchor(this, new Binder("res"));
         outputSpace.getChildren().add(output);
         
-        functionInfo.setText(funInfo.getName());
+        functionInfo.setText(funInfo.getDisplayName());
 
         // Make sure the prefWidth is correctly updated.
         this.prefWidthProperty().bind(functionInfo.widthProperty().add(argumentSpace.prefWidthProperty()));
@@ -125,17 +125,19 @@ public class FunctionBlock extends Block {
     }
 
     @Override
-    public Pair<Expression, Set<Block>> getLocalExpr() {
+    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
         Expression expr = new FunVar(this.funInfo);
-        Set<Block> addLater = new HashSet<>();
+        Set<OutputAnchor> outsideAnchors = new HashSet<>();
         
         for (InputAnchor in : this.getActiveInputs()) {
-            Pair<Expression, Set<Block>> pair = in.getLocalExpr();
+            Pair<Expression, Set<OutputAnchor>> pair = in.getLocalExpr();
             expr = new Apply(expr, pair.a);
-            addLater.addAll(pair.b);
+            outsideAnchors.addAll(pair.b);
         }
         
-        return new Pair<>(expr, addLater);
+        outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
+        
+        return new Pair<>(expr, outsideAnchors);
     }
     
     @Override
@@ -148,7 +150,7 @@ public class FunctionBlock extends Block {
                 arg.setFreshRequiredType(ftype.getArgument(), scope);
                 type = ftype.getResult();
             } else {
-                new RuntimeException("too many arguments in this functionblock " + funInfo.getName());
+                new RuntimeException("too many arguments in this functionblock " + funInfo.getDisplayName());
             }
         }
         this.output.setFreshRequiredType(type, scope);

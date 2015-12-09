@@ -224,13 +224,13 @@ public class Connection extends CubicCurve implements
      * Extends the expression graph to include all subexpression required
      * @param exprGraph the let expression representing the current expression graph
      * @param container the container to which this expression graph is constrained
-     * @param addLater a mutable list of blocks that have to be added by a surrounding container
+     * @param outsideAnchors a mutable set of required OutputAnchors from a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<Block> addLater) {
+    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<OutputAnchor> outsideAnchors) {
         if (container.map(c -> c.containsBlock(getStartAnchor().block)).orElse(!getStartAnchor().block.getContainer().isPresent()))
-            getStartAnchor().extendExprGraph(exprGraph, container, addLater);
+            getStartAnchor().extendExprGraph(exprGraph, container, outsideAnchors);
         else
-            addLater.add(getStartAnchor().block);
+            outsideAnchors.add(getStartAnchor());
     }
 
 }
