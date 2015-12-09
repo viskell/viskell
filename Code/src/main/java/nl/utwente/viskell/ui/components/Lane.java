@@ -207,6 +207,11 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
     }
 
     @Override
+    public Optional<BlockContainer> getContainer() {
+        return parent.getContainer();
+    }
+    
+    @Override
     public void moveNodes(double dx, double dy) {
         attachedBlocks.forEach(node -> node.relocate(node.getLayoutX()+dx, node.getLayoutY()+dy));
     }

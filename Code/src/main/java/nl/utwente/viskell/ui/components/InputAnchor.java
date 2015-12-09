@@ -145,9 +145,19 @@ public class InputAnchor extends ConnectionAnchor {
         Pair<Expression, Set<OutputAnchor>> pair = this.getLocalExpr();
         LetExpression fullExpr = new LetExpression(pair.a, false);
         Set<OutputAnchor> outsideAnchors = pair.b;
-        block.container.ifPresent(c -> extendExprGraph(fullExpr, block.container, outsideAnchors));
-        extendExprGraph(fullExpr, Optional.empty(), outsideAnchors);
         
+        Optional<BlockContainer> possibleContainer = block.container;
+        
+        //iterate over all wrapping containers to try adding the required expressions
+        while (possibleContainer.isPresent()) {
+            possibleContainer = possibleContainer.flatMap(container -> {
+                extendExprGraph(fullExpr, Optional.of(container), outsideAnchors);
+                outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, Optional.of(container), outsideAnchors));
+                return container.getContainer();
+            });
+        }
+        
+        extendExprGraph(fullExpr, Optional.empty(), outsideAnchors);
         outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, Optional.empty(), new HashSet<>()));
         return fullExpr;
     }

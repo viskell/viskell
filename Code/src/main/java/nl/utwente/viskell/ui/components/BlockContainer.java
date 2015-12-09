@@ -1,5 +1,7 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.Optional;
+
 import javafx.geometry.Bounds;
 
 /**
@@ -34,6 +36,9 @@ public interface BlockContainer {
     
     /** Check whether this container contains the specified block */
     public boolean containsBlock(Block block);
+    
+    /** @return the container to which this container belongs */
+    public Optional<BlockContainer> getContainer();
 
     /** Move the attached blocks with the specified offset */
     void moveNodes(double dx, double dy);
