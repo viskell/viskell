@@ -1,7 +1,9 @@
 package nl.utwente.viskell.haskell.type;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.List;
 
 public class TypeScope {
     /**
@@ -78,5 +80,14 @@ public class TypeScope {
         return new TypeVar(prefix + "___" + Integer.toHexString(tvOffset++), true);
     }
 
-    
+    /**
+     * Helper method to get all type variables (instances) used in a type
+     * @param type to inspect for type variables
+     * @return the list of typevar instances
+     */
+    protected static List<TypeVar.TypeInstance> gatherAllTypeVarInsts(Type type) {
+        TypeScope scope = new TypeScope();
+        type.getFresh(scope);
+        return new ArrayList<>(scope.staleToFresh.keySet());
+    }
 }

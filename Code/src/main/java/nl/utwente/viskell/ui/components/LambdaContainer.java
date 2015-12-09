@@ -69,17 +69,21 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     /**
      * Constructs a LambdaContainer with explicit types.
      * @param name of the function.
-     * @param type the full function type.
+     * @param signature the full function type.
      */
-    public LambdaContainer(DefinitionBlock wrapper, String name, Type type) {
+    public LambdaContainer(DefinitionBlock wrapper, String name, Type signature) {
         super();
         this.loadFXML("LambdaContainer");
         this.wrapper = wrapper;
         attachedBlocks = new HashSet<>();
+        
+        // Make sure that the internal anchor typss stay as polymorphic as the signature
+        Type constraint = signature.getFresh();
+        constraint.enforcePolymorphism();
 
         // Collect argument types and result type
         this.args = new ArrayList<>();
-        Type t = type;
+        Type t = constraint;
         int i = 0;
         while (t instanceof FunType) {
             FunType ft = (FunType) t;
