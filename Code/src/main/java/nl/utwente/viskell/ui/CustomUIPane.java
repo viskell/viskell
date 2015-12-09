@@ -18,8 +18,6 @@ import nl.utwente.viskell.ui.components.ChoiceBlock;
 import nl.utwente.viskell.ui.components.Connection;
 import nl.utwente.viskell.ui.components.DefinitionBlock;
 import nl.utwente.viskell.ui.components.DrawWire;
-import nl.utwente.viskell.ui.components.InputAnchor;
-import nl.utwente.viskell.ui.components.OutputAnchor;
 
 /**
  * The core Pane that also keeps state for the user interface.
@@ -136,9 +134,7 @@ public class CustomUIPane extends Region {
 
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
-        block.getAllInputs().forEach(InputAnchor::removeConnections);
-        block.getAllOutputs().forEach(OutputAnchor::removeConnections);
-        block.detachFromContainer();
+        block.removeAllLinks();
         
         if (block.belongsOnBottom()) {
             this.bottomLayer.getChildren().remove(block);

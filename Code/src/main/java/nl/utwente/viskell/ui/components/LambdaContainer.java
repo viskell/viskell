@@ -182,7 +182,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     
     @Override
     public void detachAllBlocks() {
-        attachedBlocks.forEach(Block::detachFromContainer);
+        new ArrayList<>(attachedBlocks).forEach(Block::detachFromContainer);
     }
     
     @Override
@@ -198,5 +198,12 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     @Override
     public void moveNodes(double dx, double dy) {
         attachedBlocks.forEach(node -> node.relocate(node.getLayoutX()+dx, node.getLayoutY()+dy));
+    }
+
+    /** Remove all associations of this container with others in preparation of removal, including all connections */
+    public void removeAllLinks() {
+       this.args.forEach(OutputAnchor::removeConnections);
+       this.res.removeConnections();
+       this.detachAllBlocks();
     }
 }

@@ -200,6 +200,13 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     public Optional<BlockContainer> getContainer() {
         return container;
     }
+
+    /** Remove all associations of this block with others in preparation of removal, including all connections */
+    public void removeAllLinks() {
+        this.getAllInputs().forEach(InputAnchor::removeConnections);
+        this.getAllOutputs().forEach(OutputAnchor::removeConnections);
+        this.detachFromContainer();
+    }
     
     /** Removes the block from its container */
     public void detachFromContainer() {
