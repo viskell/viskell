@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import nl.utwente.viskell.haskell.env.DefinitionFunction;
+import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
@@ -154,9 +155,9 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     @Override
     public void refreshAnchorTypes() {
         // do typechecking internal connections first so that the lambda type is inferred
-        this.body.handleConnectionChanges(false);
+        body.handleConnectionChanges(false);
 
-        this.fun.setExactRequiredType(this.body.getLambdaType().getFresh());
+        fun.setExactRequiredType(funInfo.map(FunctionInfo::getFreshSignature).orElse(body.getLambdaType().getFresh()));
     }
 
     public void handleConnectionChanges(boolean finalPhase) {
