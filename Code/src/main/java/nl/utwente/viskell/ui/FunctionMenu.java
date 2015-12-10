@@ -127,26 +127,26 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         /* Create content for utilSpace. */
         Button closeButton = new Button("Close");
         closeButton.setOnAction(event -> close());
-        Button valBlockButton = new Button("Value Block");
+        Button valBlockButton = new Button("Value");
         valBlockButton.setOnAction(event -> addValueBlock());
-        Button disBlockButton = new Button("Display Block");
+        Button disBlockButton = new Button("Display");
         disBlockButton.setOnAction(event -> addBlock(new DisplayBlock(parent)));
-        Button defBlockButton = new Button("Definition Block");
+        Button defBlockButton = new Button("Definition");
         defBlockButton.setOnAction(event -> addDefinitionBlock());
-        Button lambdaBlockButton = new Button("Lambda Block");
+        Button lambdaBlockButton = new Button("Lambda");
         lambdaBlockButton.setOnAction(event -> addLambdaBlock());
-        Button choiceBlockButton = new Button("Choice Block");
+        Button choiceBlockButton = new Button("Choice");
         choiceBlockButton.setOnAction(event -> addChoiceBlock());
 
         utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton, defBlockButton, lambdaBlockButton, choiceBlockButton);
 
         if (GhciSession.pickBackend() == GhciSession.Backend.GHCi) {
             // These blocks are specifically for GHCi
-            Button sliderBlockButton = new Button("Slider Block");
+            Button sliderBlockButton = new Button("Slider");
             sliderBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent)));
-            Button rgbBlockButton = new Button("RGB Block");
+            Button rgbBlockButton = new Button("RGB");
             rgbBlockButton.setOnAction(event -> addBlock(new RGBBlock(parent)));
-            Button graphBlockButton = new Button("Graph Block");
+            Button graphBlockButton = new Button("Graph");
             graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
 
             utilSpace.getChildren().addAll(sliderBlockButton, rgbBlockButton, graphBlockButton);
@@ -155,12 +155,19 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         if (GhciSession.pickBackend() == GhciSession.Backend.Clash) {
             // These blocks are specifically for Clash
 
-            Button simulateBlockButton = new Button("Simulate Block");
+            Button simulateBlockButton = new Button("Simulate");
             simulateBlockButton.setOnAction(event -> addBlock(new SimulateBlock(parent)));
 
             utilSpace.getChildren().addAll(simulateBlockButton);
         }
 
+        // with an odd number of block buttons fill the last spot with a close button
+        if (utilSpace.getChildren().size() % 2 == 1) {
+            Button extraCloseButton = new Button("Close");
+            extraCloseButton.setOnAction(event -> close());
+            utilSpace.getChildren().add(extraCloseButton);
+        }
+        
 
         for (Node button : utilSpace.getChildren()) {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);

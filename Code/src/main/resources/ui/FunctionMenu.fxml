@@ -1,6 +1,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import nl.utwente.viskell.ui.FunctionMenu?>
 <fx:root type="nl.utwente.viskell.ui.FunctionMenu" xmlns:fx="http://javafx.com/fxml/1">
@@ -10,7 +11,7 @@
             <FlowPane fx:id="searchSpace" prefWrapLength="10" vgap="50" hgap="10"/>
         </top>
         <center>
-            <VBox fx:id="utilSpace" />
+            <TilePane fx:id="utilSpace" alignment="CENTER" prefColumns="2" hgap="10" vgap="5" />
         </center>
         <bottom>
             <VBox fx:id="categorySpace" prefWidth="15" />
