@@ -101,16 +101,16 @@ public class TypeVar extends Type {
          * @throws HaskellTypeError if this type variable is rigid
          * @param The new instance of this type.
          */
-        private void set(ConcreteType type) throws HaskellTypeError {
+        private void set(ConcreteType ctype) throws HaskellTypeError {
             if (this.type != null) {
                 throw new IllegalStateException("Type instance already set");
             }
             
             if (this.isRigid) {
-                throw new HaskellTypeError("Can not unify a rigid type variable " + this.name + " with concrete type " + this.type.prettyPrint());
+                throw new HaskellTypeError("Can not unify a rigid type variable " + this.name + " with concrete type " + ctype.prettyPrint());
             }
             
-            this.type = type;
+            this.type = ctype;
         }
 
         /**
@@ -293,6 +293,14 @@ public class TypeVar extends Type {
     protected TypeVar pickFreshTypeVarInstance(IdentityHashMap<TypeVar.TypeInstance, TypeVar> staleToFresh) {
         if (staleToFresh.containsKey(this.instance)) {
             return staleToFresh.get(this.instance);
+        }
+        
+        if (this.instance.isRigid) {
+            //FIXME this is a ugly workaround to make to rigid typevars unify with fresh copies of themselves
+            //TODO remove this special case once type scoping is dealt with properly for whole lambdas
+            this.instance.unifiedVars = new LinkedList<>();
+            this.instance.unifiedVars.add(new WeakReference<>(this));
+            return this;
         }
 
         TypeVar fresh = new TypeVar(this.instance.name, this.instance.internal, this.instance.isRigid, this.instance.constraints.clone(), null);
