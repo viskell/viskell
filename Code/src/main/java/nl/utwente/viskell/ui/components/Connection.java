@@ -13,6 +13,7 @@ import javafx.scene.transform.Transform;
 import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.TypeChecker;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
@@ -106,7 +107,8 @@ public class Connection extends CubicCurve implements
         if (finalPhase == this.errorState) {
             try {
                 // first a trial unification on a copy of the types to minimize error propagation
-                TypeChecker.unify("trial connection", this.startAnchor.getType().getFresh(), this.endAnchor.getType().getFresh());
+                TypeScope scope = new TypeScope();
+                TypeChecker.unify("trial connection", this.startAnchor.getType().getFresh(scope), this.endAnchor.getType().getFresh(scope));
                 // unify the actual types
                 TypeChecker.unify("connection", this.startAnchor.getType(), this.endAnchor.getType());
                 this.endAnchor.setErrorState(false);

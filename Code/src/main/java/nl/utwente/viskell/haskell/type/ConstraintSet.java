@@ -158,4 +158,14 @@ public final class ConstraintSet {
         return Arrays.toString(this.constraints.stream().map(c -> c.getName()).toArray());
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (! (other instanceof ConstraintSet)) {
+            return false;
+        }
+        
+        return this.constraints.equals(((ConstraintSet)other).constraints);
+    }
+
+    
 }

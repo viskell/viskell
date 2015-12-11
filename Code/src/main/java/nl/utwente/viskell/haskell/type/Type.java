@@ -66,6 +66,12 @@ public abstract class Type {
     @Override
     public abstract String toString();
 
+    /** Ensures that this type stays maximal polymorphic by marking all internal type variables rigid */
+    public void enforcePolymorphism() {
+        for (TypeVar.TypeInstance tvi : TypeScope.gatherAllTypeVarInsts(this)) {
+            tvi.makeRigid();
+        }
+    }
 
     /**
      * @return a new type constructor

@@ -15,7 +15,7 @@ public class TypeVar extends Type {
     /**
      * An optional mutable reference to a concrete type.
      */
-    public final static class TypeInstance {
+    protected final static class TypeInstance {
         /**
          * The textual representation of the type variable.
          */
@@ -26,6 +26,11 @@ public class TypeVar extends Type {
          */
         private final boolean internal;
 
+        /**
+         * Whether this type variable is rigid (meaning that it can't be unified with a more specific or concrete type)
+         */
+        private boolean isRigid;
+        
         /**
          * A concrete instantiated type or null.
          */
@@ -49,15 +54,29 @@ public class TypeVar extends Type {
          * @param type The concrete instance of this type, might be null.
          * @param constraints The set of constraints for this type.
          */
-        private TypeInstance(TypeVar creator, String name, boolean internal, ConcreteType type, final ConstraintSet constraints) {
+        private TypeInstance(TypeVar creator, String name, boolean internal, boolean isRigid, ConcreteType type, final ConstraintSet constraints) {
             this.name = name;
             this.internal = internal;
+            this.isRigid = isRigid;
             this.type = type;
             this.constraints = constraints;
             this.unifiedVars = new LinkedList<>();
             this.unifiedVars.add(new WeakReference<>(creator));
         }
 
+        
+        /**
+         *  Make this type variable rigid
+         * @throws IllegalStateException when is isPresent() is true
+         */
+        protected void makeRigid() {
+            if (this.type != null) {
+                throw new IllegalStateException("Type instance already set");
+            }
+
+            this.isRigid = true;
+        }
+        
         /**
          * @return Whether there is a concrete type.
          */
@@ -79,23 +98,42 @@ public class TypeVar extends Type {
 
         /**
          * @throws IllegalStateException when is isPresent() is true
+         * @throws HaskellTypeError if this type variable is rigid
          * @param The new instance of this type.
          */
-        private void set(ConcreteType type) {
+        private void set(ConcreteType ctype) throws HaskellTypeError {
             if (this.type != null) {
                 throw new IllegalStateException("Type instance already set");
             }
             
-            this.type = type;
+            if (this.isRigid) {
+                throw new HaskellTypeError("Can not unify a rigid type variable " + this.name + " with concrete type " + ctype.prettyPrint());
+            }
+            
+            this.type = ctype;
         }
 
         /**
          * Deeply unifying all aspects of type instances
          * @param the other type instance.
-         * @throws HaskellTypeError if the combined constraint set of the typeva instances is not satisfiable.
+         * @throws HaskellTypeError if the combined constraint set of the typevar instances is not satisfiable.
+         * @throws HaskellTypeError if a rigid type variable gets unified with more constraints or another rigid type variable
          */
         private void unifyWith(TypeInstance other) throws HaskellTypeError {
+            if (this == other) {
+                return;
+            }
+            
+            if (this.isRigid && other.isRigid) {
+                throw new HaskellTypeError("Can not unify a rigid type variable " + this.name + " with another rigid type variable " + other.name);
+            }
+            
             other.constraints.mergeConstraintsWith(this.constraints);
+            
+            if ((this.isRigid || other.isRigid) && ! this.constraints.equals(other.constraints)) {
+                throw new HaskellTypeError("Can not add extra constraints to a rigid type variable " + this.name);
+            }
+            
             other.unifiedVars.addAll(this.unifiedVars);
             // Go through all type variable associated with both type instances, to make sure all of them are unified to the same instance.
             for (ListIterator<WeakReference<TypeVar>> iter = this.unifiedVars.listIterator(); iter.hasNext();) {
@@ -140,7 +178,7 @@ public class TypeVar extends Type {
      * @param internal whether this an internally generated type variable
      */
     public TypeVar(final String name, final boolean internal) {
-        this(name, internal, new ConstraintSet(), null);
+        this(name, internal, false, new ConstraintSet(), null);
     }
 
     /**
@@ -151,8 +189,8 @@ public class TypeVar extends Type {
      * @param constraints The set of constraints for this type.
      * @param instance The concrete instance of this type, might be null.
      */
-    private TypeVar(final String name, final boolean internal, final ConstraintSet constraints, final ConcreteType type) {
-        this.instance = new TypeInstance(this, name.toLowerCase(), internal, type, constraints);
+    private TypeVar(final String name, final boolean internal, final boolean isRigid, final ConstraintSet constraints, final ConcreteType type) {
+        this.instance = new TypeInstance(this, name.toLowerCase(), internal, isRigid, type, constraints);
     }
 
     /**
@@ -179,19 +217,22 @@ public class TypeVar extends Type {
 
     /*
     * @throws IllegalStateException when hasInstance() is true
+   * @throws HaskellTypeError if this type variable is rigid
     * @param The concrete type this type variable is unified with
     */
-    public final void setConcreteInstance(ConcreteType type) {
+    public final void setConcreteInstance(ConcreteType type) throws HaskellTypeError {
         this.instance.set(type);
     }
 
     /**
      * Use the same type instance for both type variable, effectively unifying them.
      * @param the other type variable.
-     * @throws HaskellTypeError @throws HaskellTypeError if the combined constraint set of the type variables is not satisfiable. 
+     * @throws HaskellTypeError if the combined constraint set of the type variables is not satisfiable. 
      */
     public final void unifyWith(TypeVar other) throws HaskellTypeError {
-        if (this.instance.internal) {
+        if (this.instance.isRigid) {
+            other.instance.unifyWith(this.instance);
+        } else if (other.instance.isRigid || this.instance.internal) {
             this.instance.unifyWith(other.instance);
         } else {
             other.instance.unifyWith(this.instance);
@@ -253,8 +294,16 @@ public class TypeVar extends Type {
         if (staleToFresh.containsKey(this.instance)) {
             return staleToFresh.get(this.instance);
         }
+        
+        if (this.instance.isRigid) {
+            //FIXME this is a ugly workaround to make to rigid typevars unify with fresh copies of themselves
+            //TODO remove this special case once type scoping is dealt with properly for whole lambdas
+            this.instance.unifiedVars = new LinkedList<>();
+            this.instance.unifiedVars.add(new WeakReference<>(this));
+            return this;
+        }
 
-        TypeVar fresh = new TypeVar(this.instance.name, this.instance.internal, this.instance.constraints.clone(), null);
+        TypeVar fresh = new TypeVar(this.instance.name, this.instance.internal, this.instance.isRigid, this.instance.constraints.clone(), null);
         staleToFresh.put(this.instance, fresh);
         return fresh;
        
