@@ -11,9 +11,15 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Binder;
@@ -39,9 +45,15 @@ public class FunApplyBlock extends Block {
         /** The connection anchor for this input argument. */
         private final InputAnchor anchor;
         
-        /** The draggable input type label. */
+        /** The input type label of this anchor. */
         private final Label inputType;
 
+        /** Label with function arrow when in curried state. */
+        private final Label curryArrow;
+        
+        /** The draggable pane combining both type label and curry arrow */
+        private final Pane typePane;
+        
         /** Whether this input argument is in curried state. */
         private boolean curried;
         
@@ -50,26 +62,32 @@ public class FunApplyBlock extends Block {
         
         public FunInputAnchor() {
             this.curried = false;
-            this.inputType = new Label(".....") {
+            this.inputType = new Label(".....");
+            this.inputType.setMinWidth(USE_PREF_SIZE);
+            this.inputType.getStyleClass().add("inputType");
+            this.curryArrow = new Label("->");
+            this.curryArrow.setMinWidth(USE_PREF_SIZE);
+            this.curryArrow.getStyleClass().add("curryArrow");
+            this.curryArrow.setVisible(false);
+            this.typePane = new HBox(this.inputType, this.curryArrow) {
                 @Override
                 public void relocate(double x, double y) {
                     super.relocate(x, y);
                     FunInputAnchor.this.dragShift(y);
                 }
             };
-            this.inputType.setMinWidth(USE_PREF_SIZE);
-            this.inputType.getStyleClass().add("inputType");
+            this.typePane.setMinWidth(USE_PREF_SIZE);
             this.anchor = new InputAnchor(FunApplyBlock.this);
             this.anchor.layoutXProperty().bind(this.inputType.widthProperty().divide(2));
-            this.getChildren().addAll(this.anchor, this.inputType);
+            this.getChildren().addAll(this.anchor, this.typePane);
 
-            dragContext = new DragContext(this.inputType);
+            dragContext = new DragContext(this.typePane);
             dragContext.setDragInitAction(c -> {this.curried = false;});
             dragContext.setDragFinishAction(c -> {
                 double height = this.inputType.getHeight();
-                boolean mostlyDown = this.inputType.getLayoutY() > height;
+                boolean mostlyDown = this.typePane.getLayoutY() > height;
                 double newY = mostlyDown ? 2*height : 0;
-                this.inputType.relocate(0, newY);
+                this.typePane.relocate(0, newY);
                 this.curried = mostlyDown;
                 FunApplyBlock.this.dragShiftOuput(newY - height);
                 FunApplyBlock.this.initiateConnectionChanges();
@@ -140,7 +158,7 @@ public class FunApplyBlock extends Block {
             t = ft.getResult();
         }
 
-        Pane inputSpace = new HBox(10, this.inputs.toArray(new Node[this.inputs.size()]));
+        Pane inputSpace = new HBox(0, this.inputs.toArray(new Node[this.inputs.size()]));
         this.curriedOutput = new Pane() {
                 @Override
                 public double computePrefWidth(double heigth) {
@@ -149,6 +167,7 @@ public class FunApplyBlock extends Block {
             };
         this.curriedOutput.setVisible(false);
         this.curriedOutput.getStyleClass().add("curriedOutput");
+        this.curriedOutput.setBorder(new Border(new BorderStroke(null, BorderStrokeStyle.SOLID, null, null)));
             
         this.bodySpace.getChildren().addAll(this.curriedOutput, inputSpace, outputSpace);
         outputSpace.layoutYProperty().bind(inputSpace.heightProperty());
@@ -237,7 +256,8 @@ public class FunApplyBlock extends Block {
         this.resTypeLabel.setText(this.resType.prettyPrint());
 
         for (FunInputAnchor arg : this.inputs) {
-            arg.inputType.setText(arg.anchor.getStringType() + (arg.curried ? " ->" : ""));
+            arg.inputType.setText(arg.anchor.getStringType());
+            arg.curryArrow.setVisible(arg.curried);
             arg.inputType.setVisible(arg.anchor.errorStateProperty().get() || ! arg.anchor.hasConnection());
         }
     }

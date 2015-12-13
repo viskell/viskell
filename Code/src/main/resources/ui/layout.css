@@ -100,6 +100,12 @@ SliderBlock .value.block {
     -fx-font-weight: normal;
 }
 
+.curryArrow {
+	-fx-padding: 0 2 0 2;
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+ }
+ 
 #inputSpace, #outputSpace {
     -fx-max-height: 0px;
     -fx-alignment: center;
