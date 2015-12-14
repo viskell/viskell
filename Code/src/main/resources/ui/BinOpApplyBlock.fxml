@@ -1,0 +1,8 @@
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import nl.utwente.viskell.ui.components.BinOpApplyBlock?>
+<fx:root type="nl.utwente.viskell.ui.components.BinOpApplyBlock" xmlns:fx="http://javafx.com/fxml/1">
+	<Pane  styleClass="function, block">
+    	<Pane fx:id="bodySpace"/>
+    </Pane>
+</fx:root>

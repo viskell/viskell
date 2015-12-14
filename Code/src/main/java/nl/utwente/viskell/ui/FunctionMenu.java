@@ -97,7 +97,11 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                 addBlock(new ValueBlock(pane, entry.getFreshSignature(), entry.getName()));
                             } else if (e.isControlDown()) {
-                                addBlock(new FunApplyBlock(entry, parent));
+                            	if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
+                            		addBlock(new BinOpApplyBlock(entry, parent));
+                            	} else {
+                            		addBlock(new FunApplyBlock(entry, parent));
+                            	}
                             } else {
                                 addBlock(new FunctionBlock(entry, parent));
                             }

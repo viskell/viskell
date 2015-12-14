@@ -11,15 +11,12 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Apply;
 import nl.utwente.viskell.haskell.expr.Binder;
@@ -111,6 +108,13 @@ public class FunApplyBlock extends Block {
             FunApplyBlock.this.dragShiftOuput(y - height);
         }
 
+        /** Refresh visual information such as types */
+        public void invalidateVisualState() {
+        	this.setTranslateY(this.anchor.hasConnection() ? 0 : -9);
+            this.inputType.setText(this.anchor.hasConnection() ? "zyxwv" : this.anchor.getStringType()); 
+            this.curryArrow.setVisible(this.curried);
+            this.inputType.setVisible(this.anchor.errorStateProperty().get() || ! this.anchor.hasConnection());
+        }
     }
     
     /** The information about the function. */
@@ -257,10 +261,7 @@ public class FunApplyBlock extends Block {
         this.resTypeLabel.setText(this.resType.prettyPrint());
 
         for (FunInputAnchor arg : this.inputs) {
-        	arg.setTranslateY(arg.anchor.hasConnection() ? 0 : -9);
-            arg.inputType.setText(arg.anchor.hasConnection() ? "zyxwv" : arg.anchor.getStringType()); 
-            arg.curryArrow.setVisible(arg.curried);
-            arg.inputType.setVisible(arg.anchor.errorStateProperty().get() || ! arg.anchor.hasConnection());
+        	arg.invalidateVisualState();
         }
     }
 

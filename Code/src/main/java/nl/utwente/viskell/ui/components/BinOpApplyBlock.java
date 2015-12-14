@@ -8,18 +8,17 @@ import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Apply;
@@ -77,13 +76,14 @@ public class BinOpApplyBlock extends Block {
             this.anchor = new InputAnchor(BinOpApplyBlock.this);
             this.anchor.layoutXProperty().bind(this.inputType.widthProperty().divide(2));
             this.getChildren().addAll(this.anchor, this.typePane);
+            this.setTranslateY(-9);
 
             dragContext = new DragContext(this.typePane);
             dragContext.setDragInitAction(c -> {this.curried = false;});
             dragContext.setDragFinishAction(c -> {
                 double height = this.inputType.getHeight();
                 boolean mostlyDown = this.typePane.getLayoutY() > height;
-                double newY = mostlyDown ? 2*height : 0;
+                double newY = mostlyDown ? 1.5*height : 0;
                 this.typePane.relocate(0, newY);
                 this.curried = mostlyDown;
                 BinOpApplyBlock.this.dragShiftOuput(newY - height);
@@ -93,8 +93,8 @@ public class BinOpApplyBlock extends Block {
 
         @Override
         public double computePrefHeight(double width) {
-            double height = this.inputType.prefHeight(width)*2;
-            this.dragContext.setDragLimits(new BoundingBox(0, 0, 0, height));
+            double height = this.inputType.prefHeight(width);
+            this.dragContext.setDragLimits(new BoundingBox(0, 0, 0, height*1.5));
             return height;
         }
 
@@ -102,9 +102,17 @@ public class BinOpApplyBlock extends Block {
         private void dragShift(double y) {
             double height = this.inputType.getHeight();
             this.anchor.setLayoutY(y);
-            this.anchor.setOpacity(1 - (y/(height*1.5)));
+            this.anchor.setOpacity(1 - (y/(height)));
             this.anchor.setVisible(y < height);
             BinOpApplyBlock.this.dragShiftOuput(y - height);
+        }
+
+        /** Refresh visual information such as types */
+        public void invalidateVisualState() {
+        	this.setTranslateY(this.anchor.hasConnection() ? 0 : -9);
+            this.inputType.setText(this.anchor.hasConnection() ? "zyxwv" : this.anchor.getStringType()); 
+            this.curryArrow.setVisible(this.curried);
+            this.inputType.setVisible(this.anchor.errorStateProperty().get() || ! this.anchor.hasConnection());
         }
 
     }
@@ -132,14 +140,19 @@ public class BinOpApplyBlock extends Block {
     @FXML private Pane bodySpace;
     
     /** The Label in which the information of the function is displayed. */
-    @FXML private Label functionInfo;
+    private Label functionInfo;
 
     public BinOpApplyBlock(FunctionInfo funInfo, CustomUIPane pane) {
         super(pane);
         this.loadFXML("BinOpApplyBlock");
 
         this.funInfo = funInfo;
-        this.functionInfo.setText(funInfo.getDisplayName());
+        String name = funInfo.getDisplayName();
+        this.functionInfo = new Label(name.substring(1, name.length()-1));
+        this.functionInfo.getStyleClass().add("operator");
+        Pane infoArea = new StackPane(functionInfo);
+        infoArea.setMinHeight(18);
+        infoArea.setMaxHeight(18);
         this.output = new OutputAnchor(this, new Binder("res"));
         
         this.resTypeLabel = new Label("");
@@ -151,7 +164,7 @@ public class BinOpApplyBlock extends Block {
         this.leftInput = new FunInputAnchor();
         this.rightInput = new FunInputAnchor();
         
-        Pane inputSpace = new HBox(0, this.leftInput, this.functionInfo, this.rightInput);
+        Pane inputSpace = new HBox(0, this.leftInput, infoArea, this.rightInput);
         this.curriedOutput = new Pane() {
                 @Override
                 public double computePrefWidth(double heigth) {
@@ -163,11 +176,12 @@ public class BinOpApplyBlock extends Block {
         this.curriedOutput.setBorder(new Border(new BorderStroke(null, BorderStrokeStyle.SOLID, null, null)));
             
         this.bodySpace.getChildren().addAll(this.curriedOutput, inputSpace, outputSpace);
+        this.bodySpace.setLayoutX(5);
         outputSpace.layoutYProperty().bind(inputSpace.heightProperty());
         outputSpace.layoutXProperty().bind(inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2)));
+        outputSpace.setTranslateY(9);
         
-        this.curriedOutput.layoutYProperty().bind(inputSpace.heightProperty().divide(2));
-        this.curriedOutput.prefHeightProperty().bind(inputSpace.heightProperty());
+        this.curriedOutput.prefHeightProperty().bind(inputSpace.heightProperty().multiply(2));
         this.curriedOutput.translateYProperty().bind(outputSpace.translateYProperty());
     }
 
@@ -177,7 +191,7 @@ public class BinOpApplyBlock extends Block {
             this.curriedOutput.setVisible(true);
             this.curriedOutput.requestLayout();
         } else { 
-            this.output.getParent().setTranslateY(shift);
+            this.output.getParent().setTranslateY(9 + shift);
             this.curriedOutput.setVisible(false);
         }
 	}
@@ -195,10 +209,10 @@ public class BinOpApplyBlock extends Block {
 	@Override
 	protected void refreshAnchorTypes() {
         FunType ft1 = (FunType)funInfo.getFreshSignature();
-        FunType ft2 = (FunType) ft1.getArgument();
-        Type ar = ft1.getArgument();
-        Type al = ft2.getArgument();
-        Type rt = ft1.getResult();
+        FunType ft2 = (FunType) ft1.getResult();
+        Type al = ft1.getArgument();
+        Type ar = ft2.getArgument();
+        Type rt = ft2.getResult();
         TypeScope scope = new TypeScope();
         
         this.leftInput.anchor.setFreshRequiredType(al, scope);
@@ -255,16 +269,9 @@ public class BinOpApplyBlock extends Block {
 	@Override
 	public void invalidateVisualState() {
         this.resTypeLabel.setText(this.resType.prettyPrint());
-
-        this.leftInput.inputType.setText(this.leftInput.anchor.getStringType());
-        this.leftInput.curryArrow.setVisible(this.leftInput.curried);
-        this.leftInput.inputType.setVisible(this.leftInput.anchor.errorStateProperty().get() || ! this.leftInput.anchor.hasConnection());
-
-        this.rightInput.inputType.setText(this.rightInput.anchor.getStringType());
-        this.rightInput.curryArrow.setVisible(this.rightInput.curried);
-        this.rightInput.inputType.setVisible(this.rightInput.anchor.errorStateProperty().get() || ! this.rightInput.anchor.hasConnection());
-
-	}
+        this.leftInput.invalidateVisualState();
+        this.rightInput.invalidateVisualState();
+    }
 	
     @Override
     public String toString() {

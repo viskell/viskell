@@ -3,15 +3,24 @@ package nl.utwente.viskell.haskell.type;
 import com.google.common.base.Joiner;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Abstract class for Haskell types. Provides an interface for common methods.
  */
 public abstract class Type {
-    /** Logger instance for types. */
-    protected Logger logger = Logger.getLogger(Type.class.getName());
 
+	/** @return The number of arguments that can be applied to a value of this type. */
+	public int countArguments() {
+		int count = 0;
+		Type type = this;
+		while (type instanceof FunType) {
+			count++;
+			type = ((FunType)type).getResult();
+		}
+		
+		return count;
+	}
+	
     /**
      * @return The readable representation of this type for in the UI.
      */
