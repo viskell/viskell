@@ -80,13 +80,14 @@ public class FunApplyBlock extends Block {
             this.anchor = new InputAnchor(FunApplyBlock.this);
             this.anchor.layoutXProperty().bind(this.inputType.widthProperty().divide(2));
             this.getChildren().addAll(this.anchor, this.typePane);
+            this.setTranslateY(-9);
 
             dragContext = new DragContext(this.typePane);
             dragContext.setDragInitAction(c -> {this.curried = false;});
             dragContext.setDragFinishAction(c -> {
                 double height = this.inputType.getHeight();
                 boolean mostlyDown = this.typePane.getLayoutY() > height;
-                double newY = mostlyDown ? 2*height : 0;
+                double newY = mostlyDown ? 1.5*height : 0;
                 this.typePane.relocate(0, newY);
                 this.curried = mostlyDown;
                 FunApplyBlock.this.dragShiftOuput(newY - height);
@@ -96,8 +97,8 @@ public class FunApplyBlock extends Block {
 
         @Override
         public double computePrefHeight(double width) {
-            double height = this.inputType.prefHeight(width)*2;
-            this.dragContext.setDragLimits(new BoundingBox(0, 0, 0, height));
+            double height = this.inputType.prefHeight(width);
+            this.dragContext.setDragLimits(new BoundingBox(0, 0, 0, height*1.5));
             return height;
         }
 
@@ -105,7 +106,7 @@ public class FunApplyBlock extends Block {
         private void dragShift(double y) {
             double height = this.inputType.getHeight();
             this.anchor.setLayoutY(y);
-            this.anchor.setOpacity(1 - (y/(height*1.5)));
+            this.anchor.setOpacity(1 - (y/(height)));
             this.anchor.setVisible(y < height);
             FunApplyBlock.this.dragShiftOuput(y - height);
         }
@@ -161,8 +162,8 @@ public class FunApplyBlock extends Block {
         Pane inputSpace = new HBox(0, this.inputs.toArray(new Node[this.inputs.size()]));
         this.curriedOutput = new Pane() {
                 @Override
-                public double computePrefWidth(double heigth) {
-                    return Math.max(inputSpace.prefWidth(heigth), outputSpace.getLayoutX()+resTypeLabel.prefWidth(heigth));
+                public double computePrefWidth(double height) {
+                    return Math.max(inputSpace.prefWidth(height), outputSpace.getLayoutX()+resTypeLabel.prefWidth(height));
                 }
             };
         this.curriedOutput.setVisible(false);
@@ -172,9 +173,9 @@ public class FunApplyBlock extends Block {
         this.bodySpace.getChildren().addAll(this.curriedOutput, inputSpace, outputSpace);
         outputSpace.layoutYProperty().bind(inputSpace.heightProperty());
         outputSpace.layoutXProperty().bind(inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2)));
+        outputSpace.setTranslateY(9);
         
-        this.curriedOutput.layoutYProperty().bind(inputSpace.heightProperty().divide(2));
-        this.curriedOutput.prefHeightProperty().bind(inputSpace.heightProperty());
+        this.curriedOutput.prefHeightProperty().bind(inputSpace.heightProperty().multiply(2));
         this.curriedOutput.translateYProperty().bind(outputSpace.translateYProperty());
     }
 
@@ -182,7 +183,7 @@ public class FunApplyBlock extends Block {
     private void dragShiftOuput(double y) {
         double shift = Math.max(0, y);
         if (this.inputs.stream().map(i -> i.curried).filter(c -> c).count() == 0) { 
-            this.output.getParent().setTranslateY(shift);
+            this.output.getParent().setTranslateY(9 + shift);
             this.curriedOutput.setVisible(false);
         } else {
             this.curriedOutput.setVisible(true);
@@ -256,7 +257,8 @@ public class FunApplyBlock extends Block {
         this.resTypeLabel.setText(this.resType.prettyPrint());
 
         for (FunInputAnchor arg : this.inputs) {
-            arg.inputType.setText(arg.anchor.getStringType());
+        	arg.setTranslateY(arg.anchor.hasConnection() ? 0 : -9);
+            arg.inputType.setText(arg.anchor.hasConnection() ? "zyxwv" : arg.anchor.getStringType()); 
             arg.curryArrow.setVisible(arg.curried);
             arg.inputType.setVisible(arg.anchor.errorStateProperty().get() || ! arg.anchor.hasConnection());
         }
