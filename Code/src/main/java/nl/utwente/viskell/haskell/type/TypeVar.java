@@ -1,10 +1,13 @@
 package nl.utwente.viskell.haskell.type;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+
+import com.google.common.collect.ImmutableList;
 
 
 /**
@@ -42,6 +45,11 @@ public class TypeVar extends Type {
         private ConstraintSet constraints;
 
         /**
+         * List of type applications that needs their constraints checked once this variable is instantiated.
+         */
+        private List<TypeApp> associatedTypeApps;
+        
+        /**
          * Internal List of all type variables that refer to this instance.
          * this list contains the creating type variable as well as the variables have unified with this.
          * It is using WeakReference to avoid holding on to too much old type variables. 
@@ -62,6 +70,7 @@ public class TypeVar extends Type {
             this.constraints = constraints;
             this.unifiedVars = new LinkedList<>();
             this.unifiedVars.add(new WeakReference<>(creator));
+            this.associatedTypeApps = new ArrayList<>();
         }
 
         
@@ -109,8 +118,16 @@ public class TypeVar extends Type {
             if (this.isRigid) {
                 throw new HaskellTypeError("Can not unify a rigid type variable " + this.name + " with concrete type " + ctype.prettyPrint());
             }
-            
+
             this.type = ctype;
+            
+            // now the type variable is instantiated we need check all deferred typeapp constraints
+            for (TypeApp tapp : this.associatedTypeApps) {
+            	TypeChecker.satisfyConstraints(tapp, this.constraints, "typeapp constraint with " + this.getName());
+            	// once satisfied the constraints are not needed anymore
+            	tapp.clearConstraints();
+            }
+            this.associatedTypeApps = ImmutableList.of();
         }
 
         /**
@@ -129,6 +146,7 @@ public class TypeVar extends Type {
             }
             
             other.constraints.mergeConstraintsWith(this.constraints);
+            other.associatedTypeApps.addAll(this.associatedTypeApps);
             
             if ((this.isRigid || other.isRigid) && ! this.constraints.equals(other.constraints)) {
                 throw new HaskellTypeError("Can not add extra constraints to a rigid type variable " + this.name);
@@ -261,7 +279,17 @@ public class TypeVar extends Type {
     protected void introduceConstrainst(ConstraintSet constraints) {
         this.instance.constraints.addExtraConstraint(constraints);
     }
-    
+
+    /**
+     * Adds a type application that requires constraint checking once this type variable gets instantiated
+     * @param typeapp to add
+     */
+	protected void addConstrainedTypeApp(TypeApp typeapp) {
+		if (! this.instance.associatedTypeApps.contains(typeapp)) {
+			this.instance.associatedTypeApps.add(typeapp);
+		}
+	}
+
     @Override
     public final String prettyPrint(final int fixity) {
         return this.instance.prettyPrint(fixity);

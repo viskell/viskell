@@ -16,9 +16,13 @@ public class TypeApp extends ConcreteType {
      */
     private final Type typeArg;
     
+    /** The set of constraints attached to this type application that can not yet be propagated further. */
+    private ConstraintSet constraints;
+    
     TypeApp(Type typeFun, Type typearg) {
         this.typeFun = typeFun;
         this.typeArg = typearg;
+        this.constraints = new ConstraintSet();
     }
 
     public Type getTypeFun() {
@@ -29,11 +33,31 @@ public class TypeApp extends ConcreteType {
         return this.typeArg;
     }
 
+    protected ConstraintSet getConstraint() {
+    	return this.constraints;
+    }
+    
+    /**
+     * Remove all constraints from this type application, to be used only after all are satisfied.
+     */
+    protected void clearConstraints() {
+    	this.constraints = new ConstraintSet();
+    }
+    
+    /**
+     * Extends the constraint set with extra set of constraints.   
+     * @param constraints set to be added to the type application
+     */
+    protected void extendConstraints(ConstraintSet constraints) {
+        this.constraints.addExtraConstraint(constraints);
+    }
+
     @Override
     public String prettyPrint(int fixity) {
         List<Type> chain = this.asFlattenedAppChain();
         Type ftype = chain.remove(0);
-        return ftype.prettyPrintAppChain(fixity, chain);
+        String apptype = ftype.prettyPrintAppChain(fixity, chain);
+        return this.constraints.prettyPrintWith(apptype, fixity);
     }
 
     protected final List<Type> asFlattenedAppChain(){
@@ -61,7 +85,11 @@ public class TypeApp extends ConcreteType {
 
     @Override
     public String toString() {
-        return String.format("(%s @ %s)", this.typeFun, this.typeArg);
+    	if (this.constraints.hasConstraints()) {
+    		return String.format("(%s:%s @ %s)", this.constraints, this.typeFun, this.typeArg);
+    	} else {
+    		return String.format("(%s @ %s)", this.typeFun, this.typeArg);
+    	}
     }
 
 }
