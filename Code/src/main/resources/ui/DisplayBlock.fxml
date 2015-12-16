@@ -9,7 +9,7 @@
                 <HBox styleClass="argumentSpace">
                     <Label fx:id="inputType"/>
                 </HBox>
-                <Label fx:id="value" styleClass="content"/>
+                <Label fx:id="value" styleClass="content" maxWidth="300"/>
             </VBox>
         </center>
         <top>
