@@ -109,10 +109,12 @@ public class BinOpApplyBlock extends Block {
 
         /** Refresh visual information such as types */
         public void invalidateVisualState() {
-        	this.setTranslateY(this.anchor.hasConnection() ? 0 : -9);
-            this.inputType.setText(this.anchor.hasConnection() ? "zyxwv" : this.anchor.getStringType()); 
+            boolean validConnection = this.anchor.hasConnection() && ! this.anchor.errorStateProperty().get();
+            this.setTranslateY(validConnection ? 0 : -9);
+            this.inputType.setText(validConnection ? "zyxwv" : this.anchor.getStringType()); 
+            this.curryArrow.setManaged(this.curried || this == BinOpApplyBlock.this.leftInput);
             this.curryArrow.setVisible(this.curried);
-            this.inputType.setVisible(this.anchor.errorStateProperty().get() || ! this.anchor.hasConnection());
+            this.typePane.setVisible(!validConnection);
         }
 
     }
@@ -189,11 +191,13 @@ public class BinOpApplyBlock extends Block {
 	private void dragShiftOuput(double y) {
         double shift = Math.max(0, y);
         if (this.leftInput.curried || this.rightInput.curried) {
+            this.curriedOutput.setManaged(true);
             this.curriedOutput.setVisible(true);
             this.curriedOutput.requestLayout();
         } else { 
             this.output.getParent().setTranslateY(9 + shift);
             this.curriedOutput.setVisible(false);
+            this.curriedOutput.setManaged(false);
         }
 	}
 

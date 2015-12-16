@@ -32,6 +32,7 @@ import nl.utwente.viskell.ui.DragContext;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class FunApplyBlock extends Block {
@@ -110,10 +111,12 @@ public class FunApplyBlock extends Block {
 
         /** Refresh visual information such as types */
         public void invalidateVisualState() {
-        	this.setTranslateY(this.anchor.hasConnection() ? 0 : -9);
-            this.inputType.setText(this.anchor.hasConnection() ? "zyxwv" : this.anchor.getStringType()); 
+            boolean validConnection = this.anchor.hasConnection() && ! this.anchor.errorStateProperty().get();
+            this.setTranslateY(validConnection ? 0 : -9);
+            this.inputType.setText(validConnection ? "zyxwv" : this.anchor.getStringType()); 
+            this.curryArrow.setManaged(this.curried || Iterables.getLast(FunApplyBlock.this.inputs) != this);
             this.curryArrow.setVisible(this.curried);
-            this.inputType.setVisible(this.anchor.errorStateProperty().get() || ! this.anchor.hasConnection());
+            this.typePane.setVisible(!validConnection);
         }
     }
     
@@ -189,7 +192,9 @@ public class FunApplyBlock extends Block {
         if (this.inputs.stream().map(i -> i.curried).filter(c -> c).count() == 0) { 
             this.output.getParent().setTranslateY(9 + shift);
             this.curriedOutput.setVisible(false);
+            this.curriedOutput.setManaged(false);
         } else {
+            this.curriedOutput.setManaged(true);
             this.curriedOutput.setVisible(true);
             this.curriedOutput.requestLayout();
         }
