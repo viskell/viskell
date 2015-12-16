@@ -218,6 +218,6 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
     public void deleteAllLinks() {
         this.arguments.forEach(OutputAnchor::removeConnections);
         this.result.removeConnections();
-        this.attachedBlocks.forEach(block -> block.moveIntoContainer(this.parent.getPane().getTopLevel()));
+        this.attachedBlocks.forEach(block -> block.moveIntoContainer(this.getParentContainer()));
     }
 }

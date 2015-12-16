@@ -195,7 +195,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     public void deleteAllLinks() {
        this.args.forEach(OutputAnchor::removeConnections);
        this.res.removeConnections();
-       this.attachedBlocks.forEach(block -> block.moveIntoContainer(this.wrapper.getPane().getTopLevel()));
+       this.attachedBlocks.forEach(block -> block.moveIntoContainer(this.getParentContainer()));
     }
 
     @Override
