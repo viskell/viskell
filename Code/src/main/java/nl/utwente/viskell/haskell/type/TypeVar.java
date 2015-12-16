@@ -145,12 +145,13 @@ public class TypeVar extends Type {
                 throw new HaskellTypeError("Can not unify a rigid type variable " + this.name + " with another rigid type variable " + other.name);
             }
             
-            other.constraints.mergeConstraintsWith(this.constraints);
-            other.associatedTypeApps.addAll(this.associatedTypeApps);
-            
+            // if one of the type variables is rigid, first check that the constraints are identical
             if ((this.isRigid || other.isRigid) && ! this.constraints.equals(other.constraints)) {
                 throw new HaskellTypeError("Can not add extra constraints to a rigid type variable " + this.name);
             }
+            
+            other.constraints.mergeConstraintsWith(this.constraints);
+            other.associatedTypeApps.addAll(this.associatedTypeApps);
             
             other.unifiedVars.addAll(this.unifiedVars);
             // Go through all type variable associated with both type instances, to make sure all of them are unified to the same instance.
@@ -354,7 +355,8 @@ public class TypeVar extends Type {
     @Override
     public final String toString() {
         String constr = this.instance.constraints.toString();
-        String tmp = String.format("%s(%s)%s", this.getName(), Integer.toHexString(this.instance.hashCode()), constr);
+        String fmt = this.instance.isRigid ? "forall %s.(%s)%s" : "%s(%s)%s";
+        String tmp = String.format(fmt, this.getName(), Integer.toHexString(this.instance.hashCode()), constr);
         return this.instance.isPresent() ? tmp + ":" + this.instance.get().toString() : tmp;
     }
 
