@@ -2,7 +2,10 @@
 <?import javafx.geometry.Insets?>
 <?import nl.utwente.viskell.ui.components.BinOpApplyBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.BinOpApplyBlock" xmlns:fx="http://javafx.com/fxml/1">
-	<Pane  styleClass="function, block">
+	<HBox styleClass="function, block">
+		<padding>
+			<Insets bottom="0" left="5" right="5" top="0" />
+		</padding>
     	<Pane fx:id="bodySpace"/>
-    </Pane>
+    </HBox>
 </fx:root>

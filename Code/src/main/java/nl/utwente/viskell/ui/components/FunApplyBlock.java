@@ -106,6 +106,8 @@ public class FunApplyBlock extends Block {
             this.anchor.setLayoutY(y);
             this.anchor.setOpacity(1 - (y/(height)));
             this.anchor.setVisible(y < height);
+            this.curryArrow.setManaged(y > height || Iterables.getLast(FunApplyBlock.this.inputs) != this);
+            this.curryArrow.setVisible(y > height);
             FunApplyBlock.this.dragShiftOuput(y - height);
         }
 
@@ -114,8 +116,6 @@ public class FunApplyBlock extends Block {
             boolean validConnection = this.anchor.hasConnection() && ! this.anchor.errorStateProperty().get();
             this.setTranslateY(validConnection ? 0 : -9);
             this.inputType.setText(validConnection ? "zyxwv" : this.anchor.getStringType()); 
-            this.curryArrow.setManaged(this.curried || Iterables.getLast(FunApplyBlock.this.inputs) != this);
-            this.curryArrow.setVisible(this.curried);
             this.typePane.setVisible(!validConnection);
         }
     }
@@ -165,6 +165,7 @@ public class FunApplyBlock extends Block {
             this.inputs.add(ia);
             t = ft.getResult();
         }
+        Iterables.getLast(FunApplyBlock.this.inputs).curryArrow.setManaged(false);
 
         Pane inputSpace = new HBox(0, this.inputs.toArray(new Node[this.inputs.size()]));
         this.curriedOutput = new Pane() {
