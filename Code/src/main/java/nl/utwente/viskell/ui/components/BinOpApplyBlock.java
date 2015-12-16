@@ -82,11 +82,11 @@ public class BinOpApplyBlock extends Block {
             dragContext.setDragInitAction(c -> {this.curried = false;});
             dragContext.setDragFinishAction(c -> {
                 double height = this.inputType.getHeight();
-                boolean mostlyDown = this.typePane.getLayoutY() > height;
-                double newY = mostlyDown ? 1.5*height : 0;
+                boolean mostlyDown = this.typePane.getLayoutY() > height*2;
+                double newY = mostlyDown ? 2.5*height : 0;
                 this.typePane.relocate(0, newY);
                 this.curried = mostlyDown;
-                BinOpApplyBlock.this.dragShiftOuput(newY - height);
+                BinOpApplyBlock.this.dragShiftOuput(newY);
                 BinOpApplyBlock.this.initiateConnectionChanges();
             });
         }
@@ -94,7 +94,7 @@ public class BinOpApplyBlock extends Block {
         @Override
         public double computePrefHeight(double width) {
             double height = this.inputType.prefHeight(width);
-            this.dragContext.setDragLimits(new BoundingBox(0, 0, 0, height*1.5));
+            this.dragContext.setDragLimits(new BoundingBox(0, 0, 0, height*2.5));
             return height;
         }
 
@@ -104,7 +104,7 @@ public class BinOpApplyBlock extends Block {
             this.anchor.setLayoutY(y);
             this.anchor.setOpacity(1 - (y/(height)));
             this.anchor.setVisible(y < height);
-            BinOpApplyBlock.this.dragShiftOuput(y - height);
+            BinOpApplyBlock.this.dragShiftOuput(y - height*2);
         }
 
         /** Refresh visual information such as types */
@@ -151,9 +151,8 @@ public class BinOpApplyBlock extends Block {
         this.functionInfo = new Label(name.substring(1, name.length()-1));
         this.functionInfo.getStyleClass().add("operator");
         Pane infoArea = new StackPane(functionInfo);
-        infoArea.setMinHeight(18);
-        infoArea.setMaxHeight(18);
-        infoArea.setTranslateY(5);
+        infoArea.setMinHeight(36);
+        infoArea.setMaxHeight(36);
         this.output = new OutputAnchor(this, new Binder("res"));
         
         this.resTypeLabel = new Label("");
@@ -182,7 +181,8 @@ public class BinOpApplyBlock extends Block {
         outputSpace.layoutXProperty().bind(inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2)));
         outputSpace.setTranslateY(9);
         
-        this.curriedOutput.prefHeightProperty().bind(inputSpace.heightProperty().multiply(2));
+        this.curriedOutput.prefHeightProperty().bind(inputSpace.heightProperty());
+        this.curriedOutput.layoutYProperty().bind(inputSpace.heightProperty().divide(2));
         this.curriedOutput.translateYProperty().bind(outputSpace.translateYProperty());
     }
 
