@@ -27,6 +27,7 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
     @FXML private ComboBox<String> theme;
     @FXML protected CheckBox debugOverlay;
     @FXML private Button reloadTheme;
+    @FXML protected CheckBox verticalCurry;
 
     public PreferencesWindow(CustomUIPane customUIPane) {
         super();

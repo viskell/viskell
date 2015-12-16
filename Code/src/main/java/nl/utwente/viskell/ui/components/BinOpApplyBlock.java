@@ -153,6 +153,7 @@ public class BinOpApplyBlock extends Block {
         Pane infoArea = new StackPane(functionInfo);
         infoArea.setMinHeight(18);
         infoArea.setMaxHeight(18);
+        infoArea.setTranslateY(5);
         this.output = new OutputAnchor(this, new Binder("res"));
         
         this.resTypeLabel = new Label("");

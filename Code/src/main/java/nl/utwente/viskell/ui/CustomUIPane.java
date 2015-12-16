@@ -113,7 +113,8 @@ public class CustomUIPane extends Region {
             dragging = false;
         } else {
             ghci.awaitRunning();
-            FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this);
+            boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
+            FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this, verticalCurry);
             menu.relocate(e.getX(), e.getY());
             this.addMenu(menu);
         }

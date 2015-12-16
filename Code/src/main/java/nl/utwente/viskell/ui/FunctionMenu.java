@@ -57,7 +57,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     @FXML
     private Pane utilSpace;
 
-    public FunctionMenu(HaskellCatalog catalog, CustomUIPane pane) {
+    public FunctionMenu(HaskellCatalog catalog, CustomUIPane pane, boolean verticalCurry) {
         this.parent = pane;
         this.loadFXML("FunctionMenu");
         this.dragContext = new DragContext(this);
@@ -96,7 +96,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                                 addBlock(new MatchBlock(entry, parent));
                             } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                 addBlock(new ValueBlock(pane, entry.getFreshSignature(), entry.getName()));
-                            } else if (e.isControlDown()) {
+                            } else if (e.isControlDown() || verticalCurry) {
                             	if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
                             		addBlock(new BinOpApplyBlock(entry, parent));
                             	} else {
