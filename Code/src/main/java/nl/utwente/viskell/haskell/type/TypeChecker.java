@@ -105,7 +105,7 @@ public final class TypeChecker {
      * @param context the expression string to use as context in errors. 
      * @throws HaskellTypeError if the constraints can no be satisfied by this type.
      */
-    private static void satisfyConstraints(Type type, ConstraintSet constraints, String context) throws HaskellTypeError {
+    protected static void satisfyConstraints(Type type, ConstraintSet constraints, String context) throws HaskellTypeError {
         if (! constraints.hasConstraints()) {
             // empty constraints are always satisfied.
             return;
@@ -132,6 +132,12 @@ public final class TypeChecker {
             TypeApp ta = (TypeApp)type;
             List<Type> chain = ta.asFlattenedAppChain();
             Type ctype = chain.remove(0);
+            
+            // use the instantiated type instead, if available.
+            if (ctype instanceof TypeVar && ((TypeVar)ctype).hasConcreteInstance()) {
+            	ctype = ((TypeVar)ctype).getInstantiatedType();
+            }
+            
             // check if the head of a type application chain is a known type constructor 
             if (ctype instanceof TypeCon) {
                 TypeCon tc = (TypeCon)ctype;
@@ -145,6 +151,12 @@ public final class TypeChecker {
                     // all satisfied, done
                     return;
                 }
+            } else if (ctype instanceof TypeVar) {
+            	// in case of a type variable application we add the constraints
+            	ta.extendConstraints(constraints);
+            	((TypeVar)ctype).addConstrainedTypeApp(ta);
+            	// done for now, the constraint satisfaction check is deferred to later
+            	return;
             }
         }
         
