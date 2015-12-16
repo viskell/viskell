@@ -1,24 +1,24 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.Optional;
 import java.util.Set;
 
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.LetExpression;
+import nl.utwente.viskell.ui.BlockContainer;
 
 /** An internal output anchor for an argument binder. */
 public class BinderAnchor extends OutputAnchor {
 
-    private final BlockContainer container;
+    private final WrappedContainer container;
 
     // FIXME BinderAnchor should not have to use the Block parent
-    public BinderAnchor(BlockContainer container, Block parent, Binder binder) {
+    public BinderAnchor(WrappedContainer container, Block parent, Binder binder) {
         super(parent, binder);
         this.container = container;
     }
 
     @Override
-    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<OutputAnchor> outsideAnchors) {
+    protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<OutputAnchor> outsideAnchors) {
         return; // the scope of this graph is limited to its parent container
     }
     

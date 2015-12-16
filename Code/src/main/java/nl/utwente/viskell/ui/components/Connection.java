@@ -14,6 +14,7 @@ import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
@@ -228,8 +229,8 @@ public class Connection extends CubicCurve implements
      * @param container the container to which this expression graph is constrained
      * @param outsideAnchors a mutable set of required OutputAnchors from a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<OutputAnchor> outsideAnchors) {
-        if (container.map(c -> c.containsBlock(getStartAnchor().block)).orElse(!getStartAnchor().block.getContainer().isPresent()))
+    protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<OutputAnchor> outsideAnchors) {
+        if (container.containsBlock(getStartAnchor().block))
             getStartAnchor().extendExprGraph(exprGraph, container, outsideAnchors);
         else
             outsideAnchors.add(getStartAnchor());

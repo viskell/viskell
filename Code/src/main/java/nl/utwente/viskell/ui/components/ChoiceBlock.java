@@ -113,20 +113,6 @@ public class ChoiceBlock extends Block {
         altSpace.getChildren().add(lane);
     }
     
-    /** Removes an alternative from this block */
-    public void removeLane(int index) {
-        removeLane(lanes.get(index));
-    }
-    
-    /** Removes an alternative from this block */
-    public void removeLane(Lane lane) {
-        lane.detachAllBlocks();
-        lanes.remove(lane);
-        altSpace.getChildren().remove(lane);
-        handleConnectionChanges(false);
-        handleConnectionChanges(true);
-    }
-    
     /** Returns the alternatives in this block */
     public List<Lane> getLanes() {
         return lanes;
@@ -138,5 +124,11 @@ public class ChoiceBlock extends Block {
         super.relocate(x, y);
         
         lanes.forEach(lane -> lane.moveNodes(dx, dy));
+    }
+    
+    @Override
+    public void deleteAllLinks() {
+        lanes.forEach(lane -> lane.deleteAllLinks());
+        super.deleteAllLinks();
     }
 }

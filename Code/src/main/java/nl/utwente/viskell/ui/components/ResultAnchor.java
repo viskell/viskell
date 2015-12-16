@@ -11,13 +11,13 @@ import nl.utwente.viskell.haskell.type.TypeScope;
 /** An internal input anchor for a local result. */
 public class ResultAnchor extends InputAnchor {
     
-    private final BlockContainer container;
+    private final WrappedContainer container;
     
     /** The optional type of the result of the function (the last part of the signature). */
     private final Optional<Type> resType;
     
     // FIXME ResultAnchor should not have or use the DefinitionBlock parent
-    public ResultAnchor(BlockContainer container, Block parent, Optional<Type> resType) {
+    public ResultAnchor(WrappedContainer container, Block parent, Optional<Type> resType) {
         super(parent);
         this.container = container;
         this.resType = resType;

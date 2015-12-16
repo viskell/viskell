@@ -3,7 +3,6 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
@@ -17,6 +16,7 @@ import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.expr.Variable;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.ui.BlockContainer;
 
 /**
  * Anchor that specifically functions as an output.
@@ -149,7 +149,7 @@ public class OutputAnchor extends ConnectionAnchor {
      * @param container the container to which this expression graph is constrained
      * @param outsideAnchors a mutable set of required OutputAnchors from a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<OutputAnchor> outsideAnchors) {
+    protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<OutputAnchor> outsideAnchors) {
         if (block.getContainer().equals(container)) {
             boolean added = false;
             Pair<Expression, Set<OutputAnchor>> pair = block.getLocalExpr();

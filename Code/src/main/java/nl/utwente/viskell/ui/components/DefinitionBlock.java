@@ -197,9 +197,9 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
 
     @Override
-    public void removeAllLinks() {
-        this.body.removeAllLinks();
-        super.removeAllLinks();
+    public void deleteAllLinks() {
+        this.body.deleteAllLinks();
+        super.deleteAllLinks();
     }
 
 }
