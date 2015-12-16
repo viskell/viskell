@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import javafx.application.Platform;
@@ -12,10 +11,12 @@ import javafx.geometry.Bounds;
 import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
+import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.CircleMenu;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.DragContext;
+import nl.utwente.viskell.ui.TrashContainer;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
 /**
@@ -46,7 +47,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     private boolean updateInProgress;
     
     /** The container to which this Block currently belongs */
-    protected Optional<BlockContainer> container;
+    protected BlockContainer container;
 
     /**
      * @param pane The pane this block belongs to.
@@ -55,12 +56,11 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.parentPane = pane;
         this.freshAnchorTypes = false;
         this.updateInProgress = false;
+        this.container = pane.getTopLevel();
+        this.container.attachBlock(this);
+        
         this.dragContext = new DragContext(this);
         this.dragContext.setSecondaryClickAction(p -> CircleMenu.showFor(this, this.localToScreen(p)));
-
-        this.container = Optional.empty();
-        
-        dragContext.setDragInitAction(event -> detachFromContainer());
         dragContext.setDragFinishAction(event -> refreshContainer());
     }
 
@@ -141,11 +141,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.getAllOutputs().stream().forEach(output -> output.getOppositeAnchors().forEach(input -> input.handleConnectionChanges(finalPhase)));
         
         // propagate changes to the outside of a choiceblock
-        container.ifPresent(container -> {
-            if (container instanceof Lane) {
-                ((Lane)container).handleConnectionChanges(finalPhase);
-            }
-        });
+        if (container instanceof Lane) {
+            ((Lane)container).handleConnectionChanges(finalPhase);
+        }
         
         if (finalPhase) {
             // Now that the expressions and types are fully updated, initiate a visual refresh.
@@ -164,9 +162,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         
         LetExpression fullExpr = new LetExpression(localExpr.a, false);
         Set<OutputAnchor> outerAnchors = localExpr.b;
-        extendExprGraph(fullExpr, Optional.empty(), outerAnchors);
+        extendExprGraph(fullExpr, this.parentPane.getTopLevel(), outerAnchors);
         
-        outerAnchors.forEach(block -> block.extendExprGraph(fullExpr, Optional.empty(), new HashSet<>()));
+        outerAnchors.forEach(block -> block.extendExprGraph(fullExpr, this.parentPane.getTopLevel(), new HashSet<>()));
         
         return fullExpr;
     }
@@ -177,7 +175,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      * @param container the container to which this expression graph is constrained
      * @param outsideAnchors a mutable set of required OutputAnchors from a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<OutputAnchor> outsideAnchors) {
+    protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<OutputAnchor> outsideAnchors) {
          for (InputAnchor input : this.getAllInputs()) {
              input.extendExprGraph(exprGraph, container, outsideAnchors);
          }
@@ -196,36 +194,49 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         return ImmutableMap.of();
     }
     
-    /** @return the container to which this block belongs, if any */
-    public Optional<BlockContainer> getContainer() {
+    /** @return the container to which this block belongs */
+    public BlockContainer getContainer() {
         return container;
     }
 
     /** Remove all associations of this block with others in preparation of removal, including all connections */
-    public void removeAllLinks() {
+    public void deleteAllLinks() {
         this.getAllInputs().forEach(InputAnchor::removeConnections);
         this.getAllOutputs().forEach(OutputAnchor::removeConnections);
-        this.detachFromContainer();
+        this.container.removeBlock(this);
+        this.container = TrashContainer.instance;
     }
     
-    /** Removes the block from its container */
-    public void detachFromContainer() {
-        container.ifPresent(container -> {
-            this.container = Optional.empty();
-            container.detachBlock(this);
-        });
+    public void moveIntoContainer(BlockContainer target) {
+        BlockContainer source = this.container;
+        if (source != target) {
+            this.container.removeBlock(this);
+            this.container = target;
+            target.attachBlock(this);
+            
+            if (source instanceof WrappedContainer) {
+                ((WrappedContainer)source).handleConnectionChanges(false);
+                ((WrappedContainer)source).handleConnectionChanges(true);
+            }
+            
+            if (target instanceof WrappedContainer) {
+                ((WrappedContainer)target).handleConnectionChanges(false);
+                ((WrappedContainer)target).handleConnectionChanges(true);
+            }
+            
+            this.initiateConnectionChanges();
+        }
     }
-
+    
     /** Scans for and attaches to a new container, if any */
     public void refreshContainer() {
         Bounds myBounds = localToScene(getBoundsInLocal());
-        detachFromContainer();
+        BlockContainer newContainer = parentPane.getBlockContainers().
+            filter(container -> container.getBoundsInScene().contains(myBounds)).
+                reduce((a, b) -> !a.getBoundsInScene().contains(b.getBoundsInScene()) ? a : b).
+                    orElse(this.parentPane.getTopLevel());
         
-        container = parentPane.getBlockContainers().
-            filter(container -> container.localToScene(container.getBoundsInLocal()).contains(myBounds)).
-                reduce((a, b) -> !a.localToScene(a.getBoundsInLocal()).contains(b.localToScene(b.getBoundsInLocal())) ? a : b);
-        
-        container.ifPresent(container -> container.attachBlock(this));
+        this.moveIntoContainer(newContainer);
     }
     
     @Override

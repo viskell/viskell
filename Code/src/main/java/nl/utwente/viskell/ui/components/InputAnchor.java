@@ -16,6 +16,7 @@ import nl.utwente.viskell.haskell.expr.Hole;
 import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.ui.BlockContainer;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -146,19 +147,19 @@ public class InputAnchor extends ConnectionAnchor {
         LetExpression fullExpr = new LetExpression(pair.a, false);
         Set<OutputAnchor> outsideAnchors = pair.b;
         
-        Optional<BlockContainer> possibleContainer = block.container;
+        BlockContainer currentContainer = block.container;
         
         //iterate over all wrapping containers to try adding the required expressions
-        while (possibleContainer.isPresent()) {
-            possibleContainer = possibleContainer.flatMap(container -> {
-                extendExprGraph(fullExpr, Optional.of(container), outsideAnchors);
-                outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, Optional.of(container), outsideAnchors));
-                return container.getContainer();
-            });
+        while (currentContainer != currentContainer.getParentContainer()) {
+            final BlockContainer container = currentContainer;
+            extendExprGraph(fullExpr, container, outsideAnchors);
+            outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, container, outsideAnchors));
+            currentContainer = container.getParentContainer();
         }
         
-        extendExprGraph(fullExpr, Optional.empty(), outsideAnchors);
-        outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, Optional.empty(), new HashSet<>()));
+        final BlockContainer container = currentContainer;
+        extendExprGraph(fullExpr, container, outsideAnchors);
+        outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, container, new HashSet<>()));
         return fullExpr;
     }
     
@@ -168,7 +169,7 @@ public class InputAnchor extends ConnectionAnchor {
      * @param container the container to which this expression graph is constrained
      * @param outsideAnchors a mutable set of required OutputAnchors from a surrounding container
      */
-    protected void extendExprGraph(LetExpression exprGraph, Optional<BlockContainer> container, Set<OutputAnchor> outsideAnchors) {
+    protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<OutputAnchor> outsideAnchors) {
         connection.ifPresent(connection -> connection.extendExprGraph(exprGraph, container, outsideAnchors));
     }
 

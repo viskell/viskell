@@ -13,7 +13,6 @@ import javafx.scene.layout.Region;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.ui.components.Block;
-import nl.utwente.viskell.ui.components.BlockContainer;
 import nl.utwente.viskell.ui.components.ChoiceBlock;
 import nl.utwente.viskell.ui.components.Connection;
 import nl.utwente.viskell.ui.components.DefinitionBlock;
@@ -32,6 +31,9 @@ public class CustomUIPane extends Region {
     /** higher pane layer for connections wires */
     private final Pane wireLayer;
 
+    /** The top level container for all blocks */
+    private TopLevel toplevel;
+    
     private ConnectionCreationManager connectionCreationManager;
     
     private GhciSession ghci;
@@ -57,6 +59,7 @@ public class CustomUIPane extends Region {
         this.wireLayer = new Pane(this.blockLayer);
         this.getChildren().add(this.wireLayer);
 
+        this.toplevel = new TopLevel(this);
         this.connectionCreationManager = new ConnectionCreationManager(this);
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
@@ -132,9 +135,14 @@ public class CustomUIPane extends Region {
         return ghci.getCatalog().asEnvironment();
     }
 
+    /** @return the top level block container */
+    public TopLevel getTopLevel() {
+        return this.toplevel;
+    }
+    
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
-        block.removeAllLinks();
+        block.deleteAllLinks();
         
         if (block.belongsOnBottom()) {
             this.bottomLayer.getChildren().remove(block);
@@ -232,6 +240,7 @@ public class CustomUIPane extends Region {
         this.bottomLayer.getChildren().clear();
         this.blockLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
         this.wireLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
+        this.toplevel = new TopLevel(this);
     }
 
     public Stream<Node> streamChildren() {

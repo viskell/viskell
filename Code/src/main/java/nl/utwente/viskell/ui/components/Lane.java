@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -17,6 +19,7 @@ import nl.utwente.viskell.haskell.expr.ConstructorBinder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.DragContext;
 
@@ -24,7 +27,7 @@ import nl.utwente.viskell.ui.DragContext;
  * A single alternative within a ChoiceBlock
  *
  */
-public class Lane extends BorderPane implements BlockContainer, ComponentLoader {
+public class Lane extends BorderPane implements WrappedContainer, ComponentLoader {
     
     /** The argument anchors of this alternative */
     protected List<BinderAnchor> arguments;
@@ -85,7 +88,7 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
         Pair<Expression, Set<OutputAnchor>> pair = result.getLocalExpr();
         LetExpression guards = new LetExpression(pair.a, true);
         Set<OutputAnchor> outsideAnchors = pair.b;
-        result.extendExprGraph(guards, Optional.of(this), outsideAnchors);
+        result.extendExprGraph(guards, this, outsideAnchors);
         
         attachedBlocks.stream().filter(Block::isBottomMost).forEach(block -> {
             if (block instanceof MatchBlock) {
@@ -93,10 +96,10 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
             } else {
                 block.getAllOutputs().forEach(anchor -> {
                     guards.addLetBinding(new ConstructorBinder("True"), anchor.getVariable());
-                    anchor.extendExprGraph(guards, Optional.of(this), outsideAnchors);
+                    anchor.extendExprGraph(guards, this, outsideAnchors);
                 });
             }
-            block.extendExprGraph(guards, Optional.of(this), outsideAnchors);
+            block.extendExprGraph(guards, this, outsideAnchors);
         });
         
         return new Pair<>(new Case.Alternative(new ConstructorBinder("()"), guards), outsideAnchors);
@@ -175,45 +178,21 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
     @Override
     public void attachBlock(Block block) {
         attachedBlocks.add(block);
-        handleConnectionChanges(false);
-        handleConnectionChanges(true);
-        block.handleConnectionChanges(false);
-        block.handleConnectionChanges(true);
     }
 
     @Override
-    public boolean detachBlock(Block block) {
-        if (attachedBlocks.remove(block)) {
-            block.detachFromContainer();
-            handleConnectionChanges(false);
-            handleConnectionChanges(true);
-            block.handleConnectionChanges(false);
-            block.handleConnectionChanges(true);
-            return true;
-        }
-        else {
-            return false;
-        }
+    public void removeBlock(Block block) {
+        attachedBlocks.remove(block);
     }
     
     @Override
-    public void detachAllBlocks() {
-        new ArrayList<>(attachedBlocks).forEach(Block::detachFromContainer);
-    }
-    
-    @Override
-    public boolean containsBlock(Block block) {
-        return attachedBlocks.contains(block);
+    public Stream<Block> getAttachedBlocks() {
+        return this.attachedBlocks.stream();
     }
 
     @Override
-    public Optional<BlockContainer> getContainer() {
+    public BlockContainer getParentContainer() {
         return parent.getContainer();
-    }
-    
-    @Override
-    public void moveNodes(double dx, double dy) {
-        attachedBlocks.forEach(node -> node.relocate(node.getLayoutX()+dx, node.getLayoutY()+dy));
     }
     
     @Override
@@ -228,5 +207,17 @@ public class Lane extends BorderPane implements BlockContainer, ComponentLoader 
         parent.getLanes().stream().filter(lane -> lane.resizer.getLayoutY() != resizerY).forEach(lane -> lane.resizer.setLayoutY(resizerY));
         guardSpace.setPrefHeight(resizer.getBoundsInParent().getMaxY());
         return super.computePrefHeight(width);
+    }
+    
+    @Override
+    public Bounds getBoundsInScene() {
+        return this.localToScene(this.getBoundsInLocal());
+    }
+    
+    @Override
+    public void deleteAllLinks() {
+        this.arguments.forEach(OutputAnchor::removeConnections);
+        this.result.removeConnections();
+        this.attachedBlocks.forEach(block -> block.moveIntoContainer(this.getParentContainer()));
     }
 }

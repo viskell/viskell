@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Binder;
@@ -17,10 +19,11 @@ import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 
 /** Represent a lambda construct with internal anchor and blocks */
-public class LambdaContainer extends BorderPane implements ComponentLoader, BlockContainer {
+public class LambdaContainer extends BorderPane implements ComponentLoader, WrappedContainer {
 
     /* area containing argument anchors */
     @FXML private Pane argSpace;
@@ -158,7 +161,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
         List<Binder> binders = args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         LetExpression body = new LetExpression(pair.a, false);
         Set<OutputAnchor> outsideAnchors = pair.b;
-        res.extendExprGraph(body, Optional.of(this), outsideAnchors);
+        res.extendExprGraph(body, this, outsideAnchors);
         
         return new Pair<>(new Lambda(binders, body), outsideAnchors);
     }
@@ -171,43 +174,32 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Bloc
     @Override
     public void attachBlock(Block block) {
         attachedBlocks.add(block);
-        handleConnectionChanges(false);
-        handleConnectionChanges(true);
     }
 
     @Override
-    public boolean detachBlock(Block block) {
-        boolean removed = attachedBlocks.remove(block);
-        block.detachFromContainer();
-        handleConnectionChanges(false);
-        handleConnectionChanges(true);
-        return removed;
+    public void removeBlock(Block block) {
+        attachedBlocks.remove(block);
     }
     
     @Override
-    public void detachAllBlocks() {
-        new ArrayList<>(attachedBlocks).forEach(Block::detachFromContainer);
+    public Stream<Block> getAttachedBlocks() {
+        return this.attachedBlocks.stream();
     }
     
     @Override
-    public boolean containsBlock(Block block) {
-        return attachedBlocks.contains(block);
-    }
-    
-    @Override
-    public Optional<BlockContainer> getContainer() {
+    public BlockContainer getParentContainer() {
         return wrapper.getContainer();
     }
 
     @Override
-    public void moveNodes(double dx, double dy) {
-        attachedBlocks.forEach(node -> node.relocate(node.getLayoutX()+dx, node.getLayoutY()+dy));
-    }
-
-    /** Remove all associations of this container with others in preparation of removal, including all connections */
-    public void removeAllLinks() {
+    public void deleteAllLinks() {
        this.args.forEach(OutputAnchor::removeConnections);
        this.res.removeConnections();
-       this.detachAllBlocks();
+       this.attachedBlocks.forEach(block -> block.moveIntoContainer(this.getParentContainer()));
+    }
+
+    @Override
+    public Bounds getBoundsInScene() {
+        return this.localToScene(this.getBoundsInLocal());
     }
 }
