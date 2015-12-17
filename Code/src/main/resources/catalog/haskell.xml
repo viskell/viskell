@@ -258,6 +258,26 @@
       <function name="enumFromThenTo" signature="Enum a => a -> a -> a -> [a]">
         used in Haskell's translation of [n, n'..m].
       </function>
+      <function name="fromInteger" signature="Num a => Integer -> a">
+        Conversion from an Integer. An integer literal represents the application of the
+        function fromInteger to the appropriate value of type Integer, so such literals have
+        type (Num a) => a.
+      </function>
+      <function name="toRational" signature="Real a => a -> Rational">
+        the rational equivalent of its real argument with full precision.
+      </function>
+      <function name="fromRational" signature="Fractional a => Rational -> a">
+        Conversion from a Rational (that is Ratio Integer).
+      </function>
+      <function name="toInteger" signature="Integral a => a -> Integer">
+        Conversion to Integer.
+      </function>
+      <function name="fromIntegral" signature="(Num b, Integral a) => a -> b">
+        general coercion from integral types.
+      </function>
+      <function name="realToFrac" signature="(Real a, Fractional b) => a -> b">
+        general coercion to fractional types
+      </function>
     </category>
     <category name="Arithmetic">
       <function name="(+)" signature="Num a => a -> a -> a">
@@ -278,14 +298,6 @@
       <function name="signum" signature="Num a => a -> a">
         Sign of a number.
       </function>
-      <function name="fromInteger" signature="Num a => Integer -> a">
-        Conversion from an Integer. An integer literal represents the application of the
-        function fromInteger to the appropriate value of type Integer, so such literals have
-        type (Num a) => a.
-      </function>
-      <function name="toRational" signature="Real a => a -> Rational">
-        the rational equivalent of its real argument with full precision.
-      </function>
       <function name="quot" signature="Integral a => a -> a -> a">
         integer division truncated toward zero.
       </function>
@@ -304,17 +316,30 @@
       <function name="divMod" signature="Integral a => a -> a -> (a, a)">
         simultaneous div and mod.
       </function>
-      <function name="toInteger" signature="Integral a => a -> Integer">
-        Conversion to Integer.
+      <function name="even" signature="Integral a => a -> Bool"/>
+      <function name="odd" signature="Integral a => a -> Bool"/>
+      <function name="gcd" signature="Integral a => a -> a -> a">
+        gcd x y is the non-negative factor of both x and y of which every common factor of x and
+        y is also a factor; for example gcd 4 2 = 2, gcd (-4) 6 = 2, gcd 0 4 = 4. gcd 0 0
+        = 0. (That is, the common divisor that is "greatest" in the divisibility preordering.)
+
+        Note: Since for signed fixed-width integer types, abs minBound &lt; 0, the result may be
+        negative if one of the arguments is minBound (and necessarily is if the other is 0 or
+        minBound) for such types.
       </function>
+      <function name="lcm" signature="Integral a => a -> a -> a">
+        lcm x y is the smallest positive integer that both x and y divide.
+      </function>
+      <function name="(^)" signature="(Num a, Integral b) => a -> b -> a">
+        raise a number to an non-negative integral power.
+      </function>
+    </category>
+    <category name="Floating point">
       <function name="(/)" signature="Fractional a => a -> a -> a">
         fractional division.
       </function>
       <function name="recip" signature="Fractional a => a -> a">
         reciprocal division.
-      </function>
-      <function name="fromRational" signature="Fractional a => Rational -> a">
-        Conversion from a Rational (that is Ratio Integer).
       </function>
       <function name="pi" signature="Floating a => a"/>
       <function name="exp" signature="Floating a => a -> a"/>
@@ -375,31 +400,8 @@
         default definition of atan2 is provided, but implementors can provide a more accurate
         implementation.
       </function>
-      <function name="even" signature="Integral a => a -> Bool"/>
-      <function name="odd" signature="Integral a => a -> Bool"/>
-      <function name="gcd" signature="Integral a => a -> a -> a">
-        gcd x y is the non-negative factor of both x and y of which every common factor of x and
-        y is also a factor; for example gcd 4 2 = 2, gcd (-4) 6 = 2, gcd 0 4 = 4. gcd 0 0
-        = 0. (That is, the common divisor that is "greatest" in the divisibility preordering.)
-
-        Note: Since for signed fixed-width integer types, abs minBound &lt; 0, the result may be
-        negative if one of the arguments is minBound (and necessarily is if the other is 0 or
-        minBound) for such types.
-      </function>
-      <function name="lcm" signature="Integral a => a -> a -> a">
-        lcm x y is the smallest positive integer that both x and y divide.
-      </function>
-      <function name="(^)" signature="(Num a, Integral b) => a -> b -> a">
-        raise a number to an non-negative integral power.
-      </function>
       <function name="(^^)" signature="(Integral b, Fractional a) => a -> b -> a">
         raise a number to an integral power
-      </function>
-      <function name="fromIntegral" signature="(Num b, Integral a) => a -> b">
-        general coercion from integral types.
-      </function>
-      <function name="realToFrac" signature="(Real a, Fractional b) => a -> b">
-        general coercion to fractional types
       </function>
     </category>
     <category name="Folds and traversals">
@@ -430,6 +432,9 @@
       <function name="elem" signature="Eq a => a -> [a] -> Bool">
         Does the element occur in the structure?
       </function>
+      <function name="notElem" signature="Eq a => a -> [a] -> Bool">
+        notElem is the negation of elem.
+      </function>
       <function name="maximum" signature="Ord a => [a] -> a">
         The largest element of a non-empty structure.
       </function>
@@ -441,6 +446,22 @@
       </function>
       <function name="product" signature="Num a => [a] -> a">
         The product function computes the product of the numbers of a structure.
+      </function>
+      <function name="and" signature="[Bool] -> Bool">
+        and returns the conjuction of a container of Bools. For the result to be True, the
+        container must be finite; False, however, results from a False value finitely far from
+        the left end.
+      </function>
+      <function name="or" signature="[Bool] -> Bool">
+        or returns the disjunction of a container of Bools. For the result to be False, the
+        container must be finite; True, however, results from a True value finitely far from
+        the left end.
+      </function>
+      <function name="any" signature="(a -> Bool) -> [a] -> Bool">
+        Determines whether any element of the structure satisfies the predicate.
+      </function>
+      <function name="all" signature="(a -> Bool) -> [a] -> Bool">
+        Determines whether all elements of the structure satisfy the pradicate.
       </function>
     </category>
     <category name="Utility functions">
@@ -460,6 +481,18 @@
         Application operator. This operator is used to apply user defined functions, since ordinary application (f x) means
         the same as (f $ x). However, $ has low, right-associative binding precedence, so it
         sometimes allows parentheses to be omitted.
+      </function>
+      <function name="fst" signature="(a, b) -> a">
+        Extract the first component of a pair.
+      </function>
+      <function name="snd" signature="(a, b) -> b">
+        Extract the second component of a pair
+      </function>
+      <function name="curry" signature="((a, b) -> c) -> (a, b) -> c">
+        curry converts an uncurried function to a curried function
+      </function>
+      <function name="uncurry" signature="(a -> b -> c) -> (a, b) -> c">
+        uncurry converts a curried function to a function on pairs
       </function>
       <function name="until" signature="(a -> Bool) -> (a -> a) -> a -> a">
         until p f yields the result of applying f until p holds.
@@ -511,20 +544,6 @@
       <function name="isLeft" signature="Either a b -> Bool"/>
       <function name="isRight" signature="Either a b -> Bool"/>
       <function name="partitionEithers" signature="[Either a b] -> ([a],[b])"/>
-
-      <function name="fst" signature="(a, b) -> a">
-        Extract the first component of a pair.
-      </function>
-      <function name="snd" signature="(a, b) -> b">
-        Extract the second component of a pair
-      </function>
-
-      <function name="curry" signature="((a, b) -> c) -> (a, b) -> c">
-        curry converts an uncurried function to a curried function
-      </function>
-      <function name="uncurry" signature="(a -> b -> c) -> (a, b) -> c">
-        uncurry converts a curried function to a function on pairs
-      </function>
     </category>
     <category name="List operations">
       <function name="[]" signature="[a]" isConstructor="true">
@@ -559,22 +578,6 @@
       </function>
       <function name="reverse" signature="[a] -> [a]">
         reverse xs returns the elements of xs in reverse order. xs must be finite.
-      </function>
-      <function name="and" signature="[Bool] -> Bool">
-        and returns the conjuction of a container of Bools. For the result to be True, the
-        container must be finite; False, however, results from a False value finitely far from
-        the left end.
-      </function>
-      <function name="or" signature="[Bool] -> Bool">
-        or returns the disjunction of a container of Bools. For the result to be False, the
-        container must be finite; True, however, results from a True value finitely far from
-        the left end.
-      </function>
-      <function name="any" signature="(a -> Bool) -> [a] -> Bool">
-        Determines whether any element of the structure satisfies the predicate.
-      </function>
-      <function name="all" signature="(a -> Bool) -> [a] -> Bool">
-        Determines whether all elements of the structure satisfy the pradicate.
       </function>
       <function name="concat" signature="[[a]] -> [a]">
         The concatenation of all the elements of a container of lists.
@@ -629,9 +632,6 @@
       <function name="break" signature="(a -> Bool) -> [a] -> ([a], [a])">
         break, applied to a predicate p and a list xs, returns a tuple where first element is
         longest prefix (possibly empty) of xs of element that do not satisfy p and second element is the remainder of the list.
-      </function>
-      <function name="notElem" signature="Eq a => a -> [a] -> Bool">
-        notElem is the negation of elem.
       </function>
       <function name="lookup" signature="Eq a => a -> [(a, b)] -> Maybe b">
         lookup key assocs looks up a key in an association list.
