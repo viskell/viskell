@@ -42,7 +42,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     private OutputAnchor fun;
     
     /** The draggable resizer in the bottom right corner */
-    private Polygon resizer;
+    private Pane resizer;
 
     /** The function info corresponding to this block */
     protected Optional<DefinitionFunction> funInfo;
@@ -97,15 +97,18 @@ public class DefinitionBlock extends Block implements ComponentLoader {
 
     /** Add and initializes a resizer element to this block */
     private void setupResizer() {
-        resizer = new Polygon();
-        resizer.getPoints().addAll(new Double[]{20.0, 20.0, 20.0, 0.0, 0.0, 20.0});
-        resizer.setFill(Color.BLUE);
+        Polygon triangle = new Polygon();
+        triangle.getPoints().addAll(new Double[]{20.0, 20.0, 20.0, 0.0, 0.0, 20.0});
+        triangle.setFill(Color.BLUE);
 
-        resizer.setManaged(false);
+        this.resizer = new Pane(triangle);
+        triangle.setLayoutX(10);
+        triangle.setLayoutY(10);
+        this.resizer.setManaged(false);
         this.getChildren().add(resizer);
-        resizer.relocate(400, 400);
+        this.resizer.relocate(400, 400);
 
-        DragContext sizeDrag = new DragContext(resizer);
+        DragContext sizeDrag = new DragContext(this.resizer);
         sizeDrag.setDragLimits(new BoundingBox(200, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));
     }
     

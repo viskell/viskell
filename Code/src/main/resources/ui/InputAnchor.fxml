@@ -2,7 +2,7 @@
 <?import javafx.scene.shape.Line?>
 <?import nl.utwente.viskell.ui.components.InputAnchor?>
 <fx:root type="nl.utwente.viskell.ui.components.InputAnchor" xmlns:fx="http://javafx.com/fxml/" maxHeight="0" minHeight="0" maxWidth="0" minWidth="0">
-    <Rectangle fx:id="invisibleAnchor" translateY="-15" height="30" width="30" styleClass="invisTouchZone"/>
+    <Rectangle fx:id="invisibleAnchor" translateY="-20" height="40" width="40" styleClass="invisTouchZone"/>
     <Rectangle fx:id="visibleAnchor" translateY="-4" height="8" width="20" styleClass="anchorPoint"/>
     <Line fx:id="openWire" endY="-16" strokeWidth="3" translateY="-14"/>
 </fx:root>
