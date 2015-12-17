@@ -5,7 +5,7 @@
     <BorderPane styleClass="value, block">
         <center>
             <VBox alignment="CENTER">
-                <Label fx:id="value" styleClass="content"/>
+                <Label fx:id="value" styleClass="content" maxWidth="300"/>
                 <!-- silly extra HBox to not break the argumentSpace css -->
                 <HBox styleClass="argumentSpace">
                     <Label fx:id="valueType"/>
