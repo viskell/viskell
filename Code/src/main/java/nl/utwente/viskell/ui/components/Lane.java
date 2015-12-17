@@ -48,7 +48,7 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
     protected ChoiceBlock parent;
     
     /** The draggable resizer in the bottom right corner */
-    private Polygon resizer;
+    private Pane resizer;
 
     /** The container Node for binder anchors */
     @FXML protected Pane argumentSpace;
@@ -163,15 +163,18 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
     
     /** Add and initializes a resizer element to this block */
     private void setupResizer() {
-        resizer = new Polygon();
-        resizer.getPoints().addAll(new Double[]{20.0, 20.0, 20.0, 0.0, 0.0, 20.0});
-        resizer.setFill(Color.BLUE);
+        Polygon triangle = new Polygon();
+        triangle.getPoints().addAll(new Double[]{20.0, 20.0, 20.0, 0.0, 0.0, 20.0});
+        triangle.setFill(Color.BLUE);
 
-        resizer.setManaged(false);
-        this.getChildren().add(resizer);
-        resizer.relocate(300-20, 400-20);
+        this.resizer = new Pane(triangle);
+        triangle.setLayoutX(10);
+        triangle.setLayoutY(10);
+        this.resizer.setManaged(false);
+        this.getChildren().add(this.resizer);
+        this.resizer.relocate(300-20, 400-20);
 
-        DragContext sizeDrag = new DragContext(resizer);
+        DragContext sizeDrag = new DragContext(this.resizer);
         sizeDrag.setDragLimits(new BoundingBox(200, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));
     }
     
