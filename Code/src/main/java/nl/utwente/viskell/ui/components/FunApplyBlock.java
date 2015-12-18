@@ -32,6 +32,7 @@ import nl.utwente.viskell.ui.DragContext;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class FunApplyBlock extends Block {
@@ -105,15 +106,17 @@ public class FunApplyBlock extends Block {
             this.anchor.setLayoutY(y);
             this.anchor.setOpacity(1 - (y/(height)));
             this.anchor.setVisible(y < height);
+            this.curryArrow.setManaged(y > height || Iterables.getLast(FunApplyBlock.this.inputs) != this);
+            this.curryArrow.setVisible(y > height);
             FunApplyBlock.this.dragShiftOuput(y - height);
         }
 
         /** Refresh visual information such as types */
         public void invalidateVisualState() {
-        	this.setTranslateY(this.anchor.hasConnection() ? 0 : -9);
-            this.inputType.setText(this.anchor.hasConnection() ? "zyxwv" : this.anchor.getStringType()); 
-            this.curryArrow.setVisible(this.curried);
-            this.inputType.setVisible(this.anchor.errorStateProperty().get() || ! this.anchor.hasConnection());
+            boolean validConnection = this.anchor.hasConnection() && ! this.anchor.errorStateProperty().get();
+            this.setTranslateY(validConnection ? 0 : -9);
+            this.inputType.setText(validConnection ? "zyxwv" : this.anchor.getStringType()); 
+            this.typePane.setVisible(!validConnection);
         }
     }
     
@@ -162,6 +165,7 @@ public class FunApplyBlock extends Block {
             this.inputs.add(ia);
             t = ft.getResult();
         }
+        Iterables.getLast(FunApplyBlock.this.inputs).curryArrow.setManaged(false);
 
         Pane inputSpace = new HBox(0, this.inputs.toArray(new Node[this.inputs.size()]));
         this.curriedOutput = new Pane() {
@@ -189,7 +193,9 @@ public class FunApplyBlock extends Block {
         if (this.inputs.stream().map(i -> i.curried).filter(c -> c).count() == 0) { 
             this.output.getParent().setTranslateY(9 + shift);
             this.curriedOutput.setVisible(false);
+            this.curriedOutput.setManaged(false);
         } else {
+            this.curriedOutput.setManaged(true);
             this.curriedOutput.setVisible(true);
             this.curriedOutput.requestLayout();
         }
