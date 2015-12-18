@@ -82,7 +82,7 @@ public class BinOpApplyBlock extends Block {
             dragContext.setDragInitAction(c -> {this.curried = false;});
             dragContext.setDragFinishAction(c -> {
                 double height = this.inputType.getHeight();
-                boolean mostlyDown = this.typePane.getLayoutY() > height*2;
+                boolean mostlyDown = this.typePane.getLayoutY() > height*1.5;
                 double newY = mostlyDown ? 2.5*height : 0;
                 this.typePane.relocate(0, newY);
                 this.curried = mostlyDown;
@@ -104,15 +104,17 @@ public class BinOpApplyBlock extends Block {
             this.anchor.setLayoutY(y);
             this.anchor.setOpacity(1 - (y/(height)));
             this.anchor.setVisible(y < height);
+            this.curryArrow.setManaged(y > height*1.5 || this == BinOpApplyBlock.this.leftInput);
+            this.curryArrow.setVisible(y > height*1.5);
             BinOpApplyBlock.this.dragShiftOuput(y - height*2);
         }
 
         /** Refresh visual information such as types */
         public void invalidateVisualState() {
-        	this.setTranslateY(this.anchor.hasConnection() ? 0 : -9);
-            this.inputType.setText(this.anchor.hasConnection() ? "zyxwv" : this.anchor.getStringType()); 
-            this.curryArrow.setVisible(this.curried);
-            this.inputType.setVisible(this.anchor.errorStateProperty().get() || ! this.anchor.hasConnection());
+            boolean validConnection = this.anchor.hasConnection() && ! this.anchor.errorStateProperty().get();
+            this.setTranslateY(validConnection ? 0 : -9);
+            this.inputType.setText(validConnection ? "zyxwv" : this.anchor.getStringType()); 
+            this.typePane.setVisible(!validConnection);
             this.anchor.invalidateVisualState();
         }
 
@@ -164,8 +166,13 @@ public class BinOpApplyBlock extends Block {
         
         this.leftInput = new FunInputAnchor();
         this.rightInput = new FunInputAnchor();
+        this.rightInput.curryArrow.setManaged(false);
         
-        Pane inputSpace = new HBox(0, this.leftInput, infoArea, this.rightInput);
+        Label arrowSpacer = new Label("->");
+        arrowSpacer.getStyleClass().add("curryArrow");
+        arrowSpacer.setVisible(false);
+        Pane inputSpace = new HBox(0, this.leftInput, infoArea, arrowSpacer, this.rightInput);
+
         this.curriedOutput = new Pane() {
                 @Override
                 public double computePrefWidth(double heigth) {
@@ -177,7 +184,6 @@ public class BinOpApplyBlock extends Block {
         this.curriedOutput.setBorder(new Border(new BorderStroke(null, BorderStrokeStyle.SOLID, null, null)));
             
         this.bodySpace.getChildren().addAll(this.curriedOutput, inputSpace, outputSpace);
-        this.bodySpace.setLayoutX(5);
         outputSpace.layoutYProperty().bind(inputSpace.heightProperty());
         outputSpace.layoutXProperty().bind(inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2)));
         outputSpace.setTranslateY(9);
@@ -190,11 +196,13 @@ public class BinOpApplyBlock extends Block {
 	private void dragShiftOuput(double y) {
         double shift = Math.max(0, y);
         if (this.leftInput.curried || this.rightInput.curried) {
+            this.curriedOutput.setManaged(true);
             this.curriedOutput.setVisible(true);
             this.curriedOutput.requestLayout();
         } else { 
             this.output.getParent().setTranslateY(9 + shift);
             this.curriedOutput.setVisible(false);
+            this.curriedOutput.setManaged(false);
         }
 	}
 

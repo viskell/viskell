@@ -89,9 +89,8 @@ SliderBlock .value.block {
 }
 
 .operator {
-    -fx-padding: 0 15 0 0;
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
+    -fx-font-size: 32px;
+    -fx-font-weight: bolder;
 }
 
 .resultType {
