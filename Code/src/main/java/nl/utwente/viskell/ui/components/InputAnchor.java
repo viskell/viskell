@@ -184,6 +184,12 @@ public class InputAnchor extends ConnectionAnchor {
         }
     }
 
+    /** Called when the VisualState changed. */
+    public void invalidateVisualState() {
+    	this.connection.ifPresent(c -> c.invalidateVisualState());
+    }
+
+    
     @Override
     public String toString() {
         return "InputAnchor for " + this.block;

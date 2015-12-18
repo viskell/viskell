@@ -63,6 +63,7 @@ public class DisplayBlock extends Block {
     @Override
     public void invalidateVisualState() {
         this.inputType.setText(this.inputAnchor.getStringType());
+        this.inputAnchor.invalidateVisualState();
 
         if (inputAnchor.hasConnection()) {
             GhciSession ghci = getPane().getGhciSession();

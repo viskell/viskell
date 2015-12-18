@@ -108,6 +108,7 @@ public class MatchBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
+    	this.input.invalidateVisualState();
         // TODO Propagate new visual state to anchors
     }
 

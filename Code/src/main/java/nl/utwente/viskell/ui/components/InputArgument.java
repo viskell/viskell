@@ -33,11 +33,6 @@ public class InputArgument extends Pane implements ComponentLoader {
         this.getChildren().add(this.inputAnchor);
     }
     
-    /** Sets the InputText. */
-    public void setInputText(String text) {
-        this.inputLabel.setText(text);
-    }
-    
     /** @return The InputAnchor belonging to this InputArgument. */
     public InputAnchor getInputAnchor() {
         return inputAnchor;
@@ -46,5 +41,11 @@ public class InputArgument extends Pane implements ComponentLoader {
     public Label getInputLabel() {
         return inputLabel;
     }
-    
+
+    /** Called when the VisualState changed. */
+    public void invalidateVisualState() {
+    	this.inputLabel.setText(this.inputAnchor.getStringType());
+    	this.inputAnchor.invalidateVisualState();
+    }
+
 }

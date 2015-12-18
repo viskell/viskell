@@ -114,6 +114,7 @@ public class FunApplyBlock extends Block {
             this.inputType.setText(this.anchor.hasConnection() ? "zyxwv" : this.anchor.getStringType()); 
             this.curryArrow.setVisible(this.curried);
             this.inputType.setVisible(this.anchor.errorStateProperty().get() || ! this.anchor.hasConnection());
+            this.anchor.invalidateVisualState();
         }
     }
     

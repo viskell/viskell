@@ -28,6 +28,11 @@ public class TypeCon extends ConcreteType {
     }
 
     @Override
+	public Type getConcrete() {
+    	return Type.con(this.name);
+	}
+
+	@Override
     public boolean containsOccurenceOf(TypeVar tvar) {
         return false;
     }

@@ -338,6 +338,15 @@ public class TypeVar extends Type {
     }
 
     @Override
+	public Type getConcrete() {
+    	if (this.hasConcreteInstance()) {
+    		return this.getInstantiatedType();
+    	} else {
+    		return this;
+    	}
+	}
+
+	@Override
     public boolean containsOccurenceOf(TypeVar tvar) {
         // If type variable share the same instance then they have been unified to a single one.
         if (this.instance == tvar.instance) {

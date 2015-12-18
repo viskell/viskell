@@ -62,6 +62,7 @@ public class SimulateBlock extends Block implements ComponentLoader {
 
     @Override
     public final void invalidateVisualState() {
+    	this.inputAnchor.invalidateVisualState();
         inputType.setText(inputAnchor.getStringType());
 
         if (inputAnchor.hasConnection()) {

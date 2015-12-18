@@ -65,6 +65,10 @@ public class RGBBlock extends DisplayBlock {
 
     @Override
     public final void invalidateVisualState() {
+    	r.invalidateVisualState();
+    	g.invalidateVisualState();
+    	b.invalidateVisualState();
+    	
         if(r.hasConnection() || g.hasConnection() || b.hasConnection()) {
             int rv = evaluateAnchor(r);
             int gv = evaluateAnchor(g);
