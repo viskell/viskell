@@ -106,7 +106,7 @@ public class InputAnchor extends ConnectionAnchor {
     
     /** @return True if this anchor has an error free connection */
     public boolean hasValidConnection() {
-        return this.connection.isPresent() && !this.errorState.get();
+        return this.connection.isPresent() && ! (this.errorState.get() && this.connection.get().hasScopeError());
     }
     
     @Override

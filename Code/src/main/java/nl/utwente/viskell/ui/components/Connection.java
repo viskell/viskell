@@ -6,8 +6,8 @@ import java.util.Set;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
 import nl.utwente.viskell.haskell.expr.LetExpression;
@@ -49,6 +49,9 @@ public class Connection extends CubicCurve implements
     /** Whether this connection produced an error in the latest type unification. */
     private boolean errorState;
 
+    /** Whether this connection is impossible due to scope restrictions */
+    private boolean scopeError;
+
     /** 
      * Construct a new Connection.
      * @param pane The Pane this Connection is on.
@@ -56,11 +59,14 @@ public class Connection extends CubicCurve implements
      */
     public Connection(CustomUIPane pane, OutputAnchor source, InputAnchor sink) {
         this.setMouseTransparent(true);
+        this.setFill(null);
         
         this.pane = pane;
         this.startAnchor = source;
         this.endAnchor = sink;
         this.errorState = false;
+        this.scopeError = false;
+        
         pane.addConnection(this);
         this.invalidateAnchorPositions();
         this.startAnchor.addConnection(this);
@@ -73,7 +79,7 @@ public class Connection extends CubicCurve implements
             TypeChecker.unify("new connection", this.startAnchor.getType(), this.endAnchor.getType());
         } catch (HaskellTypeError e) {
             this.endAnchor.setErrorState(true);
-            this.toggleErrorState(true);
+            this.errorState = true;
         }
     }
     
@@ -111,10 +117,10 @@ public class Connection extends CubicCurve implements
                 // unify the actual types
                 TypeChecker.unify("connection", this.startAnchor.getType(), this.endAnchor.getType());
                 this.endAnchor.setErrorState(false);
-                this.toggleErrorState(false);
+                this.errorState = false;
             } catch (HaskellTypeError e) {
                 this.endAnchor.setErrorState(true);
-                this.toggleErrorState(true);
+                this.errorState = true;
             }
         }
 
@@ -122,19 +128,6 @@ public class Connection extends CubicCurve implements
         this.startAnchor.handleConnectionChanges(finalPhase);
     }
 
-    /**
-     * Updates the error state of this connection, including visual effects.
-     * @param error The new error state
-     */
-    private void toggleErrorState(boolean error) {
-        this.errorState = error;
-        ObservableList<String> styleClass = this.getStyleClass();
-        styleClass.removeAll("error");
-        if (error) {
-            styleClass.add("error");
-        }
-    }
-    
     /**
      * Removes this Connection, disconnecting its anchors and removing this Connection from the pane it is on.
      */
@@ -235,9 +228,23 @@ public class Connection extends CubicCurve implements
     }
 
 	public void invalidateVisualState() {
+	    this.scopeError = !this.endAnchor.getContainer().isContainedWithin(this.startAnchor.getContainer());
+	    
 		if (this.errorState) {
+		    this.setStroke(Color.RED);
+		    this.getStrokeDashArray().clear();
 			this.setStrokeWidth(3);
+
+		}  else if (this.scopeError) {
+            this.setStroke(Color.RED);
+            this.setStrokeWidth(3);
+	        if (this.getStrokeDashArray().isEmpty()) {
+	            this.getStrokeDashArray().addAll(10.0, 10.0);
+	        }
+		
 		} else {
+		    this.setStroke(Color.BLACK);
+		    this.getStrokeDashArray().clear();
 			this.setStrokeWidth(calculateTypeWidth(this.endAnchor.getType()));
 		}
 	}
@@ -271,5 +278,9 @@ public class Connection extends CubicCurve implements
 		
 		return 3 + arity;
 	}
+
+    public boolean hasScopeError() {
+        return this.scopeError;
+    }
 
 }
