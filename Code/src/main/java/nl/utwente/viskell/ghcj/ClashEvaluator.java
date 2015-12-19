@@ -15,7 +15,7 @@ public class ClashEvaluator extends GhciEvaluator {
 
     @Override
     protected List<String> getCommand() {
-        return ImmutableList.of("clash", "--interactive", "-ignore-dot-ghci");
+        return ImmutableList.of("clash", "--interactive", "-ignore-dot-ghci", "-fno-warn-overlapping-patterns");
     }
 
     @Override

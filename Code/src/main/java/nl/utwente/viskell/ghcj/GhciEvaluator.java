@@ -15,7 +15,7 @@ public class GhciEvaluator extends Evaluator {
 
     @Override
     protected List<String> getCommand() {
-        return ImmutableList.of("ghci", "-ignore-dot-ghci");
+        return ImmutableList.of("ghci", "-ignore-dot-ghci", "-fno-warn-overlapping-patterns");
     }
 
     @Override
