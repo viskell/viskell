@@ -187,6 +187,10 @@ public class InputAnchor extends ConnectionAnchor {
     	this.connection.ifPresent(c -> c.invalidateVisualState());
     }
 
+    @Override
+    public BlockContainer getContainer() {
+        return this.block.getContainer();
+    }
     
     @Override
     public String toString() {
