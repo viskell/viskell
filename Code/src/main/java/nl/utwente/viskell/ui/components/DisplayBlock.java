@@ -65,7 +65,7 @@ public class DisplayBlock extends Block {
         this.inputType.setText(this.inputAnchor.getStringType());
         this.inputAnchor.invalidateVisualState();
 
-        if (inputAnchor.hasConnection()) {
+        if (inputAnchor.hasValidConnection()) {
             GhciSession ghci = getPane().getGhciSession();
 
             ListenableFuture<String> result = ghci.pull(inputAnchor.getFullExpr());

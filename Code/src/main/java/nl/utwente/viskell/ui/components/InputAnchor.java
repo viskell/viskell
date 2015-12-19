@@ -74,13 +74,6 @@ public class InputAnchor extends ConnectionAnchor {
         this.errorState.set(state);
     }
     
-    /**
-     * @return The property describing the error state of this ConnectionAnchor.
-     */
-    public BooleanProperty errorStateProperty() {
-        return errorState;
-    }
-    
     /** @return The Optional connection this anchor has. */
     public Optional<Connection> getConnection() {
         return this.connection;
@@ -109,6 +102,11 @@ public class InputAnchor extends ConnectionAnchor {
     @Override
     public boolean hasConnection() {
         return this.connection.isPresent();
+    }
+    
+    /** @return True if this anchor has an error free connection */
+    public boolean hasValidConnection() {
+        return this.connection.isPresent() && !this.errorState.get();
     }
     
     @Override
