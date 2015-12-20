@@ -265,10 +265,6 @@ public class Connection extends CubicCurve implements
 			return 5;
 		}
 		
-		if (type instanceof TypeCon) {
-			return 2 + arity;
-		}
-		
 		return 3 + arity;
 	}
 
