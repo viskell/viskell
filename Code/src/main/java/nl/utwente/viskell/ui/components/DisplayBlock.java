@@ -16,6 +16,7 @@ import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -98,6 +99,11 @@ public class DisplayBlock extends Block {
     @Override
     public List<OutputAnchor> getAllOutputs() {
         return ImmutableList.of();
+    }
+    
+    @Override
+    public Optional<Block> getNewCopy() {
+        return Optional.of(new DisplayBlock(this.getPane()));
     }
     
     @Override

@@ -2,6 +2,7 @@ package nl.utwente.viskell.ui.components;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javafx.fxml.FXML;
@@ -89,6 +90,11 @@ public class ValueBlock extends Block {
     @Override
     public List<OutputAnchor> getAllOutputs() {
         return ImmutableList.of(output);
+    }
+    
+    @Override
+    public Optional<Block> getNewCopy() {
+        return Optional.of(new ValueBlock(this.getPane(), this.output.binder.getFreshAnnotationType(), this.value.getText()));
     }
     
     @Override
