@@ -8,14 +8,12 @@
             <VBox alignment="CENTER">
                 <Slider min="0.0" max="1.0" fx:id="slider"/>
                 <Label fx:id="value" styleClass="content"/>
-                <!-- silly extra HBox to not break the argumentSpace css -->
-                <HBox styleClass="argumentSpace">
-                    <Label fx:id="valueType"/>
-                </HBox>
             </VBox>
         </center>
         <bottom>
-            <HBox fx:id="outputSpace"/>
+            <VBox fx:id="outputSpace">
+            	<Label fx:id="valueType" styleClass="inputType"/>
+            </VBox>
         </bottom>
     </BorderPane>
 </fx:root>

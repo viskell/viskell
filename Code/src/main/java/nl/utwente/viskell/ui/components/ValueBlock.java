@@ -52,8 +52,9 @@ public class ValueBlock extends Block {
         loadFXML(fxml);
 
         output = new OutputAnchor(this, new Binder("val", type));
-
         outputSpace.getChildren().add(output);
+        outputSpace.setTranslateY(9);
+       
         setValue(value);
     }
 

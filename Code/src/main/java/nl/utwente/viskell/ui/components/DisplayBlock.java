@@ -57,14 +57,15 @@ public class DisplayBlock extends Block {
         loadFXML(fxml);
 
         inputAnchor = new InputAnchor(this);
-        inputSpace.getChildren().add(inputAnchor);
+        inputSpace.getChildren().add(0, inputAnchor);
     }
 
     @Override
     public void invalidateVisualState() {
-        this.inputType.setText(this.inputAnchor.getStringType());
-
         if (inputAnchor.hasConnection()) {
+            inputSpace.setTranslateY(0);
+            this.inputType.setVisible(false);
+            
             GhciSession ghci = getPane().getGhciSession();
 
             ListenableFuture<String> result = ghci.pull(inputAnchor.getFullExpr());
@@ -81,6 +82,9 @@ public class DisplayBlock extends Block {
                 }
             });
         } else {
+            inputSpace.setTranslateY(-9);
+            this.inputType.setText(this.inputAnchor.getStringType());
+            this.inputType.setVisible(true);
             value.setText("?");
         }
     }
