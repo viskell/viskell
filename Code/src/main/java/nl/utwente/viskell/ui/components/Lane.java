@@ -158,7 +158,8 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
 
     /** Called when the VisualState changed. */
     public void invalidateVisualState() {
-        // TODO update anchors when they get a type label       
+    	// TODO update anchors when they get a type label  
+    	this.result.invalidateVisualState();
     }
     
     /** Add and initializes a resizer element to this block */

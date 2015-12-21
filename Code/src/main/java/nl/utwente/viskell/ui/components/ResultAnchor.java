@@ -7,6 +7,7 @@ import nl.utwente.viskell.haskell.expr.Annotated;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.ui.BlockContainer;
 
 /** An internal input anchor for a local result. */
 public class ResultAnchor extends InputAnchor {
@@ -46,4 +47,10 @@ public class ResultAnchor extends InputAnchor {
     protected void handleConnectionChanges(boolean finalPhase) {
         container.handleConnectionChanges(finalPhase);
     }
+    
+    @Override
+    public BlockContainer getContainer() {
+        return this.container;
+    }
+    
 }

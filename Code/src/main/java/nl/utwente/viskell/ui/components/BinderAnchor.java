@@ -38,4 +38,9 @@ public class BinderAnchor extends OutputAnchor {
     protected void handleConnectionChanges(boolean finalPhase) {
         this.container.handleConnectionChanges(finalPhase);
     }
+    
+    @Override
+    public BlockContainer getContainer() {
+        return this.container;
+    }
 }

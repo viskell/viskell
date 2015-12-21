@@ -79,6 +79,11 @@ public class TypeApp extends ConcreteType {
     }
 
     @Override
+	public Type getConcrete() {
+		return new TypeApp(this.typeFun.getConcrete(), this.typeArg.getConcrete());
+	}
+
+	@Override
     public boolean containsOccurenceOf(TypeVar tvar) {
         return this.typeFun.containsOccurenceOf(tvar) || this.typeArg.containsOccurenceOf(tvar);
     }

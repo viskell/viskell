@@ -67,6 +67,9 @@ public abstract class Type {
      */
     public abstract Type getFresh(final TypeScope scope);
 
+    /** @return The type with all instantiated type variable replaced by concrete types. */
+    public abstract Type getConcrete();
+    
     /**
      * @return The presence of the argument type variable some in this type.
      */

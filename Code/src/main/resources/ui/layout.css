@@ -117,10 +117,6 @@ DrawWire {
     -fx-stroke-width: 5px;
 }
 
-Connection {
-    -fx-stroke-width: 3px;
-}
-
 .overlayButtons Button {
     -fx-font-family: monospace;
     -fx-font-size: 14px;
