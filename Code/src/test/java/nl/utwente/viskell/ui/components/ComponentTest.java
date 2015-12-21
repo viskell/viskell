@@ -2,7 +2,6 @@ package nl.utwente.viskell.ui.components;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.ui.CustomUIPane;
 import org.junit.BeforeClass;
 

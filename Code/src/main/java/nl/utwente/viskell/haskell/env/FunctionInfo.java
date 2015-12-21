@@ -22,7 +22,7 @@ public abstract class FunctionInfo {
      * @param signature The type signature the corresponding function.
      */
     public FunctionInfo(String name, Type signature) {
-        this(name, signature, Collections.EMPTY_LIST);
+        this(name, signature, Collections.emptyList());
     }
 
     /**
