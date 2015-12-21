@@ -84,23 +84,22 @@ public class DragContext {
                 if (this.touchId == DragContext.NULL_ID) {
                     this.touchId = event.getTouchPoint().getId();
                     this.handleTouchPressed(event.getTouchPoint().getX(), event.getTouchPoint().getY());
-                    event.consume();
                 }
+                event.consume();
             } else if (type == TouchEvent.TOUCH_MOVED) {
                 if (this.touchId == event.getTouchPoint().getId()) {
                     this.handleTouchMoved(event.getTouchPoint().getX(), event.getTouchPoint().getY());
-                    event.consume();
                 }
+                event.consume();
             } else if (type == TouchEvent.TOUCH_RELEASED) {
                 if (this.touchId == event.getTouchPoint().getId()) {
                     this.handleTouchReleased();
-                    event.consume();
                 } else if (! this.dragStarted) {
-                    event.consume();
                     if (this.secondaryClickAction != null) {
                         this.secondaryClickAction.accept(new Point2D(event.getTouchPoint().getX(), event.getTouchPoint().getY()));
                     }
                 }
+                event.consume();
             }
         };
         
