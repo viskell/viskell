@@ -16,6 +16,7 @@ import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.CustomUIPane;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -57,15 +58,17 @@ public class DisplayBlock extends Block {
         loadFXML(fxml);
 
         inputAnchor = new InputAnchor(this);
-        inputSpace.getChildren().add(inputAnchor);
+        inputSpace.getChildren().add(0, inputAnchor);
     }
 
     @Override
     public void invalidateVisualState() {
-        this.inputType.setText(this.inputAnchor.getStringType());
         this.inputAnchor.invalidateVisualState();
 
         if (inputAnchor.hasValidConnection()) {
+            inputSpace.setTranslateY(0);
+            this.inputType.setVisible(false);
+            
             GhciSession ghci = getPane().getGhciSession();
 
             ListenableFuture<String> result = ghci.pull(inputAnchor.getFullExpr());
@@ -82,6 +85,9 @@ public class DisplayBlock extends Block {
                 }
             });
         } else {
+            inputSpace.setTranslateY(-9);
+            this.inputType.setText(this.inputAnchor.getStringType());
+            this.inputType.setVisible(true);
             value.setText("?");
         }
     }
@@ -99,6 +105,11 @@ public class DisplayBlock extends Block {
     @Override
     public List<OutputAnchor> getAllOutputs() {
         return ImmutableList.of();
+    }
+    
+    @Override
+    public Optional<Block> getNewCopy() {
+        return Optional.of(new DisplayBlock(this.getPane()));
     }
     
     @Override

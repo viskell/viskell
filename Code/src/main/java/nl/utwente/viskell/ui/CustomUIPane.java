@@ -152,6 +152,16 @@ public class CustomUIPane extends Region {
         }
     }
 
+    /** Attempts to create a copy of a block and add it to this pane. */
+    public void copyBlock(Block block) {
+        block.getNewCopy().ifPresent(copy -> {
+          this.addBlock(copy);
+          copy.relocate(block.getLayoutX()+20, block.getLayoutY()+20);
+          copy.initiateConnectionChanges();
+        });
+    }
+    
+    
     public ConnectionCreationManager getConnectionCreationManager() {
         return connectionCreationManager;
     }

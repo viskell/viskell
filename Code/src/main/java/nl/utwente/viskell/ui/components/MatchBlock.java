@@ -2,6 +2,7 @@ package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javafx.fxml.FXML;
@@ -81,6 +82,11 @@ public class MatchBlock extends Block {
     @Override
     public List<OutputAnchor> getAllOutputs() {
         return outputs;
+    }
+
+    @Override
+    public Optional<Block> getNewCopy() {
+        return Optional.of(new MatchBlock(this.info, this.getPane()));
     }
 
     @Override
