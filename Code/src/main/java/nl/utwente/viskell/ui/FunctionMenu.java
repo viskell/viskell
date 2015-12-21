@@ -148,12 +148,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             // These blocks are specifically for GHCi
             Button sliderBlockButton = new Button("Slider");
             sliderBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent)));
-            Button rgbBlockButton = new Button("RGB");
-            rgbBlockButton.setOnAction(event -> addBlock(new RGBBlock(parent)));
             Button graphBlockButton = new Button("Graph");
             graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
 
-            utilSpace.getChildren().addAll(sliderBlockButton, rgbBlockButton, graphBlockButton);
+            utilSpace.getChildren().addAll(sliderBlockButton, graphBlockButton);
         }
 
         if (GhciSession.pickBackend() == GhciSession.Backend.Clash) {
