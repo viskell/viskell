@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -211,6 +212,15 @@ public class FunApplyBlock extends Block {
         return ImmutableList.of(this.output);
     }
 
+    @Override
+    public Optional<Block> getNewCopy() {
+        if (this.inputs.stream().map(i -> i.curried).filter(c -> c).count() == 0) {
+            return Optional.of(new FunApplyBlock(this.funInfo, this.getPane()));
+        }
+        
+        return Optional.empty();
+    }
+    
     @Override
     protected void refreshAnchorTypes() {
         Type type = this.funInfo.getFreshSignature();

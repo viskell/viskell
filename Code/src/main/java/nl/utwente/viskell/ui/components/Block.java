@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -203,6 +204,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         return container;
     }
 
+    /** @return an independent copy of this Block, or Optional.empty if the internal state is too complex too copy.  */
+    public abstract Optional<Block> getNewCopy();
+    
     /** Remove all associations of this block with others in preparation of removal, including all connections */
     public void deleteAllLinks() {
         this.getAllInputs().forEach(InputAnchor::removeConnections);

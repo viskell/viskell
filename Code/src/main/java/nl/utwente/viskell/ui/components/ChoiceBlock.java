@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,6 +60,12 @@ public class ChoiceBlock extends Block {
     @Override
     public List<OutputAnchor> getAllOutputs() {
         return Collections.singletonList(output);
+    }
+
+    @Override
+    public Optional<Block> getNewCopy() {
+        // copying the internal is too complex for now
+        return Optional.empty();
     }
 
     @Override

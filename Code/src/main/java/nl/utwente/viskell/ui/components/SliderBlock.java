@@ -1,6 +1,8 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.Locale;
+import java.util.Optional;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import javafx.scene.input.TouchEvent;
@@ -31,4 +33,12 @@ public class SliderBlock extends ValueBlock {
         
         slider.addEventHandler(TouchEvent.TOUCH_MOVED, event -> event.consume());
     }
+
+    @Override
+    public Optional<Block> getNewCopy() {
+        SliderBlock block = new SliderBlock(this.getPane());
+        block.slider.setValue(this.slider.getValue());
+        return Optional.of(block);
+    }
+    
 }

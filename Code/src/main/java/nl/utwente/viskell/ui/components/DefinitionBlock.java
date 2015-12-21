@@ -156,6 +156,12 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
 
     @Override
+    public Optional<Block> getNewCopy() {
+        // copying the internals is too complex for now
+        return Optional.empty();
+    }
+
+    @Override
     public void refreshAnchorTypes() {
         // do typechecking internal connections first so that the lambda type is inferred
         body.handleConnectionChanges(false);

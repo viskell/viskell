@@ -93,6 +93,15 @@ public class Binder {
         this.inferenceType = type;
     }
 
+    /** @return a fresh copy of the annotated type constraint, or null if absent. */
+    public Type getFreshAnnotationType() {
+        if (this.annotation != null) {
+            return this.annotation.getFresh();
+        }
+        
+        return null;
+    }
+    
     @Override
     public final String toString() {
         if (this.inferenceType == null) {
