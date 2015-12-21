@@ -66,7 +66,7 @@ public class SimulateBlock extends Block implements ComponentLoader {
     	this.inputAnchor.invalidateVisualState();
         inputType.setText(inputAnchor.getStringType());
 
-        if (inputAnchor.hasConnection()) {
+        if (inputAnchor.hasValidConnection()) {
             GhciSession ghciSession = getPane().getGhciSession();
             String format = "Data.List.take %d $ simulate (%s) [1..]";
             String expr = String.format(format, iteration, inputAnchor.getFullExpr().toHaskell());

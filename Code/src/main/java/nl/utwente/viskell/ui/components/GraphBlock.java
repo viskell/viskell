@@ -93,7 +93,7 @@ public class GraphBlock extends Block {
     public void invalidateVisualState() {
     	this.input.invalidateVisualState();
     	
-        if (! this.input.hasConnection()) {
+        if (! this.input.hasValidConnection()) {
             return;
         }
         

@@ -69,7 +69,7 @@ public class RGBBlock extends DisplayBlock {
     	g.invalidateVisualState();
     	b.invalidateVisualState();
     	
-        if(r.hasConnection() || g.hasConnection() || b.hasConnection()) {
+        if(r.hasValidConnection() || g.hasValidConnection() || b.hasValidConnection()) {
             int rv = evaluateAnchor(r);
             int gv = evaluateAnchor(g);
             int bv = evaluateAnchor(b);

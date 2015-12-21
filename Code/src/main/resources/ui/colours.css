@@ -107,15 +107,6 @@ DrawWire {
     -fx-fill: null;
 }
 
-Connection {
-    -fx-stroke: black;
-    -fx-fill: null;
-}
-
-Connection.error {
-    -fx-stroke: red;
-}
-
 .invisTouchZone { 
     -fx-fill: rgba(0,255,0,0);
 }

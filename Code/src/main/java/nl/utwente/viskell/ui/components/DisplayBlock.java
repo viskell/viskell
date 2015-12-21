@@ -63,7 +63,9 @@ public class DisplayBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
-        if (inputAnchor.hasConnection()) {
+        this.inputAnchor.invalidateVisualState();
+
+        if (inputAnchor.hasValidConnection()) {
             inputSpace.setTranslateY(0);
             this.inputType.setVisible(false);
             
@@ -88,8 +90,6 @@ public class DisplayBlock extends Block {
             this.inputType.setVisible(true);
             value.setText("?");
         }
-				
-        this.inputAnchor.invalidateVisualState();
     }
     
     //TODO NOTE: only used for a meaningless test

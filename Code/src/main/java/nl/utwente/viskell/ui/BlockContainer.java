@@ -30,4 +30,20 @@ public interface BlockContainer {
     /** @return the container to which this container belongs, maybe return itself if it is the outermost container */
     public BlockContainer getParentContainer();
 
+    /** @return Whether this container is (indirectly) contained with the other container. */
+    public default boolean isContainedWithin(BlockContainer other) {
+        if (this == other) {
+            return true;
+        }
+        
+        BlockContainer target = this;
+        while (target.getParentContainer() != target) {
+            target = target.getParentContainer();
+            if (target == other) {
+                return true;
+            }
+        }
+            
+       return false;
+    }
 }

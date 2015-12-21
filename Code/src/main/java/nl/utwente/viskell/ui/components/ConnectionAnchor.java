@@ -8,6 +8,7 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ConnectionCreationManager;
 import nl.utwente.viskell.ui.serialize.Bundleable;
@@ -147,6 +148,12 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      */
     public abstract boolean hasConnection();
 
+    
+    /**
+     * @return The inner most block container associated with this anchor
+     */
+    public abstract BlockContainer getContainer();
+    
     /** 
      * Handle the Connection changes for the Block this anchor is attached to.
      * @param finalPhase whether the change propagation is in the second (final) phase.
@@ -159,4 +166,5 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public String toString() {
         return String.format("%s belonging to %s", this.getClass().getSimpleName(), this.block);
     }
+
 }
