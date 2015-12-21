@@ -63,6 +63,12 @@ public class DisplayBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
+<<<<<<< HEAD
+        this.inputType.setText(this.inputAnchor.getStringType());
+        this.inputAnchor.invalidateVisualState();
+
+=======
+>>>>>>> refs/remotes/origin/master
         if (inputAnchor.hasConnection()) {
             inputSpace.setTranslateY(0);
             this.inputType.setVisible(false);
@@ -88,8 +94,6 @@ public class DisplayBlock extends Block {
             this.inputType.setVisible(true);
             value.setText("?");
         }
-				
-        this.inputAnchor.invalidateVisualState();
     }
     
     //TODO NOTE: only used for a meaningless test

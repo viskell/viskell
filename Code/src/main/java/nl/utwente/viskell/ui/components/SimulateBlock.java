@@ -1,6 +1,7 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javafx.application.Platform;
@@ -105,6 +106,11 @@ public class SimulateBlock extends Block implements ComponentLoader {
     @Override
     public List<OutputAnchor> getAllOutputs() {
         return ImmutableList.of();
+    }
+
+    @Override
+    public Optional<Block> getNewCopy() {
+        return Optional.empty();
     }
 
     @Override

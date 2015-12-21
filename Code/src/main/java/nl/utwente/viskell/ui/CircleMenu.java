@@ -73,7 +73,7 @@ public class CircleMenu extends CirclePopupMenu {
 
     /** Copy the {@link Block} in this context. */
     public void copy() {
-        // TODO implement clipBoard in main app.
+        block.getPane().copyBlock(block);
     }
 
     /** Paste {@link Block} from memory. */

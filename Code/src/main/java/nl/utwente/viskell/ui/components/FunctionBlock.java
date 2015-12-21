@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -124,6 +125,15 @@ public class FunctionBlock extends Block {
         return ImmutableList.of(output);
     }
 
+    @Override
+    public Optional<Block> getNewCopy() {
+        if (this.argumentSpace.getKnotIndex() == this.getAllInputs().size()) {
+            return Optional.of(new FunctionBlock(this.funInfo, this.getPane()));
+        }
+    
+        return Optional.empty();
+    }
+    
     @Override
     public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
         Expression expr = new FunVar(this.funInfo);

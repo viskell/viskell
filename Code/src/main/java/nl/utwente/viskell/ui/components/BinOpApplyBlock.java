@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -216,7 +217,16 @@ public class BinOpApplyBlock extends Block {
 		return ImmutableList.of(this.output);
 	}
 
-	@Override
+    @Override
+    public Optional<Block> getNewCopy() {
+        if (this.leftInput.curried || this.rightInput.curried) {
+            return Optional.empty();
+        }
+        
+        return Optional.of(new BinOpApplyBlock(this.funInfo, this.getPane()));
+    }
+
+    @Override
 	protected void refreshAnchorTypes() {
         FunType ft1 = (FunType)funInfo.getFreshSignature();
         FunType ft2 = (FunType) ft1.getResult();

@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -71,6 +72,11 @@ public class GraphBlock extends Block {
     @Override
     public List<OutputAnchor> getAllOutputs() {
         return ImmutableList.of();
+    }
+    
+    @Override
+    public Optional<Block> getNewCopy() {
+        return Optional.of(new GraphBlock(this.getPane()));
     }
     
     @Override
