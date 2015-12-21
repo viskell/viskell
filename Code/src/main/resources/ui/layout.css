@@ -63,15 +63,12 @@ CustomUIPane, CustomUIPane > Pane > Pane > Pane {
 }
 
 .value.block, .display.block {
-    -fx-padding: 0 20 0 20;
-    -fx-text-alignment: center;
-    -fx-min-height: 75px;
-    -fx-max-height: 75px;
-    -fx-min-width: 150px;
+    -fx-padding: 0 10 0 10;
+    -fx-min-width: 100px;
 }
 
 SliderBlock .value.block {
-    -fx-min-height: 100px;
+    -fx-padding: 5 10 0 10;
 }
 
 .graph.block LineChart {

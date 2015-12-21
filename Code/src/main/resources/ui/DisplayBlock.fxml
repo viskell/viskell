@@ -4,16 +4,12 @@
 <fx:root type="nl.utwente.viskell.ui.components.DisplayBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane styleClass="display, block">
         <center>
-            <VBox alignment="CENTER">
-                <!-- silly extra HBox to not break the argumentSpace css -->
-                <HBox styleClass="argumentSpace">
-                    <Label fx:id="inputType"/>
-                </HBox>
-                <Label fx:id="value" styleClass="content" maxWidth="300"/>
-            </VBox>
+            <Label fx:id="value" styleClass="content" maxWidth="300" alignment="CENTER"/>
         </center>
         <top>
-            <HBox fx:id="inputSpace"/>
+        	<VBox fx:id="inputSpace">
+        	    <Label fx:id="inputType" styleClass="inputType"/>
+        	</VBox>
         </top>
     </BorderPane>
 </fx:root>
