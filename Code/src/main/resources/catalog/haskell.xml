@@ -192,7 +192,7 @@
 
 
   <functions>
-    <category name="Comparison and logic">
+    <category name="Comparison, logic">
       <function name="(==)" signature="Eq a => a -> a -> Bool"/>
       <function name="(/=)" signature="Eq a => a -> a -> Bool"/>
       <function name="(&lt;)" signature="Ord a => a -> a -> Bool"/>
@@ -226,7 +226,7 @@
         Greater than
       </function>
     </category>
-    <category name="Enum and Conversions">
+    <category name="Enum, conversions">
       <function name="show" signature="Show a => a -> [Char]">
         a specialised variant of showsPrec, using precedence context zero, and
         returning an ordinary [Char].
@@ -515,7 +515,7 @@
         argument to weak head normal form (WHNF), then calls the function with that value.
       </function>
     </category>
-    <category name="Tuples, Maybe, Either">
+    <category name="Basic datatypes">
       <function name="()" signature="()" isConstructor="true"/>
       <function name="(,)" signature="a -> b -> (a, b)" isConstructor="true"/>
       <function name="(,,)" signature="a -> b -> c -> (a, b, c)" isConstructor="true"/>
