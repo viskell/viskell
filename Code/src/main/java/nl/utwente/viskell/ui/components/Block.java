@@ -204,6 +204,11 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         return container;
     }
 
+    /** @return the list of internal containers wrapped inside this block */
+    public List<? extends WrappedContainer> getInternalContainers() {
+        return ImmutableList.of();
+    }
+    
     /** @return an independent copy of this Block, or Optional.empty if the internal state is too complex too copy.  */
     public abstract Optional<Block> getNewCopy();
     
@@ -249,8 +254,12 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         // use center point plus one corner to determine wherein this block is, to ease moving a block into a small container
         Predicate<Bounds> within = bounds -> bounds.contains(center) && corners.stream().anyMatch(p -> bounds.contains(p));
         
+        // a container may never end up in itself or its children
+        List<? extends WrappedContainer> internals = this.getInternalContainers();
+        Predicate<BlockContainer> notInSelf = con -> internals.stream().noneMatch(internal -> con.isContainedWithin(internal));
+        
         BlockContainer newContainer = parentPane.getBlockContainers().
-            filter(container -> within.test(container.getBoundsInScene())).
+            filter(container -> within.test(container.getBoundsInScene()) && notInSelf.test(container)).
                 reduce((a, b) -> !a.getBoundsInScene().contains(b.getBoundsInScene()) ? a : b).
                     orElse(this.parentPane.getTopLevel());
         
