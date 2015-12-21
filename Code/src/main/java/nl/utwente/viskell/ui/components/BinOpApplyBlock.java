@@ -116,6 +116,7 @@ public class BinOpApplyBlock extends Block {
             this.setTranslateY(validConnection ? 0 : -9);
             this.inputType.setText(validConnection ? "zyxwv" : this.anchor.getStringType()); 
             this.typePane.setVisible(!validConnection);
+            this.anchor.invalidateVisualState();
         }
 
     }

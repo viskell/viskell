@@ -53,6 +53,11 @@ public class FunType extends ConcreteType {
     }
 
     @Override
+	public Type getConcrete() {
+    	return new FunType(this.argument.getConcrete(), this.result.getConcrete());
+	}
+
+	@Override
     public boolean containsOccurenceOf(TypeVar tvar) {
         return this.argument.containsOccurenceOf(tvar) || this.result.containsOccurenceOf(tvar);
     }

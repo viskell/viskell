@@ -11,9 +11,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
 import nl.utwente.viskell.haskell.expr.LetExpression;
-import nl.utwente.viskell.haskell.type.HaskellTypeError;
-import nl.utwente.viskell.haskell.type.TypeChecker;
-import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
@@ -235,5 +233,39 @@ public class Connection extends CubicCurve implements
         else
             outsideAnchors.add(getStartAnchor());
     }
+
+	public void invalidateVisualState() {
+		if (this.errorState) {
+			this.setStrokeWidth(3);
+		} else {
+			this.setStrokeWidth(calculateTypeWidth(this.endAnchor.getType()));
+		}
+	}
+
+	private static int calculateTypeWidth(Type wireType) {
+		Type type = wireType.getConcrete();
+		
+		int fcount = 0;
+		while (type instanceof FunType) {
+			fcount++;
+			type = ((FunType)type).getResult();
+		}
+	
+		if (fcount > 0) {
+			return 4 + 2*fcount;
+		}
+		
+		int arity = 0;
+		while (type instanceof TypeApp) {
+			arity++;
+			type = ((TypeApp)type).getTypeFun();
+		}
+		
+		if (type instanceof ListTypeCon) {
+			return 5;
+		}
+		
+		return 3 + arity;
+	}
 
 }
