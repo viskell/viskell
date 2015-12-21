@@ -192,7 +192,7 @@
 
 
   <functions>
-    <category name="Conditionals">
+    <category name="Comparison, logic">
       <function name="(==)" signature="Eq a => a -> a -> Bool"/>
       <function name="(/=)" signature="Eq a => a -> a -> Bool"/>
       <function name="(&lt;)" signature="Ord a => a -> a -> Bool"/>
