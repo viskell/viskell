@@ -1,13 +1,17 @@
 package nl.utwente.viskell.ui.components;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
@@ -231,8 +235,18 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** Scans for and attaches to a new container, if any */
     public void refreshContainer() {
         Bounds myBounds = localToScene(getBoundsInLocal());
+        Point2D center = new Point2D((myBounds.getMinX()+myBounds.getMaxX())/2, (myBounds.getMinY()+myBounds.getMaxY())/2);
+        List<Point2D> corners = ImmutableList.of(
+                new Point2D(myBounds.getMinX(), myBounds.getMinY()),
+                new Point2D(myBounds.getMaxX(), myBounds.getMinY()),
+                new Point2D(myBounds.getMinX(), myBounds.getMaxY()),
+                new Point2D(myBounds.getMaxX(), myBounds.getMaxY()));
+        
+        // use center point plus one corner to determine wherein this block is, to ease moving a block into a small container
+        Predicate<Bounds> within = bounds -> bounds.contains(center) && corners.stream().anyMatch(p -> bounds.contains(p));
+        
         BlockContainer newContainer = parentPane.getBlockContainers().
-            filter(container -> container.getBoundsInScene().contains(myBounds)).
+            filter(container -> within.test(container.getBoundsInScene())).
                 reduce((a, b) -> !a.getBoundsInScene().contains(b.getBoundsInScene()) ? a : b).
                     orElse(this.parentPane.getTopLevel());
         
