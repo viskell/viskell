@@ -118,7 +118,8 @@ public class CustomUIPane extends Region {
             ghci.awaitRunning();
             boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
             FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this, verticalCurry);
-            menu.relocate(e.getX(), e.getY());
+            double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
+            menu.relocate(e.getX(), e.getY() - verticalCenter);
             this.addMenu(menu);
         }
     }
