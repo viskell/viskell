@@ -35,6 +35,9 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     /* The label with the explicit name and type of this definition, if it has one. */
     @FXML private Label signature;
 
+    /** Whether the type signature was given */
+    private boolean hasExplictiSignature;
+    
     /** The internal lambda within this definition block */
     private LambdaContainer body;
     
@@ -57,7 +60,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         this.loadFXML("DefinitionBlock");
 
         this.signature.setText("");
-        this.signature.setVisible(false);
+        this.hasExplictiSignature = false;
         
         this.body = new LambdaContainer(this, arity);
         ((VBox)this.getChildren().get(0)).getChildren().add(1, this.body);
@@ -81,6 +84,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         this.loadFXML("DefinitionBlock");
 
         this.signature.setText(name + " :: " + type.prettyPrint());
+        this.hasExplictiSignature = true;
 
         this.body = new LambdaContainer(this, name, type);
         ((VBox)this.getChildren().get(0)).getChildren().add(1, this.body);
@@ -185,7 +189,10 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     @Override
     public void invalidateVisualState() {
         this.body.invalidateVisualState();
-        // TODO update fun anchor when it gets a type label
+        if (!this.hasExplictiSignature) {
+        	this.signature.setText(this.fun.getStringType());
+        }
+
     }
     
     @Override

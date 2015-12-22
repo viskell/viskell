@@ -4,13 +4,13 @@
 <?import nl.utwente.viskell.ui.components.DefinitionBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.DefinitionBlock" xmlns:fx="http://javafx.com/fxml/">
     <VBox>
-        <Label fx:id="signature" styleClass="signature" />
+    	<Pane styleClass="lambdaBorder">
+        	<Label text="Spacer" styleClass="inputType" visible="false"/>
+       	</Pane>
         <!-- The internal LambdaContainer will be inserted here. -->
-        <VBox>
-            <padding>
-                <Insets bottom="0" left="10.0" right ="10.0" top="0"/>
-            </padding>
-            <HBox fx:id="funSpace" spacing="50" alignment="BOTTOM_LEFT"/>
-        </VBox>
+       	<Pane styleClass="lambdaBorder">
+       		<Label fx:id="signature" styleClass="inputType" />
+       	</Pane>	
+		<HBox fx:id="funSpace" translateX="20" alignment="BOTTOM_LEFT"/>
     </VBox>
 </fx:root>
