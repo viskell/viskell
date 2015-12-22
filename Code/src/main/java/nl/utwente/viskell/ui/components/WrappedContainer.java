@@ -6,6 +6,9 @@ import nl.utwente.viskell.ui.BlockContainer;
 /** A Block container within another block with possible outputs and inputs. */
 public interface WrappedContainer extends BlockContainer {
 
+    /** Get the block wrapping this container. */
+    public Block getWrapper();
+    
     /** Set fresh types in all anchors of this lambda for the next typechecking cycle. */
     public void refreshAnchorTypes();
 

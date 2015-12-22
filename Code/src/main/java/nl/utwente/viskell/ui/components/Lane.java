@@ -204,6 +204,11 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
     }
     
     @Override
+    public ChoiceBlock getWrapper() {
+        return this.parent;
+    }
+    
+    @Override
     public void attachBlock(Block block) {
         attachedBlocks.add(block);
     }

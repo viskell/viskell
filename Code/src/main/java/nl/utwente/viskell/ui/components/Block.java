@@ -227,6 +227,10 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
             this.container = target;
             target.attachBlock(this);
             
+            if (this.getInternalContainers().size() > 0) {
+                this.parentPane.moveInFrontOfParentContainers(this);
+            }
+            
             if (source instanceof WrappedContainer) {
                 ((WrappedContainer)source).handleConnectionChanges(false);
                 ((WrappedContainer)source).handleConnectionChanges(true);

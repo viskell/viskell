@@ -204,6 +204,11 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     }
 
     @Override
+    public DefinitionBlock getWrapper() {
+        return this.wrapper;
+    }
+    
+    @Override
     public void attachBlock(Block block) {
         attachedBlocks.add(block);
     }
