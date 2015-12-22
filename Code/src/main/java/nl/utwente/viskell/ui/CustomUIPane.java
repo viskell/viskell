@@ -168,7 +168,7 @@ public class CustomUIPane extends Region {
     	 * @param touchPoint that is the center of new active touch area.
     	 */
 		private TouchArea(TouchPoint touchPoint) {
-			super(touchPoint.getX(), touchPoint.getY(), 100, Color.TRANSPARENT);
+			super(touchPoint.getX(), touchPoint.getY(), 100, Color.RED);
 			this.touchID = touchPoint.getId();
 			this.dragStarted = false;
 			
@@ -221,7 +221,9 @@ public class CustomUIPane extends Region {
     			
     			if (Math.abs(deltaX) + Math.abs(deltaY) < 2) {
     				// ignore very small movements
-    			} else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 10) {
+                } else if ((deltaX*deltaX + deltaY*deltaY) > 10000) {
+                    // FIXME: ignore too large movements
+                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 10) {
     				this.dragStarted = true;
     				CustomUIPane.this.setTranslateX(CustomUIPane.this.getTranslateX() + deltaX);
     				CustomUIPane.this.setTranslateY(CustomUIPane.this.getTranslateY() + deltaY);
