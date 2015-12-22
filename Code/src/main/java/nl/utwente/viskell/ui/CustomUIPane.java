@@ -132,15 +132,17 @@ public class CustomUIPane extends Region {
     	if (e.getButton() == MouseButton.PRIMARY) {
             dragging = false;
         } else {
-        	this.showFunctionMenu(e.getX(), e.getY());
+        	this.showFunctionMenuAt(e.getX(), e.getY());
         }
     }
 
-    private void showFunctionMenu(double x, double y) {
+    /** Shows a new function menu at the specified location in this pane. */
+    public void showFunctionMenuAt(double x, double y) {
         ghci.awaitRunning();
         boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
         FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this, verticalCurry);
-        menu.relocate(x, y);
+        double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
+        menu.relocate(x, y - verticalCenter);
         this.addMenu(menu);
     	
     }
@@ -168,7 +170,7 @@ public class CustomUIPane extends Region {
     	 * @param touchPoint that is the center of new active touch area.
     	 */
 		private TouchArea(TouchPoint touchPoint) {
-			super(touchPoint.getX(), touchPoint.getY(), 100, Color.RED);
+			super(touchPoint.getX(), touchPoint.getY(), 100, Color.TRANSPARENT);
 			this.touchID = touchPoint.getId();
 			this.dragStarted = false;
 			
@@ -186,7 +188,7 @@ public class CustomUIPane extends Region {
 		}
 		
 		private void finishMenu(ActionEvent event) {
-			CustomUIPane.this.showFunctionMenu(this.getCenterX(), this.getCenterY());
+			CustomUIPane.this.showFunctionMenuAt(this.getCenterX(), this.getCenterY());
 			CustomUIPane.this.getChildren().remove(this);
 		}
 		

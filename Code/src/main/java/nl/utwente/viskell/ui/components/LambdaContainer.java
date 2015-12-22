@@ -10,6 +10,10 @@ import java.util.stream.Stream;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Binder;
@@ -67,6 +71,8 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
         
         this.argSpace.getChildren().addAll(this.args);
         this.resSpace.getChildren().add(this.res);
+        
+        this.setupHandlers();
     }
     
     /**
@@ -98,8 +104,33 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
 
         this.argSpace.getChildren().addAll(this.args);
         this.resSpace.getChildren().add(this.res);
+        
+        this.setupHandlers();
     }
 
+    //** Setup event handlers in the container area for function menu */
+    private void setupHandlers() {
+    	this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> event.consume());
+    	this.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> event.consume());
+    	this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+    			if (event.getButton() != MouseButton.PRIMARY) {
+    				Point2D menuPos = this.wrapper.getPane().screenToLocal(new Point2D(event.getScreenX(), event.getScreenY()));
+    				this.wrapper.getPane().showFunctionMenuAt(menuPos.getX(), menuPos.getY());
+    			}
+    		   	event.consume();
+    		});
+    	this.addEventHandler(TouchEvent.TOUCH_PRESSED, event -> event.consume());
+    	this.addEventHandler(TouchEvent.TOUCH_MOVED, event -> event.consume());
+    	this.addEventHandler(TouchEvent.TOUCH_RELEASED, event -> {
+    			if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 2) {
+    				Point2D screenPos = new Point2D(event.getTouchPoint().getScreenX(), event.getTouchPoint().getScreenY());
+    				Point2D menuPos = this.wrapper.getPane().screenToLocal(screenPos);
+    				this.wrapper.getPane().showFunctionMenuAt(menuPos.getX(), menuPos.getY());
+    			}
+    			event.consume();
+    		});
+    }
+    
     @Override
     public void refreshAnchorTypes() {
         if (this.updateInProgress || this.freshAnchorTypes) {
