@@ -4,12 +4,20 @@ import java.io.File;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
+import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.ui.components.Block;
@@ -67,9 +75,10 @@ public class CustomUIPane extends Region {
         this.ghci = new GhciSession();
         this.ghci.startAsync();
 
-        this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handlePress);
-        this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleDrag);
-        this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleRelease);
+        this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePress);
+        this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDrag);
+        this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseRelease);
+        this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handleTouchPress);
     }
 
     public void showInspector() {
@@ -88,15 +97,19 @@ public class CustomUIPane extends Region {
         preferences.show();
     }
 
-    private void handlePress(MouseEvent e) {
-        if (e.isPrimaryButtonDown()) {
+    private void handleMousePress(MouseEvent e) {
+        if (e.isPrimaryButtonDown() && !e.isSynthesized()) {
             offset = new Point2D(this.getTranslateX(), this.getTranslateY());
             dragStart = new Point2D(e.getScreenX(), e.getScreenY());
             dragging = true;
         }
     }
 
-    private void handleDrag(MouseEvent e) {
+    private void handleMouseDrag(MouseEvent e) {
+    	if (e.isSynthesized()) {
+    		return;
+    	}
+    	
         if (!e.isSecondaryButtonDown()) {
             if (dragging) {
                 Point2D dragCurrent = new Point2D(e.getScreenX(), e.getScreenY());
@@ -111,19 +124,117 @@ public class CustomUIPane extends Region {
         }
     }
     
-    private void handleRelease(MouseEvent e) {
-        if (e.getButton() == MouseButton.PRIMARY) {
+    private void handleMouseRelease(MouseEvent e) {
+    	if (e.isSynthesized()) {
+    		return;
+    	}
+    	
+    	if (e.getButton() == MouseButton.PRIMARY) {
             dragging = false;
         } else {
-            ghci.awaitRunning();
-            boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
-            FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this, verticalCurry);
-            double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
-            menu.relocate(e.getX(), e.getY() - verticalCenter);
-            this.addMenu(menu);
+        	this.showFunctionMenu(e.getX(), e.getY());
         }
     }
 
+    private void showFunctionMenu(double x, double y) {
+        ghci.awaitRunning();
+        boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
+        FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this, verticalCurry);
+        menu.relocate(x, y);
+        this.addMenu(menu);
+    	
+    }
+    
+    private void handleTouchPress(TouchEvent e) {
+    	this.getChildren().add(new TouchArea(e.getTouchPoint()));
+    	e.consume();
+    }
+    
+    /** A circular local area for handling multi finger touch actions. */
+    private class TouchArea extends Circle {
+    	/** The ID of finger that spawned this touch area. */
+    	private int touchID;
+    	
+    	/** Whether this touch area has been dragged further than the drag threshold. */
+    	private boolean dragStarted;
+    	
+    	/** Timed delay for the removal of this touch area. */
+    	private Timeline removeDelay;
+    	
+    	/** Timed delay for the creation of the function menu. */
+    	private Timeline menuDelay;
+    	
+    	/**
+    	 * @param touchPoint that is the center of new active touch area.
+    	 */
+		private TouchArea(TouchPoint touchPoint) {
+			super(touchPoint.getX(), touchPoint.getY(), 100, Color.RED);
+			this.touchID = touchPoint.getId();
+			this.dragStarted = false;
+			
+			this.removeDelay = new Timeline(new KeyFrame(Duration.millis(100), this::remove));
+	    	this.menuDelay = new Timeline(new KeyFrame(Duration.millis(250), this::finishMenu));
+	    	
+	    	touchPoint.grab(this);
+	    	this.addEventHandler(TouchEvent.TOUCH_RELEASED, this::handleRelease);
+	    	this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handlePress);
+	    	this.addEventHandler(TouchEvent.TOUCH_MOVED, this::handleDrag);
+		}
+    	
+		private void remove(ActionEvent event) {
+			CustomUIPane.this.getChildren().remove(this);
+		}
+		
+		private void finishMenu(ActionEvent event) {
+			CustomUIPane.this.showFunctionMenu(this.getCenterX(), this.getCenterY());
+			CustomUIPane.this.getChildren().remove(this);
+		}
+		
+		private void handlePress(TouchEvent event) {
+			// this might have been a drag glitch, so halt release actions
+			this.removeDelay.stop();
+			this.menuDelay.stop();
+			
+			event.consume();
+		}
+		
+    	private void handleRelease(TouchEvent event) {
+    		if (event.getTouchPoint().getId() != this.touchID && !this.dragStarted) {
+    			// trigger menu creation timer
+    			this.menuDelay.play();
+    		} else if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 1) {
+    			// trigger area removal timer
+    			this.removeDelay.play();
+    		}
+    		
+    		event.consume();
+    	}
+    	
+    	private void handleDrag(TouchEvent event) {
+    		if (event.getTouchPoint().getId() != this.touchID) {
+    			// we use only primary finger for drag movement
+    		} else if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() < 2) {
+    			// not a multi finger drag
+    		} else {
+    			double deltaX = event.getTouchPoint().getX() - this.getCenterX();
+    			double deltaY = event.getTouchPoint().getY() - this.getCenterY();
+    			
+    			if (Math.abs(deltaX) + Math.abs(deltaY) < 2) {
+    				// ignore very small movements
+                } else if ((deltaX*deltaX + deltaY*deltaY) > 10000) {
+                    // FIXME: ignore too large movements
+                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 10) {
+    				this.dragStarted = true;
+    				CustomUIPane.this.setTranslateX(CustomUIPane.this.getTranslateX() + deltaX);
+    				CustomUIPane.this.setTranslateY(CustomUIPane.this.getTranslateY() + deltaY);
+    			}
+    		}
+    		
+    		event.consume();
+    	}
+    	
+    }
+    
     private void setScale(double scale) {
         this.setScaleX(scale);
         this.setScaleY(scale);

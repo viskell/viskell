@@ -36,7 +36,7 @@ public class LambdaTest {
         assertEquals("(\\ u -> 5.0)", l5.toString());
         
         // using a zero-argument lambda
-        Expression emptyLambda = new Lambda(Collections.EMPTY_LIST, new Value(Type.con("Float"), "pi"));
+        Expression emptyLambda = new Lambda(Collections.emptyList(), new Value(Type.con("Float"), "pi"));
         assertEquals("(\\_ -> pi) ()", emptyLambda.toString());
     }
 
