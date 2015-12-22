@@ -10,6 +10,10 @@ import java.util.stream.Stream;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -73,6 +77,26 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
         argumentSpace.getChildren().addAll(arguments);
         resultSpace.getChildren().add(result);
         setupResizer();
+        
+    	this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> event.consume());
+    	this.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> event.consume());
+    	this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+    			if (event.getButton() != MouseButton.PRIMARY) {
+    				Point2D menuPos = this.parent.getPane().screenToLocal(new Point2D(event.getScreenX(), event.getScreenY()));
+    				this.parent.getPane().showFunctionMenuAt(menuPos.getX(), menuPos.getY());
+    			}
+    		   	event.consume();
+    		});
+    	this.addEventHandler(TouchEvent.TOUCH_PRESSED, event -> event.consume());
+    	this.addEventHandler(TouchEvent.TOUCH_MOVED, event -> event.consume());
+    	this.addEventHandler(TouchEvent.TOUCH_RELEASED, event -> {
+    			if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 2) {
+    				Point2D screenPos = new Point2D(event.getTouchPoint().getScreenX(), event.getTouchPoint().getScreenY());
+    				Point2D menuPos = this.parent.getPane().screenToLocal(screenPos);
+    				this.parent.getPane().showFunctionMenuAt(menuPos.getX(), menuPos.getY());
+    			}
+    			event.consume();
+    		});
     }
 
     /**

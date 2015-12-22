@@ -115,15 +115,21 @@ public class CustomUIPane extends Region {
         if (e.getButton() == MouseButton.PRIMARY) {
             dragging = false;
         } else {
-            ghci.awaitRunning();
-            boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
-            FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this, verticalCurry);
-            double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
-            menu.relocate(e.getX(), e.getY() - verticalCenter);
-            this.addMenu(menu);
+        	this.showFunctionMenuAt(e.getX(), e.getY());
         }
     }
 
+    /** Shows a new function menu at the specified location in this pane. */
+    public void showFunctionMenuAt(double x, double y) {
+        ghci.awaitRunning();
+        boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
+        FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this, verticalCurry);
+        double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
+        menu.relocate(x, y - verticalCenter);
+        this.addMenu(menu);
+    	
+    }
+    
     private void setScale(double scale) {
         this.setScaleX(scale);
         this.setScaleY(scale);
