@@ -74,6 +74,8 @@ public class CustomUIPane extends Region {
 
         this.ghci = new GhciSession();
         this.ghci.startAsync();
+        
+        this.currentFile = Optional.empty();
 
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDrag);
@@ -125,12 +127,10 @@ public class CustomUIPane extends Region {
     }
     
     private void handleMouseRelease(MouseEvent e) {
-    	if (e.isSynthesized()) {
-    		return;
-    	}
-    	
     	if (e.getButton() == MouseButton.PRIMARY) {
-            dragging = false;
+    	    if (!e.isSynthesized()) {
+    	        dragging = false;
+    	    }
         } else {
         	this.showFunctionMenuAt(e.getX(), e.getY());
         }
