@@ -141,11 +141,8 @@ ImageView.hoverMenu {
     -fx-background-color: rgba(0, 0, 0, 0.2);
 }
 
-.signature {
-    -fx-text-fill: white;
-    -fx-background-insets: 0, 0;
-    -fx-background-radius: 0, 0;
-    -fx-background-color: transparent;
+.lambdaBorder {
+	-fx-background-color: rgba(127, 255, 127, 0.3);
 }
 
 ChoiceBlock * {
