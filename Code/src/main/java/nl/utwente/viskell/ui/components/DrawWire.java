@@ -93,7 +93,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
     public void setFreePosition(Point2D point) {
         this.setEndX(point.getX());
         this.setEndY(point.getY());
-        this.updateBezierControlPoints();
+        this.invalidateAnchorPosition();
         
         Point2D scenePoint = this.pane.localToScene(point, false);
         BlockContainer anchorContainer = this.anchor.getContainer();
