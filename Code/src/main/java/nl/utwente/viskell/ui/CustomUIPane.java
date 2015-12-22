@@ -127,12 +127,12 @@ public class CustomUIPane extends Region {
     }
     
     private void handleMouseRelease(MouseEvent e) {
-    	if (e.getButton() == MouseButton.PRIMARY) {
-    	    if (!e.isSynthesized()) {
-    	        dragging = false;
-    	    }
-        } else {
-        	this.showFunctionMenuAt(e.getX(), e.getY());
+        if (e.getButton() == MouseButton.PRIMARY) {
+            if (!e.isSynthesized()) {
+                dragging = false;
+            }
+        } else if (!dragging) {
+            this.showFunctionMenuAt(e.getX(), e.getY());
         }
     }
 
