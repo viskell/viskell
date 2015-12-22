@@ -175,6 +175,11 @@ public class OutputAnchor extends ConnectionAnchor {
     }
 
     @Override
+    public BlockContainer getContainer() {
+        return this.block.getContainer();
+    }
+    
+    @Override
     public Map<String, Object> toBundle() {
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
         Block block = this.block;

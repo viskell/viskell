@@ -168,7 +168,8 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
 
     /** Called when the VisualState changed. */
     public void invalidateVisualState() {
-        // TODO update anchors when they get a type label       
+        // TODO update anchors when they get a type label    
+    	this.res.invalidateVisualState();
     }
 
     @Override

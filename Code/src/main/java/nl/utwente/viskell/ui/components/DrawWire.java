@@ -5,6 +5,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
+import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.CustomUIPane;
 
@@ -93,6 +94,25 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         this.setEndX(point.getX());
         this.setEndY(point.getY());
         this.updateBezierControlPoints();
+        
+        Point2D scenePoint = this.pane.localToScene(point, false);
+        BlockContainer anchorContainer = this.anchor.getContainer();
+        boolean scopeOK = true;
+        
+        if (this.anchor instanceof OutputAnchor) {
+            scopeOK = anchorContainer.getBoundsInScene().contains(scenePoint);
+        } else if (this.anchor instanceof InputAnchor) {
+            scopeOK = this.pane.getBlockContainers().
+                filter(con -> con.getBoundsInScene().contains(scenePoint)).
+                    allMatch(con -> anchorContainer.isContainedWithin(con));
+        }
+        
+        if (scopeOK) {
+            this.getStrokeDashArray().clear();
+        } else if (this.getStrokeDashArray().isEmpty()) {
+            this.getStrokeDashArray().addAll(15.0, 15.0);
+        }
+        
     }
 
     /** Updates the Bezier offset (curviness) according to the current start and end positions. */

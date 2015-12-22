@@ -112,7 +112,8 @@ public class BinOpApplyBlock extends Block {
 
         /** Refresh visual information such as types */
         public void invalidateVisualState() {
-            boolean validConnection = this.anchor.hasConnection() && ! this.anchor.errorStateProperty().get();
+            this.anchor.invalidateVisualState();
+            boolean validConnection = this.anchor.hasValidConnection();
             this.setTranslateY(validConnection ? 0 : -9);
             this.inputType.setText(validConnection ? "zyxwv" : this.anchor.getStringType()); 
             this.typePane.setVisible(!validConnection);

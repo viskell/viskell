@@ -308,10 +308,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      */
     public void invalidateTypes() {
         rightArgument.setText(block.getAllOutputs().get(0).getStringType());
-
-        for (InputArgument argument : leftArguments) {
-            argument.setInputText(argument.getInputAnchor().getStringType());
-        }
+        this.leftArguments.forEach(InputArgument::invalidateVisualState);
     }
 
     /**
