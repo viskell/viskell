@@ -198,6 +198,11 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
 
     @Override
+    public List<LambdaContainer> getInternalContainers() {
+        return ImmutableList.of(this.body);
+    }
+    
+    @Override
     public void relocate(double x, double y) {
         double dx = x-getLayoutX(), dy = y-getLayoutY();
         super.relocate(x, y);

@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableList;
+
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Binder;
@@ -123,6 +125,11 @@ public class ChoiceBlock extends Block {
     /** Returns the alternatives in this block */
     public List<Lane> getLanes() {
         return lanes;
+    }
+    
+    @Override
+    public List<Lane> getInternalContainers() {
+        return ImmutableList.copyOf(this.lanes);
     }
     
     @Override
