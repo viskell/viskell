@@ -187,14 +187,12 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     }
     
     /** @return The local expression this LambdaContainer represents. */
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
-        Pair<Expression, Set<OutputAnchor>> pair = res.getLocalExpr();
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
         List<Binder> binders = args.stream().map(arg -> arg.binder).collect(Collectors.toList());
-        LetExpression body = new LetExpression(pair.a, false);
-        Set<OutputAnchor> outsideAnchors = pair.b;
+        LetExpression body = new LetExpression(res.getLocalExpr(outsideAnchors), false);
         res.extendExprGraph(body, this, outsideAnchors);
         
-        return new Pair<>(new Lambda(binders, body), outsideAnchors);
+        return new Lambda(binders, body);
     }
 
     /** Called when the VisualState changed. */

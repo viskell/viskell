@@ -156,17 +156,20 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         }
     }
     
-    /** @return A pair containing the expression this block represents and a set of out-of-reach OutputAnchors. */
-    public abstract Pair<Expression,Set<OutputAnchor>> getLocalExpr();
+    /**
+     * @param outsideAnchors the set being accumulated of out-of-reach OutputAnchors that are required for the expression.
+     * @return The expression this block represents.
+     */
+    public abstract Expression getLocalExpr(Set<OutputAnchor> outsideAnchors);
     
     /**
      * @return A complete expression of this block and all its dependencies.
      */
     public final Expression getFullExpr() {
-        Pair<Expression, Set<OutputAnchor>> localExpr = getLocalExpr();
+        Set<OutputAnchor> outerAnchors = new HashSet<>();
+        Expression localExpr = getLocalExpr(outerAnchors);
         
-        LetExpression fullExpr = new LetExpression(localExpr.a, false);
-        Set<OutputAnchor> outerAnchors = localExpr.b;
+        LetExpression fullExpr = new LetExpression(localExpr, false);
         extendExprGraph(fullExpr, this.parentPane.getTopLevel(), outerAnchors);
         
         outerAnchors.forEach(block -> block.extendExprGraph(fullExpr, this.parentPane.getTopLevel(), new HashSet<>()));

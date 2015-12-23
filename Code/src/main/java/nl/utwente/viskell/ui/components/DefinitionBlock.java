@@ -182,8 +182,8 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
     
     @Override
-    public final Pair<Expression,Set<OutputAnchor>> getLocalExpr() {
-        return this.body.getLocalExpr();
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
+        return this.body.getLocalExpr(outsideAnchors);
     }
 
     @Override
