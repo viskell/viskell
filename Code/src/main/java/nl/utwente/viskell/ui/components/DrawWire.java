@@ -3,6 +3,10 @@ package nl.utwente.viskell.ui.components;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
+import javafx.scene.input.TouchPoint;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
 import nl.utwente.viskell.ui.BlockContainer;
@@ -15,6 +19,12 @@ import nl.utwente.viskell.ui.CustomUIPane;
  */
 public class DrawWire extends CubicCurve implements ChangeListener<Transform>, ComponentLoader {
 
+	/** The 'touch point ID' associated with the mouse. */
+	public static final int INPUT_ID_MOUSE = -1;
+	
+	/** The ID of the touch point that initiated this wire. */
+	private final int touchID;
+	
     /** The Pane this connection wire is on. */
     private final CustomUIPane pane;
 
@@ -25,9 +35,10 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
      * @param pane The Pane this wire is on.
      * @param anchor The starting anchor of new wire.
      */
-    public DrawWire(CustomUIPane pane, ConnectionAnchor anchor) {
+    public DrawWire(CustomUIPane pane, ConnectionAnchor anchor, int touchID) {
         this.setMouseTransparent(true);
 
+        this.touchID = touchID;
         this.pane = pane;
         this.anchor = anchor;
         pane.addWire(this);
@@ -37,6 +48,60 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         anchor.localToSceneTransformProperty().addListener(x -> this.invalidateAnchorPosition());
     }
 
+    public static DrawWire initiate(CustomUIPane pane, ConnectionAnchor anchor, int touchID) {
+        if (anchor instanceof InputAnchor && ((InputAnchor)anchor).hasConnection()) {
+            // make room for a new connection by removing existing one
+            Connection conn = ((InputAnchor)anchor).getConnection().get();
+            conn.remove();
+            // keep the other end of old connection to initiate the new one
+            return new DrawWire(pane, conn.getStartAnchor(), touchID);
+        } else {
+            return new DrawWire(pane, anchor, touchID);
+        }
+
+    }
+
+	protected void handleMouseDrag(MouseEvent event) {
+		Point2D localPos = pane.sceneToLocal(event.getSceneX(), event.getSceneY());
+		this.setFreePosition(localPos);
+		event.consume();
+	}
+	
+	protected void handleTouchMove(TouchEvent event) {
+		TouchPoint tp = event.getTouchPoint();
+		if (tp.getId() == this.touchID) {
+			Point2D localPos = pane.sceneToLocal(tp.getSceneX(), tp.getSceneY());
+			this.setFreePosition(localPos);
+			event.consume();
+		}
+	}
+
+	protected void handleMouseRelease(MouseEvent event) {
+        this.handleReleaseOn(event.getPickResult().getIntersectedNode());
+        event.consume();
+	}
+
+	protected void handleTouchRelease(TouchEvent event) {
+		TouchPoint tp = event.getTouchPoint();
+		if (tp.getId() == this.touchID) {
+			this.handleReleaseOn(tp.getPickResult().getIntersectedNode());
+			event.consume();
+		}
+		
+	}
+	
+	private void handleReleaseOn(Node picked) {
+        if (picked.getParent() instanceof ConnectionAnchor) {
+        	ConnectionAnchor target = (ConnectionAnchor)picked.getParent();
+            Connection connection = this.buildConnectionTo(target);
+            if (connection != null) {
+                connection.getStartAnchor().initiateConnectionChanges();
+            }
+        }
+        // drop the wire, even if connection failed
+        this.remove();
+	}
+	
     /**
      * Constructs a new Connection from this partial wire and another anchor
      * @param target the Anchor to which the other end of this should be connection to.
@@ -68,6 +133,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
 
     /** Removes this wire from its pane, and its listener. */
     public final void remove() {
+    	this.anchor.wireInProgess = null;
         this.anchor.localToSceneTransformProperty().removeListener(this);
         this.pane.removeWire(this);
     }

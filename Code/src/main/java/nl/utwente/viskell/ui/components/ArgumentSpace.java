@@ -14,7 +14,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Circle;
 import nl.utwente.viskell.ui.ComponentLoader;
-import nl.utwente.viskell.ui.ConnectionCreationManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +66,8 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * This is required to support multi-touch inputs.
      */
     private int inputID;
+    private static int INPUT_ID_NONE = Integer.MIN_VALUE;
+    private static int INPUT_ID_MOUSE = -1;    
 
     /**
      * Constructs an ArgumentSpace belonging to the function block as given.
@@ -76,7 +77,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         this.loadFXML("ArgumentSpace");
 
         this.block = block;
-        this.inputID = ConnectionCreationManager.INPUT_ID_NONE;
+        this.inputID = INPUT_ID_NONE;
         this.leftArguments = new ArrayList<InputArgument>();
         this.knotIndex = new SimpleIntegerProperty(0);
 
@@ -109,9 +110,9 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
         this.knot.layoutYProperty().bind(this.heightProperty().divide(2));
 
         //Mouse listeners
-        this.knot.setOnMousePressed(event -> {onKnotPressed(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
+        this.knot.setOnMousePressed(event -> {onKnotPressed(INPUT_ID_MOUSE); event.consume();});
         this.knot.setOnMouseDragged(event -> {onKnotMoved(event); event.consume();});
-        this.knot.setOnMouseReleased(event -> {onKnotReleased(ConnectionCreationManager.INPUT_ID_MOUSE); event.consume();});
+        this.knot.setOnMouseReleased(event -> {onKnotReleased(INPUT_ID_MOUSE); event.consume();});
 
         //Touch listeners
         this.knot.setOnTouchPressed(event -> {onKnotPressed(event.getTouchPoint().getId()); event.consume();});
@@ -162,7 +163,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      */
     private void onKnotPressed(int inputID) {
         knot.layoutXProperty().unbind();
-        if(this.inputID == ConnectionCreationManager.INPUT_ID_NONE) {
+        if(this.inputID == INPUT_ID_NONE) {
             this.inputID = inputID;
         } else {
             // Ignore, another touch point is already dragging;
@@ -175,7 +176,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      */
     private void onKnotReleased(int inputID) {
         if(this.inputID == inputID) {
-            this.inputID = ConnectionCreationManager.INPUT_ID_NONE;
+            this.inputID = INPUT_ID_NONE;
             snapToKnotIndex();
         } else {
             // Ignore, different touch point;
@@ -194,7 +195,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
     private void onKnotMoved(InputEvent event) {
         if (event instanceof MouseEvent) {
             MouseEvent mEvent = (MouseEvent) event;
-            knotMoved(ConnectionCreationManager.INPUT_ID_MOUSE, mEvent.getSceneX());
+            knotMoved(INPUT_ID_MOUSE, mEvent.getSceneX());
         } else if (event instanceof TouchEvent) {
             TouchEvent tEvent = (TouchEvent) event;
             knotMoved(tEvent.getTouchPoint().getId(), tEvent.getTouchPoint().getSceneX());
@@ -265,7 +266,7 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * property bindings.
      */
     public void snapToKnotIndex() {
-        if (inputID == ConnectionCreationManager.INPUT_ID_NONE) {
+        if (inputID == INPUT_ID_NONE) {
             int kti = getKnotIndex();
             if (kti > 0 && kti <= leftArguments.size()) {
                 Region arg = leftArguments.get(kti-1); // First argument left of the knot.
