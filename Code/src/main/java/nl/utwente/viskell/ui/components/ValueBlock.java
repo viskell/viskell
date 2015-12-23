@@ -45,18 +45,17 @@ public class ValueBlock extends Block {
      * @param pane The parent pane this Block resides on.
      */
     public ValueBlock(CustomUIPane pane, Type type, String value) {
-        this(pane, type, value, "ValueBlock");
+        this("ValueBlock", pane, type);
+        this.setValue(value);
     }
     
-    protected ValueBlock(CustomUIPane pane, Type type, String value, String fxml) {
+    protected ValueBlock(String fxml, CustomUIPane pane, Type type) {
         super(pane);
         loadFXML(fxml);
 
         output = new OutputAnchor(this, new Binder("val", type));
         outputSpace.getChildren().add(output);
         outputSpace.setTranslateY(9);
-       
-        setValue(value);
     }
 
     /**

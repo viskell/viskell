@@ -6,7 +6,7 @@
     <BorderPane styleClass="value, block">
         <center>
             <VBox alignment="CENTER">
-                <Slider min="0.0" max="1.0" fx:id="slider"/>
+                <Slider min="-1.0" max="1.0" fx:id="slider"/>
                 <Label fx:id="value" styleClass="content"/>
             </VBox>
         </center>
