@@ -2,6 +2,7 @@ package nl.utwente.viskell.ui;
 
 import com.google.common.base.Splitter;
 
+import javafx.animation.ScaleTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -15,6 +16,7 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.CatalogFunction;
@@ -175,6 +177,15 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             ((Region) button).setMaxWidth(Double.MAX_VALUE);
         }
 
+        // opening animation of this menu, during which it can't be accidentally used
+        this.setMouseTransparent(true);
+        this.setScaleX(0.3);
+        this.setScaleY(0.1);
+        ScaleTransition opening = new ScaleTransition(Duration.millis(500), this);
+        opening.setToX(1);
+        opening.setToY(1);
+        opening.setOnFinished(e -> this.setMouseTransparent(false));
+        opening.play();
     }
 
     private void addValueBlock() {
@@ -238,6 +249,12 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
     /** Closes this menu by removing it from it's parent. */
     public void close() {
-        parent.removeMenu(this);
+    	// disable it first, before removal in a closing animation 
+        this.setMouseTransparent(true);
+        ScaleTransition closing = new ScaleTransition(Duration.millis(300), this);
+        closing.setToX(0.3);
+        closing.setToY(0.1);
+        closing.setOnFinished(e -> parent.removeMenu(this));
+        closing.play();
     }
 }
