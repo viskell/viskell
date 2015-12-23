@@ -1,7 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -135,19 +134,16 @@ public class FunctionBlock extends Block {
     }
     
     @Override
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
         Expression expr = new FunVar(this.funInfo);
-        Set<OutputAnchor> outsideAnchors = new HashSet<>();
         
         for (InputAnchor in : this.getActiveInputs()) {
-            Pair<Expression, Set<OutputAnchor>> pair = in.getLocalExpr();
-            expr = new Apply(expr, pair.a);
-            outsideAnchors.addAll(pair.b);
+            expr = new Apply(expr, in.getLocalExpr(outsideAnchors));
         }
         
         outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
         
-        return new Pair<>(expr, outsideAnchors);
+        return expr;
     }
     
     @Override

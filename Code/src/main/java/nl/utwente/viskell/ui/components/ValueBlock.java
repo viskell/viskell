@@ -1,6 +1,5 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -74,8 +73,8 @@ public class ValueBlock extends Block {
     }
 
     @Override
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
-        return new Pair<>(new Value(output.getType(), getValue()), new HashSet<>());
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
+        return new Value(output.getType(), getValue());
     }
 
     @Override

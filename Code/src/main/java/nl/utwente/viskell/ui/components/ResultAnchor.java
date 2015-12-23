@@ -25,13 +25,12 @@ public class ResultAnchor extends InputAnchor {
     }
     
     @Override
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
         if (resType.isPresent()) {
-            Pair<Expression, Set<OutputAnchor>> pair = super.getLocalExpr();
-            return new Pair<>(new Annotated(pair.a, resType.get()), pair.b);
+            return new Annotated(super.getLocalExpr(outsideAnchors), resType.get());
         }
        
-        return super.getLocalExpr();
+        return super.getLocalExpr(outsideAnchors);
     }
     
     /** Set fresh type for the next typechecking cycle.*/

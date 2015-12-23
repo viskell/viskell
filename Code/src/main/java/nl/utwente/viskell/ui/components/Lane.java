@@ -20,7 +20,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import nl.utwente.viskell.haskell.expr.Case;
 import nl.utwente.viskell.haskell.expr.ConstructorBinder;
-import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.BlockContainer;
@@ -106,12 +105,10 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
      * Secondly, the expression is extended with bottom-most blocks within this lane.
      * Bottom-most blocks are *assumed* to be either deconstructors or expressions resulting in a Bool.
      * 
-     * @return a pair containing this lane's Alternative and a set of out-of-reach OutputAnchors
+     * @return this lane's Alternative
      */
-    public Pair<Case.Alternative,Set<OutputAnchor>> getAlternative() {
-        Pair<Expression, Set<OutputAnchor>> pair = result.getLocalExpr();
-        LetExpression guards = new LetExpression(pair.a, true);
-        Set<OutputAnchor> outsideAnchors = pair.b;
+    public Case.Alternative getAlternative(Set<OutputAnchor> outsideAnchors) {
+        LetExpression guards = new LetExpression(result.getLocalExpr(outsideAnchors), true);
         result.extendExprGraph(guards, this, outsideAnchors);
         
         attachedBlocks.stream().filter(Block::isBottomMost).forEach(block -> {
@@ -126,7 +123,7 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
             block.extendExprGraph(guards, this, outsideAnchors);
         });
         
-        return new Pair<>(new Case.Alternative(new ConstructorBinder("()"), guards), outsideAnchors);
+        return (new Case.Alternative(new ConstructorBinder("()"), guards));
     }
 
     /** Returns the result anchor of this Lane */

@@ -1,7 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -251,19 +250,16 @@ public class BinOpApplyBlock extends Block {
 	}
 
 	@Override
-	public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
+	public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
         Expression expr = new FunVar(this.funInfo);
         List<Binder> curriedArgs = new ArrayList<>();
-        Set<OutputAnchor> outsideAnchors = new HashSet<>();
         
         if (this.leftInput.curried) {
             Binder ca = new Binder("ca");
             curriedArgs.add(ca);
             expr = new Apply(expr, new LocalVar(ca));
         } else {
-            Pair<Expression, Set<OutputAnchor>> pair = this.leftInput.anchor.getLocalExpr();
-            expr = new Apply(expr, pair.a);
-            outsideAnchors.addAll(pair.b);
+            expr = new Apply(expr, this.leftInput.anchor.getLocalExpr(outsideAnchors));
         }
 
         if (this.rightInput.curried) {
@@ -271,17 +267,15 @@ public class BinOpApplyBlock extends Block {
             curriedArgs.add(ca);
             expr = new Apply(expr, new LocalVar(ca));
         } else {
-            Pair<Expression, Set<OutputAnchor>> pair = this.rightInput.anchor.getLocalExpr();
-            expr = new Apply(expr, pair.a);
-            outsideAnchors.addAll(pair.b);
+            expr = new Apply(expr, this.rightInput.anchor.getLocalExpr(outsideAnchors));
         }
 
         outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
         
         if (curriedArgs.isEmpty()) {
-            return new Pair<>(expr, outsideAnchors);
+            return expr;
         } else {
-            return new Pair<>(new Lambda(curriedArgs, expr), outsideAnchors);
+            return new Lambda(curriedArgs, expr);
         }
 
 	}

@@ -108,8 +108,8 @@ public class MatchBlock extends Block {
     }
 
     @Override
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
-        return input.getLocalExpr();
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
+        return input.getLocalExpr(outsideAnchors);
     }
 
     @Override
