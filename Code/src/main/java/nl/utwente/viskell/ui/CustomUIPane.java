@@ -1,6 +1,7 @@
 package nl.utwente.viskell.ui;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -21,10 +22,9 @@ import javafx.util.Duration;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.ui.components.Block;
-import nl.utwente.viskell.ui.components.ChoiceBlock;
 import nl.utwente.viskell.ui.components.Connection;
-import nl.utwente.viskell.ui.components.DefinitionBlock;
 import nl.utwente.viskell.ui.components.DrawWire;
+import nl.utwente.viskell.ui.components.WrappedContainer;
 
 /**
  * The core Pane that also keeps state for the user interface.
@@ -377,14 +377,30 @@ public class CustomUIPane extends Region {
     }
 
     public Stream<BlockContainer> getBlockContainers() {
-        return bottomLayer.getChildrenUnmodifiable().stream().flatMap(node -> {
-            if (node instanceof ChoiceBlock) {
-                return ((ChoiceBlock)node).getLanes().stream();
-            }
-            if (node instanceof DefinitionBlock) {
-                return Stream.of(((DefinitionBlock)node).getBody());
-            }
-            return Stream.empty();
-        });
+        return bottomLayer.getChildrenUnmodifiable().stream().flatMap(node ->
+            (node instanceof Block) ? ((Block)node).getInternalContainers().stream() : Stream.empty());
     }
+
+    /**
+     * Ensures that the ordering of container blocks on the bottom layer is consistent with parent ordering.
+     * @param block that might need corrections in the visual ordering. 
+     */
+    public void moveInFrontOfParentContainers(Block block) {
+        if (block.getContainer() instanceof WrappedContainer) {
+            Block parent = ((WrappedContainer)block.getContainer()).getWrapper();
+            int childIndex = this.bottomLayer.getChildren().indexOf(block);
+            int parentIndex = this.bottomLayer.getChildren().indexOf(parent);
+            if (childIndex < parentIndex && childIndex >= 0) {
+                this.bottomLayer.getChildren().remove(block);
+                this.bottomLayer.getChildren().add(parentIndex, block);
+                // moving the block after the parent might have caused ordering issues in the block inbetween, resolve them
+                for (Node node : new ArrayList<Node>(this.bottomLayer.getChildren().subList(childIndex, parentIndex-1))) {
+                    if (node instanceof Block) {
+                        this.moveInFrontOfParentContainers((Block)node);
+                    }
+                }
+            }
+        }
+    }
+    
 }
