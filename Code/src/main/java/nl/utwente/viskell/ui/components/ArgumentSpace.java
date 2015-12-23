@@ -65,9 +65,9 @@ public class ArgumentSpace extends Pane implements ComponentLoader {
      * The inputID is associated with an input (INPUT_ID_MOUSE for mouse, > 0 for touch).
      * This is required to support multi-touch inputs.
      */
-    private int inputID;
     private static int INPUT_ID_NONE = Integer.MIN_VALUE;
-    private static int INPUT_ID_MOUSE = -1;    
+    private static int INPUT_ID_MOUSE = -1;
+    private int inputID;
 
     /**
      * Constructs an ArgumentSpace belonging to the function block as given.

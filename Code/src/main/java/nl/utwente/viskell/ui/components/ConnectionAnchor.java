@@ -6,6 +6,7 @@ import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
+import nl.utwente.viskell.ui.CustomUIPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
 /**
@@ -16,7 +17,7 @@ import nl.utwente.viskell.ui.serialize.Bundleable;
 public abstract class ConnectionAnchor extends StackPane implements ComponentLoader, Bundleable {
 
     /** The connection being drawn starting from this anchor, or null if none. */
-    protected DrawWire wireInProgess;
+    protected DrawWire wireInProgress;
 
     /** The block this ConnectionAnchor belongs to. */
     protected final Block block;
@@ -28,12 +29,28 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         this.block = block;
         
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePress);
-        this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDrag);
-        this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseRelease);
+        this.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
+        		if (this.wireInProgress != null && !event.isSynthesized()) {
+        			this.wireInProgress.handleMouseDrag(event);
+        		}
+        	});
+        this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+        		if (this.wireInProgress != null && !event.isSynthesized()) {
+        			this.wireInProgress.handleMouseRelease(event);
+        		}
+        	});
         
         this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handleTouchPress);
-        this.addEventHandler(TouchEvent.TOUCH_MOVED, this::handleTouchMove);
-        this.addEventHandler(TouchEvent.TOUCH_RELEASED, this::handleTouchRelease);
+        this.addEventHandler(TouchEvent.TOUCH_MOVED, event -> {
+        		if (this.wireInProgress != null) {
+        			this.wireInProgress.handleTouchMove(event);
+        		}
+        	});
+        this.addEventHandler(TouchEvent.TOUCH_RELEASED, event -> {
+        		if (this.wireInProgress != null) {
+        			this.wireInProgress.handleTouchRelease(event);
+        		}
+        	});
     }
  
     /**
@@ -82,41 +99,17 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
 
     private void handleMousePress(MouseEvent event) {
-    	if (this.wireInProgess == null && !event.isSynthesized()) {
-    		this.wireInProgess = DrawWire.initiate(this.block.getPane(), this, DrawWire.INPUT_ID_MOUSE);
+    	if (this.wireInProgress == null && !event.isSynthesized()) {
+    		this.wireInProgress = DrawWire.initiate(this, DrawWire.INPUT_ID_MOUSE);
     		event.consume();
     	}
     }
 
     private void handleTouchPress(TouchEvent event) {
-    	if (this.wireInProgess == null) {
+    	if (this.wireInProgress == null) {
     		int touchID = event.getTouchPoint().getId();
-    		this.wireInProgess = DrawWire.initiate(this.block.getPane(), this, touchID);
+    		this.wireInProgress = DrawWire.initiate(this, touchID);
     		event.consume();
-    	}
-    }
-    
-    private void handleMouseDrag(MouseEvent event) {
-    	if (this.wireInProgess != null && !event.isSynthesized()) {
-    		this.wireInProgess.handleMouseDrag(event);
-    	}
-    }
-    
-    private void handleMouseRelease(MouseEvent event) {
-    	if (this.wireInProgess != null && !event.isSynthesized()) {
-    		this.wireInProgess.handleMouseRelease(event);
-    	}
-    }
-
-    private void handleTouchMove(TouchEvent event) {
-    	if (this.wireInProgess != null) {
-    		this.wireInProgess.handleTouchMove(event);
-    	}
-    }
-    
-    private void handleTouchRelease(TouchEvent event) {
-    	if (this.wireInProgess != null) {
-    		this.wireInProgess.handleTouchRelease(event);
     	}
     }
 
@@ -124,5 +117,10 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public String toString() {
         return String.format("%s belonging to %s", this.getClass().getSimpleName(), this.block);
     }
+
+    /** @return the UIPane of the attached block. */
+	public CustomUIPane getPane() {
+		return this.block.getPane();
+	}
 
 }
