@@ -16,8 +16,8 @@ public interface BlockContainer {
     /** Attach a block to this container */
     public void attachBlock(Block block);
     
-    /** Remove a block from this container */
-    public void removeBlock(Block block);
+    /** Detach a block from this container */
+    public void detachBlock(Block block);
 
     /** @return a stream of all block attached to this container */
     public Stream<Block> getAttachedBlocks();

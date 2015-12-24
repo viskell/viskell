@@ -27,7 +27,7 @@ import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.DragContext;
 
 import com.google.common.collect.ImmutableList;
@@ -144,7 +144,7 @@ public class FunApplyBlock extends Block {
     /** The Label in which the information of the function is displayed. */
     @FXML private Label functionInfo;
     
-    public FunApplyBlock(FunctionInfo funInfo, CustomUIPane pane) {
+    public FunApplyBlock(FunctionInfo funInfo, ToplevelPane pane) {
         super(pane);
         this.loadFXML("FunApplyBlock");
 
@@ -215,7 +215,7 @@ public class FunApplyBlock extends Block {
     @Override
     public Optional<Block> getNewCopy() {
         if (this.inputs.stream().map(i -> i.curried).filter(c -> c).count() == 0) {
-            return Optional.of(new FunApplyBlock(this.funInfo, this.getPane()));
+            return Optional.of(new FunApplyBlock(this.funInfo, this.getToplevel()));
         }
         
         return Optional.empty();

@@ -1,13 +1,14 @@
 package nl.utwente.viskell.ui;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
@@ -27,9 +28,11 @@ import nl.utwente.viskell.ui.components.DrawWire;
 import nl.utwente.viskell.ui.components.WrappedContainer;
 
 /**
- * The core Pane that also keeps state for the user interface.
+ * The core Pane that represent the programming workspace.
+ * It is a layered visualization of all blocks, wires, and menu elements.
+ * And represents the toplevel container of all blocks.
  */
-public class CustomUIPane extends Region {
+public class ToplevelPane extends Region implements BlockContainer {
     /** bottom pane layer intended for block container such as lambda's */
     private final Pane bottomLayer;
 
@@ -39,11 +42,7 @@ public class CustomUIPane extends Region {
     /** higher pane layer for connections wires */
     private final Pane wireLayer;
 
-    /** The top level container for all blocks */
-    private TopLevel toplevel;
-    
     private GhciSession ghci;
-    private InspectorWindow inspector;
     private PreferencesWindow preferences;
 
     private Point2D dragStart;
@@ -52,27 +51,26 @@ public class CustomUIPane extends Region {
     /** Boolean to indicate that a drag (pan) action has started, yet not finished. */
     private boolean dragging;
 
-    /** The File we're currently working on, if any. */
-    private Optional<File> currentFile;
-
+    /** The set of blocks that logically belong to this top level */
+    private final Set<Block> attachedBlocks;
+    
     /**
      * Constructs a new instance.
      */
-    public CustomUIPane() {
+    public ToplevelPane() {
         super();
+        this.attachedBlocks = new HashSet<>();
+        
         this.bottomLayer = new Pane();
         this.blockLayer = new Pane(this.bottomLayer);
         this.wireLayer = new Pane(this.blockLayer);
         this.getChildren().add(this.wireLayer);
 
-        this.toplevel = new TopLevel(this);
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
 
         this.ghci = new GhciSession();
         this.ghci.startAsync();
-        
-        this.currentFile = Optional.empty();
 
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDrag);
@@ -80,20 +78,8 @@ public class CustomUIPane extends Region {
         this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handleTouchPress);
     }
 
-    public void showInspector() {
-        if (inspector == null) {
-            inspector = new InspectorWindow(this);
-        }
-
-        inspector.show();
-    }
-
-    public void showPreferences() {
-        if (preferences == null) {
-            preferences = new PreferencesWindow(this);
-        }
-
-        preferences.show();
+    public void setPreferences(PreferencesWindow prefs) {
+        this.preferences = prefs;
     }
 
     private void handleMousePress(MouseEvent e) {
@@ -185,12 +171,12 @@ public class CustomUIPane extends Region {
 		}
     	
 		private void remove(ActionEvent event) {
-			CustomUIPane.this.getChildren().remove(this);
+			ToplevelPane.this.getChildren().remove(this);
 		}
 		
 		private void finishMenu(ActionEvent event) {
-			CustomUIPane.this.showFunctionMenuAt(this.getCenterX(), this.getCenterY());
-			CustomUIPane.this.getChildren().remove(this);
+			ToplevelPane.this.showFunctionMenuAt(this.getCenterX(), this.getCenterY());
+			ToplevelPane.this.getChildren().remove(this);
 			this.menuCreated = true;
 		}
 		
@@ -234,19 +220,14 @@ public class CustomUIPane extends Region {
                     // FIXME: ignore too large movements
                 } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 24) {
     				this.dragStarted = true;
-    				CustomUIPane.this.setTranslateX(CustomUIPane.this.getTranslateX() + deltaX);
-    				CustomUIPane.this.setTranslateY(CustomUIPane.this.getTranslateY() + deltaY);
+    				ToplevelPane.this.setTranslateX(ToplevelPane.this.getTranslateX() + deltaX);
+    				ToplevelPane.this.setTranslateY(ToplevelPane.this.getTranslateY() + deltaY);
     			}
     		}
     		
     		event.consume();
     	}
     	
-    }
-    
-    private void setScale(double scale) {
-        this.setScaleX(scale);
-        this.setScaleY(scale);
     }
 
     /**
@@ -257,11 +238,6 @@ public class CustomUIPane extends Region {
         return ghci.getCatalog().asEnvironment();
     }
 
-    /** @return the top level block container */
-    public TopLevel getTopLevel() {
-        return this.toplevel;
-    }
-    
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
         block.deleteAllLinks();
@@ -284,39 +260,6 @@ public class CustomUIPane extends Region {
     
      public GhciSession getGhciSession() {
         return ghci;
-    }
-
-    public void zoomOut() {
-        zoom(0.8);
-    }
-
-    public void zoomIn() {
-        zoom(1.25);
-    }
-
-    private void zoom(double ratio) {
-        double scale = this.getScaleX();
-
-        /* Limit zoom to reasonable range. */
-        if (scale <= 0.2 && ratio < 1) return;
-        if (scale >= 3 && ratio > 1) return;
-
-        this.setScale(scale * ratio);
-        this.setTranslateX(this.getTranslateX() * ratio);
-        this.setTranslateY(this.getTranslateY() * ratio);
-    }
-
-    /** Gets the file we're currently working on, if any. */
-    public Optional<File> getCurrentFile() {
-        return currentFile;
-    }
-
-    /**
-     * Sets the file we're currently working on. Probably called from a Save
-     * As/Open operation.
-     */
-    public void setCurrentFile(File currentFile) {
-        this.currentFile = Optional.of(currentFile);
     }
 
     /**
@@ -367,7 +310,7 @@ public class CustomUIPane extends Region {
         this.bottomLayer.getChildren().clear();
         this.blockLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
         this.wireLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
-        this.toplevel = new TopLevel(this);
+        this.attachedBlocks.clear();
     }
 
     public Stream<Node> streamChildren() {
@@ -378,7 +321,7 @@ public class CustomUIPane extends Region {
         return Stream.concat(bottom, Stream.concat(blocks, wires));
     }
 
-    public Stream<BlockContainer> getBlockContainers() {
+    public Stream<BlockContainer> getAllBlockContainers() {
         return bottomLayer.getChildrenUnmodifiable().stream().flatMap(node ->
             (node instanceof Block) ? ((Block)node).getInternalContainers().stream() : Stream.empty());
     }
@@ -405,4 +348,29 @@ public class CustomUIPane extends Region {
         }
     }
     
+    @Override
+    public Bounds getBoundsInScene() {
+        return this.localToScene(this.getBoundsInLocal());
+    }
+
+    @Override
+    public void attachBlock(Block block) {
+        this.attachedBlocks.add(block);
+    }
+
+    @Override
+    public void detachBlock(Block block) {
+        this.attachedBlocks.remove(block);
+    }
+
+    @Override
+    public Stream<Block> getAttachedBlocks() {
+        return this.attachedBlocks.stream();
+    }
+
+    @Override
+    public BlockContainer getParentContainer() {
+        return this;
+    }
+
 }

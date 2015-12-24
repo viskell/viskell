@@ -6,7 +6,7 @@ import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
 /**
@@ -119,8 +119,8 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
 
     /** @return the UIPane of the attached block. */
-    public CustomUIPane getPane() {
-        return this.block.getPane();
+    public ToplevelPane getPane() {
+        return this.block.getToplevel();
     }
 
 }

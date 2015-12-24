@@ -6,7 +6,7 @@ import java.util.Optional;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import javafx.scene.input.TouchEvent;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 /**
  * An extension of ValueBlock.
@@ -26,7 +26,7 @@ public class SliderBlock extends ValueBlock {
      * @param pane The parent pane this Block resides on.
      * @param isIntegral wWhether this slider represent an integral value.
      */
-    public SliderBlock(CustomUIPane pane, boolean isIntegral) {
+    public SliderBlock(ToplevelPane pane, boolean isIntegral) {
         super("SliderBlock", pane, pane.getEnvInstance().buildType(isIntegral ? "Num a => a" : "Fractional a => a"));
 
         this.isIntegral = isIntegral;
@@ -69,7 +69,7 @@ public class SliderBlock extends ValueBlock {
     
     @Override
     public Optional<Block> getNewCopy() {
-        SliderBlock block = new SliderBlock(this.getPane(), this.isIntegral);
+        SliderBlock block = new SliderBlock(this.getToplevel(), this.isIntegral);
         block.slider.setValue(this.slider.getValue());
         return Optional.of(block);
     }

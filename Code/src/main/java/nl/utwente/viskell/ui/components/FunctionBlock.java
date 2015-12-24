@@ -18,7 +18,7 @@ import nl.utwente.viskell.haskell.expr.FunVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -58,7 +58,7 @@ public class FunctionBlock extends Block {
      * @param pane
      *            The parent pane in which this FunctionBlock exists.
      */
-    public FunctionBlock(FunctionInfo funInfo, CustomUIPane pane) {
+    public FunctionBlock(FunctionInfo funInfo, ToplevelPane pane) {
         super(pane);
         this.funInfo = funInfo;
 
@@ -127,7 +127,7 @@ public class FunctionBlock extends Block {
     @Override
     public Optional<Block> getNewCopy() {
         if (this.argumentSpace.getKnotIndex() == this.getAllInputs().size()) {
-            return Optional.of(new FunctionBlock(this.funInfo, this.getPane()));
+            return Optional.of(new FunctionBlock(this.funInfo, this.getToplevel()));
         }
     
         return Optional.empty();

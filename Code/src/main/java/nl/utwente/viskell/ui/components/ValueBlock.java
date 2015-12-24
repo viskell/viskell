@@ -12,7 +12,7 @@ import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -43,12 +43,12 @@ public class ValueBlock extends Block {
      * Construct a new ValueBlock.
      * @param pane The parent pane this Block resides on.
      */
-    public ValueBlock(CustomUIPane pane, Type type, String value) {
+    public ValueBlock(ToplevelPane pane, Type type, String value) {
         this("ValueBlock", pane, type);
         this.setValue(value);
     }
     
-    protected ValueBlock(String fxml, CustomUIPane pane, Type type) {
+    protected ValueBlock(String fxml, ToplevelPane pane, Type type) {
         super(pane);
         loadFXML(fxml);
 
@@ -93,7 +93,7 @@ public class ValueBlock extends Block {
     
     @Override
     public Optional<Block> getNewCopy() {
-        return Optional.of(new ValueBlock(this.getPane(), this.output.binder.getFreshAnnotationType(), this.value.getText()));
+        return Optional.of(new ValueBlock(this.getToplevel(), this.output.binder.getFreshAnnotationType(), this.value.getText()));
     }
     
     @Override

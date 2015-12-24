@@ -11,7 +11,7 @@ import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 /**
  * A DrawWire represents the UI for a new incomplete connection is the process of being drawn. 
@@ -42,7 +42,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         this.anchor = anchor;
         this.initAnchor = initAnchor;
 
-        CustomUIPane pane = anchor.getPane();
+        ToplevelPane pane = anchor.getPane();
         pane.addWire(this);
         Point2D initPos = pane.sceneToLocal(initAnchor.localToScene(new Point2D(0, 0)));
         this.setFreePosition(initPos);
@@ -164,7 +164,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         this.setEndY(point.getY());
         this.invalidateAnchorPosition();
 
-        CustomUIPane pane = this.anchor.block.getPane();
+        ToplevelPane pane = this.anchor.block.getToplevel();
         Point2D scenePoint = pane.localToScene(point, false);
         BlockContainer anchorContainer = this.anchor.getContainer();
         boolean scopeOK = true;
@@ -172,7 +172,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         if (this.anchor instanceof OutputAnchor) {
             scopeOK = anchorContainer.getBoundsInScene().contains(scenePoint);
         } else if (this.anchor instanceof InputAnchor) {
-            scopeOK = pane.getBlockContainers().
+            scopeOK = pane.getAllBlockContainers().
                     filter(con -> con.getBoundsInScene().contains(scenePoint)).
                     allMatch(con -> anchorContainer.isContainedWithin(con));
         }

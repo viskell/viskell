@@ -21,7 +21,7 @@ import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.haskell.type.TypeVar;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 /**
  * An evaluation block with multiple guarded alternatives.
@@ -41,7 +41,7 @@ public class ChoiceBlock extends Block {
     /** The container Node for the OutputAnchor */
     @FXML protected Pane resultSpace;
 
-    public ChoiceBlock(CustomUIPane pane) {
+    public ChoiceBlock(ToplevelPane pane) {
         super(pane);
         this.loadFXML("ChoiceBlock");
         

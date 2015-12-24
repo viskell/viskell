@@ -13,7 +13,7 @@ import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,11 +48,11 @@ public class DisplayBlock extends Block {
      * @param pane
      *            The pane on which this DisplayBlock resides.
      */
-    public DisplayBlock(CustomUIPane pane) {
+    public DisplayBlock(ToplevelPane pane) {
         this(pane, "DisplayBlock");
     }
     
-    protected DisplayBlock(CustomUIPane pane, String fxml) {
+    protected DisplayBlock(ToplevelPane pane, String fxml) {
         super(pane);
         this.showConstraint = pane.getEnvInstance().buildType("Show a => a");
         loadFXML(fxml);
@@ -69,7 +69,7 @@ public class DisplayBlock extends Block {
             inputSpace.setTranslateY(0);
             this.inputType.setVisible(false);
             
-            GhciSession ghci = getPane().getGhciSession();
+            GhciSession ghci = getToplevel().getGhciSession();
 
             ListenableFuture<String> result = ghci.pull(inputAnchor.getFullExpr());
 
@@ -109,7 +109,7 @@ public class DisplayBlock extends Block {
     
     @Override
     public Optional<Block> getNewCopy() {
-        return Optional.of(new DisplayBlock(this.getPane()));
+        return Optional.of(new DisplayBlock(this.getToplevel()));
     }
     
     @Override

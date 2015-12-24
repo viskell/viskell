@@ -49,7 +49,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     protected DragContext dragContext;
 
     private Accordion categoryContainer = new Accordion();
-    private CustomUIPane parent;
+    private ToplevelPane parent;
     @FXML
     private Pane searchSpace;
     @FXML
@@ -57,7 +57,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     @FXML
     private Pane utilSpace;
 
-    public FunctionMenu(HaskellCatalog catalog, CustomUIPane pane, boolean verticalCurry) {
+    public FunctionMenu(HaskellCatalog catalog, ToplevelPane pane, boolean verticalCurry) {
         this.parent = pane;
         this.loadFXML("FunctionMenu");
         this.dragContext = new DragContext(this);
