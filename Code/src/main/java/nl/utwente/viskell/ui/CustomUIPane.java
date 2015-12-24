@@ -42,8 +42,6 @@ public class CustomUIPane extends Region {
     /** The top level container for all blocks */
     private TopLevel toplevel;
     
-    private ConnectionCreationManager connectionCreationManager;
-    
     private GhciSession ghci;
     private InspectorWindow inspector;
     private PreferencesWindow preferences;
@@ -68,7 +66,6 @@ public class CustomUIPane extends Region {
         this.getChildren().add(this.wireLayer);
 
         this.toplevel = new TopLevel(this);
-        this.connectionCreationManager = new ConnectionCreationManager(this);
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
 
@@ -285,12 +282,7 @@ public class CustomUIPane extends Region {
         });
     }
     
-    
-    public ConnectionCreationManager getConnectionCreationManager() {
-        return connectionCreationManager;
-    }
-
-    public GhciSession getGhciSession() {
+     public GhciSession getGhciSession() {
         return ghci;
     }
 

@@ -3,6 +3,10 @@ package nl.utwente.viskell.ui.components;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
+import javafx.scene.input.TouchPoint;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
 import nl.utwente.viskell.ui.BlockContainer;
@@ -15,26 +19,90 @@ import nl.utwente.viskell.ui.CustomUIPane;
  */
 public class DrawWire extends CubicCurve implements ChangeListener<Transform>, ComponentLoader {
 
-    /** The Pane this connection wire is on. */
-    private final CustomUIPane pane;
+    /** The 'touch point ID' associated with the mouse. */
+    public static final int INPUT_ID_MOUSE = -1;
+
+    /** The ID of the touch point that initiated this wire. */
+    private final int touchID;
+
+    /** The Anchor this wire is connected to */
+    protected final ConnectionAnchor anchor;
 
     /** The Anchor this wire has been initiated from */
-    private final ConnectionAnchor anchor;
-    
+    private final ConnectionAnchor initAnchor;
+
     /**
      * @param pane The Pane this wire is on.
-     * @param anchor The starting anchor of new wire.
+     * @param anchor The connected side of this new wire.
+     * @param initAnchor The anchor where this wire was initiated from.
      */
-    public DrawWire(CustomUIPane pane, ConnectionAnchor anchor) {
+    private DrawWire(ConnectionAnchor anchor, ConnectionAnchor initAnchor, int touchID) {
         this.setMouseTransparent(true);
-
-        this.pane = pane;
+        this.touchID = touchID;
         this.anchor = anchor;
+        this.initAnchor = initAnchor;
+
+        CustomUIPane pane = anchor.getPane();
         pane.addWire(this);
-        Point2D initPos = pane.sceneToLocal(anchor.localToScene(new Point2D(0, 0)));
+        Point2D initPos = pane.sceneToLocal(initAnchor.localToScene(new Point2D(0, 0)));
         this.setFreePosition(initPos);
-        this.invalidateAnchorPosition();
         anchor.localToSceneTransformProperty().addListener(x -> this.invalidateAnchorPosition());
+    }
+
+    protected static DrawWire initiate(ConnectionAnchor anchor, int touchID) {
+        if (anchor instanceof InputAnchor && ((InputAnchor)anchor).hasConnection()) {
+            // make room for a new connection by removing existing one
+            Connection conn = ((InputAnchor)anchor).getConnection().get();
+            conn.remove();
+            // keep the other end of old connection to initiate the new one
+            return new DrawWire(conn.getStartAnchor(), anchor, touchID);
+        } else {
+            return new DrawWire(anchor, anchor, touchID);
+        }
+    }
+
+    protected void handleMouseDrag(MouseEvent event) {
+        if (this.touchID == INPUT_ID_MOUSE) {
+            Point2D localPos = this.anchor.getPane().sceneToLocal(event.getSceneX(), event.getSceneY());
+            this.setFreePosition(localPos);
+            event.consume();
+        }
+    }
+
+    protected void handleTouchMove(TouchEvent event) {
+        TouchPoint tp = event.getTouchPoint();
+        if (tp.getId() == this.touchID) {
+            Point2D localPos = this.anchor.getPane().sceneToLocal(tp.getSceneX(), tp.getSceneY());
+            this.setFreePosition(localPos);
+            event.consume();
+        }
+    }
+
+    protected void handleMouseRelease(MouseEvent event) {
+        if (this.touchID == INPUT_ID_MOUSE) {
+            this.handleReleaseOn(event.getPickResult().getIntersectedNode());
+            event.consume();
+        }
+    }
+
+    protected void handleTouchRelease(TouchEvent event) {
+        TouchPoint tp = event.getTouchPoint();
+        if (tp.getId() == this.touchID) {
+            this.handleReleaseOn(tp.getPickResult().getIntersectedNode());
+            event.consume();
+        }
+    }
+
+    private void handleReleaseOn(Node picked) {
+        if (picked.getParent() instanceof ConnectionAnchor) {
+            ConnectionAnchor target = (ConnectionAnchor)picked.getParent();
+            Connection connection = this.buildConnectionTo(target);
+            if (connection != null) {
+                connection.getStartAnchor().initiateConnectionChanges();
+            }
+        }
+        // drop the wire, even if connection failed
+        this.remove();
     }
 
     /**
@@ -42,7 +110,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
      * @param target the Anchor to which the other end of this should be connection to.
      * @return the newly build Connection or null if it's not possible
      */
-    public Connection buildConnectionTo(ConnectionAnchor target) {
+    private Connection buildConnectionTo(ConnectionAnchor target) {
         InputAnchor sink;
         OutputAnchor source;
         if (this.anchor instanceof InputAnchor) {
@@ -57,19 +125,20 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             }
             sink = (InputAnchor)target;
             source = (OutputAnchor)this.anchor;
-            
+
             if (sink.hasConnection()) {
                 sink.removeConnections(); // push out the existing connection
             }
         }
 
-        return new Connection(this.pane, source, sink);
+        return new Connection(source, sink);
     }
 
     /** Removes this wire from its pane, and its listener. */
     public final void remove() {
+        this.initAnchor.wireInProgress = null;
         this.anchor.localToSceneTransformProperty().removeListener(this);
-        this.pane.removeWire(this);
+        this.anchor.getPane().removeWire(this);
     }
 
     @Override
@@ -80,12 +149,12 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
     /** Update the UI position of the anchor. */
     private void invalidateAnchorPosition() {
         Point2D center = (this.anchor instanceof InputAnchor) ? new Point2D(0, -4) : new Point2D(0, 4);
-        Point2D point = pane.sceneToLocal(this.anchor.localToScene(center));
+        Point2D point = this.anchor.getPane().sceneToLocal(this.anchor.localToScene(center));
         this.setStartX(point.getX());
         this.setStartY(point.getY());
         this.updateBezierControlPoints();
     }
-    
+
     /**
      * Sets the free end coordinates for this wire.
      * @param point coordinates local to this wire's parent.
@@ -94,25 +163,26 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         this.setEndX(point.getX());
         this.setEndY(point.getY());
         this.invalidateAnchorPosition();
-        
-        Point2D scenePoint = this.pane.localToScene(point, false);
+
+        CustomUIPane pane = this.anchor.block.getPane();
+        Point2D scenePoint = pane.localToScene(point, false);
         BlockContainer anchorContainer = this.anchor.getContainer();
         boolean scopeOK = true;
-        
+
         if (this.anchor instanceof OutputAnchor) {
             scopeOK = anchorContainer.getBoundsInScene().contains(scenePoint);
         } else if (this.anchor instanceof InputAnchor) {
-            scopeOK = this.pane.getBlockContainers().
-                filter(con -> con.getBoundsInScene().contains(scenePoint)).
+            scopeOK = pane.getBlockContainers().
+                    filter(con -> con.getBoundsInScene().contains(scenePoint)).
                     allMatch(con -> anchorContainer.isContainedWithin(con));
         }
-        
+
         if (scopeOK) {
             this.getStrokeDashArray().clear();
         } else if (this.getStrokeDashArray().isEmpty()) {
             this.getStrokeDashArray().addAll(15.0, 15.0);
         }
-        
+
     }
 
     /** Updates the Bezier offset (curviness) according to the current start and end positions. */
@@ -123,7 +193,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         if (distY > BEZIER_CONTROL_OFFSET) {
             yOffset = Math.cbrt(distY / BEZIER_CONTROL_OFFSET) * BEZIER_CONTROL_OFFSET;
         }
-        
+
         this.setControlX1(this.getStartX());
         this.setControlX2(this.getEndX());
         if (this.anchor instanceof OutputAnchor) {

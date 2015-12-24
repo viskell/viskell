@@ -43,8 +43,6 @@ public class Connection extends CubicCurve implements
     /** Ending point of this Line that can be Anchored onto other objects. */
     private final InputAnchor endAnchor;
 
-    /** The Pane this Connection is on. */
-    private CustomUIPane pane;
     
     /** Whether this connection produced an error in the latest type unification. */
     private boolean errorState;
@@ -57,17 +55,16 @@ public class Connection extends CubicCurve implements
      * @param pane The Pane this Connection is on.
      * @param anchor A ConnectionAnchor of this Connection.
      */
-    public Connection(CustomUIPane pane, OutputAnchor source, InputAnchor sink) {
+    public Connection(OutputAnchor source, InputAnchor sink) {
         this.setMouseTransparent(true);
         this.setFill(null);
         
-        this.pane = pane;
         this.startAnchor = source;
         this.endAnchor = sink;
         this.errorState = false;
         this.scopeError = false;
         
-        pane.addConnection(this);
+        source.getPane().addConnection(this);
         this.invalidateAnchorPositions();
         this.startAnchor.addConnection(this);
         this.startAnchor.localToSceneTransformProperty().addListener(this);
@@ -136,7 +133,7 @@ public class Connection extends CubicCurve implements
         this.endAnchor.localToSceneTransformProperty().removeListener(this);
         this.startAnchor.dropConnection(this);
         this.endAnchor.removeConnections();
-        this.pane.removeConnection(this);
+        this.startAnchor.getPane().removeConnection(this);
         // propagate the connection changes of both anchors simultaneously in two phases to avoid duplicate work 
         this.startAnchor.handleConnectionChanges(false);
         this.endAnchor.handleConnectionChanges(false);
@@ -151,8 +148,9 @@ public class Connection extends CubicCurve implements
 
     /** Update the UI positions of both start and end anchors. */
     private void invalidateAnchorPositions() {
-        this.setStartPosition(this.pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 4))));
-        this.setEndPosition(this.pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, -4))));
+    	CustomUIPane pane = this.startAnchor.getPane();
+    	this.setStartPosition(pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 4))));
+    	this.setEndPosition(pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, -4))));
     }
 
     @Override
