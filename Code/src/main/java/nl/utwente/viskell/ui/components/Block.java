@@ -64,7 +64,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.container = pane;
         this.container.attachBlock(this);
         
-        if (!this.isBottomMost()) {
+        if (!this.belongsOnBottom()) {
             // make all non container blocks resize themselves around horizontal midpoint to reduce visual movement 
             this.translateXProperty().bind(this.widthProperty().divide(2).negate());
         }
