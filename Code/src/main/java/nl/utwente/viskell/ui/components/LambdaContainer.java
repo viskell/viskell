@@ -212,7 +212,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     }
 
     @Override
-    public void removeBlock(Block block) {
+    public void detachBlock(Block block) {
         attachedBlocks.remove(block);
     }
     

@@ -211,7 +211,7 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
     }
 
     @Override
-    public void removeBlock(Block block) {
+    public void detachBlock(Block block) {
         attachedBlocks.remove(block);
     }
     

@@ -1,11 +1,14 @@
 package nl.utwente.viskell.ui;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
@@ -27,7 +30,7 @@ import nl.utwente.viskell.ui.components.WrappedContainer;
 /**
  * The core Pane that represent the programming workspace.
  */
-public class CustomUIPane extends Region {
+public class CustomUIPane extends Region implements BlockContainer {
     /** bottom pane layer intended for block container such as lambda's */
     private final Pane bottomLayer;
 
@@ -37,9 +40,6 @@ public class CustomUIPane extends Region {
     /** higher pane layer for connections wires */
     private final Pane wireLayer;
 
-    /** The top level container for all blocks */
-    private TopLevel toplevel;
-    
     private GhciSession ghci;
     private PreferencesWindow preferences;
 
@@ -49,17 +49,21 @@ public class CustomUIPane extends Region {
     /** Boolean to indicate that a drag (pan) action has started, yet not finished. */
     private boolean dragging;
 
+    /** The set of blocks that logically belong to this top level */
+    private final Set<Block> attachedBlocks;
+    
     /**
      * Constructs a new instance.
      */
     public CustomUIPane() {
         super();
+        this.attachedBlocks = new HashSet<>();
+        
         this.bottomLayer = new Pane();
         this.blockLayer = new Pane(this.bottomLayer);
         this.wireLayer = new Pane(this.blockLayer);
         this.getChildren().add(this.wireLayer);
 
-        this.toplevel = new TopLevel(this);
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
 
@@ -232,11 +236,6 @@ public class CustomUIPane extends Region {
         return ghci.getCatalog().asEnvironment();
     }
 
-    /** @return the top level block container */
-    public TopLevel getTopLevel() {
-        return this.toplevel;
-    }
-    
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
         block.deleteAllLinks();
@@ -309,7 +308,7 @@ public class CustomUIPane extends Region {
         this.bottomLayer.getChildren().clear();
         this.blockLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
         this.wireLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
-        this.toplevel = new TopLevel(this);
+        this.attachedBlocks.clear();
     }
 
     public Stream<Node> streamChildren() {
@@ -347,4 +346,29 @@ public class CustomUIPane extends Region {
         }
     }
     
+    @Override
+    public Bounds getBoundsInScene() {
+        return this.localToScene(this.getBoundsInLocal());
+    }
+
+    @Override
+    public void attachBlock(Block block) {
+        this.attachedBlocks.add(block);
+    }
+
+    @Override
+    public void detachBlock(Block block) {
+        this.attachedBlocks.remove(block);
+    }
+
+    @Override
+    public Stream<Block> getAttachedBlocks() {
+        return this.attachedBlocks.stream();
+    }
+
+    @Override
+    public BlockContainer getParentContainer() {
+        return this;
+    }
+
 }

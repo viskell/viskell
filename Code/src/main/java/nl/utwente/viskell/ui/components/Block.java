@@ -61,7 +61,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.parentPane = pane;
         this.freshAnchorTypes = false;
         this.updateInProgress = false;
-        this.container = pane.getTopLevel();
+        this.container = pane;
         this.container.attachBlock(this);
         
         this.dragContext = new DragContext(this);
@@ -170,9 +170,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         Expression localExpr = getLocalExpr(outerAnchors);
         
         LetExpression fullExpr = new LetExpression(localExpr, false);
-        extendExprGraph(fullExpr, this.parentPane.getTopLevel(), outerAnchors);
+        extendExprGraph(fullExpr, this.parentPane, outerAnchors);
         
-        outerAnchors.forEach(block -> block.extendExprGraph(fullExpr, this.parentPane.getTopLevel(), new HashSet<>()));
+        outerAnchors.forEach(block -> block.extendExprGraph(fullExpr, this.parentPane, new HashSet<>()));
         
         return fullExpr;
     }
@@ -219,14 +219,14 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     public void deleteAllLinks() {
         this.getAllInputs().forEach(InputAnchor::removeConnections);
         this.getAllOutputs().forEach(OutputAnchor::removeConnections);
-        this.container.removeBlock(this);
+        this.container.detachBlock(this);
         this.container = TrashContainer.instance;
     }
     
     public void moveIntoContainer(BlockContainer target) {
         BlockContainer source = this.container;
         if (source != target) {
-            this.container.removeBlock(this);
+            this.container.detachBlock(this);
             this.container = target;
             target.attachBlock(this);
             
@@ -268,7 +268,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         BlockContainer newContainer = parentPane.getBlockContainers().
             filter(container -> within.test(container.getBoundsInScene()) && notInSelf.test(container)).
                 reduce((a, b) -> !a.getBoundsInScene().contains(b.getBoundsInScene()) ? a : b).
-                    orElse(this.parentPane.getTopLevel());
+                    orElse(this.parentPane);
         
         this.moveIntoContainer(newContainer);
     }
