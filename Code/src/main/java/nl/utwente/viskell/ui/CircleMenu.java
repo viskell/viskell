@@ -73,7 +73,7 @@ public class CircleMenu extends CirclePopupMenu {
 
     /** Copy the {@link Block} in this context. */
     public void copy() {
-        block.getPane().copyBlock(block);
+        block.getToplevel().copyBlock(block);
     }
 
     /** Paste {@link Block} from memory. */
@@ -82,7 +82,7 @@ public class CircleMenu extends CirclePopupMenu {
 
     /** Delete the {@link Block} in this context. */
     public void delete() {
-        block.getPane().removeBlock(block);
+        block.getToplevel().removeBlock(block);
     }
 
     /** Saves the {@link Block} in this context. */

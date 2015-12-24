@@ -29,8 +29,10 @@ import nl.utwente.viskell.ui.components.WrappedContainer;
 
 /**
  * The core Pane that represent the programming workspace.
+ * It is a layered visualization of all blocks, wires, and menu elements.
+ * And represents the toplevel container of all blocks.
  */
-public class CustomUIPane extends Region implements BlockContainer {
+public class ToplevelPane extends Region implements BlockContainer {
     /** bottom pane layer intended for block container such as lambda's */
     private final Pane bottomLayer;
 
@@ -55,7 +57,7 @@ public class CustomUIPane extends Region implements BlockContainer {
     /**
      * Constructs a new instance.
      */
-    public CustomUIPane() {
+    public ToplevelPane() {
         super();
         this.attachedBlocks = new HashSet<>();
         
@@ -169,12 +171,12 @@ public class CustomUIPane extends Region implements BlockContainer {
 		}
     	
 		private void remove(ActionEvent event) {
-			CustomUIPane.this.getChildren().remove(this);
+			ToplevelPane.this.getChildren().remove(this);
 		}
 		
 		private void finishMenu(ActionEvent event) {
-			CustomUIPane.this.showFunctionMenuAt(this.getCenterX(), this.getCenterY());
-			CustomUIPane.this.getChildren().remove(this);
+			ToplevelPane.this.showFunctionMenuAt(this.getCenterX(), this.getCenterY());
+			ToplevelPane.this.getChildren().remove(this);
 			this.menuCreated = true;
 		}
 		
@@ -218,8 +220,8 @@ public class CustomUIPane extends Region implements BlockContainer {
                     // FIXME: ignore too large movements
                 } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 24) {
     				this.dragStarted = true;
-    				CustomUIPane.this.setTranslateX(CustomUIPane.this.getTranslateX() + deltaX);
-    				CustomUIPane.this.setTranslateY(CustomUIPane.this.getTranslateY() + deltaY);
+    				ToplevelPane.this.setTranslateX(ToplevelPane.this.getTranslateX() + deltaX);
+    				ToplevelPane.this.setTranslateY(ToplevelPane.this.getTranslateY() + deltaY);
     			}
     		}
     		
@@ -319,7 +321,7 @@ public class CustomUIPane extends Region implements BlockContainer {
         return Stream.concat(bottom, Stream.concat(blocks, wires));
     }
 
-    public Stream<BlockContainer> getBlockContainers() {
+    public Stream<BlockContainer> getAllBlockContainers() {
         return bottomLayer.getChildrenUnmodifiable().stream().flatMap(node ->
             (node instanceof Block) ? ((Block)node).getInternalContainers().stream() : Stream.empty());
     }

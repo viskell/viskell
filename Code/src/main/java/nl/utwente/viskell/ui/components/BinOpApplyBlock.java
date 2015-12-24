@@ -30,7 +30,7 @@ import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.DragContext;
 
 public class BinOpApplyBlock extends Block {
@@ -145,7 +145,7 @@ public class BinOpApplyBlock extends Block {
     /** The Label in which the information of the function is displayed. */
     private Label functionInfo;
 
-    public BinOpApplyBlock(FunctionInfo funInfo, CustomUIPane pane) {
+    public BinOpApplyBlock(FunctionInfo funInfo, ToplevelPane pane) {
         super(pane);
         this.loadFXML("BinOpApplyBlock");
 
@@ -222,7 +222,7 @@ public class BinOpApplyBlock extends Block {
             return Optional.empty();
         }
         
-        return Optional.of(new BinOpApplyBlock(this.funInfo, this.getPane()));
+        return Optional.of(new BinOpApplyBlock(this.funInfo, this.getToplevel()));
     }
 
     @Override

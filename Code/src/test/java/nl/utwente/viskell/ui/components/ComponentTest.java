@@ -2,7 +2,7 @@ package nl.utwente.viskell.ui.components;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 import org.junit.BeforeClass;
 
 /**
@@ -35,7 +35,7 @@ public class ComponentTest {
         }
     }
 
-    protected CustomUIPane getPane() {
-        return new CustomUIPane();
+    protected ToplevelPane getPane() {
+        return new ToplevelPane();
     }
 }

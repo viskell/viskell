@@ -35,9 +35,9 @@ public class MainOverlay extends StackPane {
     private InspectorWindow inspector;
 
     /** The currently active customUIpane. */
-    private CustomUIPane mainPane;
+    private ToplevelPane mainPane;
     
-    public MainOverlay(CustomUIPane pane) {
+    public MainOverlay(ToplevelPane pane) {
         super();
 
         this.mainPane = pane;
@@ -83,7 +83,7 @@ public class MainOverlay extends StackPane {
         this.getChildren().setAll(this.mainPane, buttons, toolBar, touchOverlay);
     }
 
-    public CustomUIPane getMainPane() {
+    public ToplevelPane getMainPane() {
         return this.mainPane;
     }
     

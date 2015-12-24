@@ -14,7 +14,7 @@ import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
 import com.google.common.collect.ImmutableMap;
@@ -148,7 +148,7 @@ public class Connection extends CubicCurve implements
 
     /** Update the UI positions of both start and end anchors. */
     private void invalidateAnchorPositions() {
-    	CustomUIPane pane = this.startAnchor.getPane();
+    	ToplevelPane pane = this.startAnchor.getPane();
     	this.setStartPosition(pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 4))));
     	this.setEndPosition(pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, -4))));
     }

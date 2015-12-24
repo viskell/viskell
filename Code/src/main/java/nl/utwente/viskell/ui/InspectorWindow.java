@@ -47,7 +47,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
     }
 
     public void update() {
-        CustomUIPane pane = this.overlay.getMainPane();
+        ToplevelPane pane = this.overlay.getMainPane();
         json.setText(Exporter.export(pane));
         TreeItem<String> root = new TreeItem<>("all blocks");
         root.setExpanded(true);
