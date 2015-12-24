@@ -21,38 +21,38 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
 
     /** The block this ConnectionAnchor belongs to. */
     protected final Block block;
-    
+
     /**
      * @param block The block this ConnectionAnchor belongs to.
      */
     public ConnectionAnchor(Block block) {
         this.block = block;
-        
+
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> {
-        		if (this.wireInProgress != null && !event.isSynthesized()) {
-        			this.wireInProgress.handleMouseDrag(event);
-        		}
-        	});
+            if (this.wireInProgress != null && !event.isSynthesized()) {
+                this.wireInProgress.handleMouseDrag(event);
+            }
+        });
         this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-        		if (this.wireInProgress != null && !event.isSynthesized()) {
-        			this.wireInProgress.handleMouseRelease(event);
-        		}
-        	});
-        
+            if (this.wireInProgress != null && !event.isSynthesized()) {
+                this.wireInProgress.handleMouseRelease(event);
+            }
+        });
+
         this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handleTouchPress);
         this.addEventHandler(TouchEvent.TOUCH_MOVED, event -> {
-        		if (this.wireInProgress != null) {
-        			this.wireInProgress.handleTouchMove(event);
-        		}
-        	});
+            if (this.wireInProgress != null) {
+                this.wireInProgress.handleTouchMove(event);
+            }
+        });
         this.addEventHandler(TouchEvent.TOUCH_RELEASED, event -> {
-        		if (this.wireInProgress != null) {
-        			this.wireInProgress.handleTouchRelease(event);
-        		}
-        	});
+            if (this.wireInProgress != null) {
+                this.wireInProgress.handleTouchRelease(event);
+            }
+        });
     }
- 
+
     /**
      * @param active The new active state for this ConnectionAnchor.
      */
@@ -61,19 +61,19 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
             this.removeConnections();
         }
     }
-    
+
     /**
      * @return the local type of this anchor
      */
     public abstract Type getType();
-    
+
     /**
      * @return the string representation of the in- or output type.
      */
     public final String getStringType() {
         return this.getType().prettyPrint();
     }
-    
+
     /**
      * Removes all the connections this anchor has.
      */
@@ -84,12 +84,12 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
      */
     public abstract boolean hasConnection();
 
-    
+
     /**
      * @return The inner most block container associated with this anchor
      */
     public abstract BlockContainer getContainer();
-    
+
     /** 
      * Handle the Connection changes for the Block this anchor is attached to.
      * @param finalPhase whether the change propagation is in the second (final) phase.
@@ -99,18 +99,18 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
 
     private void handleMousePress(MouseEvent event) {
-    	if (this.wireInProgress == null && !event.isSynthesized()) {
-    		this.wireInProgress = DrawWire.initiate(this, DrawWire.INPUT_ID_MOUSE);
-    		event.consume();
-    	}
+        if (this.wireInProgress == null && !event.isSynthesized()) {
+            this.wireInProgress = DrawWire.initiate(this, DrawWire.INPUT_ID_MOUSE);
+            event.consume();
+        }
     }
 
     private void handleTouchPress(TouchEvent event) {
-    	if (this.wireInProgress == null) {
-    		int touchID = event.getTouchPoint().getId();
-    		this.wireInProgress = DrawWire.initiate(this, touchID);
-    		event.consume();
-    	}
+        if (this.wireInProgress == null) {
+            int touchID = event.getTouchPoint().getId();
+            this.wireInProgress = DrawWire.initiate(this, touchID);
+            event.consume();
+        }
     }
 
     @Override
@@ -119,8 +119,8 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
 
     /** @return the UIPane of the attached block. */
-	public CustomUIPane getPane() {
-		return this.block.getPane();
-	}
+    public CustomUIPane getPane() {
+        return this.block.getPane();
+    }
 
 }
