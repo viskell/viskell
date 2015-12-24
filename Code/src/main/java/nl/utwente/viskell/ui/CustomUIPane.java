@@ -160,6 +160,9 @@ public class CustomUIPane extends Region {
     	/** Whether this touch area has been dragged further than the drag threshold. */
     	private boolean dragStarted;
     	
+    	/** Whether this touch area has spawned a menu.  */
+    	private boolean menuCreated;
+    	
     	/** Timed delay for the removal of this touch area. */
     	private Timeline removeDelay;
     	
@@ -173,9 +176,10 @@ public class CustomUIPane extends Region {
 			super(touchPoint.getX(), touchPoint.getY(), 100, Color.TRANSPARENT);
 			this.touchID = touchPoint.getId();
 			this.dragStarted = false;
+			this.menuCreated = false;
 			
-			this.removeDelay = new Timeline(new KeyFrame(Duration.millis(100), this::remove));
-	    	this.menuDelay = new Timeline(new KeyFrame(Duration.millis(250), this::finishMenu));
+			this.removeDelay = new Timeline(new KeyFrame(Duration.millis(250), this::remove));
+	    	this.menuDelay = new Timeline(new KeyFrame(Duration.millis(200), this::finishMenu));
 	    	
 	    	touchPoint.grab(this);
 	    	this.addEventHandler(TouchEvent.TOUCH_RELEASED, this::handleRelease);
@@ -190,23 +194,29 @@ public class CustomUIPane extends Region {
 		private void finishMenu(ActionEvent event) {
 			CustomUIPane.this.showFunctionMenuAt(this.getCenterX(), this.getCenterY());
 			CustomUIPane.this.getChildren().remove(this);
+			this.menuCreated = true;
 		}
 		
 		private void handlePress(TouchEvent event) {
 			// this might have been a drag glitch, so halt release actions
 			this.removeDelay.stop();
-			this.menuDelay.stop();
-			
+			if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 2) {
+				this.menuDelay.stop();
+			}
 			event.consume();
 		}
 		
     	private void handleRelease(TouchEvent event) {
-    		if (event.getTouchPoint().getId() != this.touchID && !this.dragStarted) {
+    		long fingerCount = event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count();
+
+    		if (fingerCount == 1) {
+     			// trigger area removal timer
+     			this.removeDelay.play();
+     		} else if (this.dragStarted || this.menuCreated) {
+    			// avoid accidental creation of (more) menus
+    		} else if (fingerCount == 2) {
     			// trigger menu creation timer
     			this.menuDelay.play();
-    		} else if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 1) {
-    			// trigger area removal timer
-    			this.removeDelay.play();
     		}
     		
     		event.consume();
@@ -225,7 +235,7 @@ public class CustomUIPane extends Region {
     				// ignore very small movements
                 } else if ((deltaX*deltaX + deltaY*deltaY) > 10000) {
                     // FIXME: ignore too large movements
-                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 10) {
+                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 24) {
     				this.dragStarted = true;
     				CustomUIPane.this.setTranslateX(CustomUIPane.this.getTranslateX() + deltaX);
     				CustomUIPane.this.setTranslateY(CustomUIPane.this.getTranslateY() + deltaY);
