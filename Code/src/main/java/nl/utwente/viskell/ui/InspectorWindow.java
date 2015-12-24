@@ -19,16 +19,16 @@ import nl.utwente.viskell.ui.serialize.Exporter;
  */
 public class InspectorWindow extends BorderPane implements ComponentLoader {
     private Stage stage;
-    private CustomUIPane pane;
+    private MainOverlay overlay;
 
     @FXML private TreeView<String> tree;
     @FXML private ListView<String> errors;
     @FXML private TextArea hs;
     @FXML private TextArea json;
 
-    public InspectorWindow(CustomUIPane parentPane) {
+    public InspectorWindow(MainOverlay overlay) {
         loadFXML("InspectorWindow");
-        pane = parentPane;
+        this.overlay = overlay;
 
         stage = new Stage();
         stage.setTitle("Inspect");
@@ -47,13 +47,14 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
     }
 
     public void update() {
+        CustomUIPane pane = this.overlay.getMainPane();
         json.setText(Exporter.export(pane));
         TreeItem<String> root = new TreeItem<>("all blocks");
         root.setExpanded(true);
 
         // show information on all bottom most blocks
         StringBuilder haskell = new StringBuilder();
-        this.pane.streamChildren().forEach(node -> {
+        pane.streamChildren().forEach(node -> {
             if (node instanceof Block && ((Block)node).isBottomMost()) {
                 Block block = (Block)node;
                 Expression expr = block.getFullExpr();

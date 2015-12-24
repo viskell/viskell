@@ -27,12 +27,22 @@ public class MainOverlay extends StackPane {
 
     private final Pane touchOverlay;
     final Map<Integer, TouchDisplay> circleByTouchId;
+
+    /** The current preferences window, or null if not yet opened. */
+    private PreferencesWindow preferences;
+
+    /** The current inspector window, or null if not yet opened. */
+    private InspectorWindow inspector;
+
+    /** The currently active customUIpane. */
+    private CustomUIPane mainPane;
     
     public MainOverlay(CustomUIPane pane) {
         super();
 
-        FlowPane toolBar = makeMenuBar(pane);
-        FlowPane buttons = makeZoomBar(pane);
+        this.mainPane = pane;
+        FlowPane toolBar = makeMenuBar();
+        FlowPane buttons = makeZoomBar();
 
         circleByTouchId = new TreeMap<>();
         touchOverlay = new Pane();
@@ -70,11 +80,16 @@ public class MainOverlay extends StackPane {
             touchOverlay.getChildren().remove(circle);
         });
                 
-        this.getChildren().setAll(pane, buttons, toolBar, touchOverlay);
+        this.getChildren().setAll(this.mainPane, buttons, toolBar, touchOverlay);
     }
 
-    private FlowPane makeMenuBar(CustomUIPane pane) {
-        ContextMenu burgerMenu = new GlobalMenu(pane);
+    public CustomUIPane getMainPane() {
+        return this.mainPane;
+    }
+    
+    
+    private FlowPane makeMenuBar() {
+        ContextMenu burgerMenu = new GlobalMenu(this);
 
         Button menu = new Button(MENU_LABEL);
         menu.setFocusTraversable(false);
@@ -91,12 +106,12 @@ public class MainOverlay extends StackPane {
         return toolBar;
     }
 
-    private FlowPane makeZoomBar(CustomUIPane pane) {
+    private FlowPane makeZoomBar() {
         Button zoomIn = new Button("+");
-        zoomIn.setOnAction(e -> pane.zoomIn());
+        zoomIn.setOnAction(e -> this.zoom(1.25));
 
         Button zoomOut = new Button("–");
-        zoomOut.setOnAction(e -> pane.zoomOut());
+        zoomOut.setOnAction(e -> this.zoom(0.8));
 
         FlowPane buttons = new FlowPane(10, 0, zoomIn, zoomOut);
         buttons.setPrefSize(100, 20);
@@ -109,6 +124,40 @@ public class MainOverlay extends StackPane {
     
     public void setTouchVisible(boolean value) {
         this.touchOverlay.setVisible(value);
+    }
+
+    public void showPreferences() {
+        if (this.preferences == null) {
+            this.preferences = new PreferencesWindow(this);
+            this.mainPane.setPreferences(this.preferences);
+        }
+
+        this.preferences.show();
+    }
+
+    public void showInspector() {
+        if (this.inspector == null) {
+            this.inspector = new InspectorWindow(this);
+        }
+
+        this.inspector.show();
+    }
+
+    /**
+     * Zooms the underlying main pane in/out with a ratio, up to reasonable limits. 
+     * @param ratio the additional zoom factor to apply.
+     */
+    private void zoom(double ratio) {
+        double scale = this.mainPane.getScaleX();
+
+        /* Limit zoom to reasonable range. */
+        if (scale <= 0.2 && ratio < 1) return;
+        if (scale >= 3 && ratio > 1) return;
+
+        this.mainPane.setScaleX(scale * ratio);
+        this.mainPane.setScaleY(scale * ratio);
+        this.mainPane.setTranslateX(this.mainPane.getTranslateX() * ratio);
+        this.mainPane.setTranslateY(this.mainPane.getTranslateY() * ratio);
     }
 
 }

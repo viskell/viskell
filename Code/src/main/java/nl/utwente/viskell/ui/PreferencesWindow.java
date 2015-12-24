@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableList;
  */
 public class PreferencesWindow extends BorderPane implements ComponentLoader {
     private Stage stage;
-    private CustomUIPane pane;
     private Preferences preferences;
 
     @FXML private ComboBox<GhciSession.Backend> ghci;
@@ -29,10 +28,9 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
     @FXML private Button reloadTheme;
     @FXML protected CheckBox verticalCurry;
 
-    public PreferencesWindow(CustomUIPane customUIPane) {
+    public PreferencesWindow(MainOverlay overlay) {
         super();
         
-        pane = customUIPane;
         preferences = Preferences.userNodeForPackage(Main.class);
 
         stage = new Stage();
@@ -45,7 +43,7 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
         ghci.getSelectionModel().select(GhciSession.pickBackend());
         ghci.valueProperty().addListener(event -> {
             preferences.put("ghci", ghci.getValue().toString());
-            pane.restartBackend();
+            overlay.getMainPane().restartBackend();
         });
         
         

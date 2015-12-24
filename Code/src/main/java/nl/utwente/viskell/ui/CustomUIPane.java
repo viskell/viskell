@@ -1,8 +1,6 @@
 package nl.utwente.viskell.ui;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import javafx.animation.KeyFrame;
@@ -27,7 +25,7 @@ import nl.utwente.viskell.ui.components.DrawWire;
 import nl.utwente.viskell.ui.components.WrappedContainer;
 
 /**
- * The core Pane that also keeps state for the user interface.
+ * The core Pane that represent the programming workspace.
  */
 public class CustomUIPane extends Region {
     /** bottom pane layer intended for block container such as lambda's */
@@ -43,7 +41,6 @@ public class CustomUIPane extends Region {
     private TopLevel toplevel;
     
     private GhciSession ghci;
-    private InspectorWindow inspector;
     private PreferencesWindow preferences;
 
     private Point2D dragStart;
@@ -51,9 +48,6 @@ public class CustomUIPane extends Region {
     
     /** Boolean to indicate that a drag (pan) action has started, yet not finished. */
     private boolean dragging;
-
-    /** The File we're currently working on, if any. */
-    private Optional<File> currentFile;
 
     /**
      * Constructs a new instance.
@@ -71,8 +65,6 @@ public class CustomUIPane extends Region {
 
         this.ghci = new GhciSession();
         this.ghci.startAsync();
-        
-        this.currentFile = Optional.empty();
 
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDrag);
@@ -80,20 +72,8 @@ public class CustomUIPane extends Region {
         this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handleTouchPress);
     }
 
-    public void showInspector() {
-        if (inspector == null) {
-            inspector = new InspectorWindow(this);
-        }
-
-        inspector.show();
-    }
-
-    public void showPreferences() {
-        if (preferences == null) {
-            preferences = new PreferencesWindow(this);
-        }
-
-        preferences.show();
+    public void setPreferences(PreferencesWindow prefs) {
+        this.preferences = prefs;
     }
 
     private void handleMousePress(MouseEvent e) {
@@ -243,11 +223,6 @@ public class CustomUIPane extends Region {
     	}
     	
     }
-    
-    private void setScale(double scale) {
-        this.setScaleX(scale);
-        this.setScaleY(scale);
-    }
 
     /**
      * @return The Env instance to be used within this CustomUIPane.
@@ -284,39 +259,6 @@ public class CustomUIPane extends Region {
     
      public GhciSession getGhciSession() {
         return ghci;
-    }
-
-    public void zoomOut() {
-        zoom(0.8);
-    }
-
-    public void zoomIn() {
-        zoom(1.25);
-    }
-
-    private void zoom(double ratio) {
-        double scale = this.getScaleX();
-
-        /* Limit zoom to reasonable range. */
-        if (scale <= 0.2 && ratio < 1) return;
-        if (scale >= 3 && ratio > 1) return;
-
-        this.setScale(scale * ratio);
-        this.setTranslateX(this.getTranslateX() * ratio);
-        this.setTranslateY(this.getTranslateY() * ratio);
-    }
-
-    /** Gets the file we're currently working on, if any. */
-    public Optional<File> getCurrentFile() {
-        return currentFile;
-    }
-
-    /**
-     * Sets the file we're currently working on. Probably called from a Save
-     * As/Open operation.
-     */
-    public void setCurrentFile(File currentFile) {
-        this.currentFile = Optional.of(currentFile);
     }
 
     /**

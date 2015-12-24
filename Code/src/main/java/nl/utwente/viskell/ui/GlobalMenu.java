@@ -18,11 +18,17 @@ import java.util.Optional;
  * A context menu with global actions (i.e. quit).
  */
 public class GlobalMenu extends ContextMenu {
-    private CustomUIPane pane;
+    /** The main overlay of which this menu is a part */ 
+    private MainOverlay overlay;
 
-    public GlobalMenu(CustomUIPane pane) {
+    /** The File we're currently working on, if any. */
+    private Optional<File> currentFile;
+
+
+    public GlobalMenu(MainOverlay overlay) {
         super();
-        this.pane = pane;
+        this.overlay = overlay;
+        this.currentFile = Optional.empty();
 
         MenuItem menuNew = new MenuItem("New");
         menuNew.setOnAction(this::onNew);
@@ -37,10 +43,10 @@ public class GlobalMenu extends ContextMenu {
         menuSaveAs.setOnAction(this::onSaveAs);
 
         MenuItem menuPreferences = new MenuItem("Preferences...");
-        menuPreferences.setOnAction(e -> pane.showPreferences());
+        menuPreferences.setOnAction(e -> this.overlay.showPreferences());
 
         MenuItem menuInspector = new MenuItem("Inspector");
-        menuInspector.setOnAction(e -> pane.showInspector());
+        menuInspector.setOnAction(e -> this.overlay.showInspector());
 
         MenuItem menuQuit = new MenuItem("Quit");
         menuQuit.setOnAction(this::onQuit);
@@ -49,11 +55,11 @@ public class GlobalMenu extends ContextMenu {
     }
 
     private void onNew(ActionEvent actionEvent) {
-        this.pane.clearChildren();
+        this.overlay.getMainPane().clearChildren();
     }
 
     private void onOpen(ActionEvent actionEvent) {
-        Window window = pane.getScene().getWindow();
+        Window window = this.overlay.getScene().getWindow();
         File file = new FileChooser().showOpenDialog(window);
 
         if (file != null) {
@@ -62,28 +68,26 @@ public class GlobalMenu extends ContextMenu {
     }
 
     private void onSave(ActionEvent actionEvent) {
-        Optional<File> file = pane.getCurrentFile();
-
-        if (file.isPresent()) {
-            saveTo(file.get());
+        if (this.currentFile.isPresent()) {
+            saveTo(this.currentFile.get());
         } else {
             onSaveAs(actionEvent);
         }
     }
 
     private void onSaveAs(ActionEvent actionEvent) {
-        Window window = pane.getScene().getWindow();
+        Window window = this.overlay.getScene().getWindow();
         File file = new FileChooser().showSaveDialog(window);
 
         if (file != null) {
             saveTo(file);
-            pane.setCurrentFile(file);
+            this.currentFile = Optional.of(file);
         }
     }
 
     private void saveTo(File file) {
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(Exporter.export(pane).getBytes(Charsets.UTF_8));
+            fos.write(Exporter.export(this.overlay.getMainPane()).getBytes(Charsets.UTF_8));
             fos.close();
         } catch (IOException e) {
             // TODO do something sensible here
