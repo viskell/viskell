@@ -1,12 +1,18 @@
 package nl.utwente.viskell.ui;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
+import javafx.event.Event;
 import javafx.geometry.Point2D;
-import javafx.scene.control.MenuItem;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 import jfxtras.scene.layout.CircularPane;
-import jfxtras.scene.menu.CirclePopupMenu;
 import nl.utwente.viskell.ui.components.Block;
 
 /**
@@ -20,49 +26,71 @@ import nl.utwente.viskell.ui.components.Block;
  * functionality is under development.
  * </p>
  */
-public class CircleMenu extends CirclePopupMenu {
+public class CircleMenu extends CircularPane {
 
     /** The context of the menu. */
     private Block block;
 
+    /** Timed delay for hide of this menu after inactivity. */
+    private Timeline hideDelay;
+    
     /** Show the Circle menu for a specific block. */
     public static void showFor(Block block, Point2D pos) {
         CircleMenu menu = new CircleMenu(block);
-        menu.show(pos.getX(), pos.getY());
+        double centerX = pos.getX() - (menu.prefWidth(-1) / 2);
+        double centerY = pos.getY() - (menu.prefHeight(-1) / 2);
+        menu.setLayoutX(centerX);
+        menu.setLayoutY(centerY);
+        block.getToplevel().addMenu(menu);
     }
     
-    public CircleMenu(Block block) {
-        super(block, null);
+    private CircleMenu(Block block) {
+        super();
         this.block = block;
 
+        this.hideDelay = new Timeline(new KeyFrame(Duration.millis(4000), e-> this.hide()));
+        this.hideDelay.play();
+        this.setMouseTransparent(true);
+        
         // Define menu items
         
         // Cut Option
         ImageView image = makeImageView("/ui/cut32.png");
-        MenuItem delete = new MenuItem("cut", image);
-        delete.setOnAction(t -> delete());
+        MenuButton delete = new MenuButton("cut", image);
+        delete.setOnActivate(() -> delete());
+        this.add(delete);
 
         // Copy Option
         image = makeImageView("/ui/copy32.png");
-        MenuItem copy = new MenuItem("copy", image);
-        copy.setOnAction(t -> copy());
+        MenuButton copy = new MenuButton("copy", image);
+        copy.setOnActivate(() -> copy());
+        this.add(copy);
 
         // Paste Option
         image = makeImageView("/ui/paste32.png");
-        MenuItem paste = new MenuItem("paste", image);
-        paste.setOnAction(t -> paste());
+        MenuButton paste = new MenuButton("paste", image);
+        paste.setOnActivate(() -> paste());
+        this.add(paste);
 
         // Save Option
         image = makeImageView("/ui/save32.png");
-        MenuItem save = new MenuItem("save", image);
-        save.setOnAction(t -> saveBlock());
+        MenuButton save = new MenuButton("save", image);
+        save.setOnActivate(() -> saveBlock());
+        this.add(save);
 
-        // Registration
-        this.getItems().addAll(copy, paste, delete, save);
-
-        // Animation
-        this.setAnimationInterpolation(CircularPane::animateOverTheArcWithFade);
-        this.setAnimationDuration(Duration.ONE);
+        // opening animation
+        this.setScaleX(0.1);
+        this.setScaleY(0.1);
+        ScaleTransition opening = new ScaleTransition(Duration.millis(250), this);
+        opening.setToX(1);
+        opening.setToY(1);
+        opening.setOnFinished(e -> this.setMouseTransparent(false));
+        opening.play();
+    }
+    
+    /** hide this menu by removing it */
+    private void hide() {
+        this.block.getToplevel().removeMenu(this);
     }
     
     private ImageView makeImageView(String path) {
@@ -72,21 +100,70 @@ public class CircleMenu extends CirclePopupMenu {
     }
 
     /** Copy the {@link Block} in this context. */
-    public void copy() {
+    private void copy() {
         block.getToplevel().copyBlock(block);
     }
 
     /** Paste {@link Block} from memory. */
-    public void paste() {
+    private void paste() {
     }
 
     /** Delete the {@link Block} in this context. */
-    public void delete() {
+    private void delete() {
         block.getToplevel().removeBlock(block);
     }
 
     /** Saves the {@link Block} in this context. */
-    public void saveBlock() {
+    private void saveBlock() {
         // TODO store block in custom catalog?
+    }
+    
+    /** A touch enabled button within this circle menu */
+    private class MenuButton extends Pane {
+        /** Whether this button has been pressed */
+        private boolean wasPressed;
+        
+        /** The action to execute on a 'click' */
+        private Runnable clickAction;
+        
+        /**
+         * @param name of the button
+         * @param image node shown on the button
+         */
+        private MenuButton(String name, Node image) {
+            super(image);
+            this.wasPressed = false;
+            
+            this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::onPress);
+            this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::onPress);
+            this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::onRelease);
+            this.addEventHandler(TouchEvent.TOUCH_RELEASED, this::onRelease);
+        }
+        
+        /** Sets the action to execute on a 'click' */
+        private void setOnActivate(Runnable action) {
+            this.clickAction = action;
+        }
+        
+        /** Handles a press event for this button. */
+        private void onPress(Event event) {
+            this.wasPressed = true;
+            CircleMenu.this.hideDelay.playFromStart();
+            event.consume();
+        }
+        
+        /** Handles a release event for this button. */
+        private void onRelease(Event event) {
+            if (this.wasPressed) {
+                if (this.clickAction != null) {
+                    this.clickAction.run();
+                    // avoid double actions
+                    this.clickAction = null;
+                }
+                
+                CircleMenu.this.hide();
+            }
+            event.consume();
+        }
     }
 }
