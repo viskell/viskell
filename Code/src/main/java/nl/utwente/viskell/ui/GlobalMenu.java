@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import nl.utwente.viskell.ui.serialize.Exporter;
 
@@ -48,10 +49,14 @@ public class GlobalMenu extends ContextMenu {
         MenuItem menuInspector = new MenuItem("Inspector");
         menuInspector.setOnAction(e -> this.overlay.showInspector());
 
+        MenuItem menuFullScreen = new MenuItem("Toggle full screen");
+        menuFullScreen.setOnAction(this::toggleFullScreen);
+        
         MenuItem menuQuit = new MenuItem("Quit");
         menuQuit.setOnAction(this::onQuit);
 
-        this.getItems().addAll(menuNew, menuOpen, menuSave, menuSaveAs, menuInspector, menuPreferences, menuQuit);
+        this.getItems().addAll(menuNew, menuOpen, menuSave, menuSaveAs, menuInspector, menuPreferences,
+                menuFullScreen, menuQuit);
     }
 
     private void onNew(ActionEvent actionEvent) {
@@ -92,6 +97,16 @@ public class GlobalMenu extends ContextMenu {
         } catch (IOException e) {
             // TODO do something sensible here
             e.printStackTrace();
+        }
+    }
+    
+    private void toggleFullScreen(ActionEvent actionEvent) {
+        Stage stage = Main.primaryStage;
+        if (stage.isFullScreen()) {
+            stage.setFullScreen(false);
+        } else {
+            stage.setMaximized(true);
+            stage.setFullScreen(true);
         }
     }
 
