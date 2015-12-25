@@ -77,6 +77,7 @@ public class BinOpApplyBlock extends Block {
             this.anchor.layoutXProperty().bind(this.inputType.widthProperty().divide(2));
             this.getChildren().addAll(this.anchor, this.typePane);
             this.setTranslateY(-9);
+            this.setPickOnBounds(false);
 
             dragContext = new DragContext(this.typePane);
             dragContext.setDragInitAction(c -> {this.curried = false;});
@@ -163,6 +164,7 @@ public class BinOpApplyBlock extends Block {
         this.resTypeLabel.getStyleClass().add("resultType");
         VBox outputSpace = new VBox(this.resTypeLabel, this.output);
         outputSpace.setAlignment(Pos.CENTER);
+        outputSpace.setPickOnBounds(false);
         
         this.leftInput = new FunInputAnchor();
         this.rightInput = new FunInputAnchor();
@@ -172,6 +174,7 @@ public class BinOpApplyBlock extends Block {
         arrowSpacer.getStyleClass().add("curryArrow");
         arrowSpacer.setVisible(false);
         Pane inputSpace = new HBox(0, this.leftInput, infoArea, arrowSpacer, this.rightInput);
+        inputSpace.setPickOnBounds(false);
 
         this.curriedOutput = new Pane() {
                 @Override

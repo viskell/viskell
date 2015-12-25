@@ -3,17 +3,17 @@
 <?import javafx.geometry.Insets?>
 <?import nl.utwente.viskell.ui.components.MatchBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.MatchBlock"    xmlns:fx="http://javafx.com/fxml/">
-    <BorderPane>
+    <BorderPane pickOnBounds="false">
         <center>
             <HBox styleClass="match, block">
                 <Label fx:id="name" styleClass="title" />
             </HBox>
         </center>
         <top>
-            <HBox fx:id="inputSpace"/>
+            <HBox fx:id="inputSpace" pickOnBounds="false" />
         </top>
         <bottom>
-            <HBox fx:id="outputSpace" spacing="50">
+            <HBox fx:id="outputSpace" spacing="50" pickOnBounds="false">
                 <padding>
                     <Insets bottom="0" left="20" right="20" top="0" />
                 </padding>

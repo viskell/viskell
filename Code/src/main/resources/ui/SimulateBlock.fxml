@@ -3,7 +3,7 @@
 <?import nl.utwente.viskell.ui.components.SimulateBlock?>
 <?import javafx.scene.control.Button?>
 <fx:root type="nl.utwente.viskell.ui.components.SimulateBlock" xmlns:fx="http://javafx.com/fxml/">
-    <BorderPane styleClass="display, block">
+    <BorderPane styleClass="display, block" pickOnBounds="false">
         <center>
             <VBox alignment="CENTER">
                 <Label fx:id="inputType" styleClass="argumentLabel" />
@@ -16,7 +16,7 @@
             </VBox>
         </center>
         <top>
-            <HBox fx:id="inputSpace"/>
+            <HBox fx:id="inputSpace" pickOnBounds="false" />
         </top>
     </BorderPane>
 </fx:root>

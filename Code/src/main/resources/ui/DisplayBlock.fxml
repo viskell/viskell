@@ -2,12 +2,12 @@
 <?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.DisplayBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.DisplayBlock" xmlns:fx="http://javafx.com/fxml/">
-    <BorderPane styleClass="display, block">
+    <BorderPane styleClass="display, block" pickOnBounds="false">
         <center>
             <Label fx:id="value" styleClass="content" maxWidth="300" alignment="CENTER"/>
         </center>
         <top>
-        	<VBox fx:id="inputSpace">
+        	<VBox fx:id="inputSpace" pickOnBounds="false">
         	    <Label fx:id="inputType" styleClass="inputType"/>
         	</VBox>
         </top>

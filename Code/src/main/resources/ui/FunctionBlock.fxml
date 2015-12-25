@@ -2,18 +2,18 @@
 <?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.FunctionBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
-    <BorderPane>
+    <BorderPane pickOnBounds="false">
         <center>
-            <HBox styleClass="function, block">
+            <HBox styleClass="function, block" pickOnBounds="false">
                 <Label fx:id="functionInfo" styleClass="title" />
-                <Pane fx:id="nestSpace"/>
+                <Pane fx:id="nestSpace" pickOnBounds="false" />
             </HBox>
         </center>
         <top>
-            <TilePane fx:id="inputSpace"/>
+            <TilePane fx:id="inputSpace" pickOnBounds="false" />
         </top>
         <bottom>
-            <HBox fx:id="outputSpace"/>
+            <HBox fx:id="outputSpace" pickOnBounds="false" />
         </bottom>
     </BorderPane>
 </fx:root>

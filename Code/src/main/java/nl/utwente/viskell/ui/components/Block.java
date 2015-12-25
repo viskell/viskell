@@ -64,6 +64,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.container = pane;
         this.container.attachBlock(this);
         
+        // only the actual shape should be selected for events, not the larger outside bounds
+        this.setPickOnBounds(false);
+        
         if (!this.belongsOnBottom()) {
             // make all non container blocks resize themselves around horizontal midpoint to reduce visual movement 
             this.translateXProperty().bind(this.widthProperty().divide(2).negate());
