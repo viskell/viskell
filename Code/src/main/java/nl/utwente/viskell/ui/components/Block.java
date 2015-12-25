@@ -70,7 +70,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         }
         
         this.dragContext = new DragContext(this);
-        this.dragContext.setSecondaryClickAction(p -> CircleMenu.showFor(this, this.localToScreen(p)));
+        this.dragContext.setSecondaryClickAction(p -> CircleMenu.showFor(this, this.localToParent(p)));
         dragContext.setDragFinishAction(event -> refreshContainer());
     }
 

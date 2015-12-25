@@ -282,11 +282,11 @@ public class ToplevelPane extends Region implements BlockContainer {
         }
     }
 
-    public boolean addMenu(FunctionMenu menu) {
+    public boolean addMenu(Pane menu) {
         return this.getChildren().add(menu);
     }
 
-    public boolean removeMenu(FunctionMenu menu) {
+    public boolean removeMenu(Pane menu) {
         return this.getChildren().remove(menu);
     }
 
