@@ -2,12 +2,19 @@ package nl.utwente.viskell.ui.components;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcTo;
+import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.CubicCurve;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Transform;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
@@ -19,12 +26,6 @@ import nl.utwente.viskell.ui.ToplevelPane;
  */
 public class DrawWire extends CubicCurve implements ChangeListener<Transform>, ComponentLoader {
 
-    /** The 'touch point ID' associated with the mouse. */
-    public static final int INPUT_ID_MOUSE = -1;
-
-    /** The ID of the touch point that initiated this wire. */
-    private final int touchID;
-
     /** The Anchor this wire is connected to */
     protected final ConnectionAnchor anchor;
 
@@ -32,13 +33,12 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
     private final ConnectionAnchor initAnchor;
 
     /**
-     * @param pane The Pane this wire is on.
-     * @param anchor The connected side of this new wire.
-     * @param initAnchor The anchor where this wire was initiated from.
+     * @param anchor the connected side of this new wire.
+     * @param initAnchor the anchor where this wire was initiated from.
+     * @param touchPoint that initiated this wire, or null if it was by mouse. 
      */
-    private DrawWire(ConnectionAnchor anchor, ConnectionAnchor initAnchor, int touchID) {
+    private DrawWire(ConnectionAnchor anchor, ConnectionAnchor initAnchor, TouchPoint touchPoint) {
         this.setMouseTransparent(true);
-        this.touchID = touchID;
         this.anchor = anchor;
         this.initAnchor = initAnchor;
 
@@ -47,50 +47,33 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         Point2D initPos = pane.sceneToLocal(initAnchor.localToScene(new Point2D(0, 0)));
         this.setFreePosition(initPos);
         anchor.localToSceneTransformProperty().addListener(x -> this.invalidateAnchorPosition());
+        
+        if (touchPoint != null) {
+            pane.addTouchArea(new TouchArea(touchPoint));
+        }
     }
 
-    protected static DrawWire initiate(ConnectionAnchor anchor, int touchID) {
+    protected static DrawWire initiate(ConnectionAnchor anchor, TouchPoint touchPoint) {
         if (anchor instanceof InputAnchor && ((InputAnchor)anchor).hasConnection()) {
             // make room for a new connection by removing existing one
             Connection conn = ((InputAnchor)anchor).getConnection().get();
             conn.remove();
             // keep the other end of old connection to initiate the new one
-            return new DrawWire(conn.getStartAnchor(), anchor, touchID);
+            return new DrawWire(conn.getStartAnchor(), anchor, touchPoint);
         } else {
-            return new DrawWire(anchor, anchor, touchID);
+            return new DrawWire(anchor, anchor, touchPoint);
         }
     }
 
     protected void handleMouseDrag(MouseEvent event) {
-        if (this.touchID == INPUT_ID_MOUSE) {
-            Point2D localPos = this.anchor.getPane().sceneToLocal(event.getSceneX(), event.getSceneY());
-            this.setFreePosition(localPos);
-            event.consume();
-        }
-    }
-
-    protected void handleTouchMove(TouchEvent event) {
-        TouchPoint tp = event.getTouchPoint();
-        if (tp.getId() == this.touchID) {
-            Point2D localPos = this.anchor.getPane().sceneToLocal(tp.getSceneX(), tp.getSceneY());
-            this.setFreePosition(localPos);
-            event.consume();
-        }
+        Point2D localPos = this.anchor.getPane().sceneToLocal(event.getSceneX(), event.getSceneY());
+        this.setFreePosition(localPos);
+        event.consume();
     }
 
     protected void handleMouseRelease(MouseEvent event) {
-        if (this.touchID == INPUT_ID_MOUSE) {
-            this.handleReleaseOn(event.getPickResult().getIntersectedNode());
-            event.consume();
-        }
-    }
-
-    protected void handleTouchRelease(TouchEvent event) {
-        TouchPoint tp = event.getTouchPoint();
-        if (tp.getId() == this.touchID) {
-            this.handleReleaseOn(tp.getPickResult().getIntersectedNode());
-            event.consume();
-        }
+        this.handleReleaseOn(event.getPickResult().getIntersectedNode());
+        event.consume();
     }
 
     private void handleReleaseOn(Node picked) {
@@ -183,6 +166,96 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             this.getStrokeDashArray().addAll(15.0, 15.0);
         }
 
+    }
+
+    /** A circular area at the open end of the draw wire for handling multi finger touch actions.
+     *  This area has as a workaround a hole in the middle to be able to pick the thing behind it on release.
+     */
+    private class TouchArea extends Path {
+        /** The ID of finger that spawned this touch area. */
+        private int touchID;
+        
+        /** Whether this touch area has been dragged further than the drag threshold. */
+        private boolean dragStarted;
+        
+        /** Whether this touch area has spawned a menu.  */
+        private boolean menuCreated;
+        
+        /**
+         * @param touchPoint that is the center of new active touch area.
+         */
+        private TouchArea(TouchPoint touchPoint) {
+            super();
+            this.setLayoutX(DrawWire.this.getEndX());
+            this.setLayoutY(DrawWire.this.getEndY());
+            this.touchID = touchPoint.getId();
+            this.dragStarted = true;
+            this.menuCreated = false;
+            
+            // a circle with hole is built from a path of round arcs with a very thick stroke
+            ArcTo arc1 = new ArcTo(100, 100, 0, 100, 0, true, true);
+            ArcTo arc2 = new ArcTo(100, 100, 0, -100, 0, true, true);
+            this.getElements().addAll(new MoveTo(-100, 0), arc1, arc2, new ClosePath());
+            this.setStrokeWidth(80);
+            this.setStroke(Color.TRANSPARENT);
+            this.setStrokeType(StrokeType.INSIDE);
+
+            touchPoint.grab(this);
+            this.addEventHandler(TouchEvent.TOUCH_RELEASED, this::handleRelease);
+            this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handlePress);
+            this.addEventHandler(TouchEvent.TOUCH_MOVED, this::handleDrag);
+        }
+        
+        private void finishMenu(ActionEvent event) {
+            // TODO
+            this.menuCreated = true;
+        }
+        
+        private void handlePress(TouchEvent event) {
+            event.consume();
+        }
+        
+        private void handleRelease(TouchEvent event) {
+            long fingerCount = event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count();
+
+            if (fingerCount == 1) {
+                ToplevelPane pane = DrawWire.this.anchor.getPane();
+                pane.removeTouchArea(this);
+                Node picked = event.getTouchPoint().getPickResult().getIntersectedNode();
+                DrawWire.this.handleReleaseOn(picked);
+            } else if (this.dragStarted || this.menuCreated) {
+                // avoid accidental creation of (more) menus
+            } else if (fingerCount == 2) {
+                // TODO wire menu
+            }
+            
+            event.consume();
+        }
+        
+        private void handleDrag(TouchEvent event) {
+            if (event.getTouchPoint().getId() != this.touchID) {
+                // we use only primary finger for drag movement
+            } else {
+                double deltaX = event.getTouchPoint().getX();
+                double deltaY = event.getTouchPoint().getY();
+                
+                if (Math.abs(deltaX) + Math.abs(deltaY) < 2) {
+                    // ignore very small movements
+                } else if ((deltaX*deltaX + deltaY*deltaY) > 10000) {
+                    // FIXME: ignore too large movements
+                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 24) {
+                    this.dragStarted = true;
+                    double newX = this.getLayoutX() + deltaX;
+                    double newY = this.getLayoutY() + deltaY;
+                    this.setLayoutX(newX);
+                    this.setLayoutY(newY);
+                    DrawWire.this.setFreePosition(new Point2D(newX, newY));
+                }
+            }
+            
+            event.consume();
+        }
+        
     }
 
     /** Updates the Bezier offset (curviness) according to the current start and end positions. */
