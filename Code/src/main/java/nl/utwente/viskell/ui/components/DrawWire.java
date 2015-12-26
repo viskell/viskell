@@ -95,7 +95,9 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
     }
 
     protected void handleMouseRelease(MouseEvent event) {
-        if (event.getButton() == MouseButton.PRIMARY) {
+        if (this.menu != null) {
+            // release has no effect if there is a menu
+        } else if (event.getButton() == MouseButton.PRIMARY) {
             this.handleReleaseOn(event.getPickResult().getIntersectedNode());
         } else {
             this.showMenu();

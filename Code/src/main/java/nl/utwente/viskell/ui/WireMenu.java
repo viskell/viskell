@@ -32,21 +32,26 @@ public class WireMenu extends TilePane {
         if (wire.getAnchor() instanceof InputAnchor) {
             Button lambdaBlockButton = new Button("Lambda");
             lambdaBlockButton.setOnAction(event -> addBlockWithOutput(new DefinitionBlock(this.toplevel, 1)));
+            lambdaBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new DefinitionBlock(this.toplevel, 1)));
             
             Button rationalBlockButton = new Button("Rational");
             rationalBlockButton.setOnAction(event -> addBlockWithOutput(new SliderBlock(this.toplevel, false)));
+            rationalBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new SliderBlock(this.toplevel, false)));
             
             Button IntegerBlockButton = new Button("Integer");
             IntegerBlockButton.setOnAction(event -> addBlockWithOutput(new SliderBlock(this.toplevel, true)));
+            IntegerBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new SliderBlock(this.toplevel, true)));
 
             this.getChildren().addAll(cancelButton, lambdaBlockButton, rationalBlockButton, IntegerBlockButton);
             
         } else {
             Button disBlockButton = new Button("Display");
             disBlockButton.setOnAction(event -> addBlockWithInput(new DisplayBlock(this.toplevel)));
+            disBlockButton.setOnTouchPressed(event -> addBlockWithInput(new DisplayBlock(this.toplevel)));
             
             Button graphBlockButton = new Button("Graph");
             graphBlockButton.setOnAction(event -> addBlockWithInput(new GraphBlock(this.toplevel)));
+            graphBlockButton.setOnTouchPressed(event -> addBlockWithInput(new GraphBlock(this.toplevel)));
 
             this.getChildren().addAll(cancelButton, disBlockButton, graphBlockButton);
         }
@@ -66,21 +71,27 @@ public class WireMenu extends TilePane {
         block.relocate(this.attachedWire.getEndX(), this.attachedWire.getEndY());
         this.close();
         
-        InputAnchor input = block.getAllInputs().get(0);
-        this.attachedWire.buildConnectionTo(input);
-        this.attachedWire.remove();
         block.initiateConnectionChanges();
+        InputAnchor input = block.getAllInputs().get(0);
+        Connection connection = this.attachedWire.buildConnectionTo(input);
+        if (connection != null) {
+            connection.getStartAnchor().initiateConnectionChanges();
+        }
+        this.attachedWire.remove();
     }
 
     private void addBlockWithOutput(Block block) {
         this.toplevel.addBlock(block);
-        block.relocate(this.attachedWire.getEndX(), this.attachedWire.getEndY() - 50);
+        block.relocate(this.attachedWire.getEndX(), this.attachedWire.getEndY() - block.prefHeight(-1));
         this.close();
         
-        OutputAnchor input = block.getAllOutputs().get(0);
-        this.attachedWire.buildConnectionTo(input);
-        this.attachedWire.remove();
         block.initiateConnectionChanges();
+        OutputAnchor output = block.getAllOutputs().get(0);
+        Connection connection = this.attachedWire.buildConnectionTo(output);
+        if (connection != null) {
+            connection.getStartAnchor().initiateConnectionChanges();
+        }
+        this.attachedWire.remove();
     }
 
     /** Closes this menu by removing it from it's parent. */
