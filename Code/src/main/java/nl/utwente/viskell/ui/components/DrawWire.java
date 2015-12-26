@@ -1,10 +1,12 @@
 package nl.utwente.viskell.ui.components;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
@@ -16,9 +18,11 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Transform;
+import javafx.util.Duration;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ToplevelPane;
+import nl.utwente.viskell.ui.WireMenu;
 
 /**
  * A DrawWire represents the UI for a new incomplete connection is the process of being drawn. 
@@ -32,6 +36,10 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
     /** The Anchor this wire has been initiated from */
     private final ConnectionAnchor initAnchor;
 
+    private TouchArea toucharea;
+    
+    private WireMenu menu;
+    
     /**
      * @param anchor the connected side of this new wire.
      * @param initAnchor the anchor where this wire was initiated from.
@@ -49,7 +57,8 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         anchor.localToSceneTransformProperty().addListener(x -> this.invalidateAnchorPosition());
         
         if (touchPoint != null) {
-            pane.addTouchArea(new TouchArea(touchPoint));
+            this.toucharea = new TouchArea(touchPoint);
+            pane.addTouchArea(this.toucharea);
         }
     }
 
@@ -65,14 +74,32 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         }
     }
 
+    public ConnectionAnchor getAnchor() {
+        return this.anchor;
+    }
+    
+    private void showMenu() {
+        if (this.menu == null) {
+            this.menu = new WireMenu(this);
+            this.menu.relocate(this.getEndX() + 50 , this.getEndY() - 50);
+            this.anchor.block.getToplevel().addMenu(this.menu);
+        }
+    }
+    
     protected void handleMouseDrag(MouseEvent event) {
-        Point2D localPos = this.anchor.getPane().sceneToLocal(event.getSceneX(), event.getSceneY());
-        this.setFreePosition(localPos);
+        if (this.menu == null) {
+            Point2D localPos = this.anchor.getPane().sceneToLocal(event.getSceneX(), event.getSceneY());
+            this.setFreePosition(localPos);
+        }
         event.consume();
     }
 
     protected void handleMouseRelease(MouseEvent event) {
-        this.handleReleaseOn(event.getPickResult().getIntersectedNode());
+        if (event.getButton() == MouseButton.PRIMARY) {
+            this.handleReleaseOn(event.getPickResult().getIntersectedNode());
+        } else {
+            this.showMenu();
+        }
         event.consume();
     }
 
@@ -93,7 +120,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
      * @param target the Anchor to which the other end of this should be connection to.
      * @return the newly build Connection or null if it's not possible
      */
-    private Connection buildConnectionTo(ConnectionAnchor target) {
+    public Connection buildConnectionTo(ConnectionAnchor target) {
         InputAnchor sink;
         OutputAnchor source;
         if (this.anchor instanceof InputAnchor) {
@@ -119,6 +146,15 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
 
     /** Removes this wire from its pane, and its listener. */
     public final void remove() {
+        if (this.menu != null) {
+            this.menu.close();
+            this.menu = null;
+        }
+        
+        if (this.toucharea != null) {
+            this.toucharea.remove();
+        }
+        
         this.initAnchor.wireInProgress = null;
         this.anchor.localToSceneTransformProperty().removeListener(this);
         this.anchor.getPane().removeWire(this);
@@ -178,9 +214,6 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         /** Whether this touch area has been dragged further than the drag threshold. */
         private boolean dragStarted;
         
-        /** Whether this touch area has spawned a menu.  */
-        private boolean menuCreated;
-        
         /**
          * @param touchPoint that is the center of new active touch area.
          */
@@ -190,15 +223,15 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             this.setLayoutY(DrawWire.this.getEndY());
             this.touchID = touchPoint.getId();
             this.dragStarted = true;
-            this.menuCreated = false;
             
             // a circle with hole is built from a path of round arcs with a very thick stroke
             ArcTo arc1 = new ArcTo(100, 100, 0, 100, 0, true, true);
             ArcTo arc2 = new ArcTo(100, 100, 0, -100, 0, true, true);
             this.getElements().addAll(new MoveTo(-100, 0), arc1, arc2, new ClosePath());
-            this.setStrokeWidth(80);
-            this.setStroke(Color.TRANSPARENT);
+            this.setStrokeWidth(90);
+            this.setStroke(Color.web("#0066FF"));
             this.setStrokeType(StrokeType.INSIDE);
+            this.setOpacity(0);
 
             touchPoint.grab(this);
             this.addEventHandler(TouchEvent.TOUCH_RELEASED, this::handleRelease);
@@ -206,27 +239,37 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             this.addEventHandler(TouchEvent.TOUCH_MOVED, this::handleDrag);
         }
         
-        private void finishMenu(ActionEvent event) {
-            // TODO
-            this.menuCreated = true;
+        private void remove() {
+            ToplevelPane pane = DrawWire.this.anchor.getPane();
+            pane.removeTouchArea(this);
         }
-        
+
         private void handlePress(TouchEvent event) {
+            if (DrawWire.this.menu != null) {
+                this.touchID = event.getTouchPoint().getId();
+            }
             event.consume();
         }
         
         private void handleRelease(TouchEvent event) {
             long fingerCount = event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count();
 
-            if (fingerCount == 1) {
-                ToplevelPane pane = DrawWire.this.anchor.getPane();
-                pane.removeTouchArea(this);
+            if (fingerCount == 1 && DrawWire.this.menu == null) {
+                this.remove();
                 Node picked = event.getTouchPoint().getPickResult().getIntersectedNode();
                 DrawWire.this.handleReleaseOn(picked);
-            } else if (this.dragStarted || this.menuCreated) {
+            } else if (DrawWire.this.menu != null) {
                 // avoid accidental creation of (more) menus
             } else if (fingerCount == 2) {
-                // TODO wire menu
+                DrawWire.this.showMenu();
+                this.dragStarted = false;
+                // a delay to avoid the background picking up jitter from this event
+                Timeline delay = new Timeline(new KeyFrame(Duration.millis(250), e -> {
+                    this.setScaleX(0.25);
+                    this.setScaleY(0.25);
+                    this.setOpacity(0.4);
+                }));
+                delay.play();
             }
             
             event.consume();
@@ -236,15 +279,19 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             if (event.getTouchPoint().getId() != this.touchID) {
                 // we use only primary finger for drag movement
             } else {
-                double deltaX = event.getTouchPoint().getX();
-                double deltaY = event.getTouchPoint().getY();
+                double scaleFactor = this.getScaleX();
+                double deltaX = event.getTouchPoint().getX() * scaleFactor;
+                double deltaY = event.getTouchPoint().getY() * scaleFactor;
                 
                 if (Math.abs(deltaX) + Math.abs(deltaY) < 2) {
                     // ignore very small movements
                 } else if ((deltaX*deltaX + deltaY*deltaY) > 10000) {
                     // FIXME: ignore too large movements
-                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 24) {
-                    this.dragStarted = true;
+                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 35) {
+                    if (!this.dragStarted) {
+                        this.handleDragStart();
+                    }
+ 
                     double newX = this.getLayoutX() + deltaX;
                     double newY = this.getLayoutY() + deltaY;
                     this.setLayoutX(newX);
@@ -256,6 +303,17 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             event.consume();
         }
         
+        private void handleDragStart() {
+            this.dragStarted = true;
+            if (DrawWire.this.menu != null) {
+                // resume dragging the wire
+                DrawWire.this.menu.close();
+                DrawWire.this.menu = null;
+                this.setScaleX(1);
+                this.setScaleY(1);
+                this.setOpacity(0);
+            }
+        }
     }
 
     /** Updates the Bezier offset (curviness) according to the current start and end positions. */
