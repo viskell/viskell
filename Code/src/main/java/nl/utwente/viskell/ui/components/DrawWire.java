@@ -106,8 +106,17 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
     }
 
     private void handleReleaseOn(Node picked) {
-        if (picked.getParent() instanceof ConnectionAnchor) {
-            ConnectionAnchor target = (ConnectionAnchor)picked.getParent();
+        Node next = picked;
+        ConnectionAnchor target = null;
+        while (next != null) {
+            if (next instanceof ConnectionAnchor.Target) {
+                target = ((ConnectionAnchor.Target)next).getAssociatedAnchor();
+                break;
+            }
+            next = next.getParent();
+        }
+        
+        if (target != null) {
             Connection connection = this.buildConnectionTo(target);
             if (connection != null) {
                 connection.getStartAnchor().initiateConnectionChanges();

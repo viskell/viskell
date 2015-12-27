@@ -8,7 +8,7 @@ import nl.utwente.viskell.ui.ComponentLoader;
  * A class that represents an input field inside a FunctionBlock.
  * This basically combines a label with an anchor to which an input can be connected.
  */
-public class InputArgument extends Pane implements ComponentLoader {
+public class InputArgument extends Pane implements ComponentLoader, ConnectionAnchor.Target {
     /** The label on which to display type information. */
     private Label inputLabel;
     
@@ -40,6 +40,11 @@ public class InputArgument extends Pane implements ComponentLoader {
     /** @return The Label that displays the input's type. */
     public Label getInputLabel() {
         return inputLabel;
+    }
+
+    @Override
+    public ConnectionAnchor getAssociatedAnchor() {
+        return inputAnchor;
     }
 
     /** Called when the VisualState changed. */

@@ -21,7 +21,7 @@ import nl.utwente.viskell.ui.BlockContainer;
 /**
  * Anchor that specifically functions as an output.
  */
-public class OutputAnchor extends ConnectionAnchor {
+public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.Target {
     
     /** The visual representation of the OutputAnchor. */
     @FXML private Shape visibleAnchor;
@@ -52,6 +52,11 @@ public class OutputAnchor extends ConnectionAnchor {
     @Override
     public Type getType() {
         return this.binder.getBoundType();
+    }
+
+    @Override
+    public ConnectionAnchor getAssociatedAnchor() {
+        return this;
     }
 
     /**

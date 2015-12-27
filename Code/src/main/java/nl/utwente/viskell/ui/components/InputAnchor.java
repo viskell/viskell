@@ -23,7 +23,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * ConnectionAnchor that specifically functions as an input.
  */
-public class InputAnchor extends ConnectionAnchor {
+public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Target {
 
     /** The visual representation of the InputAnchor. */
     @FXML private Shape visibleAnchor;
@@ -65,6 +65,11 @@ public class InputAnchor extends ConnectionAnchor {
     public InputAnchor(Block block, Type type) {
         this(block);
         this.type = type;
+    }
+    
+    @Override
+    public ConnectionAnchor getAssociatedAnchor() {
+        return this;
     }
     
     /**

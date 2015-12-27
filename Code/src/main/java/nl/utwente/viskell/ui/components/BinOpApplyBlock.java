@@ -36,7 +36,7 @@ import nl.utwente.viskell.ui.DragContext;
 public class BinOpApplyBlock extends Block {
 
     /** Function input anchor that can be dragged down for currying. */
-    private class FunInputAnchor extends Pane {
+    private class FunInputAnchor extends Pane implements ConnectionAnchor.Target {
 
         /** The connection anchor for this input argument. */
         private final InputAnchor anchor;
@@ -90,6 +90,11 @@ public class BinOpApplyBlock extends Block {
                 BinOpApplyBlock.this.dragShiftOuput(newY);
                 BinOpApplyBlock.this.initiateConnectionChanges();
             });
+        }
+
+        @Override
+        public ConnectionAnchor getAssociatedAnchor() {
+            return this.anchor;
         }
 
         @Override
