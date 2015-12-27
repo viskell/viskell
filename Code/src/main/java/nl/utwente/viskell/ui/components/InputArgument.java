@@ -31,6 +31,7 @@ public class InputArgument extends Pane implements ComponentLoader, ConnectionAn
         
         this.setPrefHeight(ArgumentSpace.HEIGHT);
         this.getChildren().add(this.inputAnchor);
+        this.setPickOnBounds(false);
     }
     
     /** @return The InputAnchor belonging to this InputArgument. */

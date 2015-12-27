@@ -178,6 +178,18 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
         }
     }
     
+    @Override
+    public void setWireInProgress(DrawWire wire) {
+        super.setWireInProgress(wire);
+        if (wire == null) {
+            this.openWire.setVisible(!this.hasConnection());
+            this.invisibleAnchor.setMouseTransparent(false);
+        } else {
+            this.openWire.setVisible(false);
+            this.invisibleAnchor.setMouseTransparent(true);
+        }
+    }
+
     /** invalidates the visual state of the block this anchor belongs to*/
     public void invalidateVisualState() {
         this.block.invalidateVisualState();

@@ -114,7 +114,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             }
             next = next.getParent();
         }
-        
+
         if (target != null) {
             Connection connection = this.buildConnectionTo(target);
             if (connection != null) {
@@ -165,7 +165,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             this.toucharea.remove();
         }
         
-        this.initAnchor.wireInProgress = null;
+        this.initAnchor.setWireInProgress(null);
         this.anchor.localToSceneTransformProperty().removeListener(this);
         this.anchor.getPane().removeWire(this);
     }

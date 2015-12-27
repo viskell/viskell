@@ -24,7 +24,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
     
     /** The connection being drawn starting from this anchor, or null if none. */
-    protected DrawWire wireInProgress;
+    private DrawWire wireInProgress;
 
     /** The block this ConnectionAnchor belongs to. */
     protected final Block block;
@@ -86,6 +86,13 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public abstract Point2D getAttachmentPoint();
     
     /**
+     * @param wire is being drawn from this connection anchor, or null if the drawing has finished/failed.
+     */
+    public void setWireInProgress(DrawWire wire) {
+        this.wireInProgress = wire;
+    }
+    
+    /**
      * @return The inner most block container associated with this anchor
      */
     public abstract BlockContainer getContainer();
@@ -100,14 +107,14 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
 
     private void handleMousePress(MouseEvent event) {
         if (this.wireInProgress == null && !event.isSynthesized()) {
-            this.wireInProgress = DrawWire.initiate(this, null);
+            this.setWireInProgress(DrawWire.initiate(this, null));
             event.consume();
         }
     }
 
     private void handleTouchPress(TouchEvent event) {
         if (this.wireInProgress == null) {
-            this.wireInProgress = DrawWire.initiate(this, event.getTouchPoint());
+            this.setWireInProgress(DrawWire.initiate(this, event.getTouchPoint()));
             event.consume();
         }
     }

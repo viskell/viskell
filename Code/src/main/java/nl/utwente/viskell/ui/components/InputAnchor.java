@@ -192,6 +192,18 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
         }
     }
 
+    @Override
+    public void setWireInProgress(DrawWire wire) {
+        super.setWireInProgress(wire);
+        if (wire == null) {
+            this.openWire.setVisible(!this.hasConnection());
+            this.invisibleAnchor.setMouseTransparent(false);
+        } else {
+            this.openWire.setVisible(false);
+            this.invisibleAnchor.setMouseTransparent(true);
+        }
+    }
+
     /** Called when the VisualState changed. */
     public void invalidateVisualState() {
     	this.connection.ifPresent(c -> c.invalidateVisualState());
