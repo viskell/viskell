@@ -13,9 +13,14 @@ import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.ToplevelPane;
 
+/** This variant of the ValueBlock uses QuickCheck to generate values based on the output type. */
 public class ArbitraryBlock extends ValueBlock {
     
+    /** The button for getting the next randomly generated value */
     @FXML private Button rngTrigger; 
+    
+    /** Whether a value has been generated for this block. */
+    private boolean hasValue;
     
     /**
      * Constructs a new ArbitraryBlock
@@ -24,17 +29,19 @@ public class ArbitraryBlock extends ValueBlock {
     public ArbitraryBlock(ToplevelPane pane) {
         super("ArbitraryBlock", pane, pane.getEnvInstance().buildType("Arbitrary a => a"));
         this.rngTrigger.setOnAction(event -> this.getNextValue(event.hashCode()));
+        this.hasValue = false;
         this.getNextValue(this.hashCode());
     }
 
     private void getNextValue(int seed) {
         this.setValue("?????");
+        this.hasValue = false;
         
         if (! this.output.hasConnection()) {
             return;
         }
 
-        // we cannot generate values for complicated types
+        // we cannot generate values for polymorphic types and we don't try to for function types
         Type type = this.output.getType().getConcrete();
         if (type instanceof TypeVar || type instanceof FunType) {
             return;
@@ -47,6 +54,7 @@ public class ArbitraryBlock extends ValueBlock {
         }
         
         // now let QuickCheck try to generate an arbitrary value of this type
+        this.hasValue = true;
         GhciSession ghci = this.getToplevel().getGhciSession();
         int genOffset = Math.abs(seed) % 10;
         String haskellType = type.prettyPrint(10);
@@ -71,8 +79,8 @@ public class ArbitraryBlock extends ValueBlock {
     
     @Override
     public void invalidateVisualState() {
-        if (this.value.getText().startsWith("?")) {
-            // try again to get a value
+        if (this.hasValue != this.output.hasConnection()) {
+            // attempt to refresh the value
             this.getNextValue(5);
         }
 
