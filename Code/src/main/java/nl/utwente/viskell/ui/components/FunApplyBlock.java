@@ -79,6 +79,7 @@ public class FunApplyBlock extends Block {
             this.anchor.layoutXProperty().bind(this.inputType.widthProperty().divide(2));
             this.getChildren().addAll(this.anchor, this.typePane);
             this.setTranslateY(-9);
+            this.setPickOnBounds(false);
 
             dragContext = new DragContext(this.typePane);
             dragContext.setDragInitAction(c -> {this.curried = false;});
@@ -158,6 +159,7 @@ public class FunApplyBlock extends Block {
         this.resTypeLabel.getStyleClass().add("resultType");
         VBox outputSpace = new VBox(this.resTypeLabel, this.output);
         outputSpace.setAlignment(Pos.CENTER);
+        outputSpace.setPickOnBounds(false);
         
         Type t = funInfo.getFreshSignature();
         while (t instanceof FunType) {
@@ -169,6 +171,8 @@ public class FunApplyBlock extends Block {
         Iterables.getLast(FunApplyBlock.this.inputs).curryArrow.setManaged(false);
 
         Pane inputSpace = new HBox(0, this.inputs.toArray(new Node[this.inputs.size()]));
+        inputSpace.setPickOnBounds(false);
+        
         this.curriedOutput = new Pane() {
                 @Override
                 public double computePrefWidth(double height) {

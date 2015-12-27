@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.SliderBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.SliderBlock" xmlns:fx="http://javafx.com/fxml/">
-    <BorderPane styleClass="value, block">
+    <BorderPane styleClass="value, block" pickOnBounds="false">
         <center>
             <VBox alignment="CENTER">
                 <Slider min="-1.0" max="1.0" fx:id="slider"/>
@@ -11,7 +11,7 @@
             </VBox>
         </center>
         <bottom>
-            <VBox fx:id="outputSpace">
+            <VBox fx:id="outputSpace" pickOnBounds="false">
             	<Label fx:id="valueType" styleClass="inputType"/>
             </VBox>
         </bottom>
