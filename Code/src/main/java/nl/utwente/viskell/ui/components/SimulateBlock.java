@@ -14,7 +14,7 @@ import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FutureCallback;
@@ -48,7 +48,7 @@ public class SimulateBlock extends Block implements ComponentLoader {
     /** The number of results to calculate and show */
     private int iteration;
 
-    public SimulateBlock(CustomUIPane pane) {
+    public SimulateBlock(ToplevelPane pane) {
         super(pane);
         loadFXML("SimulateBlock");
 
@@ -58,7 +58,7 @@ public class SimulateBlock extends Block implements ComponentLoader {
         iteration = 0;
 
         String signature = "(Num a, Show b) => Signal a -> Signal b";
-        funConstraint = getPane().getEnvInstance().buildType(signature);
+        funConstraint = getToplevel().getEnvInstance().buildType(signature);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class SimulateBlock extends Block implements ComponentLoader {
         inputType.setText(inputAnchor.getStringType());
 
         if (inputAnchor.hasValidConnection()) {
-            GhciSession ghciSession = getPane().getGhciSession();
+            GhciSession ghciSession = getToplevel().getGhciSession();
             String format = "Data.List.take %d $ simulate (%s) [1..]";
             String expr = String.format(format, iteration, inputAnchor.getFullExpr().toHaskell());
             ListenableFuture<String> result = ghciSession.pullRaw(expr);
@@ -114,8 +114,8 @@ public class SimulateBlock extends Block implements ComponentLoader {
     }
 
     @Override
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
-        return inputAnchor.getLocalExpr();
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
+        return inputAnchor.getLocalExpr(outsideAnchors);
     }
 
     @Override

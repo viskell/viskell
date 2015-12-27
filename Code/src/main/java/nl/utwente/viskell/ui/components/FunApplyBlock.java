@@ -1,7 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -28,7 +27,7 @@ import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.DragContext;
 
 import com.google.common.collect.ImmutableList;
@@ -80,6 +79,7 @@ public class FunApplyBlock extends Block {
             this.anchor.layoutXProperty().bind(this.inputType.widthProperty().divide(2));
             this.getChildren().addAll(this.anchor, this.typePane);
             this.setTranslateY(-9);
+            this.setPickOnBounds(false);
 
             dragContext = new DragContext(this.typePane);
             dragContext.setDragInitAction(c -> {this.curried = false;});
@@ -145,7 +145,7 @@ public class FunApplyBlock extends Block {
     /** The Label in which the information of the function is displayed. */
     @FXML private Label functionInfo;
     
-    public FunApplyBlock(FunctionInfo funInfo, CustomUIPane pane) {
+    public FunApplyBlock(FunctionInfo funInfo, ToplevelPane pane) {
         super(pane);
         this.loadFXML("FunApplyBlock");
 
@@ -159,6 +159,7 @@ public class FunApplyBlock extends Block {
         this.resTypeLabel.getStyleClass().add("resultType");
         VBox outputSpace = new VBox(this.resTypeLabel, this.output);
         outputSpace.setAlignment(Pos.CENTER);
+        outputSpace.setPickOnBounds(false);
         
         Type t = funInfo.getFreshSignature();
         while (t instanceof FunType) {
@@ -170,6 +171,8 @@ public class FunApplyBlock extends Block {
         Iterables.getLast(FunApplyBlock.this.inputs).curryArrow.setManaged(false);
 
         Pane inputSpace = new HBox(0, this.inputs.toArray(new Node[this.inputs.size()]));
+        inputSpace.setPickOnBounds(false);
+        
         this.curriedOutput = new Pane() {
                 @Override
                 public double computePrefWidth(double height) {
@@ -216,7 +219,7 @@ public class FunApplyBlock extends Block {
     @Override
     public Optional<Block> getNewCopy() {
         if (this.inputs.stream().map(i -> i.curried).filter(c -> c).count() == 0) {
-            return Optional.of(new FunApplyBlock(this.funInfo, this.getPane()));
+            return Optional.of(new FunApplyBlock(this.funInfo, this.getToplevel()));
         }
         
         return Optional.empty();
@@ -247,10 +250,9 @@ public class FunApplyBlock extends Block {
     }
 
     @Override
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
         Expression expr = new FunVar(this.funInfo);
         List<Binder> curriedArgs = new ArrayList<>();
-        Set<OutputAnchor> outsideAnchors = new HashSet<>();
         
         for (FunInputAnchor arg : this.inputs) {
             if (arg.curried) {
@@ -258,18 +260,16 @@ public class FunApplyBlock extends Block {
                 curriedArgs.add(ca);
                 expr = new Apply(expr, new LocalVar(ca));
             } else {
-                Pair<Expression, Set<OutputAnchor>> pair = arg.anchor.getLocalExpr();
-                expr = new Apply(expr, pair.a);
-                outsideAnchors.addAll(pair.b);
+                expr = new Apply(expr, arg.anchor.getLocalExpr(outsideAnchors));
             }
         }
         
         outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
         
         if (curriedArgs.isEmpty()) {
-            return new Pair<>(expr, outsideAnchors);
+            return expr;
         } else {
-            return new Pair<>(new Lambda(curriedArgs, expr), outsideAnchors);
+            return new Lambda(curriedArgs, expr);
         }
     }
 

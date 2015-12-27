@@ -19,7 +19,7 @@ import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.ComponentLoader;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.DragContext;
 
 import com.google.common.collect.ImmutableList;
@@ -55,7 +55,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
      * @param pane the parent ui pane.
      * @param arity the number of arguments of this lambda.
      */
-    public DefinitionBlock(CustomUIPane pane, int arity) {
+    public DefinitionBlock(ToplevelPane pane, int arity) {
         super(pane);
         this.loadFXML("DefinitionBlock");
 
@@ -79,7 +79,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
      * @param name of the function.
      * @param type the full function type.
      */
-    public DefinitionBlock(CustomUIPane pane, String name, Type type) {
+    public DefinitionBlock(ToplevelPane pane, String name, Type type) {
         super(pane);
         this.loadFXML("DefinitionBlock");
 
@@ -122,8 +122,8 @@ public class DefinitionBlock extends Block implements ComponentLoader {
      */
     protected void createFunctionBlock(MouseEvent event) {
         funInfo.ifPresent(info -> {
-            Block block = (event.isControlDown()) ? new FunApplyBlock(info, getPane()) : new FunctionBlock(info, getPane());
-            getPane().addBlock(block);
+            Block block = (event.isControlDown()) ? new FunApplyBlock(info, getToplevel()) : new FunctionBlock(info, getToplevel());
+            getToplevel().addBlock(block);
             Point2D pos = this.localToParent(0, 0);
             block.relocate(pos.getX(), pos.getY());
             block.initiateConnectionChanges();
@@ -182,8 +182,8 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     }
     
     @Override
-    public final Pair<Expression,Set<OutputAnchor>> getLocalExpr() {
-        return this.body.getLocalExpr();
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
+        return this.body.getLocalExpr(outsideAnchors);
     }
 
     @Override

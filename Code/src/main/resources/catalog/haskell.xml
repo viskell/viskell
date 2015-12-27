@@ -183,9 +183,47 @@
       <instance name="(,,,,,)" constrainedArgs="6"/>
       <instance name="(,,,,,,)" constrainedArgs="7"/>
     </class>
+    <class name="Monoid">
+      <instance name="Ordering"/>
+      <instance name="Maybe" constrainedArgs="1"/>
+      <instance name="IO"/>
+      <instance name="[]"/>
+      <instance name="()"/>
+      <instance name="(,)" constrainedArgs="2"/>
+      <instance name="(,,)" constrainedArgs="3"/>
+      <instance name="(,,,)" constrainedArgs="4"/>
+      <instance name="(,,,,)" constrainedArgs="5"/>
+    </class>
     <class name="Functor">
       <instance name="Maybe"/>
       <instance name="IO"/>
+      <instance name="[]"/>
+    </class>
+    <class name="Applicative">
+      <superClass name="Functor"/>
+      <instance name="Maybe"/>
+      <instance name="IO"/>
+      <instance name="[]"/>
+    </class>
+    <class name="Monad">
+      <superClass name="Applicative"/>
+      <instance name="Maybe"/>
+      <instance name="IO"/>
+      <instance name="[]"/>
+    </class>
+    <class name="Alternative">
+      <superClass name="Applicative"/>
+      <instance name="Maybe"/>
+      <instance name="[]"/>
+    </class>
+    <class name="Foldable">
+      <instance name="Maybe"/>
+      <instance name="[]"/>
+    </class>
+    <class name="Traversable">
+      <superClass name="Functor"/>
+      <superClass name="Foldable"/>
+      <instance name="Maybe"/>
       <instance name="[]"/>
     </class>
   </classes>

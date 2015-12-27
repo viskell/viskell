@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.DefinitionBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.DefinitionBlock" xmlns:fx="http://javafx.com/fxml/">
-    <VBox>
+    <VBox pickOnBounds="false">
     	<Pane styleClass="lambdaBorder">
         	<Label text="Spacer" styleClass="inputType" visible="false"/>
        	</Pane>
@@ -11,6 +11,6 @@
        	<Pane styleClass="lambdaBorder">
        		<Label fx:id="signature" styleClass="inputType" />
        	</Pane>	
-		<HBox fx:id="funSpace" translateX="20" alignment="BOTTOM_LEFT"/>
+		<HBox fx:id="funSpace" translateX="20" alignment="BOTTOM_LEFT" pickOnBounds="false"/>
     </VBox>
 </fx:root>

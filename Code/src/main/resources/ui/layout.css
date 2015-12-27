@@ -1,8 +1,8 @@
-CustomUIPane {
+ToplevelPane {
     -fx-background-position: 2500 2500;
 }
 
-CustomUIPane, CustomUIPane > Pane > Pane > Pane {
+ToplevelPane, ToplevelPane > Pane > Pane > Pane {
     -fx-min-width: 8000;
     -fx-min-height: 4500;
     -fx-max-width: 8000;

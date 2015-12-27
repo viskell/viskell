@@ -26,7 +26,7 @@ public class Main extends Application {
         Font.loadFont(this.getClass().getResourceAsStream("/ui/fonts/titillium.otf"), 20);
 
         // Init TactilePane
-        CustomUIPane tactilePane = new CustomUIPane();
+        ToplevelPane tactilePane = new ToplevelPane();
 
         overlay = new MainOverlay(tactilePane);
 

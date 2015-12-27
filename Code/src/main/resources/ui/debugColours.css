@@ -16,41 +16,41 @@ Connection.error {
     -fx-stroke: red;
 }
 
-*, CustomUIPane > Pane > Pane > Pane > * { 
+*, ToplevelPane > Pane > Pane > Pane > * { 
     -fx-border-style: solid;
     -fx-border-size: 2px;
 }
 
-* > *, CustomUIPane > Pane > Pane > Pane > * > * { 
+* > *, ToplevelPane > Pane > Pane > Pane > * > * { 
     -fx-border-color: yellow;
 }
 
-* > * > *, CustomUIPane > Pane > Pane > Pane > * > * > * { 
+* > * > *, ToplevelPane > Pane > Pane > Pane > * > * > * { 
     -fx-border-color: red;
     -fx-background-color: rgba(255, 255, 255, 0.2);
 }
 
-* > * > * > *, CustomUIPane > Pane > Pane > Pane > * > * > * > * { 
+* > * > * > *, ToplevelPane > Pane > Pane > Pane > * > * > * > * { 
     -fx-border-color: lime;
 }
 
-* > * > * > * > *, CustomUIPane > Pane > Pane > Pane > * > * > * > * > * { 
+* > * > * > * > *, ToplevelPane > Pane > Pane > Pane > * > * > * > * > * { 
     -fx-border-color: fuchsia;
 }
 
-* > * > * > * > * > *, CustomUIPane > Pane > Pane > Pane > * > * > * > * > * > * { 
+* > * > * > * > * > *, ToplevelPane > Pane > Pane > Pane > * > * > * > * > * > * { 
     -fx-border-color: orange;
 }
 
-* > * > * > * > * > * > *, CustomUIPane > Pane > Pane > Pane > * > * > * > * > * > * > * { 
+* > * > * > * > * > * > *, ToplevelPane > Pane > Pane > Pane > * > * > * > * > * > * > * { 
     -fx-border-color: cyan;
 }
 
-* > * > * > * > * > * > * > *, CustomUIPane > Pane > Pane > Pane > * > * > * > * > * > * > * > * { 
+* > * > * > * > * > * > * > *, ToplevelPane > Pane > Pane > Pane > * > * > * > * > * > * > * > * { 
     -fx-border-color: red;
 }
 
-CustomUIPane, PreferencesWindow, CustomUIPane > Pane > Pane > * {
+ToplevelPane, PreferencesWindow, ToplevelPane > Pane > Pane > * {
     -fx-background-color: #303030;
 }
 

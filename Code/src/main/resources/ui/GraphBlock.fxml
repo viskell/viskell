@@ -4,9 +4,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import nl.utwente.viskell.ui.components.GraphBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.GraphBlock" xmlns:fx="http://javafx.com/fxml/">
-    <BorderPane styleClass="graph, block">
+    <BorderPane styleClass="graph, block" pickOnBounds="false">
         <top>
-            <Pane fx:id="inputSpace" maxHeight="0"/>
+            <Pane fx:id="inputSpace" maxHeight="0" pickOnBounds="false" />
         </top>
         <center>
             <LineChart  prefWidth="500" prefHeight="300" fx:id="chart" createSymbols="false" legendVisible="false" animated="false">

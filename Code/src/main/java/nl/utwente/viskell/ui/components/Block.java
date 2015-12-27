@@ -19,7 +19,7 @@ import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.CircleMenu;
 import nl.utwente.viskell.ui.ComponentLoader;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.DragContext;
 import nl.utwente.viskell.ui.TrashContainer;
 import nl.utwente.viskell.ui.serialize.Bundleable;
@@ -40,7 +40,7 @@ import nl.utwente.viskell.ui.serialize.Bundleable;
  */
 public abstract class Block extends StackPane implements Bundleable, ComponentLoader {
     /** The pane that is used to hold state and place all components on. */
-    private final CustomUIPane parentPane;
+    private final ToplevelPane toplevel;
     
     /** The context that deals with dragging and touch event for this Block */
     protected DragContext dragContext;
@@ -57,21 +57,29 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /**
      * @param pane The pane this block belongs to.
      */
-    public Block(CustomUIPane pane) {
-        this.parentPane = pane;
+    public Block(ToplevelPane pane) {
+        this.toplevel = pane;
         this.freshAnchorTypes = false;
         this.updateInProgress = false;
-        this.container = pane.getTopLevel();
+        this.container = pane;
         this.container.attachBlock(this);
         
+        // only the actual shape should be selected for events, not the larger outside bounds
+        this.setPickOnBounds(false);
+        
+        if (!this.belongsOnBottom()) {
+            // make all non container blocks resize themselves around horizontal midpoint to reduce visual movement 
+            this.translateXProperty().bind(this.widthProperty().divide(2).negate());
+        }
+        
         this.dragContext = new DragContext(this);
-        this.dragContext.setSecondaryClickAction(p -> CircleMenu.showFor(this, this.localToScreen(p)));
+        this.dragContext.setSecondaryClickAction(p -> CircleMenu.showFor(this, this.localToParent(p)));
         dragContext.setDragFinishAction(event -> refreshContainer());
     }
 
     /** @return the parent CustomUIPane of this component. */
-    public final CustomUIPane getPane() {
-        return this.parentPane;
+    public final ToplevelPane getToplevel() {
+        return this.toplevel;
     }
 
     /**
@@ -156,20 +164,23 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         }
     }
     
-    /** @return A pair containing the expression this block represents and a set of out-of-reach OutputAnchors. */
-    public abstract Pair<Expression,Set<OutputAnchor>> getLocalExpr();
+    /**
+     * @param outsideAnchors the set being accumulated of out-of-reach OutputAnchors that are required for the expression.
+     * @return The expression this block represents.
+     */
+    public abstract Expression getLocalExpr(Set<OutputAnchor> outsideAnchors);
     
     /**
      * @return A complete expression of this block and all its dependencies.
      */
     public final Expression getFullExpr() {
-        Pair<Expression, Set<OutputAnchor>> localExpr = getLocalExpr();
+        Set<OutputAnchor> outerAnchors = new HashSet<>();
+        Expression localExpr = getLocalExpr(outerAnchors);
         
-        LetExpression fullExpr = new LetExpression(localExpr.a, false);
-        Set<OutputAnchor> outerAnchors = localExpr.b;
-        extendExprGraph(fullExpr, this.parentPane.getTopLevel(), outerAnchors);
+        LetExpression fullExpr = new LetExpression(localExpr, false);
+        extendExprGraph(fullExpr, this.toplevel, outerAnchors);
         
-        outerAnchors.forEach(block -> block.extendExprGraph(fullExpr, this.parentPane.getTopLevel(), new HashSet<>()));
+        outerAnchors.forEach(block -> block.extendExprGraph(fullExpr, this.toplevel, new HashSet<>()));
         
         return fullExpr;
     }
@@ -216,19 +227,19 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     public void deleteAllLinks() {
         this.getAllInputs().forEach(InputAnchor::removeConnections);
         this.getAllOutputs().forEach(OutputAnchor::removeConnections);
-        this.container.removeBlock(this);
+        this.container.detachBlock(this);
         this.container = TrashContainer.instance;
     }
     
     public void moveIntoContainer(BlockContainer target) {
         BlockContainer source = this.container;
         if (source != target) {
-            this.container.removeBlock(this);
+            this.container.detachBlock(this);
             this.container = target;
             target.attachBlock(this);
             
             if (this.getInternalContainers().size() > 0) {
-                this.parentPane.moveInFrontOfParentContainers(this);
+                this.toplevel.moveInFrontOfParentContainers(this);
             }
             
             if (source instanceof WrappedContainer) {
@@ -262,10 +273,10 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         List<? extends WrappedContainer> internals = this.getInternalContainers();
         Predicate<BlockContainer> notInSelf = con -> internals.stream().noneMatch(internal -> con.isContainedWithin(internal));
         
-        BlockContainer newContainer = parentPane.getBlockContainers().
+        BlockContainer newContainer = toplevel.getAllBlockContainers().
             filter(container -> within.test(container.getBoundsInScene()) && notInSelf.test(container)).
                 reduce((a, b) -> !a.getBoundsInScene().contains(b.getBoundsInScene()) ? a : b).
-                    orElse(this.parentPane.getTopLevel());
+                    orElse(this.toplevel);
         
         this.moveIntoContainer(newContainer);
     }

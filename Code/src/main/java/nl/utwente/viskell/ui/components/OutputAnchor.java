@@ -152,15 +152,13 @@ public class OutputAnchor extends ConnectionAnchor {
     protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<OutputAnchor> outsideAnchors) {
         if (block.getContainer().equals(container)) {
             boolean added = false;
-            Pair<Expression, Set<OutputAnchor>> pair = block.getLocalExpr();
+            Expression expr = block.getLocalExpr(outsideAnchors);
             
             if (block instanceof MatchBlock) {
-                added = exprGraph.addLetBinding(((MatchBlock)block).getPrimaryBinder(), pair.a);
+                added = exprGraph.addLetBinding(((MatchBlock)block).getPrimaryBinder(), expr);
             } else {
-                added = exprGraph.addLetBinding(binder, pair.a);
+                added = exprGraph.addLetBinding(binder, expr);
             }
-            
-            outsideAnchors.addAll(pair.b);
             
             if (added) {
                 // for a new let binding everything from the subexpression in this block needs to be included

@@ -1,13 +1,14 @@
 package nl.utwente.viskell.ui;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
@@ -18,6 +19,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
@@ -27,9 +29,11 @@ import nl.utwente.viskell.ui.components.DrawWire;
 import nl.utwente.viskell.ui.components.WrappedContainer;
 
 /**
- * The core Pane that also keeps state for the user interface.
+ * The core Pane that represent the programming workspace.
+ * It is a layered visualization of all blocks, wires, and menu elements.
+ * And represents the toplevel container of all blocks.
  */
-public class CustomUIPane extends Region {
+public class ToplevelPane extends Region implements BlockContainer {
     /** bottom pane layer intended for block container such as lambda's */
     private final Pane bottomLayer;
 
@@ -39,13 +43,7 @@ public class CustomUIPane extends Region {
     /** higher pane layer for connections wires */
     private final Pane wireLayer;
 
-    /** The top level container for all blocks */
-    private TopLevel toplevel;
-    
-    private ConnectionCreationManager connectionCreationManager;
-    
     private GhciSession ghci;
-    private InspectorWindow inspector;
     private PreferencesWindow preferences;
 
     private Point2D dragStart;
@@ -54,28 +52,26 @@ public class CustomUIPane extends Region {
     /** Boolean to indicate that a drag (pan) action has started, yet not finished. */
     private boolean dragging;
 
-    /** The File we're currently working on, if any. */
-    private Optional<File> currentFile;
-
+    /** The set of blocks that logically belong to this top level */
+    private final Set<Block> attachedBlocks;
+    
     /**
      * Constructs a new instance.
      */
-    public CustomUIPane() {
+    public ToplevelPane() {
         super();
+        this.attachedBlocks = new HashSet<>();
+        
         this.bottomLayer = new Pane();
         this.blockLayer = new Pane(this.bottomLayer);
         this.wireLayer = new Pane(this.blockLayer);
         this.getChildren().add(this.wireLayer);
 
-        this.toplevel = new TopLevel(this);
-        this.connectionCreationManager = new ConnectionCreationManager(this);
         this.dragStart = Point2D.ZERO;
         this.offset = Point2D.ZERO;
 
         this.ghci = new GhciSession();
         this.ghci.startAsync();
-        
-        this.currentFile = Optional.empty();
 
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePress);
         this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDrag);
@@ -83,20 +79,8 @@ public class CustomUIPane extends Region {
         this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handleTouchPress);
     }
 
-    public void showInspector() {
-        if (inspector == null) {
-            inspector = new InspectorWindow(this);
-        }
-
-        inspector.show();
-    }
-
-    public void showPreferences() {
-        if (preferences == null) {
-            preferences = new PreferencesWindow(this);
-        }
-
-        preferences.show();
+    public void setPreferences(PreferencesWindow prefs) {
+        this.preferences = prefs;
     }
 
     private void handleMousePress(MouseEvent e) {
@@ -160,6 +144,9 @@ public class CustomUIPane extends Region {
     	/** Whether this touch area has been dragged further than the drag threshold. */
     	private boolean dragStarted;
     	
+    	/** Whether this touch area has spawned a menu.  */
+    	private boolean menuCreated;
+    	
     	/** Timed delay for the removal of this touch area. */
     	private Timeline removeDelay;
     	
@@ -173,9 +160,10 @@ public class CustomUIPane extends Region {
 			super(touchPoint.getX(), touchPoint.getY(), 100, Color.TRANSPARENT);
 			this.touchID = touchPoint.getId();
 			this.dragStarted = false;
+			this.menuCreated = false;
 			
-			this.removeDelay = new Timeline(new KeyFrame(Duration.millis(100), this::remove));
-	    	this.menuDelay = new Timeline(new KeyFrame(Duration.millis(250), this::finishMenu));
+			this.removeDelay = new Timeline(new KeyFrame(Duration.millis(250), this::remove));
+	    	this.menuDelay = new Timeline(new KeyFrame(Duration.millis(200), this::finishMenu));
 	    	
 	    	touchPoint.grab(this);
 	    	this.addEventHandler(TouchEvent.TOUCH_RELEASED, this::handleRelease);
@@ -184,29 +172,35 @@ public class CustomUIPane extends Region {
 		}
     	
 		private void remove(ActionEvent event) {
-			CustomUIPane.this.getChildren().remove(this);
+			ToplevelPane.this.getChildren().remove(this);
 		}
 		
 		private void finishMenu(ActionEvent event) {
-			CustomUIPane.this.showFunctionMenuAt(this.getCenterX(), this.getCenterY(), false);
-			CustomUIPane.this.getChildren().remove(this);
+			ToplevelPane.this.showFunctionMenuAt(this.getCenterX(), this.getCenterY(), false);
+			ToplevelPane.this.getChildren().remove(this);
+			this.menuCreated = true;
 		}
 		
 		private void handlePress(TouchEvent event) {
 			// this might have been a drag glitch, so halt release actions
 			this.removeDelay.stop();
-			this.menuDelay.stop();
-			
+			if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 2) {
+				this.menuDelay.stop();
+			}
 			event.consume();
 		}
 		
     	private void handleRelease(TouchEvent event) {
-    		if (event.getTouchPoint().getId() != this.touchID && !this.dragStarted) {
+    		long fingerCount = event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count();
+
+    		if (fingerCount == 1) {
+     			// trigger area removal timer
+     			this.removeDelay.play();
+     		} else if (this.dragStarted || this.menuCreated) {
+    			// avoid accidental creation of (more) menus
+    		} else if (fingerCount == 2) {
     			// trigger menu creation timer
     			this.menuDelay.play();
-    		} else if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 1) {
-    			// trigger area removal timer
-    			this.removeDelay.play();
     		}
     		
     		event.consume();
@@ -225,21 +219,16 @@ public class CustomUIPane extends Region {
     				// ignore very small movements
                 } else if ((deltaX*deltaX + deltaY*deltaY) > 10000) {
                     // FIXME: ignore too large movements
-                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 10) {
+                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 24) {
     				this.dragStarted = true;
-    				CustomUIPane.this.setTranslateX(CustomUIPane.this.getTranslateX() + deltaX);
-    				CustomUIPane.this.setTranslateY(CustomUIPane.this.getTranslateY() + deltaY);
+    				ToplevelPane.this.setTranslateX(ToplevelPane.this.getTranslateX() + deltaX);
+    				ToplevelPane.this.setTranslateY(ToplevelPane.this.getTranslateY() + deltaY);
     			}
     		}
     		
     		event.consume();
     	}
     	
-    }
-    
-    private void setScale(double scale) {
-        this.setScaleX(scale);
-        this.setScaleY(scale);
     }
 
     /**
@@ -250,11 +239,6 @@ public class CustomUIPane extends Region {
         return ghci.getCatalog().asEnvironment();
     }
 
-    /** @return the top level block container */
-    public TopLevel getTopLevel() {
-        return this.toplevel;
-    }
-    
     /** Remove the given block from this UI pane, including its connections. */
     public void removeBlock(Block block) {
         block.deleteAllLinks();
@@ -275,46 +259,8 @@ public class CustomUIPane extends Region {
         });
     }
     
-    
-    public ConnectionCreationManager getConnectionCreationManager() {
-        return connectionCreationManager;
-    }
-
-    public GhciSession getGhciSession() {
+     public GhciSession getGhciSession() {
         return ghci;
-    }
-
-    public void zoomOut() {
-        zoom(0.8);
-    }
-
-    public void zoomIn() {
-        zoom(1.25);
-    }
-
-    private void zoom(double ratio) {
-        double scale = this.getScaleX();
-
-        /* Limit zoom to reasonable range. */
-        if (scale <= 0.2 && ratio < 1) return;
-        if (scale >= 3 && ratio > 1) return;
-
-        this.setScale(scale * ratio);
-        this.setTranslateX(this.getTranslateX() * ratio);
-        this.setTranslateY(this.getTranslateY() * ratio);
-    }
-
-    /** Gets the file we're currently working on, if any. */
-    public Optional<File> getCurrentFile() {
-        return currentFile;
-    }
-
-    /**
-     * Sets the file we're currently working on. Probably called from a Save
-     * As/Open operation.
-     */
-    public void setCurrentFile(File currentFile) {
-        this.currentFile = Optional.of(currentFile);
     }
 
     /**
@@ -337,11 +283,11 @@ public class CustomUIPane extends Region {
         }
     }
 
-    public boolean addMenu(FunctionMenu menu) {
+    public boolean addMenu(Pane menu) {
         return this.getChildren().add(menu);
     }
 
-    public boolean removeMenu(FunctionMenu menu) {
+    public boolean removeMenu(Pane menu) {
         return this.getChildren().remove(menu);
     }
 
@@ -361,11 +307,19 @@ public class CustomUIPane extends Region {
         return this.getChildren().remove(drawWire);
     }
 
+    public boolean addTouchArea(Shape area) {
+        return this.getChildren().add(area);
+    }
+    
+    public boolean removeTouchArea(Shape area) {
+        return this.getChildren().remove(area);
+    }
+    
     public void clearChildren() {
         this.bottomLayer.getChildren().clear();
         this.blockLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
         this.wireLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
-        this.toplevel = new TopLevel(this);
+        this.attachedBlocks.clear();
     }
 
     public Stream<Node> streamChildren() {
@@ -376,7 +330,7 @@ public class CustomUIPane extends Region {
         return Stream.concat(bottom, Stream.concat(blocks, wires));
     }
 
-    public Stream<BlockContainer> getBlockContainers() {
+    public Stream<BlockContainer> getAllBlockContainers() {
         return bottomLayer.getChildrenUnmodifiable().stream().flatMap(node ->
             (node instanceof Block) ? ((Block)node).getInternalContainers().stream() : Stream.empty());
     }
@@ -403,4 +357,29 @@ public class CustomUIPane extends Region {
         }
     }
     
+    @Override
+    public Bounds getBoundsInScene() {
+        return this.localToScene(this.getBoundsInLocal());
+    }
+
+    @Override
+    public void attachBlock(Block block) {
+        this.attachedBlocks.add(block);
+    }
+
+    @Override
+    public void detachBlock(Block block) {
+        this.attachedBlocks.remove(block);
+    }
+
+    @Override
+    public Stream<Block> getAttachedBlocks() {
+        return this.attachedBlocks.stream();
+    }
+
+    @Override
+    public BlockContainer getParentContainer() {
+        return this;
+    }
+
 }

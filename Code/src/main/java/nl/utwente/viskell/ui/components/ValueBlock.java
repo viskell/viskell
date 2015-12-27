@@ -1,6 +1,5 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -13,7 +12,7 @@ import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -44,19 +43,18 @@ public class ValueBlock extends Block {
      * Construct a new ValueBlock.
      * @param pane The parent pane this Block resides on.
      */
-    public ValueBlock(CustomUIPane pane, Type type, String value) {
-        this(pane, type, value, "ValueBlock");
+    public ValueBlock(ToplevelPane pane, Type type, String value) {
+        this("ValueBlock", pane, type);
+        this.setValue(value);
     }
     
-    protected ValueBlock(CustomUIPane pane, Type type, String value, String fxml) {
+    protected ValueBlock(String fxml, ToplevelPane pane, Type type) {
         super(pane);
         loadFXML(fxml);
 
         output = new OutputAnchor(this, new Binder("val", type));
         outputSpace.getChildren().add(output);
         outputSpace.setTranslateY(9);
-       
-        setValue(value);
     }
 
     /**
@@ -74,8 +72,8 @@ public class ValueBlock extends Block {
     }
 
     @Override
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
-        return new Pair<>(new Value(output.getType(), getValue()), new HashSet<>());
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
+        return new Value(output.getType(), getValue());
     }
 
     @Override
@@ -95,7 +93,7 @@ public class ValueBlock extends Block {
     
     @Override
     public Optional<Block> getNewCopy() {
-        return Optional.of(new ValueBlock(this.getPane(), this.output.binder.getFreshAnnotationType(), this.value.getText()));
+        return Optional.of(new ValueBlock(this.getToplevel(), this.output.binder.getFreshAnnotationType(), this.value.getText()));
     }
     
     @Override

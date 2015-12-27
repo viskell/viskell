@@ -51,7 +51,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     protected DragContext dragContext;
 
     private Accordion categoryContainer = new Accordion();
-    private CustomUIPane parent;
+    private ToplevelPane parent;
     @FXML
     private Pane searchSpace;
     @FXML
@@ -59,7 +59,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     @FXML
     private Pane utilSpace;
 
-    public FunctionMenu(boolean byMouse, HaskellCatalog catalog, CustomUIPane pane, boolean verticalCurry) {
+    public FunctionMenu(boolean byMouse, HaskellCatalog catalog, ToplevelPane pane, boolean verticalCurry) {
         this.parent = pane;
         this.loadFXML("FunctionMenu");
         this.dragContext = new DragContext(this);
@@ -149,12 +149,14 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
         if (GhciSession.pickBackend() == GhciSession.Backend.GHCi) {
             // These blocks are specifically for GHCi
-            Button sliderBlockButton = new Button("Slider");
-            sliderBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent)));
+            Button rationalBlockButton = new Button("Rational");
+            rationalBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent, false)));
+            Button IntegerBlockButton = new Button("Integer");
+            IntegerBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent, true)));
             Button graphBlockButton = new Button("Graph");
             graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
 
-            utilSpace.getChildren().addAll(sliderBlockButton, graphBlockButton);
+            utilSpace.getChildren().addAll(rationalBlockButton, IntegerBlockButton, graphBlockButton);
         }
 
         if (GhciSession.pickBackend() == GhciSession.Backend.Clash) {

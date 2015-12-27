@@ -26,7 +26,7 @@ public final class TrashContainer implements BlockContainer {
     }
 
     @Override
-    public void removeBlock(Block block) {
+    public void detachBlock(Block block) {
     }
 
     @Override

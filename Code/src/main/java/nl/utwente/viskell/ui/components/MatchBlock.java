@@ -15,7 +15,7 @@ import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 import com.google.common.collect.ImmutableList;
 
@@ -42,7 +42,7 @@ public class MatchBlock extends Block {
 
     protected ConstructorBinder primaryBinder;
     
-    public MatchBlock(FunctionInfo funInfo, CustomUIPane pane) {
+    public MatchBlock(FunctionInfo funInfo, ToplevelPane pane) {
         super(pane);
         this.loadFXML("MatchBlock");
         
@@ -86,7 +86,7 @@ public class MatchBlock extends Block {
 
     @Override
     public Optional<Block> getNewCopy() {
-        return Optional.of(new MatchBlock(this.info, this.getPane()));
+        return Optional.of(new MatchBlock(this.info, this.getToplevel()));
     }
 
     @Override
@@ -108,8 +108,8 @@ public class MatchBlock extends Block {
     }
 
     @Override
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
-        return input.getLocalExpr();
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
+        return input.getLocalExpr(outsideAnchors);
     }
 
     @Override

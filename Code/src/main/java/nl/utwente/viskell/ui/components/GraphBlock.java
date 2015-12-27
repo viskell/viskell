@@ -21,7 +21,7 @@ import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
@@ -50,7 +50,7 @@ public class GraphBlock extends Block {
      * Constructs a new GraphBlock.
      * @param pane The CustomUIPane on which this Block resides.
      */
-    public GraphBlock(CustomUIPane pane) {
+    public GraphBlock(ToplevelPane pane) {
         super(pane);
         loadFXML("GraphBlock");
 
@@ -76,12 +76,12 @@ public class GraphBlock extends Block {
     
     @Override
     public Optional<Block> getNewCopy() {
-        return Optional.of(new GraphBlock(this.getPane()));
+        return Optional.of(new GraphBlock(this.getToplevel()));
     }
     
     @Override
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
-        return input.getLocalExpr();
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
+        return input.getLocalExpr(outsideAnchors);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class GraphBlock extends Block {
         double max = x.getUpperBound();
 
         try {
-            GhciSession ghciSession = getPane().getGhciSession();
+            GhciSession ghciSession = getToplevel().getGhciSession();
             String funName = "graph_fun_" + Integer.toHexString(this.hashCode());
             ghciSession.push(funName, this.getFullExpr());
             String range = String.format(Locale.US, " [%f,%f..%f]", min, min+step, max);

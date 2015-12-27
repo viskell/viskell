@@ -1,7 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -19,7 +18,7 @@ import nl.utwente.viskell.haskell.expr.FunVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -59,7 +58,7 @@ public class FunctionBlock extends Block {
      * @param pane
      *            The parent pane in which this FunctionBlock exists.
      */
-    public FunctionBlock(FunctionInfo funInfo, CustomUIPane pane) {
+    public FunctionBlock(FunctionInfo funInfo, ToplevelPane pane) {
         super(pane);
         this.funInfo = funInfo;
 
@@ -128,26 +127,23 @@ public class FunctionBlock extends Block {
     @Override
     public Optional<Block> getNewCopy() {
         if (this.argumentSpace.getKnotIndex() == this.getAllInputs().size()) {
-            return Optional.of(new FunctionBlock(this.funInfo, this.getPane()));
+            return Optional.of(new FunctionBlock(this.funInfo, this.getToplevel()));
         }
     
         return Optional.empty();
     }
     
     @Override
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
         Expression expr = new FunVar(this.funInfo);
-        Set<OutputAnchor> outsideAnchors = new HashSet<>();
         
         for (InputAnchor in : this.getActiveInputs()) {
-            Pair<Expression, Set<OutputAnchor>> pair = in.getLocalExpr();
-            expr = new Apply(expr, pair.a);
-            outsideAnchors.addAll(pair.b);
+            expr = new Apply(expr, in.getLocalExpr(outsideAnchors));
         }
         
         outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
         
-        return new Pair<>(expr, outsideAnchors);
+        return expr;
     }
     
     @Override

@@ -1,7 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -31,7 +30,7 @@ import nl.utwente.viskell.haskell.expr.LocalVar;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.CustomUIPane;
+import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.DragContext;
 
 public class BinOpApplyBlock extends Block {
@@ -78,6 +77,7 @@ public class BinOpApplyBlock extends Block {
             this.anchor.layoutXProperty().bind(this.inputType.widthProperty().divide(2));
             this.getChildren().addAll(this.anchor, this.typePane);
             this.setTranslateY(-9);
+            this.setPickOnBounds(false);
 
             dragContext = new DragContext(this.typePane);
             dragContext.setDragInitAction(c -> {this.curried = false;});
@@ -146,7 +146,7 @@ public class BinOpApplyBlock extends Block {
     /** The Label in which the information of the function is displayed. */
     private Label functionInfo;
 
-    public BinOpApplyBlock(FunctionInfo funInfo, CustomUIPane pane) {
+    public BinOpApplyBlock(FunctionInfo funInfo, ToplevelPane pane) {
         super(pane);
         this.loadFXML("BinOpApplyBlock");
 
@@ -164,6 +164,7 @@ public class BinOpApplyBlock extends Block {
         this.resTypeLabel.getStyleClass().add("resultType");
         VBox outputSpace = new VBox(this.resTypeLabel, this.output);
         outputSpace.setAlignment(Pos.CENTER);
+        outputSpace.setPickOnBounds(false);
         
         this.leftInput = new FunInputAnchor();
         this.rightInput = new FunInputAnchor();
@@ -173,6 +174,7 @@ public class BinOpApplyBlock extends Block {
         arrowSpacer.getStyleClass().add("curryArrow");
         arrowSpacer.setVisible(false);
         Pane inputSpace = new HBox(0, this.leftInput, infoArea, arrowSpacer, this.rightInput);
+        inputSpace.setPickOnBounds(false);
 
         this.curriedOutput = new Pane() {
                 @Override
@@ -223,7 +225,7 @@ public class BinOpApplyBlock extends Block {
             return Optional.empty();
         }
         
-        return Optional.of(new BinOpApplyBlock(this.funInfo, this.getPane()));
+        return Optional.of(new BinOpApplyBlock(this.funInfo, this.getToplevel()));
     }
 
     @Override
@@ -251,19 +253,16 @@ public class BinOpApplyBlock extends Block {
 	}
 
 	@Override
-	public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
+	public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
         Expression expr = new FunVar(this.funInfo);
         List<Binder> curriedArgs = new ArrayList<>();
-        Set<OutputAnchor> outsideAnchors = new HashSet<>();
         
         if (this.leftInput.curried) {
             Binder ca = new Binder("ca");
             curriedArgs.add(ca);
             expr = new Apply(expr, new LocalVar(ca));
         } else {
-            Pair<Expression, Set<OutputAnchor>> pair = this.leftInput.anchor.getLocalExpr();
-            expr = new Apply(expr, pair.a);
-            outsideAnchors.addAll(pair.b);
+            expr = new Apply(expr, this.leftInput.anchor.getLocalExpr(outsideAnchors));
         }
 
         if (this.rightInput.curried) {
@@ -271,17 +270,15 @@ public class BinOpApplyBlock extends Block {
             curriedArgs.add(ca);
             expr = new Apply(expr, new LocalVar(ca));
         } else {
-            Pair<Expression, Set<OutputAnchor>> pair = this.rightInput.anchor.getLocalExpr();
-            expr = new Apply(expr, pair.a);
-            outsideAnchors.addAll(pair.b);
+            expr = new Apply(expr, this.rightInput.anchor.getLocalExpr(outsideAnchors));
         }
 
         outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
         
         if (curriedArgs.isEmpty()) {
-            return new Pair<>(expr, outsideAnchors);
+            return expr;
         } else {
-            return new Pair<>(new Lambda(curriedArgs, expr), outsideAnchors);
+            return new Lambda(curriedArgs, expr);
         }
 
 	}

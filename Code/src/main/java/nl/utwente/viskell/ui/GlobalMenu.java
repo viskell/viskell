@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import nl.utwente.viskell.ui.serialize.Exporter;
 
@@ -18,11 +19,17 @@ import java.util.Optional;
  * A context menu with global actions (i.e. quit).
  */
 public class GlobalMenu extends ContextMenu {
-    private CustomUIPane pane;
+    /** The main overlay of which this menu is a part */ 
+    private MainOverlay overlay;
 
-    public GlobalMenu(CustomUIPane pane) {
+    /** The File we're currently working on, if any. */
+    private Optional<File> currentFile;
+
+
+    public GlobalMenu(MainOverlay overlay) {
         super();
-        this.pane = pane;
+        this.overlay = overlay;
+        this.currentFile = Optional.empty();
 
         MenuItem menuNew = new MenuItem("New");
         menuNew.setOnAction(this::onNew);
@@ -37,23 +44,27 @@ public class GlobalMenu extends ContextMenu {
         menuSaveAs.setOnAction(this::onSaveAs);
 
         MenuItem menuPreferences = new MenuItem("Preferences...");
-        menuPreferences.setOnAction(e -> pane.showPreferences());
+        menuPreferences.setOnAction(e -> this.overlay.showPreferences());
 
         MenuItem menuInspector = new MenuItem("Inspector");
-        menuInspector.setOnAction(e -> pane.showInspector());
+        menuInspector.setOnAction(e -> this.overlay.showInspector());
 
+        MenuItem menuFullScreen = new MenuItem("Toggle full screen");
+        menuFullScreen.setOnAction(this::toggleFullScreen);
+        
         MenuItem menuQuit = new MenuItem("Quit");
         menuQuit.setOnAction(this::onQuit);
 
-        this.getItems().addAll(menuNew, menuOpen, menuSave, menuSaveAs, menuInspector, menuPreferences, menuQuit);
+        this.getItems().addAll(menuNew, menuOpen, menuSave, menuSaveAs, menuInspector, menuPreferences,
+                menuFullScreen, menuQuit);
     }
 
     private void onNew(ActionEvent actionEvent) {
-        this.pane.clearChildren();
+        this.overlay.getMainPane().clearChildren();
     }
 
     private void onOpen(ActionEvent actionEvent) {
-        Window window = pane.getScene().getWindow();
+        Window window = this.overlay.getScene().getWindow();
         File file = new FileChooser().showOpenDialog(window);
 
         if (file != null) {
@@ -62,32 +73,40 @@ public class GlobalMenu extends ContextMenu {
     }
 
     private void onSave(ActionEvent actionEvent) {
-        Optional<File> file = pane.getCurrentFile();
-
-        if (file.isPresent()) {
-            saveTo(file.get());
+        if (this.currentFile.isPresent()) {
+            saveTo(this.currentFile.get());
         } else {
             onSaveAs(actionEvent);
         }
     }
 
     private void onSaveAs(ActionEvent actionEvent) {
-        Window window = pane.getScene().getWindow();
+        Window window = this.overlay.getScene().getWindow();
         File file = new FileChooser().showSaveDialog(window);
 
         if (file != null) {
             saveTo(file);
-            pane.setCurrentFile(file);
+            this.currentFile = Optional.of(file);
         }
     }
 
     private void saveTo(File file) {
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(Exporter.export(pane).getBytes(Charsets.UTF_8));
+            fos.write(Exporter.export(this.overlay.getMainPane()).getBytes(Charsets.UTF_8));
             fos.close();
         } catch (IOException e) {
             // TODO do something sensible here
             e.printStackTrace();
+        }
+    }
+    
+    private void toggleFullScreen(ActionEvent actionEvent) {
+        Stage stage = Main.primaryStage;
+        if (stage.isFullScreen()) {
+            stage.setFullScreen(false);
+        } else {
+            stage.setMaximized(true);
+            stage.setFullScreen(true);
         }
     }
 

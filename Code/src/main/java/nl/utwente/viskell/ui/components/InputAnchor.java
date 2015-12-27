@@ -133,17 +133,16 @@ public class InputAnchor extends ConnectionAnchor {
     /**
      * @return The local expression carried by the connection connected to this anchor.
      */
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
-        return new Pair<>(this.connection.map(c -> c.getStartAnchor().getVariable()).orElse(new Hole()), new HashSet<>());
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
+        return this.connection.map(c -> c.getStartAnchor().getVariable()).orElse(new Hole());
     }
     
     /**
      * @return The full expression carried by the connection connected to this anchor.
      */
     public Expression getFullExpr() {
-        Pair<Expression, Set<OutputAnchor>> pair = this.getLocalExpr();
-        LetExpression fullExpr = new LetExpression(pair.a, false);
-        Set<OutputAnchor> outsideAnchors = pair.b;
+        Set<OutputAnchor> outsideAnchors = new HashSet<>();
+        LetExpression fullExpr = new LetExpression(this.getLocalExpr(outsideAnchors), false);
         
         BlockContainer currentContainer = block.container;
         

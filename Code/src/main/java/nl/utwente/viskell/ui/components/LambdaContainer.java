@@ -114,8 +114,8 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     	this.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> event.consume());
     	this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
     			if (event.getButton() != MouseButton.PRIMARY) {
-    				Point2D menuPos = this.wrapper.getPane().screenToLocal(new Point2D(event.getScreenX(), event.getScreenY()));
-    				this.wrapper.getPane().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), true);
+    				Point2D menuPos = this.wrapper.getToplevel().screenToLocal(new Point2D(event.getScreenX(), event.getScreenY()));
+    				this.wrapper.getToplevel().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), true);
     			}
     		   	event.consume();
     		});
@@ -124,8 +124,8 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     	this.addEventHandler(TouchEvent.TOUCH_RELEASED, event -> {
     			if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 2) {
     				Point2D screenPos = new Point2D(event.getTouchPoint().getScreenX(), event.getTouchPoint().getScreenY());
-    				Point2D menuPos = this.wrapper.getPane().screenToLocal(screenPos);
-    				this.wrapper.getPane().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), false);
+    				Point2D menuPos = this.wrapper.getToplevel().screenToLocal(screenPos);
+    				this.wrapper.getToplevel().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), false);
     			}
     			event.consume();
     		});
@@ -187,14 +187,12 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     }
     
     /** @return The local expression this LambdaContainer represents. */
-    public Pair<Expression, Set<OutputAnchor>> getLocalExpr() {
-        Pair<Expression, Set<OutputAnchor>> pair = res.getLocalExpr();
+    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
         List<Binder> binders = args.stream().map(arg -> arg.binder).collect(Collectors.toList());
-        LetExpression body = new LetExpression(pair.a, false);
-        Set<OutputAnchor> outsideAnchors = pair.b;
+        LetExpression body = new LetExpression(res.getLocalExpr(outsideAnchors), false);
         res.extendExprGraph(body, this, outsideAnchors);
         
-        return new Pair<>(new Lambda(binders, body), outsideAnchors);
+        return new Lambda(binders, body);
     }
 
     /** Called when the VisualState changed. */
@@ -214,7 +212,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     }
 
     @Override
-    public void removeBlock(Block block) {
+    public void detachBlock(Block block) {
         attachedBlocks.remove(block);
     }
     
