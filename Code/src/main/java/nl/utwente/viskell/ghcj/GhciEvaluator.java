@@ -20,7 +20,7 @@ public class GhciEvaluator extends Evaluator {
 
     @Override
     protected List<String> getModules() {
-        return ImmutableList.of("Data.List", "Data.Maybe", "Data.Either");
+        return ImmutableList.of("Data.List", "Data.Maybe", "Data.Either", "Data.Monoid", "Control.Applicative");
     }
 
     @Override
