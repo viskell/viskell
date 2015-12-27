@@ -83,7 +83,7 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
     	this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
     			if (event.getButton() != MouseButton.PRIMARY) {
     				Point2D menuPos = this.parent.getPane().screenToLocal(new Point2D(event.getScreenX(), event.getScreenY()));
-    				this.parent.getPane().showFunctionMenuAt(menuPos.getX(), menuPos.getY());
+    				this.parent.getPane().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), true);
     			}
     		   	event.consume();
     		});
@@ -93,7 +93,7 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
     			if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 2) {
     				Point2D screenPos = new Point2D(event.getTouchPoint().getScreenX(), event.getTouchPoint().getScreenY());
     				Point2D menuPos = this.parent.getPane().screenToLocal(screenPos);
-    				this.parent.getPane().showFunctionMenuAt(menuPos.getX(), menuPos.getY());
+    				this.parent.getPane().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), false);
     			}
     			event.consume();
     		});

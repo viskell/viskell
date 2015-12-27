@@ -132,15 +132,15 @@ public class CustomUIPane extends Region {
                 dragging = false;
             }
         } else if (!dragging) {
-            this.showFunctionMenuAt(e.getX(), e.getY());
+            this.showFunctionMenuAt(e.getX(), e.getY(), true);
         }
     }
 
     /** Shows a new function menu at the specified location in this pane. */
-    public void showFunctionMenuAt(double x, double y) {
+    public void showFunctionMenuAt(double x, double y, boolean byMouse) {
         ghci.awaitRunning();
         boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
-        FunctionMenu menu = new FunctionMenu(ghci.getCatalog(), this, verticalCurry);
+        FunctionMenu menu = new FunctionMenu(byMouse, ghci.getCatalog(), this, verticalCurry);
         double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
         menu.relocate(x, y - verticalCenter);
         this.addMenu(menu);
@@ -188,7 +188,7 @@ public class CustomUIPane extends Region {
 		}
 		
 		private void finishMenu(ActionEvent event) {
-			CustomUIPane.this.showFunctionMenuAt(this.getCenterX(), this.getCenterY());
+			CustomUIPane.this.showFunctionMenuAt(this.getCenterX(), this.getCenterY(), false);
 			CustomUIPane.this.getChildren().remove(this);
 		}
 		

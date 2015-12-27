@@ -59,7 +59,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     @FXML
     private Pane utilSpace;
 
-    public FunctionMenu(HaskellCatalog catalog, CustomUIPane pane, boolean verticalCurry) {
+    public FunctionMenu(boolean byMouse, HaskellCatalog catalog, CustomUIPane pane, boolean verticalCurry) {
         this.parent = pane;
         this.loadFXML("FunctionMenu");
         this.dragContext = new DragContext(this);
@@ -132,7 +132,8 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
         /* Create content for utilSpace. */
         Button closeButton = new Button("Close");
-        closeButton.setOnAction(event -> close());
+        closeButton.setOnMouseClicked(event -> close(true));
+        closeButton.setOnTouchPressed(event -> close(false));
         Button valBlockButton = new Button("Value");
         valBlockButton.setOnAction(event -> addValueBlock());
         Button disBlockButton = new Button("Display");
@@ -168,7 +169,8 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         // with an odd number of block buttons fill the last spot with a close button
         if (utilSpace.getChildren().size() % 2 == 1) {
             Button extraCloseButton = new Button("Close");
-            extraCloseButton.setOnAction(event -> close());
+            extraCloseButton.setOnMouseClicked(event -> close(true));
+            extraCloseButton.setOnTouchPressed(event -> close(false));
             utilSpace.getChildren().add(extraCloseButton);
         }
         
@@ -181,7 +183,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         this.setMouseTransparent(true);
         this.setScaleX(0.3);
         this.setScaleY(0.1);
-        ScaleTransition opening = new ScaleTransition(Duration.millis(500), this);
+        ScaleTransition opening = new ScaleTransition(byMouse ? Duration.ONE : Duration.millis(300), this);
         opening.setToX(1);
         opening.setToY(1);
         opening.setOnFinished(e -> this.setMouseTransparent(false));
@@ -248,10 +250,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     }
 
     /** Closes this menu by removing it from it's parent. */
-    public void close() {
+    public void close(boolean byMouse) {
     	// disable it first, before removal in a closing animation 
         this.setMouseTransparent(true);
-        ScaleTransition closing = new ScaleTransition(Duration.millis(300), this);
+        ScaleTransition closing = new ScaleTransition(byMouse ? Duration.ONE :Duration.millis(300), this);
         closing.setToX(0.3);
         closing.setToY(0.1);
         closing.setOnFinished(e -> parent.removeMenu(this));
