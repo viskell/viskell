@@ -60,7 +60,7 @@ public class TypeApp extends ConcreteType {
         return this.constraints.prettyPrintWith(apptype, fixity);
     }
 
-    protected final List<Type> asFlattenedAppChain(){
+    public final List<Type> asFlattenedAppChain(){
         final LinkedList<Type> chain = new LinkedList<>();
         Type type = this;
         while (type instanceof TypeApp) {
