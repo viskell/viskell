@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Hole;
@@ -114,6 +115,11 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
         return this.connection.isPresent() && ! (this.errorState.get() || this.connection.get().hasScopeError());
     }
     
+    @Override
+    public Point2D getAttachmentPoint() {
+        return this.getPane().sceneToLocal(this.localToScene(new Point2D(0, -9)));
+    }
+
     @Override
     public Type getType() {
         return this.type;

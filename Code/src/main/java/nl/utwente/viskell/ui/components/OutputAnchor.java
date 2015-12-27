@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableMap;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
@@ -131,6 +132,11 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
         this.openWire.setVisible(true);
     }
 
+    @Override
+    public Point2D getAttachmentPoint() {
+        return this.getPane().sceneToLocal(this.localToScene(new Point2D(0, 9)));
+    }
+    
     /** Initiate connection changes at the Block this anchor is attached to. */
     public void initiateConnectionChanges() {
         this.block.initiateConnectionChanges();

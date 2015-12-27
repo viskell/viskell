@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
+import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.StackPane;
@@ -81,6 +82,9 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public abstract boolean hasConnection();
 
 
+    /** @return the location of where to attach wire in the coordinates of the toplevel pane. */
+    public abstract Point2D getAttachmentPoint();
+    
     /**
      * @return The inner most block container associated with this anchor
      */
