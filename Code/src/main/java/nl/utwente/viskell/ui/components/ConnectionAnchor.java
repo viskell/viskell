@@ -41,16 +41,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         });
 
         this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handleTouchPress);
-        this.addEventHandler(TouchEvent.TOUCH_MOVED, event -> {
-            if (this.wireInProgress != null) {
-                this.wireInProgress.handleTouchMove(event);
-            }
-        });
-        this.addEventHandler(TouchEvent.TOUCH_RELEASED, event -> {
-            if (this.wireInProgress != null) {
-                this.wireInProgress.handleTouchRelease(event);
-            }
-        });
     }
 
     /**
@@ -100,15 +90,14 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
 
     private void handleMousePress(MouseEvent event) {
         if (this.wireInProgress == null && !event.isSynthesized()) {
-            this.wireInProgress = DrawWire.initiate(this, DrawWire.INPUT_ID_MOUSE);
+            this.wireInProgress = DrawWire.initiate(this, null);
             event.consume();
         }
     }
 
     private void handleTouchPress(TouchEvent event) {
         if (this.wireInProgress == null) {
-            int touchID = event.getTouchPoint().getId();
-            this.wireInProgress = DrawWire.initiate(this, touchID);
+            this.wireInProgress = DrawWire.initiate(this, event.getTouchPoint());
             event.consume();
         }
     }

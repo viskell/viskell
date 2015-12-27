@@ -19,6 +19,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 import javafx.util.Duration;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
@@ -306,6 +307,14 @@ public class ToplevelPane extends Region implements BlockContainer {
         return this.getChildren().remove(drawWire);
     }
 
+    public boolean addTouchArea(Shape area) {
+        return this.getChildren().add(area);
+    }
+    
+    public boolean removeTouchArea(Shape area) {
+        return this.getChildren().remove(area);
+    }
+    
     public void clearChildren() {
         this.bottomLayer.getChildren().clear();
         this.blockLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
