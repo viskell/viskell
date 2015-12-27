@@ -67,6 +67,15 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
     -fx-min-width: 100px;
 }
 
+ArbitraryBlock .value.block {
+    -fx-padding: 5 10 0 10;
+}
+
+.value.block Button {
+    -fx-font-size: 15px;
+    -fx-font-weight: normal;
+}
+
 SliderBlock .value.block {
     -fx-padding: 5 10 0 10;
 }

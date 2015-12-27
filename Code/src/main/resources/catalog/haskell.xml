@@ -226,6 +226,23 @@
       <instance name="Maybe"/>
       <instance name="[]"/>
     </class>
+    <class name="Arbitrary">
+      <instance name="Ordering"/>
+      <instance name="Integer"/>
+      <instance name="Int"/>
+      <instance name="Char"/>
+      <instance name="Bool"/>
+      <instance name="Float"/>
+      <instance name="Double"/>
+      <instance name="[]" constrainedArgs="1"/>
+      <instance name="Maybe" constrainedArgs="1"/>
+      <instance name="Either" constrainedArgs="2"/>
+      <instance name="()"/>
+      <instance name="(,)" constrainedArgs="2"/>
+      <instance name="(,,)" constrainedArgs="3"/>
+      <instance name="(,,,)" constrainedArgs="4"/>
+      <instance name="(,,,,)" constrainedArgs="5"/>
+    </class>
   </classes>
 
 

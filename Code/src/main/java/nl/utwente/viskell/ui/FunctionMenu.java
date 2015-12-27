@@ -136,6 +136,8 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         closeButton.setOnTouchPressed(event -> close(false));
         Button valBlockButton = new Button("Value");
         valBlockButton.setOnAction(event -> addValueBlock());
+        Button arbBlockButton = new Button("Arbitrary");
+        arbBlockButton.setOnAction(event -> addBlock(new ArbitraryBlock(parent)));
         Button disBlockButton = new Button("Display");
         disBlockButton.setOnAction(event -> addBlock(new DisplayBlock(parent)));
         Button defBlockButton = new Button("Definition");
@@ -145,7 +147,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         Button choiceBlockButton = new Button("Choice");
         choiceBlockButton.setOnAction(event -> addChoiceBlock());
 
-        utilSpace.getChildren().addAll(closeButton, valBlockButton, disBlockButton, defBlockButton, lambdaBlockButton, choiceBlockButton);
+        utilSpace.getChildren().addAll(closeButton, valBlockButton, arbBlockButton, disBlockButton, defBlockButton, lambdaBlockButton, choiceBlockButton);
 
         if (GhciSession.pickBackend() == GhciSession.Backend.GHCi) {
             // These blocks are specifically for GHCi
