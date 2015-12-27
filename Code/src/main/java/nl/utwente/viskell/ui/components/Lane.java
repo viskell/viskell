@@ -250,4 +250,16 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
         this.result.removeConnections();
         new ArrayList<>(this.attachedBlocks).forEach(block -> block.moveIntoContainer(this.getParentContainer()));
     }
+
+    @Override
+    public void expandToFit(Bounds blockBounds) {
+        Bounds containerBounds = this.parent.getToplevel().sceneToLocal(this.getBoundsInScene());
+        double shiftX = Math.min(0, blockBounds.getMinX() - containerBounds.getMinX());
+        double shiftY = Math.min(0, blockBounds.getMinY() - containerBounds.getMinY());
+        double extraX = Math.max(0, blockBounds.getMaxX() - containerBounds.getMaxX()) + Math.abs(shiftX);
+        double extraY = Math.max(0, blockBounds.getMaxY() - containerBounds.getMaxY()) + Math.abs(shiftY);
+        this.resizer.relocate(this.resizer.getLayoutX() + extraX, this.resizer.getLayoutY() + extraY);
+        double shiftXForRights = extraX + shiftX;
+        this.parent.shiftAllBut(shiftX, shiftY, this, shiftXForRights);
+    }
 }
