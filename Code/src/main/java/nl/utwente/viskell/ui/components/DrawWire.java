@@ -78,9 +78,9 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         return this.anchor;
     }
     
-    private void showMenu() {
+    private void showMenu(boolean byMouse) {
         if (this.menu == null) {
-            this.menu = new WireMenu(this);
+            this.menu = new WireMenu(this, byMouse);
             this.menu.relocate(this.getEndX() + 50 , this.getEndY() - 50);
             this.anchor.block.getToplevel().addMenu(this.menu);
         }
@@ -100,7 +100,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         } else if (event.getButton() == MouseButton.PRIMARY) {
             this.handleReleaseOn(event.getPickResult().getIntersectedNode());
         } else {
-            this.showMenu();
+            this.showMenu(true);
         }
         event.consume();
     }
@@ -263,7 +263,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             } else if (DrawWire.this.menu != null) {
                 // avoid accidental creation of (more) menus
             } else if (fingerCount == 2) {
-                DrawWire.this.showMenu();
+                DrawWire.this.showMenu(false);
                 this.dragStarted = false;
                 // a delay to avoid the background picking up jitter from this event
                 Timeline delay = new Timeline(new KeyFrame(Duration.millis(250), e -> {
