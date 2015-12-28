@@ -6,11 +6,14 @@ import javafx.animation.Timeline;
 import javafx.event.Event;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import jfxtras.scene.layout.CircularPane;
 import nl.utwente.viskell.ui.components.Block;
@@ -55,25 +58,25 @@ public class CircleMenu extends CircularPane {
         // Define menu items
         
         // Cut Option
-        ImageView image = makeImageView("/ui/cut32.png");
+        ImageView image = makeImageView("/ui/icons/appbar.scissor.png");
         MenuButton delete = new MenuButton("cut", image);
         delete.setOnActivate(() -> delete());
         this.add(delete);
 
         // Copy Option
-        image = makeImageView("/ui/copy32.png");
+        image = makeImageView("/ui/icons/appbar.page.copy.png");
         MenuButton copy = new MenuButton("copy", image);
         copy.setOnActivate(() -> copy());
         this.add(copy);
 
         // Paste Option
-        image = makeImageView("/ui/paste32.png");
+        image = makeImageView("/ui/icons/appbar.clipboard.paste.png");
         MenuButton paste = new MenuButton("paste", image);
         paste.setOnActivate(() -> paste());
         this.add(paste);
 
         // Save Option
-        image = makeImageView("/ui/save32.png");
+        image = makeImageView("/ui/icons/appbar.save.png");
         MenuButton save = new MenuButton("save", image);
         save.setOnActivate(() -> saveBlock());
         this.add(save);
@@ -95,7 +98,6 @@ public class CircleMenu extends CircularPane {
     
     private ImageView makeImageView(String path) {
         ImageView image = new ImageView(new Image(this.getClass().getResourceAsStream(path)));
-        image.getStyleClass().add("hoverMenu");
         return image;
     }
 
@@ -119,7 +121,7 @@ public class CircleMenu extends CircularPane {
     }
     
     /** A touch enabled button within this circle menu */
-    private class MenuButton extends Pane {
+    private class MenuButton extends StackPane {
         /** Whether this button has been pressed */
         private boolean wasPressed;
         
@@ -131,7 +133,14 @@ public class CircleMenu extends CircularPane {
          * @param image node shown on the button
          */
         private MenuButton(String name, Node image) {
-            super(image);
+            super();
+            Circle backing = new Circle(0, 0, 32, Color.GOLD);
+            backing.setEffect(new DropShadow(20, 5, 5, Color.BLACK));
+            backing.setStroke(Color.BLACK);
+            backing.setStrokeWidth(1);
+            this.getChildren().addAll(backing, image);
+            this.setPrefSize(64, 64);
+            
             this.wasPressed = false;
             
             this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::onPress);
