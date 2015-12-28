@@ -261,5 +261,8 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
         this.resizer.relocate(this.resizer.getLayoutX() + extraX, this.resizer.getLayoutY() + extraY);
         double shiftXForRights = extraX + shiftX;
         this.parent.shiftAllBut(shiftX, shiftY, this, shiftXForRights);
+
+        // also resize its parent in case of nested containers
+        this.getParentContainer().expandToFit(this.parent.getBoundsInParent());
     }
 }

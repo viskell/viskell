@@ -246,5 +246,8 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
         double extraX = Math.max(0, blockBounds.getMaxX() - containerBounds.getMaxX()) + Math.abs(shiftX);
         double extraY = Math.max(0, blockBounds.getMaxY() - containerBounds.getMaxY()) + Math.abs(shiftY);
         this.wrapper.shiftAndGrow(shiftX, shiftY, extraX, extraY);
+        
+        // also resize its parent in case of nested containers
+        this.getParentContainer().expandToFit(this.wrapper.getBoundsInParent());
     }
 }
