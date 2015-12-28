@@ -118,6 +118,17 @@ public class ChoiceBlock extends Block {
         Lane lane = new Lane(this);
         lanes.add(lane);
         altSpace.getChildren().add(lane);
+        this.initiateConnectionChanges();
+    }
+    
+    /** Removes the last alternative from this block */
+    public void removeLastLane() {
+        if (this.lanes.size() > 1) { 
+            Lane lane = lanes.remove(lanes.size()-1);
+            lane.deleteAllLinks();
+            altSpace.getChildren().remove(lane);
+            this.initiateConnectionChanges();
+        }
     }
     
     /** Returns the alternatives in this block */

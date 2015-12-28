@@ -131,6 +131,24 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     		});
     }
     
+    /** Adds extra input binder anchor to this lambda */
+    public void addExtraInput() {
+        BinderAnchor arg = new BinderAnchor(this, wrapper, new Binder("x_" + this.args.size()));
+        this.args.add(arg);
+        this.argSpace.getChildren().add(arg);
+        this.wrapper.initiateConnectionChanges();
+    }
+
+    /** Removes the last input binder anchor of this lambda */
+    public void removeLastInput() {
+        if (this.args.size() > 1) {
+            BinderAnchor arg = this.args.remove(this.args.size()-1);
+            arg.removeConnections();
+            this.argSpace.getChildren().remove(arg);
+            this.wrapper.initiateConnectionChanges();
+        }
+    }
+    
     @Override
     public void refreshAnchorTypes() {
         if (this.updateInProgress || this.freshAnchorTypes) {

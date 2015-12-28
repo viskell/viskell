@@ -132,6 +132,11 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         });
     }
     
+    /** @return whether this is an unnamed lambda */
+    public boolean isLambda() {
+        return !this.funInfo.isPresent();
+    }
+    
     /** @return The output binder of this block */
     public Binder getBinder() {
         return fun.binder;
