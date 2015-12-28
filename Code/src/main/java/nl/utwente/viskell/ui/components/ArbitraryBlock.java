@@ -42,7 +42,7 @@ public class ArbitraryBlock extends ValueBlock {
         }
 
         // we cannot generate values for polymorphic types and we don't try to for function types
-        Type type = this.output.getType().getConcrete();
+        Type type = this.output.getType(Optional.empty()).getConcrete();
         if (type instanceof TypeVar || type instanceof FunType) {
             return;
         } else if (type instanceof TypeApp) {

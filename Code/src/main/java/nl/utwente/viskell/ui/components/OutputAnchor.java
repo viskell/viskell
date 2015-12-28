@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui.components;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableMap;
@@ -33,7 +34,7 @@ public class OutputAnchor extends ConnectionAnchor {
     @FXML private Shape openWire;
     
     /** The connections this anchor has, can be empty for no connections. */
-    private List<Connection> connections;
+    protected List<Connection> connections;
 
     /** The variable binder attached to the expression corresponding to this anchor */
     protected final Binder binder;
@@ -49,9 +50,19 @@ public class OutputAnchor extends ConnectionAnchor {
         this.binder = binder;
     }
     
-    @Override
-    public Type getType() {
+    /**
+     * @param targetConnection optionally which special connection the type associated with.
+     * @return the local type of this anchor
+     */
+    public Type getType(Optional<Connection> targetConnection) {
         return this.binder.getBoundType();
+    }
+
+    /**
+     * @return the string representation of the in- or output type.
+     */
+    public final String getStringType() {
+        return this.getType(Optional.empty()).prettyPrint();
     }
 
     /**

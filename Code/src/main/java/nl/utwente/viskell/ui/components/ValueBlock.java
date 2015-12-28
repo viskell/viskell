@@ -73,7 +73,7 @@ public class ValueBlock extends Block {
 
     @Override
     public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
-        return new Value(output.getType(), getValue());
+        return new Value(output.getType(Optional.empty()), getValue());
     }
 
     @Override

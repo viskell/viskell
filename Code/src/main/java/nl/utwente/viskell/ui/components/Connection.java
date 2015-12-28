@@ -73,7 +73,7 @@ public class Connection extends CubicCurve implements
 
         // typecheck the new connection to mark potential errors at the best location
         try {
-            TypeChecker.unify("new connection", this.startAnchor.getType(), this.endAnchor.getType());
+            TypeChecker.unify("new connection", this.startAnchor.getType(Optional.of(this)), this.endAnchor.getType());
         } catch (HaskellTypeError e) {
             this.endAnchor.setErrorState(true);
             this.errorState = true;
@@ -110,9 +110,9 @@ public class Connection extends CubicCurve implements
             try {
                 // first a trial unification on a copy of the types to minimize error propagation
                 TypeScope scope = new TypeScope();
-                TypeChecker.unify("trial connection", this.startAnchor.getType().getFresh(scope), this.endAnchor.getType().getFresh(scope));
+                TypeChecker.unify("trial connection", this.startAnchor.getType(Optional.of(this)).getFresh(scope), this.endAnchor.getType().getFresh(scope));
                 // unify the actual types
-                TypeChecker.unify("connection", this.startAnchor.getType(), this.endAnchor.getType());
+                TypeChecker.unify("connection", this.startAnchor.getType(Optional.of(this)), this.endAnchor.getType());
                 this.endAnchor.setErrorState(false);
                 this.errorState = false;
             } catch (HaskellTypeError e) {
