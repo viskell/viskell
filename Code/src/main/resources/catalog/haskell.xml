@@ -709,7 +709,7 @@
       <function name="zip3" signature="[a] -> [b] -> [b] -> [(a, b, c)]">
         zip3 takes three lists and returns a list of triples, analogous to zip.
       </function>
-      <function name="zipWith3" signature="(a -> b -> c -> d) [a] -> [b] -> [c] -> [d]">
+      <function name="zipWith3" signature="(a -> b -> c -> d) -> [a] -> [b] -> [c] -> [d]">
         The zipWith3 function takes a function which combines three elements, as well as three
         lists and returns a list of their point-wise combination, analogous to zipWith.
       </function>
