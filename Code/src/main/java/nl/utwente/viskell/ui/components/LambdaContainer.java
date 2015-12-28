@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
@@ -226,6 +227,11 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
         return wrapper.getContainer();
     }
 
+    @Override
+    public Node asNode() {
+        return this;
+    }
+    
     @Override
     public void deleteAllLinks() {
        this.args.forEach(OutputAnchor::removeConnections);
