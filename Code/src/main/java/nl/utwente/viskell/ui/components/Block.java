@@ -279,6 +279,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
                     orElse(this.toplevel);
         
         this.moveIntoContainer(newContainer);
+        newContainer.expandToFit(this.getBoundsInParent());
     }
     
     @Override

@@ -39,4 +39,9 @@ public final class TrashContainer implements BlockContainer {
         return this;
     }
 
+    @Override
+    public void expandToFit(Bounds blockBounds) {
+        // everything fits in the trash
+    }
+
 }
