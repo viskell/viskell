@@ -34,6 +34,12 @@ public class SliderBlock extends ValueBlock {
         this.slider.setValue(0);
         this.updateValue();
 
+        slider.getStyleClass().add("inactive");
+        slider.setOnMousePressed(e -> slider.getStyleClass().removeAll("inactive"));
+        slider.setOnMouseReleased(e -> slider.getStyleClass().add("inactive"));
+        slider.setOnTouchPressed(e -> slider.getStyleClass().removeAll("inactive"));
+        slider.setOnTouchReleased(e -> slider.getStyleClass().add("inactive"));
+
         slider.valueProperty().addListener(ev -> this.updateValue());
         slider.valueChangingProperty().addListener(ev -> this.toggleSliding());
         

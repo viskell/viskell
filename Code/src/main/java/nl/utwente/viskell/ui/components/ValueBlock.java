@@ -54,7 +54,6 @@ public class ValueBlock extends Block {
 
         output = new OutputAnchor(this, new Binder("val", type));
         outputSpace.getChildren().add(output);
-        outputSpace.setTranslateY(9);
     }
 
     /**
