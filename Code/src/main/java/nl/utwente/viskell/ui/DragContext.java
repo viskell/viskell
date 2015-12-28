@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import javafx.event.EventHandler;
@@ -47,7 +48,7 @@ public class DragContext {
     private Consumer<DragContext> dragFinishAction;
 
     /** the method to be called when a secondary action is performed, may be null. */
-    private Consumer<Point2D> secondaryClickAction;
+    private BiConsumer<Point2D, Boolean> secondaryClickAction;
     
     /** bounds to wherein the dragging is constrained */
     private Bounds dragLimits;  
@@ -96,7 +97,7 @@ public class DragContext {
                     this.handleTouchReleased();
                 } else if (! this.dragStarted) {
                     if (this.secondaryClickAction != null) {
-                        this.secondaryClickAction.accept(new Point2D(event.getTouchPoint().getX(), event.getTouchPoint().getY()));
+                        this.secondaryClickAction.accept(new Point2D(event.getTouchPoint().getX(), event.getTouchPoint().getY()), false);
                     }
                 }
                 event.consume();
@@ -127,7 +128,7 @@ public class DragContext {
                 if (event.getButton() == MouseButton.SECONDARY && !this.dragStarted) {
                     event.consume();
                     if (this.secondaryClickAction != null) {
-                        this.secondaryClickAction.accept(new Point2D(event.getX(), event.getY()));
+                        this.secondaryClickAction.accept(new Point2D(event.getX(), event.getY()), true);
                     }
                 } else if (this.touchId == DragContext.MOUSE_ID) {
                     handleTouchReleased();
@@ -231,8 +232,9 @@ public class DragContext {
     /**
      * @param action the method to be called when a secondary action is performed, may be null.
      * Secondary actions are either a right click on the mouse or a tap on the same node by a second finger
+     * The boolean passed to the action is whether the action performed with a mouse
      */
-    public void setSecondaryClickAction(Consumer<Point2D> action) {
+    public void setSecondaryClickAction(BiConsumer<Point2D, Boolean> action) {
         this.secondaryClickAction = action;
     }
 

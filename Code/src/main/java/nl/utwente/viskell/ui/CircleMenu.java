@@ -38,8 +38,8 @@ public class CircleMenu extends CircularPane {
     private Timeline hideDelay;
     
     /** Show the Circle menu for a specific block. */
-    public static void showFor(Block block, Point2D pos) {
-        CircleMenu menu = new CircleMenu(block);
+    public static void showFor(Block block, Point2D pos, boolean byMouse) {
+        CircleMenu menu = new CircleMenu(block, byMouse);
         double centerX = pos.getX() - (menu.prefWidth(-1) / 2);
         double centerY = pos.getY() - (menu.prefHeight(-1) / 2);
         menu.setLayoutX(centerX);
@@ -47,7 +47,7 @@ public class CircleMenu extends CircularPane {
         block.getToplevel().addMenu(menu);
     }
     
-    private CircleMenu(Block block) {
+    private CircleMenu(Block block, boolean byMouse) {
         super();
         this.block = block;
 
@@ -84,7 +84,7 @@ public class CircleMenu extends CircularPane {
         // opening animation
         this.setScaleX(0.1);
         this.setScaleY(0.1);
-        ScaleTransition opening = new ScaleTransition(Duration.millis(250), this);
+        ScaleTransition opening = new ScaleTransition(byMouse ? Duration.ONE : Duration.millis(250), this);
         opening.setToX(1);
         opening.setToY(1);
         opening.setOnFinished(e -> this.setMouseTransparent(false));
