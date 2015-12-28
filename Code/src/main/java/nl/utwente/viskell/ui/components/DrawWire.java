@@ -52,8 +52,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
 
         ToplevelPane pane = anchor.getPane();
         pane.addWire(this);
-        Point2D initPos = pane.sceneToLocal(initAnchor.localToScene(new Point2D(0, 0)));
-        this.setFreePosition(initPos);
+        this.setFreePosition(initAnchor.getAttachmentPoint());
         anchor.localToSceneTransformProperty().addListener(x -> this.invalidateAnchorPosition());
         
         if (touchPoint != null) {
@@ -106,8 +105,17 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
     }
 
     private void handleReleaseOn(Node picked) {
-        if (picked.getParent() instanceof ConnectionAnchor) {
-            ConnectionAnchor target = (ConnectionAnchor)picked.getParent();
+        Node next = picked;
+        ConnectionAnchor target = null;
+        while (next != null) {
+            if (next instanceof ConnectionAnchor.Target) {
+                target = ((ConnectionAnchor.Target)next).getAssociatedAnchor();
+                break;
+            }
+            next = next.getParent();
+        }
+
+        if (target != null) {
             Connection connection = this.buildConnectionTo(target);
             if (connection != null) {
                 connection.getStartAnchor().initiateConnectionChanges();
@@ -157,7 +165,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             this.toucharea.remove();
         }
         
-        this.initAnchor.wireInProgress = null;
+        this.initAnchor.setWireInProgress(null);
         this.anchor.localToSceneTransformProperty().removeListener(this);
         this.anchor.getPane().removeWire(this);
     }
@@ -169,11 +177,17 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
 
     /** Update the UI position of the anchor. */
     private void invalidateAnchorPosition() {
-        Point2D center = (this.anchor instanceof InputAnchor) ? new Point2D(0, -4) : new Point2D(0, 4);
-        Point2D point = this.anchor.getPane().sceneToLocal(this.anchor.localToScene(center));
-        this.setStartX(point.getX());
-        this.setStartY(point.getY());
-        this.updateBezierControlPoints();
+        Point2D point = this.anchor.getAttachmentPoint();
+        if (this.anchor instanceof InputAnchor) {
+            this.setEndX(point.getX());
+            this.setEndY(point.getY());
+        
+        } else {
+            this.setStartX(point.getX());
+            this.setStartY(point.getY());
+        }
+
+        Connection.updateBezierControlPoints(this);
     }
 
     /**
@@ -181,8 +195,15 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
      * @param point coordinates local to this wire's parent.
      */
     public void setFreePosition(Point2D point) {
-        this.setEndX(point.getX());
-        this.setEndY(point.getY());
+        if (this.anchor instanceof InputAnchor) {
+            this.setStartX(point.getX());
+            this.setStartY(point.getY());
+            
+        } else {
+            this.setEndX(point.getX());
+            this.setEndY(point.getY());
+        }
+        
         this.invalidateAnchorPosition();
 
         ToplevelPane pane = this.anchor.block.getToplevel();
@@ -315,29 +336,6 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 this.setScaleY(1);
                 this.setOpacity(0);
             }
-        }
-    }
-
-    /** Updates the Bezier offset (curviness) according to the current start and end positions. */
-    private void updateBezierControlPoints() {
-        double BEZIER_CONTROL_OFFSET = Connection.BEZIER_CONTROL_OFFSET;
-        double distY = Math.abs(this.getEndY() - this.getStartY());
-        double yOffset = BEZIER_CONTROL_OFFSET;
-        if (distY > BEZIER_CONTROL_OFFSET) {
-            yOffset = Math.cbrt(distY / BEZIER_CONTROL_OFFSET) * BEZIER_CONTROL_OFFSET;
-        }
-
-        this.setControlX1(this.getStartX());
-        this.setControlX2(this.getEndX());
-        if (this.anchor instanceof OutputAnchor) {
-            this.setControlY1(this.getStartY() + yOffset);
-        } else {
-            this.setControlY1(this.getStartY() - yOffset);
-        }
-        if (this.getStartY() > this.getEndY()) {
-            this.setControlY2(this.getEndY()   + yOffset);
-        } else {
-            this.setControlY2(this.getEndY()   - yOffset);
         }
     }
 
