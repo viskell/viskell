@@ -137,10 +137,23 @@ public class ChoiceBlock extends Block {
         
         lanes.forEach(lane -> lane.moveNodes(dx, dy));
     }
+
+    protected void shiftAllBut(double shiftX, double shiftY, Lane changedLane, double shiftXForRights) {
+        super.relocate(this.getLayoutX() + shiftX, this.getLayoutY() + shiftY);
+        int lx = this.lanes.indexOf(changedLane);
+        for (int i = 0; i < this.lanes.size(); i++) {
+            if (i < lx) {
+                this.lanes.get(i).moveNodes(shiftX, 0);
+            } else if (i > lx) {
+                this.lanes.get(i).moveNodes(shiftXForRights, 0);
+            }
+        }
+    }
     
     @Override
     public void deleteAllLinks() {
         lanes.forEach(lane -> lane.deleteAllLinks());
         super.deleteAllLinks();
     }
+
 }

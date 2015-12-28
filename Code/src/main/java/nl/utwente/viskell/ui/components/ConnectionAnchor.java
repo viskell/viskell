@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
+import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.StackPane;
@@ -15,8 +16,14 @@ import nl.utwente.viskell.ui.serialize.Bundleable;
  */
 public abstract class ConnectionAnchor extends StackPane implements ComponentLoader, Bundleable {
 
+    /** Helper interface for finding the associated connection anchor on release a wire onto something. */
+    public static interface Target {
+        /** @return the connection anchor directly related to the Target object. */
+        public ConnectionAnchor getAssociatedAnchor();
+    }
+    
     /** The connection being drawn starting from this anchor, or null if none. */
-    protected DrawWire wireInProgress;
+    private DrawWire wireInProgress;
 
     /** The block this ConnectionAnchor belongs to. */
     protected final Block block;
@@ -62,6 +69,16 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public abstract boolean hasConnection();
 
 
+    /** @return the location of where to attach wire in the coordinates of the toplevel pane. */
+    public abstract Point2D getAttachmentPoint();
+    
+    /**
+     * @param wire is being drawn from this connection anchor, or null if the drawing has finished/failed.
+     */
+    public void setWireInProgress(DrawWire wire) {
+        this.wireInProgress = wire;
+    }
+    
     /**
      * @return The inner most block container associated with this anchor
      */
@@ -77,14 +94,14 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
 
     private void handleMousePress(MouseEvent event) {
         if (this.wireInProgress == null && !event.isSynthesized()) {
-            this.wireInProgress = DrawWire.initiate(this, null);
+            this.setWireInProgress(DrawWire.initiate(this, null));
             event.consume();
         }
     }
 
     private void handleTouchPress(TouchEvent event) {
         if (this.wireInProgress == null) {
-            this.wireInProgress = DrawWire.initiate(this, event.getTouchPoint());
+            this.setWireInProgress(DrawWire.initiate(this, event.getTouchPoint()));
             event.consume();
         }
     }

@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Hole;
@@ -23,7 +24,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * ConnectionAnchor that specifically functions as an input.
  */
-public class InputAnchor extends ConnectionAnchor {
+public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Target {
 
     /** The visual representation of the InputAnchor. */
     @FXML private Shape visibleAnchor;
@@ -65,6 +66,11 @@ public class InputAnchor extends ConnectionAnchor {
     public InputAnchor(Block block, Type type) {
         this(block);
         this.type = type;
+    }
+    
+    @Override
+    public ConnectionAnchor getAssociatedAnchor() {
+        return this;
     }
     
     /**
@@ -109,6 +115,11 @@ public class InputAnchor extends ConnectionAnchor {
         return this.connection.isPresent() && ! (this.errorState.get() || this.connection.get().hasScopeError());
     }
     
+    @Override
+    public Point2D getAttachmentPoint() {
+        return this.getPane().sceneToLocal(this.localToScene(new Point2D(0, -9)));
+    }
+
     /**
      * @return the local type of this anchor
      */
@@ -187,6 +198,18 @@ public class InputAnchor extends ConnectionAnchor {
         style.removeAll("error");
         if (newValue) {
             style.add("error");
+        }
+    }
+
+    @Override
+    public void setWireInProgress(DrawWire wire) {
+        super.setWireInProgress(wire);
+        if (wire == null) {
+            this.openWire.setVisible(!this.hasConnection());
+            this.invisibleAnchor.setMouseTransparent(false);
+        } else {
+            this.openWire.setVisible(false);
+            this.invisibleAnchor.setMouseTransparent(true);
         }
     }
 

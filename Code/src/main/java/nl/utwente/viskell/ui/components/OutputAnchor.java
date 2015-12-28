@@ -9,6 +9,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableMap;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
@@ -22,7 +23,7 @@ import nl.utwente.viskell.ui.BlockContainer;
 /**
  * Anchor that specifically functions as an output.
  */
-public class OutputAnchor extends ConnectionAnchor {
+public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.Target {
     
     /** The visual representation of the OutputAnchor. */
     @FXML private Shape visibleAnchor;
@@ -56,6 +57,11 @@ public class OutputAnchor extends ConnectionAnchor {
      */
     public Type getType(Optional<Connection> targetConnection) {
         return this.binder.getBoundType();
+    }
+
+    @Override
+    public ConnectionAnchor getAssociatedAnchor() {
+        return this;
     }
 
     /**
@@ -137,6 +143,11 @@ public class OutputAnchor extends ConnectionAnchor {
         this.openWire.setVisible(true);
     }
 
+    @Override
+    public Point2D getAttachmentPoint() {
+        return this.getPane().sceneToLocal(this.localToScene(new Point2D(0, 9)));
+    }
+    
     /** Initiate connection changes at the Block this anchor is attached to. */
     public void initiateConnectionChanges() {
         this.block.initiateConnectionChanges();
@@ -178,6 +189,18 @@ public class OutputAnchor extends ConnectionAnchor {
         }
     }
     
+    @Override
+    public void setWireInProgress(DrawWire wire) {
+        super.setWireInProgress(wire);
+        if (wire == null) {
+            this.openWire.setVisible(!this.hasConnection());
+            this.invisibleAnchor.setMouseTransparent(false);
+        } else {
+            this.openWire.setVisible(false);
+            this.invisibleAnchor.setMouseTransparent(true);
+        }
+    }
+
     /** invalidates the visual state of the block this anchor belongs to*/
     public void invalidateVisualState() {
         this.block.invalidateVisualState();

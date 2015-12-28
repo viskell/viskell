@@ -14,7 +14,6 @@ import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
-import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
 import com.google.common.collect.ImmutableMap;
@@ -148,9 +147,8 @@ public class Connection extends CubicCurve implements
 
     /** Update the UI positions of both start and end anchors. */
     private void invalidateAnchorPositions() {
-    	ToplevelPane pane = this.startAnchor.getPane();
-    	this.setStartPosition(pane.sceneToLocal(this.startAnchor.localToScene(new Point2D(0, 4))));
-    	this.setEndPosition(pane.sceneToLocal(this.endAnchor.localToScene(new Point2D(0, -4))));
+    	this.setStartPosition(this.startAnchor.getAttachmentPoint());
+    	this.setEndPosition(this.endAnchor.getAttachmentPoint());
     }
 
     @Override
@@ -173,7 +171,7 @@ public class Connection extends CubicCurve implements
     private void setStartPosition(Point2D point) {
         this.setStartX(point.getX());
         this.setStartY(point.getY());
-        this.updateBezierControlPoints();
+        updateBezierControlPoints(this);
     }
 
     /**
@@ -183,13 +181,13 @@ public class Connection extends CubicCurve implements
     private void setEndPosition(Point2D point) {
         this.setEndX(point.getX());
         this.setEndY(point.getY());
-        this.updateBezierControlPoints();
+        updateBezierControlPoints(this);
     }
 
     /** Returns the current bezier offset based on the current start and end positions. */
-    private double getBezierYOffset() {
-        double distX = Math.abs(this.getEndX() - this.getStartX());
-        double diffY = this.getEndY() - this.getStartY();
+    private static double getBezierYOffset(CubicCurve wire) {
+        double distX = Math.abs(wire.getEndX() - wire.getStartX());
+        double diffY = wire.getEndY() - wire.getStartY();
         double distY = diffY > 0 ? diffY/2 : -diffY; 
         if (distY < BEZIER_CONTROL_OFFSET) {
             if (distX < BEZIER_CONTROL_OFFSET) {
@@ -204,12 +202,12 @@ public class Connection extends CubicCurve implements
     }
 
     /** Updates the Bezier offset (curviness) according to the current start and end positions. */
-    private void updateBezierControlPoints() {
-        double yOffset = this.getBezierYOffset();
-        this.setControlX1(this.getStartX());
-        this.setControlY1(this.getStartY() + yOffset);
-        this.setControlX2(this.getEndX());
-        this.setControlY2(this.getEndY() - yOffset);
+    protected static void updateBezierControlPoints(CubicCurve wire) {
+        double yOffset = getBezierYOffset(wire);
+        wire.setControlX1(wire.getStartX());
+        wire.setControlY1(wire.getStartY() + yOffset);
+        wire.setControlX2(wire.getEndX());
+        wire.setControlY2(wire.getEndY() - yOffset);
     }
     
     /**

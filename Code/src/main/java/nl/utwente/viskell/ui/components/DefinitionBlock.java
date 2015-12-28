@@ -223,4 +223,9 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         super.deleteAllLinks();
     }
 
+    protected void shiftAndGrow(double shiftX, double shiftY, double extraX, double extraY) {
+        super.relocate(this.getLayoutX() + shiftX , this.getLayoutY() + shiftY);
+        this.resizer.relocate(this.resizer.getLayoutX() + extraX, this.resizer.getLayoutY() + extraY);
+    }
+
 }
