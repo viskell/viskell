@@ -26,7 +26,7 @@ import java.util.Set;
  * value at all, the value can be altered at any time by providing a different
  * input source using a {@link Connection}.
  */
-public class DisplayBlock extends Block {
+public class DisplayBlock extends Block implements ConnectionAnchor.Target {
 
     /** The Anchor that is used as input. */
     protected InputAnchor inputAnchor;
@@ -97,6 +97,11 @@ public class DisplayBlock extends Block {
         return value.getText();
     }
     
+    @Override
+    public ConnectionAnchor getAssociatedAnchor() {
+        return inputAnchor;
+    }
+
     @Override
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(inputAnchor);

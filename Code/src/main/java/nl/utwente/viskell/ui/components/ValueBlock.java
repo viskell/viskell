@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableMap;
  * Block should be extended instead.
  * </p>
  */
-public class ValueBlock extends Block {
+public class ValueBlock extends Block implements ConnectionAnchor.Target {
     /** The OutputAnchor of this ValueBlock. */
     protected OutputAnchor output;
 
@@ -69,6 +69,11 @@ public class ValueBlock extends Block {
      */
     public final String getValue() {
         return value.getText();
+    }
+
+    @Override
+    public ConnectionAnchor getAssociatedAnchor() {
+        return output;
     }
 
     @Override

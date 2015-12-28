@@ -66,4 +66,10 @@ public interface BlockContainer {
             
        return false;
     }
+    
+    /**
+     * Grows the bounds of this container to fit the given additional bounds.
+     * @param blockBounds of the Block that needs to fit in the container.
+     */
+    public void expandToFit(Bounds blockBounds);
 }

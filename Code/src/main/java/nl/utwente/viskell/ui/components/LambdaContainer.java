@@ -243,4 +243,17 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     public Bounds getBoundsInScene() {
         return this.localToScene(this.getBoundsInLocal());
     }
+
+    @Override
+    public void expandToFit(Bounds blockBounds) {
+        Bounds containerBounds = this.wrapper.getToplevel().sceneToLocal(this.getBoundsInScene());
+        double shiftX = Math.min(0, blockBounds.getMinX() - containerBounds.getMinX());
+        double shiftY = Math.min(0, blockBounds.getMinY() - containerBounds.getMinY());
+        double extraX = Math.max(0, blockBounds.getMaxX() - containerBounds.getMaxX()) + Math.abs(shiftX);
+        double extraY = Math.max(0, blockBounds.getMaxY() - containerBounds.getMaxY()) + Math.abs(shiftY);
+        this.wrapper.shiftAndGrow(shiftX, shiftY, extraX, extraY);
+        
+        // also resize its parent in case of nested containers
+        this.getParentContainer().expandToFit(this.wrapper.getBoundsInParent());
+    }
 }

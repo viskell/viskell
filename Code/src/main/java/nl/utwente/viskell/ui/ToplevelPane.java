@@ -231,4 +231,10 @@ public class ToplevelPane extends Region implements BlockContainer {
     public ToplevelPane getToplevel() {
         return this;
     }
+
+    @Override
+    public void expandToFit(Bounds bounds) {
+        // The toplevel is large enough to fit practical everything
+    }
+
 }

@@ -15,7 +15,7 @@ public class WireMenu extends TilePane {
     /** The draw wire belonging to this menu */
     private DrawWire attachedWire;
     
-    public WireMenu(DrawWire wire) {
+    public WireMenu(DrawWire wire, boolean byMouse) {
         this.toplevel = wire.getAnchor().getPane();
         this.attachedWire = wire;
         this.setMouseTransparent(true);
@@ -59,7 +59,7 @@ public class WireMenu extends TilePane {
         // opening animation
         this.setScaleX(0.1);
         this.setScaleY(0.1);
-        ScaleTransition opening = new ScaleTransition(Duration.millis(250), this);
+        ScaleTransition opening = new ScaleTransition(byMouse ? Duration.ONE : Duration.millis(250), this);
         opening.setToX(1);
         opening.setToY(1);
         opening.setOnFinished(e -> this.setMouseTransparent(false));
