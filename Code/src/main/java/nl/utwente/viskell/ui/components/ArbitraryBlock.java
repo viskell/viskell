@@ -41,8 +41,13 @@ public class ArbitraryBlock extends ValueBlock {
             return;
         }
 
+        Type outputType = this.output.getType(Optional.empty());
+
+        // we first attempt to apply the defaulting mechanism to eliminate polymorphism
+        Optional<Type> defType = outputType.getFresh().defaultedConcreteType(Type.con("Bool"));
+        Type type = defType.orElse(outputType);
+
         // we cannot generate values for polymorphic types and we don't try to for function types
-        Type type = this.output.getType(Optional.empty()).getConcrete();
         if (type instanceof TypeVar || type instanceof FunType) {
             return;
         } else if (type instanceof TypeApp) {

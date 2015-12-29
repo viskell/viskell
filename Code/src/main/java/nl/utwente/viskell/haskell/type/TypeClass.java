@@ -92,9 +92,7 @@ public class TypeClass implements Comparable<TypeClass> {
     }
 
     public void setDefaultType(TypeCon defType) {
-        if (this.instances.contains(defType)) {
-            this.defaultType = Optional.of(defType);
-        }
+        this.defaultType = Optional.of(defType);
     }
     
     protected Optional<TypeCon> getDefaultType() {

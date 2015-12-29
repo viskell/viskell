@@ -3,6 +3,7 @@ package nl.utwente.viskell.haskell.type;
 import com.google.common.base.Joiner;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Abstract class for Haskell types. Provides an interface for common methods.
@@ -82,6 +83,25 @@ public abstract class Type {
     public void enforcePolymorphism() {
         for (TypeVar.TypeInstance tvi : TypeScope.gatherAllTypeVarInsts(this)) {
             tvi.makeRigid();
+        }
+    }
+    
+    /**
+     * Attempts to produce a concrete type with all type variables instantiated.
+     * @param backupFiller the type to use when no type can be found using type class defaulting.
+     * @return a type without any polymorphism, if successful.
+     */
+    public Optional<Type> defaultedConcreteType(ConcreteType backupFiller) {
+        Type ftype = this.getFresh();
+        try {
+            for (TypeVar.TypeInstance tvi : TypeScope.gatherAllTypeVarInsts(ftype)) {
+                tvi.defaultOrElse(backupFiller);
+            }
+            Type ctype = ftype.getConcrete();
+            TypeChecker.unify("defaulting validation", ctype.getFresh(), this.getFresh());
+            return Optional.of(ctype);
+        } catch (HaskellTypeError e) {
+            return Optional.empty();
         }
     }
 
