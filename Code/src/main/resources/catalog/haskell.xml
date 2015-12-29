@@ -44,12 +44,6 @@
      <datatype name="(,,,,)" typeArity="5">
        <constructor name="(,,,,)" signature="a -> b -> c -> d -> e ->(a,b,c,d,e)"/>
      </datatype>
-     <datatype name="(,,,,,)" typeArity="6">
-       <constructor name="(,,,,,)" signature="a -> b -> c -> d -> e -> f -> (a,b,c,d,e,f)"/>
-     </datatype>
-     <datatype name="(,,,,,,)" typeArity="7">
-       <constructor name="(,,,,,,)" signature="a -> b -> c -> d -> e -> f -> g -> (a,b,c,d,e,f,g)"/>
-     </datatype>
      <datatype name="IO" builtin="true" typeArity="1"/>
   </datatypes>
   
@@ -70,8 +64,6 @@
       <instance name="(,,)" constrainedArgs="3"/>
       <instance name="(,,,)" constrainedArgs="4"/>
       <instance name="(,,,,)" constrainedArgs="5"/>
-      <instance name="(,,,,,)" constrainedArgs="6"/>
-      <instance name="(,,,,,,)" constrainedArgs="7"/>
     </class>
     <class name="Ord">
       <superClass name="Eq"/>
@@ -90,8 +82,6 @@
       <instance name="(,,)" constrainedArgs="3"/>
       <instance name="(,,,)" constrainedArgs="4"/>
       <instance name="(,,,,)" constrainedArgs="5"/>
-      <instance name="(,,,,,)" constrainedArgs="6"/>
-      <instance name="(,,,,,,)" constrainedArgs="7"/>
     </class>
     <class name="Enum">
       <instance name="Ordering"/>
@@ -102,6 +92,17 @@
       <instance name="Float"/>
       <instance name="Double"/>
       <instance name="()"/>
+    </class>
+    <class name="Bounded">
+      <instance name="Ordering"/>
+      <instance name="Int"/>
+      <instance name="Char"/>
+      <instance name="Bool"/>
+      <instance name="()"/>
+      <instance name="(,)" constrainedArgs="2"/>
+      <instance name="(,,)" constrainedArgs="3"/>
+      <instance name="(,,,)" constrainedArgs="4"/>
+      <instance name="(,,,,)" constrainedArgs="5"/>
     </class>
     <class name="Num">
       <instance name="Int"/>
@@ -161,8 +162,6 @@
       <instance name="(,,)" constrainedArgs="3"/>
       <instance name="(,,,)" constrainedArgs="4"/>
       <instance name="(,,,,)" constrainedArgs="5"/>
-      <instance name="(,,,,,)" constrainedArgs="6"/>
-      <instance name="(,,,,,,)" constrainedArgs="7"/>
     </class>
     <class name="Read">
       <instance name="Ordering"/>
@@ -180,8 +179,6 @@
       <instance name="(,,)" constrainedArgs="3"/>
       <instance name="(,,,)" constrainedArgs="4"/>
       <instance name="(,,,,)" constrainedArgs="5"/>
-      <instance name="(,,,,,)" constrainedArgs="6"/>
-      <instance name="(,,,,,,)" constrainedArgs="7"/>
     </class>
     <class name="Monoid">
       <instance name="Ordering"/>
@@ -209,6 +206,11 @@
       <superClass name="Applicative"/>
       <instance name="Maybe"/>
       <instance name="IO"/>
+      <instance name="[]"/>
+    </class>
+    <class name="MonadPlus">
+      <superClass name="Monad"/>
+      <instance name="Maybe"/>
       <instance name="[]"/>
     </class>
     <class name="Alternative">
@@ -281,6 +283,7 @@
         Greater than
       </function>
     </category>
+
     <category name="Enum, conversions">
       <function name="show" signature="Show a => a -> [Char]">
         a specialised variant of showsPrec, using precedence context zero, and
@@ -304,15 +307,17 @@
       <function name="enumFrom" signature="Enum a => a -> [a]">
         Used in Haskell's translation of [n..].
       </function>
-      <function name="enumFromThen" signature="Enum a => a -> a -> [a]">
-        used in Haskell's translation of [n, n'..].
-      </function>
       <function name="enumFromTo" signature="Enum a => a -> a -> [a]">
         used in Haskell's translation of [n..m].
+      </function>
+ <!--
+      <function name="enumFromThen" signature="Enum a => a -> a -> [a]">
+        used in Haskell's translation of [n, n'..].
       </function>
       <function name="enumFromThenTo" signature="Enum a => a -> a -> a -> [a]">
         used in Haskell's translation of [n, n'..m].
       </function>
+-->      
       <function name="fromInteger" signature="Num a => Integer -> a">
         Conversion from an Integer. An integer literal represents the application of the
         function fromInteger to the appropriate value of type Integer, so such literals have
@@ -333,7 +338,10 @@
       <function name="realToFrac" signature="(Real a, Fractional b) => a -> b">
         general coercion to fractional types
       </function>
+      <function name="minBound" signature="Bounded a => a"/>
+      <function name="maxBound" signature="Bounded a => a"/>
     </category>
+
     <category name="Arithmetic">
       <function name="(+)" signature="Num a => a -> a -> a">
         Mathematical addition.
@@ -365,12 +373,6 @@
       <function name="mod" signature="Integral a => a -> a -> a">
         integer modulus, satisfying (x 'div' y)*y + (x 'mod y) == x.
       </function>
-      <function name="quotRem" signature="Integral a => a -> a -> (a, a)">
-        simultaneous quot and rem.
-      </function>
-      <function name="divMod" signature="Integral a => a -> a -> (a, a)">
-        simultaneous div and mod.
-      </function>
       <function name="even" signature="Integral a => a -> Bool"/>
       <function name="odd" signature="Integral a => a -> Bool"/>
       <function name="gcd" signature="Integral a => a -> a -> a">
@@ -389,6 +391,7 @@
         raise a number to an non-negative integral power.
       </function>
     </category>
+
     <category name="Floating point">
       <function name="(/)" signature="Fractional a => a -> a -> a">
         fractional division.
@@ -408,12 +411,6 @@
       <function name="asin" signature="Floating a => a -> a"/>
       <function name="acos" signature="Floating a => a -> a"/>
       <function name="atan" signature="Floating a => a -> a"/>
-      <function name="sinh" signature="Floating a => a -> a"/>
-      <function name="cosh" signature="Floating a => a -> a"/>
-      <function name="tanh" signature="Floating a => a -> a"/>
-      <function name="asinh" signature="Floating a => a -> a"/>
-      <function name="acosh" signature="Floating a => a -> a"/>
-      <function name="atanh" signature="Floating a => a -> a"/>
       <function name="properFraction" signature="(RealFrac a, Integral b) => a -> (b, a)">
         The function properFraction takes a real fractional number x and returns a pair (n,f) such that x = n+f, and:
         - n is an integral number with the same sign as x; and
@@ -437,32 +434,33 @@
       <function name="isInfinite" signature="RealFloat a => a -> Bool">
         True if the argument is an IEEE infinity or negative infinity
       </function>
-      <function name="isDenormalized" signature="RealFloat a => a -> Bool">
-        True if the argument is too small to be represented in normalized format.
-      </function>
-      <function name="isNegativeZero" signature="RealFloat a => a -> Bool">
-        True if the argument is an IEEE negative zero.
-      </function>
-      <function name="isIEEE" signature="RealFloat a => a -> Bool">
-        True if the argument is an IEEE floating point number.
-      </function>
-      <function name="atan2" signature="RealFloat a => a -> a -> a">
-        a version of arctangent taking two real floating-point arguments. For real floating x and
-        y, atan2 y x computes the angle (from the positive x-axis) of the vector from the
-        origin to the point (x,y). atan2 y x returns a value in the range [-pi, pi]. It follows
-        the Common Lisp semantics for the origin when signed zeroes are supported. atan2 y
-        1, with y in a type that is RealFloat, should return the same value as atan y. A
-        default definition of atan2 is provided, but implementors can provide a more accurate
-        implementation.
-      </function>
       <function name="(^^)" signature="(Integral b, Fractional a) => a -> b -> a">
         raise a number to an integral power
       </function>
     </category>
-    <category name="Folds and traversals">
+
+    <category name="Functor and co.">
       <function name="fmap" signature="Functor f => (a -> b) -> f a -> f b">
         Map over a functor.
       </function>
+      <function name="(&lt;$)" signature="Functor f => a -> f b -> f a"/>
+      <function name="(&lt;$&gt;)" signature="Functor f => (a -> b) -> f b -> f a"/>
+      <function name="pure" signature="Applicative f => a -> f a"/>
+      <function name="(&lt;*&gt;)" signature="Applicative f => f (a -> b) -> f b -> f a"/>
+      <function name="(&gt;&gt;=)" signature="Monad m => m a -> (a -> m b) -> m b"/>
+      <function name="(&gt;&gt;)" signature="Monad m => m a -> m b -> m b"/>
+      <function name="return" signature="Monad m => a -> m a"/>
+      <function name="liftA2" signature="Applicative f => (a -> b -> c) -> f a -> f b -> f c"/>
+      <function name="liftA3" signature="Applicative f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d"/>
+      <function name="empty" signature="Alternative f => f a"/>
+      <function name="(&lt;|&gt;)" signature="Alternative f a -> f a -> f a"/>
+      <function name="mapM" signature="Monad m => (a -> m b) -> [a] -> m [b]"/>
+      <function name="mapM_" signature="Monad m => (a -> m b) -> [a] -> m ()"/>
+      <function name="sequence" signature="Monad m => [m a] -> m [a]"/>
+      <function name="sequence_" signature="Monad m => [m a] -> m ()"/>
+    </category>
+
+    <category name="List reductions">
       <function name="foldr" signature="(a -> b -> b) -> b -> [a] -> b">
         Right-associative fold of a structure.
       </function>
@@ -474,21 +472,6 @@
       </function>
       <function name="foldl1" signature="(a -> a -> a) -> [a] -> a">
         A variant of foldl that has no base case, and thus may only be applied to non-empty structures.
-      </function>
-      <function name="null" signature="[a] -> Bool">
-        Test whether the structure is empty. The default implementation is optimized for
-        structures that are similar to cons-lists, because there is no general way to do better.
-      </function>
-      <function name="length" signature="[a] -> Int">
-        Returns the size/length of a finite structure as an Int. The default implementation is
-        optimized for structures that are similar to cons-lists, because there is no general way to
-        do better.
-      </function>
-      <function name="elem" signature="Eq a => a -> [a] -> Bool">
-        Does the element occur in the structure?
-      </function>
-      <function name="notElem" signature="Eq a => a -> [a] -> Bool">
-        notElem is the negation of elem.
       </function>
       <function name="maximum" signature="Ord a => [a] -> a">
         The largest element of a non-empty structure.
@@ -518,7 +501,25 @@
       <function name="all" signature="(a -> Bool) -> [a] -> Bool">
         Determines whether all elements of the structure satisfy the pradicate.
       </function>
+      <function name="scanl" signature="(b -> a -> b) -> b -> [a] -> [b]">
+        scanl is similar to foldl, but returns a list of successive reduced values from the left.
+      </function>
+      <function name="scanl1" signature="(a -> a -> a) -> [a] -> [a]">
+        scanl1 is a variant of scanl that has no starting value argument.
+      </function>
+      <function name="scanr" signature="(a -> b -> b) -> b -> [a] -> [b]">
+        scanr is the right-to-left dual of scanl.
+      </function>
+      <function name="scanr1" signature="(a -> a -> a) -> [a] -> [a]">
+        scanr1 is a variant of scanr that has no starting value argument.
+      </function>
+      <function name="mappend" signature="Monoid a => [a] -> a"/>
+      <function name="foldl&apos;" signature="(b -> a -> b) -> b -> [a] -> b"/>
+      <function name="foldl1&apos;" signature="(a -> a -> a) -> [a] -> a"/>
+      <function name="mapAccumL" signature="(acc -> x -> (acc, y)) -> acc -> [x] -> (acc, [y])"/>
+      <function name="mapAccumR" signature="(acc -> x -> (acc, y)) -> acc -> [x] -> (acc, [y])"/>
     </category>
+
     <category name="Utility functions">
       <function name="id" signature="a -> a">
         identity function.
@@ -552,11 +553,6 @@
       <function name="until" signature="(a -> Bool) -> (a -> a) -> a -> a">
         until p f yields the result of applying f until p holds.
       </function>
-      <function name="asTypeOf" signature="a -> a -> a">
-        asTypeOf is a type-restricted version of const. It is usually used an infix operator, and
-        its typing forces its first argument (which is usually overloaded) to have the same type as the
-        second.
-      </function>
       <function name="undefined" signature="a">
         A special case of error. It is expected that compilers will recognize this and insert error
         messages which are more appropriate to the context in which undefined appears.
@@ -569,6 +565,8 @@
         Strict (call-by-value) application operator. It takes a function and an argument, evaluates the
         argument to weak head normal form (WHNF), then calls the function with that value.
       </function>
+      <function name="mempty" signature="Monoid a => a"/>
+      <function name="mappend" signature="Monoid a => a -> a -> a"/>
     </category>
     <category name="Basic datatypes">
       <function name="()" signature="()" isConstructor="true"/>
@@ -576,8 +574,6 @@
       <function name="(,,)" signature="a -> b -> c -> (a, b, c)" isConstructor="true"/>
       <function name="(,,,)" signature="a -> b -> c -> d -> (a, b, c, d)" isConstructor="true"/>
       <function name="(,,,,)" signature="a -> b -> c -> d -> e -> (a, b, c, d, e)" isConstructor="true"/>
-      <function name="(,,,,,)" signature="a -> b -> c -> d -> e -> f -> (a, b, c, d, e, f)" isConstructor="true"/>
-      <function name="(,,,,,,)" signature="a -> b -> c -> d -> e -> f -> g -> (a, b, c, d, e, f, g)" isConstructor="true"/>
 
       <function name="Nothing" signature="Maybe a" isConstructor="true"/>
       <function name="Just" signature="a -> Maybe a" isConstructor="true"/>
@@ -589,7 +585,6 @@
       <function name="maybeToList" signature="Maybe a -> [a] "/>
       <function name="listToMaybe" signature="[a] -> Maybe a "/>
       <function name="catMaybes" signature="[Maybe a] -> [a] "/>
-      <function name="mapMaybe" signature="(a -> Maybe b) -> [a] -> [b]"/>
 
       <function name="Left" signature="a -> Either a b" isConstructor="true"/>
       <function name="Right" signature="b -> Either a b" isConstructor="true"/>
@@ -600,7 +595,8 @@
       <function name="isRight" signature="Either a b -> Bool"/>
       <function name="partitionEithers" signature="[Either a b] -> ([a],[b])"/>
     </category>
-    <category name="List operations">
+
+    <category name="Basic list operations">
       <function name="[]" signature="[a]" isConstructor="true">
       	An empty list.
       </function>
@@ -640,36 +636,58 @@
       <function name="concatMap" signature="([a] -> [b]) -> [a] -> [b]">
         Map a function over all the elements of a container and concatenate the resulting.
       </function>
-      <function name="scanl" signature="(b -> a -> b) -> b -> [a] -> [b]">
-        scanl is similar to foldl, but returns a list of successive reduced values from the left.
-      </function>
-      <function name="scanl1" signature="(a -> a -> a) -> [a] -> [a]">
-        scanl1 is a variant of scanl that has no starting value argument.
-      </function>
-      <function name="scanr" signature="(a -> b -> b) -> b -> [a] -> [b]">
-        scanr is the right-to-left dual of scanl.
-      </function>
-      <function name="scanr1" signature="(a -> a -> a) -> [a] -> [a]">
-        scanr1 is a variant of scanr that has no starting value argument.
-      </function>
       <function name="iterate" signature="(a -> a) -> a -> [a]">
         iterate f x returns an infinite list of repeated applications of f to x
       </function>
       <function name="repeat" signature="a -> [a]">
         repeat x is an infinite list, with x the value of every element.
       </function>
-      <function name="replicate" signature="a -> [a]">
+      <function name="replicate" signature="Int -> a -> [a]">
         replicate n x is a list of length n with x the value of every element.
         It is an instance of the more general genericReplicate, in which n may be of any integral type.
-      </function>
-      <function name="cycle" signature="[a] -> [a]">
-        cycle ties a finite list into a circular one, or equivalently, the infinite repetition of the orignal list. It is de identity on infinite lists.
       </function>
       <function name="take" signature="Int -> [a] -> [a]">
         take n, applied to a list xs, returns the prefix of xs of length n, or xs itself if n > length xs.
       </function>
       <function name="drop" signature="Int -> [a] -> [a]">
         drop n xs returns the suffix of xs after the first n elements, or [] if n > length xs.
+      </function>
+      <function name="zip" signature="[a] -> [b] -> [(a, b)]">
+        zip takes two lists and returns a list of corresponding pairs. If one input list is short,
+        excess elements of the longer list are discarded.
+      </function>
+      <function name="zipWith" signature="(a -> b -> c) -> [a] -> [b] -> [c]">
+        zipWith generalises zip by zipping with the function given as the first argument, instead of a tupling function.
+        For example, zipWith (+) is applied to two lists to produce the list of corresponding sums.
+      </function>
+      <function name="unzip" signature="[(a, b)] -> ([a], [b])">
+        unzip transforms a list of pairs into a list of first components and a list of second
+        components.
+      </function>
+      <function name="null" signature="[a] -> Bool">
+        Test whether the structure is empty. The default implementation is optimized for
+        structures that are similar to cons-lists, because there is no general way to do better.
+      </function>
+      <function name="length" signature="[a] -> Int">
+        Returns the size/length of a finite structure as an Int. The default implementation is
+        optimized for structures that are similar to cons-lists, because there is no general way to
+        do better.
+      </function>
+      <function name="elem" signature="Eq a => a -> [a] -> Bool">
+        Does the element occur in the structure?
+      </function>
+      <function name="notElem" signature="Eq a => a -> [a] -> Bool">
+        notElem is the negation of elem.
+      </function>
+      <function name="group" signature="Eq a => [a] -> [[a]]"/>
+      <function name="insert" signature="Ord a => a -> [a] -> [a]"/>
+      <function name="nub" signature="Eq a => [a] -> [a]"/>
+      <function name="sort" signature="Ord a => [a] -> [a]"/>
+    </category>
+    
+    <category name="More list operations">
+      <function name="cycle" signature="[a] -> [a]">
+        cycle ties a finite list into a circular one, or equivalently, the infinite repetition of the orignal list. It is de identity on infinite lists.
       </function>
       <function name="splitAt" signature="Int -> [a] -> ([a], [a])">
         splitAt n xs returns a tuple where first element is xs prefix of length n and second element is the remainder of the list.
@@ -688,30 +706,18 @@
         break, applied to a predicate p and a list xs, returns a tuple where first element is
         longest prefix (possibly empty) of xs of element that do not satisfy p and second element is the remainder of the list.
       </function>
-      <function name="lookup" signature="Eq a => a -> [(a, b)] -> Maybe b">
-        lookup key assocs looks up a key in an association list.
-      </function>
-      <function name="zip" signature="[a] -> [b] -> [(a, b)]">
-        zip takes two lists and returns a list of corresponding pairs. If one input list is short,
-        excess elements of the longer list are discarded.
-      </function>
       <function name="zip3" signature="[a] -> [b] -> [b] -> [(a, b, c)]">
         zip3 takes three lists and returns a list of triples, analogous to zip.
       </function>
-      <function name="zipWith" signature="(a -> b -> c) -> [a] -> [b] -> [c]">
-        zipWith generalises zip by zipping with the function given as the first argument, instead of a tupling function.
-        For example, zipWith (+) is applied to two lists to produce the list of corresponding sums.
-      </function>
-      <function name="zipWith3" signature="(a -> b -> c -> d) [a] -> [b] -> [c] -> [d]">
+      <function name="zipWith3" signature="(a -> b -> c -> d) -> [a] -> [b] -> [c] -> [d]">
         The zipWith3 function takes a function which combines three elements, as well as three
         lists and returns a list of their point-wise combination, analogous to zipWith.
       </function>
-      <function name="unzip" signature="[(a, b)] -> ([a], [b])">
-        unzip transforms a list of pairs into a list of first components and a list of second
-        components.
-      </function>
       <function name="unzip3" signature="[(a, b, c)] -> ([a], [b], [c])">
         the unzip3 function takes a list of triples and returns three lists, analogous to unzip.
+      </function>
+      <function name="lookup" signature="Eq a => a -> [(a, b)] -> Maybe b">
+        lookup key assocs looks up a key in an association list.
       </function>
       <function name="lines" signature="[Char] -> [[Char]]">
         lines breaks a string up into a list of strings at newline characters.
@@ -727,6 +733,34 @@
       <function name="unwords" signature="[[Char]] -> [Char]">
         unwords is an inverse operation to words. It joins words with separating spaces.
       </function>
+      <function name="(\\)" signature="Eq a => [a] -> [a] -> [a]"/>
+      <function name="delete" signature="Eq a => a -> [a] -> [a]"/>
+      <function name="deleteBy" signature="(a -> a -> Bool) -> a -> [a] -> [a]"/>
+      <function name="elemIndex" signature="Eq a => a -> [a] -> Maybe Int"/>
+      <function name="elemIndices" signature="Eq a => a -> [a] -> [Int]"/>
+      <function name="find" signature="(a -> Bool) -> [a] -> Maybe a"/>
+      <function name="findIndex" signature="(a -> Bool) -> [a] -> Maybe Int"/>
+      <function name="findIndices" signature="(a -> Bool) -> [a] -> [Int]"/>
+      <function name="groupBy" signature="(a -> a -> Bool) -> [a] -> [[a]]"/>
+      <function name="inits" signature="[a] -> [[a]]"/>
+      <function name="insertBy" signature="(a -> a -> Ordering) -> a -> [a] -> [a]"/>
+      <function name="intercalate" signature="[a] -> [[a]] -> [a]"/>
+      <function name="intersect" signature="Eq a => [a] -> [a] -> [a]"/>
+      <function name="intersectBy" signature="(a -> a -> Bool) -> [a] -> [a] -> [a]"/>
+      <function name="intersperse" signature="a -> [a] -> [a]"/>
+      <function name="isInfixOf" signature="Eq a => [a] -> [a] -> Bool"/>
+      <function name="isPrefixOf" signature="Eq a => [a] -> [a] -> Bool"/>
+      <function name="nubBy" signature="(a -> a -> Bool) -> [a] -> [a]"/>
+      <function name="partition" signature="(a -> Bool) -> [a] -> ([a], [a])"/>
+      <function name="permutations" signature="[a] -> [[a]]"/>
+      <function name="sortBy" signature="(a -> a -> Ordering) -> [a] -> [a]"/>
+      <function name="subsequences" signature="[a] -> [[a]]"/>
+      <function name="tails" signature="[a] -> [[a]]"/>
+      <function name="transpose" signature="[[a]] -> [[a]]"/>
+      <function name="unfoldr" signature="(b -> Maybe (a, b)) -> b -> [a]"/>
+      <function name="union" signature="Eq a => [a] -> [a] -> [a]"/>
+      <function name="unionBy" signature="(a -> a -> Bool) -> [a] -> [a] -> [a]"/>
+      
     </category>
   </functions>
 </catalog>
