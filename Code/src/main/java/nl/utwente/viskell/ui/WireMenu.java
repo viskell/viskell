@@ -57,7 +57,11 @@ public class WireMenu extends TilePane {
             graphBlockButton.setOnAction(event -> addBlockWithInput(new GraphBlock(this.toplevel)));
             graphBlockButton.setOnTouchPressed(event -> addBlockWithInput(new GraphBlock(this.toplevel)));
 
-            this.getChildren().addAll(cancelButton, disBlockButton, graphBlockButton);
+            Button splitBlockButton = new Button("Splitter");
+            splitBlockButton.setOnAction(event -> addBlockWithInput(new SplitterBlock(this.toplevel,2)));
+            splitBlockButton.setOnTouchPressed(event -> addBlockWithInput(new SplitterBlock(this.toplevel,2)));
+            
+            this.getChildren().addAll(cancelButton, disBlockButton, graphBlockButton, splitBlockButton);
         }
 
         // opening animation
