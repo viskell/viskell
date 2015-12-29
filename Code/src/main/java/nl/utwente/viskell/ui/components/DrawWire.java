@@ -286,6 +286,8 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             this.setScaleX(0.25);
             this.setScaleY(0.25);
             this.setOpacity(0.6);
+            this.setStrokeWidth(99);
+            DrawWire.this.setOpacity(1);
         }
         
         private void remove() {
@@ -297,7 +299,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             if (!this.dragStarted) {
                 this.touchID = event.getTouchPoint().getId();
                 this.disapperance.stop();
-                DrawWire.this.setOpacity(1);
+                this.makeVisible();
             }
             event.consume();
         }
@@ -317,6 +319,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         }
         
         private void handleTouchRelease(TouchEvent event) {
+            this.dragStarted = false;
             long fingerCount = event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count();
 
             if (fingerCount == 1 && DrawWire.this.menu == null) {
@@ -326,7 +329,6 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 // avoid accidental creation of (more) menus
             } else if (fingerCount == 2) {
                 DrawWire.this.showMenu(false);
-                this.dragStarted = false;
                 // a delay to avoid the background picking up jitter from this event
                 Timeline delay = new Timeline(new KeyFrame(Duration.millis(250), e -> this.makeVisible()));
                 delay.play();
@@ -342,6 +344,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 // release has no effect if there is a menu
             } else if (event.getButton() == MouseButton.PRIMARY) {
                 DrawWire.this.handleReleaseOn(event.getPickResult().getIntersectedNode());
+                this.dragStarted = false;
             } else {
                 DrawWire.this.showMenu(true);
                 this.dragStarted = false;
@@ -401,6 +404,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             this.setScaleX(1);
             this.setScaleY(1);
             this.setOpacity(0);
+            this.setStrokeWidth(90);
         }
     }
 
