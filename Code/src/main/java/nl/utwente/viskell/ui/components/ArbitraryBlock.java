@@ -34,7 +34,7 @@ public class ArbitraryBlock extends ValueBlock {
     }
 
     private void getNextValue(int seed) {
-        this.setValue("?????");
+        this.setValue("???");
         this.hasValue = false;
         
         if (! this.output.hasConnection()) {
@@ -72,7 +72,7 @@ public class ArbitraryBlock extends ValueBlock {
             }
 
             public void onFailure(Throwable throwable) {
-                Platform.runLater(() -> ArbitraryBlock.this.setValue("....."));
+                Platform.runLater(() -> ArbitraryBlock.this.setValue("..."));
             }
         });
     }

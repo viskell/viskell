@@ -62,13 +62,14 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
     -fx-padding: 10;
 }
 
-.value.block, .display.block {
+.display.block {
     -fx-padding: 0 10 0 10;
     -fx-min-width: 100px;
 }
 
-ArbitraryBlock .value.block {
-    -fx-padding: 5 10 0 10;
+.value.block {
+    -fx-padding: 3 6 -9 6;
+    -fx-min-width: 80px;
 }
 
 .value.block Button {
@@ -76,8 +77,8 @@ ArbitraryBlock .value.block {
     -fx-font-weight: normal;
 }
 
-SliderBlock .value.block {
-    -fx-padding: 5 10 0 10;
+SliderBlock Slider.inactive .track {
+	-fx-opacity: 0.6;
 }
 
 .graph.block LineChart {

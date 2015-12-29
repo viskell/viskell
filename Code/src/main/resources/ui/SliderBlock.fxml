@@ -1,12 +1,17 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 <?import nl.utwente.viskell.ui.components.SliderBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.SliderBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane styleClass="value, block" pickOnBounds="false">
         <center>
             <VBox alignment="CENTER">
-                <Slider min="-1.0" max="1.0" fx:id="slider"/>
+                <Slider min="-1.0" max="1.0" fx:id="slider" maxWidth="120">
+					<padding>
+						<Insets bottom="-4" left="-12" right="-12" top="0" />
+					</padding>
+                </Slider>
                 <Label fx:id="value" styleClass="content"/>
             </VBox>
         </center>
