@@ -48,7 +48,7 @@
   </datatypes>
   
   <classes>
-    <class name="Eq">
+    <class name="Eq" default="Int">
       <instance name="Int"/>
       <instance name="Integer"/>
       <instance name="Ordering"/>
@@ -65,7 +65,7 @@
       <instance name="(,,,)" constrainedArgs="4"/>
       <instance name="(,,,,)" constrainedArgs="5"/>
     </class>
-    <class name="Ord">
+    <class name="Ord" default="Int">
       <superClass name="Eq"/>
       <instance name="Ordering"/>
       <instance name="Bool"/>
@@ -83,7 +83,7 @@
       <instance name="(,,,)" constrainedArgs="4"/>
       <instance name="(,,,,)" constrainedArgs="5"/>
     </class>
-    <class name="Enum">
+    <class name="Enum" default="Int">
       <instance name="Ordering"/>
       <instance name="Integer"/>
       <instance name="Int"/>
@@ -93,7 +93,7 @@
       <instance name="Double"/>
       <instance name="()"/>
     </class>
-    <class name="Bounded">
+    <class name="Bounded" default="Int">
       <instance name="Ordering"/>
       <instance name="Int"/>
       <instance name="Char"/>
@@ -104,13 +104,13 @@
       <instance name="(,,,)" constrainedArgs="4"/>
       <instance name="(,,,,)" constrainedArgs="5"/>
     </class>
-    <class name="Num">
+    <class name="Num" default="Int">
       <instance name="Int"/>
       <instance name="Integer"/>
       <instance name="Float"/>
       <instance name="Double"/>
     </class>
-    <class name="Fractional">
+    <class name="Fractional" default="Double">
       <superClass name="Num"/>
       <instance name="Float"/>
       <instance name="Double"/>
@@ -128,7 +128,7 @@
       <instance name="Float"/>
       <instance name="Double"/>
     </class>
-    <class name="Integral">
+    <class name="Integral" default="Int">
       <superClass name="Enum"/>
       <superClass name="Real"/>
       <instance name="Int"/>
@@ -191,12 +191,12 @@
       <instance name="(,,,)" constrainedArgs="4"/>
       <instance name="(,,,,)" constrainedArgs="5"/>
     </class>
-    <class name="Functor">
+    <class name="Functor" default="[]">
       <instance name="Maybe"/>
       <instance name="IO"/>
       <instance name="[]"/>
     </class>
-    <class name="Applicative">
+    <class name="Applicative" default="Maybe">
       <superClass name="Functor"/>
       <instance name="Maybe"/>
       <instance name="IO"/>
@@ -218,7 +218,7 @@
       <instance name="Maybe"/>
       <instance name="[]"/>
     </class>
-    <class name="Foldable">
+    <class name="Foldable" default="[]">
       <instance name="Maybe"/>
       <instance name="[]"/>
     </class>
