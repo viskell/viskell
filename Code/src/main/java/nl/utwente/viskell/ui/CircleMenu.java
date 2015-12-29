@@ -16,7 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import jfxtras.scene.layout.CircularPane;
-import nl.utwente.viskell.ui.components.Block;
+import nl.utwente.viskell.ui.components.*;
 
 /**
  * Circle menu is a context based menu implementation for {@link Block} classes.
@@ -69,18 +69,42 @@ public class CircleMenu extends CircularPane {
         copy.setOnActivate(() -> copy());
         this.add(copy);
 
-        // Paste Option
-        image = makeImageView("/ui/icons/appbar.clipboard.paste.png");
-        MenuButton paste = new MenuButton("paste", image);
-        paste.setOnActivate(() -> paste());
-        this.add(paste);
+        if (block instanceof DefinitionBlock && ((DefinitionBlock)block).isLambda()) {
+            image = makeImageView("/ui/icons/appbar.edit.add.png");
+            MenuButton addInput = new MenuButton("add input", image);
+            addInput.setOnActivate(() -> ((DefinitionBlock)block).getBody().addExtraInput());
+            this.add(addInput);
+            
+            image = makeImageView("/ui/icons/appbar.edit.minus.png");
+            MenuButton removeInput = new MenuButton("remove input", image);
+            removeInput.setOnActivate(() -> ((DefinitionBlock)block).getBody().removeLastInput());
+            this.add(removeInput);
+            
+        } else if (block instanceof ChoiceBlock) {
+            image = makeImageView("/ui/icons/appbar.layout.collapse.right.png");
+            MenuButton addLane = new MenuButton("add lane", image);
+            addLane.setOnActivate(() -> ((ChoiceBlock)block).addLane());
+            this.add(addLane);
+            
+            image = makeImageView("/ui/icons/appbar.layout.expand.left.variant.png");
+            MenuButton removeLane = new MenuButton("remove lane", image);
+            removeLane.setOnActivate(() -> ((ChoiceBlock)block).removeLastLane());
+            this.add(removeLane);
 
-        // Save Option
-        image = makeImageView("/ui/icons/appbar.save.png");
-        MenuButton save = new MenuButton("save", image);
-        save.setOnActivate(() -> saveBlock());
-        this.add(save);
+        } else {
+            // Paste Option
+            image = makeImageView("/ui/icons/appbar.clipboard.paste.png");
+            MenuButton paste = new MenuButton("paste", image);
+            paste.setOnActivate(() -> paste());
+            this.add(paste);
 
+            // Save Option
+            image = makeImageView("/ui/icons/appbar.save.png");
+            MenuButton save = new MenuButton("save", image);
+            save.setOnActivate(() -> saveBlock());
+            this.add(save);
+        }
+        
         // opening animation
         this.setScaleX(0.1);
         this.setScaleY(0.1);
