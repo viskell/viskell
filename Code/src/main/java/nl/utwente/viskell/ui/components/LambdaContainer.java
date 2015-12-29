@@ -65,7 +65,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
         
         this.args = new ArrayList<>();
         for (int i = 0; i < arity; i++) {
-            this.args.add(new BinderAnchor(this, wrapper, new Binder("x_" + i)));
+            this.args.add(new BinderAnchor(this, wrapper, new Binder("" + (char)('a' + i))));
         }
         this.res = new ResultAnchor(this, wrapper, Optional.empty());
         
@@ -149,7 +149,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     protected Type getLambdaType() {
         ArrayList<Type> types = new ArrayList<>();
         for (BinderAnchor arg : this.args) {
-            types.add(arg.getType());
+            types.add(arg.getType(Optional.empty()));
         }
         types.add(this.res.getType());
 

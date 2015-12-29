@@ -4,7 +4,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.StackPane;
-import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ToplevelPane;
@@ -57,18 +56,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
         if (!active) {
             this.removeConnections();
         }
-    }
-
-    /**
-     * @return the local type of this anchor
-     */
-    public abstract Type getType();
-
-    /**
-     * @return the string representation of the in- or output type.
-     */
-    public final String getStringType() {
-        return this.getType().prettyPrint();
     }
 
     /**

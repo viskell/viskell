@@ -42,7 +42,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     private LambdaContainer body;
     
     /** The function anchor (second bottom anchor) */
-    private OutputAnchor fun;
+    private PolyOutputAnchor fun;
     
     /** The draggable resizer in the bottom right corner */
     private Pane resizer;
@@ -65,7 +65,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         this.body = new LambdaContainer(this, arity);
         ((VBox)this.getChildren().get(0)).getChildren().add(1, this.body);
         
-        this.fun = new OutputAnchor(this, new Binder("lam"));
+        this.fun = new PolyOutputAnchor(this, new Binder("lam"));
         this.funSpace.getChildren().add(this.fun);
         this.dragContext.setGoToForegroundOnContact(false);
         this.setupResizer();
@@ -89,7 +89,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         this.body = new LambdaContainer(this, name, type);
         ((VBox)this.getChildren().get(0)).getChildren().add(1, this.body);
         
-        this.fun = new OutputAnchor(this, new Binder("lam"));
+        this.fun = new PolyOutputAnchor(this, new Binder("lam"));
         this.funSpace.getChildren().add(this.fun);
         this.dragContext.setGoToForegroundOnContact(false);
         this.setupResizer();

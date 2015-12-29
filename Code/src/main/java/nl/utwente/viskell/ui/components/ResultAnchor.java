@@ -38,7 +38,7 @@ public class ResultAnchor extends InputAnchor {
         if (resType.isPresent()) {
             setFreshRequiredType(resType.get(), scope);
         } else {
-            setFreshRequiredType(TypeScope.unique("y"), scope);
+            setFreshRequiredType(new TypeScope().getVar("x"), scope);
         }
     }
 

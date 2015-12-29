@@ -120,9 +120,18 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
         return this.getPane().sceneToLocal(this.localToScene(new Point2D(0, -9)));
     }
 
-    @Override
+    /**
+     * @return the local type of this anchor
+     */
     public Type getType() {
         return this.type;
+    }
+    
+    /**
+     * @return the string representation of the in- or output type.
+     */
+    public final String getStringType() {
+        return this.getType().prettyPrint();
     }
     
     /**
