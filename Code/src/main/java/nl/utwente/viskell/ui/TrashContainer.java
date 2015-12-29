@@ -4,6 +4,8 @@ import java.util.stream.Stream;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
+import javafx.scene.layout.Region;
 import nl.utwente.viskell.ui.components.Block;
 
 /** A dummy Block container for deleted blocks */
@@ -37,6 +39,11 @@ public final class TrashContainer implements BlockContainer {
     @Override
     public BlockContainer getParentContainer() {
         return this;
+    }
+
+    @Override
+    public Node asNode() {
+        return new Region();
     }
 
     @Override

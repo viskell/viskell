@@ -5,22 +5,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TouchEvent;
-import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Shape;
-import javafx.util.Duration;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.ui.components.Block;
@@ -46,12 +35,6 @@ public class ToplevelPane extends Region implements BlockContainer {
     private GhciSession ghci;
     private PreferencesWindow preferences;
 
-    private Point2D dragStart;
-    private Point2D offset;
-    
-    /** Boolean to indicate that a drag (pan) action has started, yet not finished. */
-    private boolean dragging;
-
     /** The set of blocks that logically belong to this top level */
     private final Set<Block> attachedBlocks;
     
@@ -67,57 +50,14 @@ public class ToplevelPane extends Region implements BlockContainer {
         this.wireLayer = new Pane(this.blockLayer);
         this.getChildren().add(this.wireLayer);
 
-        this.dragStart = Point2D.ZERO;
-        this.offset = Point2D.ZERO;
-
         this.ghci = new GhciSession();
         this.ghci.startAsync();
 
-        this.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePress);
-        this.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDrag);
-        this.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseRelease);
-        this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handleTouchPress);
+        new TouchContext(this);
     }
 
     public void setPreferences(PreferencesWindow prefs) {
         this.preferences = prefs;
-    }
-
-    private void handleMousePress(MouseEvent e) {
-        if (e.isPrimaryButtonDown() && !e.isSynthesized()) {
-            offset = new Point2D(this.getTranslateX(), this.getTranslateY());
-            dragStart = new Point2D(e.getScreenX(), e.getScreenY());
-            dragging = true;
-        }
-    }
-
-    private void handleMouseDrag(MouseEvent e) {
-    	if (e.isSynthesized()) {
-    		return;
-    	}
-    	
-        if (!e.isSecondaryButtonDown()) {
-            if (dragging) {
-                Point2D dragCurrent = new Point2D(e.getScreenX(), e.getScreenY());
-                Point2D delta = dragStart.subtract(dragCurrent);
-    
-                this.setTranslateX(offset.getX() - delta.getX());
-                this.setTranslateY(offset.getY() - delta.getY());
-            } else {
-                dragStart = new Point2D(e.getScreenX(), e.getScreenY());
-                dragging = true;
-            }
-        }
-    }
-    
-    private void handleMouseRelease(MouseEvent e) {
-        if (e.getButton() == MouseButton.PRIMARY) {
-            if (!e.isSynthesized()) {
-                dragging = false;
-            }
-        } else if (!dragging) {
-            this.showFunctionMenuAt(e.getX(), e.getY(), true);
-        }
     }
 
     /** Shows a new function menu at the specified location in this pane. */
@@ -131,106 +71,6 @@ public class ToplevelPane extends Region implements BlockContainer {
     	
     }
     
-    private void handleTouchPress(TouchEvent e) {
-    	this.getChildren().add(new TouchArea(e.getTouchPoint()));
-    	e.consume();
-    }
-    
-    /** A circular local area for handling multi finger touch actions. */
-    private class TouchArea extends Circle {
-    	/** The ID of finger that spawned this touch area. */
-    	private int touchID;
-    	
-    	/** Whether this touch area has been dragged further than the drag threshold. */
-    	private boolean dragStarted;
-    	
-    	/** Whether this touch area has spawned a menu.  */
-    	private boolean menuCreated;
-    	
-    	/** Timed delay for the removal of this touch area. */
-    	private Timeline removeDelay;
-    	
-    	/** Timed delay for the creation of the function menu. */
-    	private Timeline menuDelay;
-    	
-    	/**
-    	 * @param touchPoint that is the center of new active touch area.
-    	 */
-		private TouchArea(TouchPoint touchPoint) {
-			super(touchPoint.getX(), touchPoint.getY(), 100, Color.TRANSPARENT);
-			this.touchID = touchPoint.getId();
-			this.dragStarted = false;
-			this.menuCreated = false;
-			
-			this.removeDelay = new Timeline(new KeyFrame(Duration.millis(250), this::remove));
-	    	this.menuDelay = new Timeline(new KeyFrame(Duration.millis(200), this::finishMenu));
-	    	
-	    	touchPoint.grab(this);
-	    	this.addEventHandler(TouchEvent.TOUCH_RELEASED, this::handleRelease);
-	    	this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handlePress);
-	    	this.addEventHandler(TouchEvent.TOUCH_MOVED, this::handleDrag);
-		}
-    	
-		private void remove(ActionEvent event) {
-			ToplevelPane.this.getChildren().remove(this);
-		}
-		
-		private void finishMenu(ActionEvent event) {
-			ToplevelPane.this.showFunctionMenuAt(this.getCenterX(), this.getCenterY(), false);
-			ToplevelPane.this.getChildren().remove(this);
-			this.menuCreated = true;
-		}
-		
-		private void handlePress(TouchEvent event) {
-			// this might have been a drag glitch, so halt release actions
-			this.removeDelay.stop();
-			if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 2) {
-				this.menuDelay.stop();
-			}
-			event.consume();
-		}
-		
-    	private void handleRelease(TouchEvent event) {
-    		long fingerCount = event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count();
-
-    		if (fingerCount == 1) {
-     			// trigger area removal timer
-     			this.removeDelay.play();
-     		} else if (this.dragStarted || this.menuCreated) {
-    			// avoid accidental creation of (more) menus
-    		} else if (fingerCount == 2) {
-    			// trigger menu creation timer
-    			this.menuDelay.play();
-    		}
-    		
-    		event.consume();
-    	}
-    	
-    	private void handleDrag(TouchEvent event) {
-    		if (event.getTouchPoint().getId() != this.touchID) {
-    			// we use only primary finger for drag movement
-    		} else if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() < 2) {
-    			// not a multi finger drag
-    		} else {
-    			double deltaX = event.getTouchPoint().getX() - this.getCenterX();
-    			double deltaY = event.getTouchPoint().getY() - this.getCenterY();
-    			
-    			if (Math.abs(deltaX) + Math.abs(deltaY) < 2) {
-    				// ignore very small movements
-                } else if ((deltaX*deltaX + deltaY*deltaY) > 10000) {
-                    // FIXME: ignore too large movements
-                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 24) {
-    				this.dragStarted = true;
-    				ToplevelPane.this.setTranslateX(ToplevelPane.this.getTranslateX() + deltaX);
-    				ToplevelPane.this.setTranslateY(ToplevelPane.this.getTranslateY() + deltaY);
-    			}
-    		}
-    		
-    		event.consume();
-    	}
-    	
-    }
-
     /**
      * @return The Env instance to be used within this CustomUIPane.
      */
@@ -379,6 +219,16 @@ public class ToplevelPane extends Region implements BlockContainer {
 
     @Override
     public BlockContainer getParentContainer() {
+        return this;
+    }
+
+    @Override
+    public Node asNode() {
+        return this;
+    }
+
+    @Override
+    public ToplevelPane getToplevel() {
         return this;
     }
 

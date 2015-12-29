@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
@@ -223,6 +224,11 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
     @Override
     public BlockContainer getParentContainer() {
         return parent.getContainer();
+    }
+
+    @Override
+    public Node asNode() {
+        return this;
     }
     
     @Override

@@ -1,6 +1,7 @@
 package nl.utwente.viskell.ui.components;
 
 import nl.utwente.viskell.ui.BlockContainer;
+import nl.utwente.viskell.ui.ToplevelPane;
 
 
 /** A Block container within another block with possible outputs and inputs. */
@@ -8,6 +9,11 @@ public interface WrappedContainer extends BlockContainer {
 
     /** Get the block wrapping this container. */
     public Block getWrapper();
+    
+    @Override
+    public default ToplevelPane getToplevel() {
+        return this.getWrapper().getToplevel();
+    }
     
     /** Set fresh types in all anchors of this lambda for the next typechecking cycle. */
     public void refreshAnchorTypes();

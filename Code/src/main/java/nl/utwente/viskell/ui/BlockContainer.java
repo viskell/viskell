@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui;
 import java.util.stream.Stream;
 
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import nl.utwente.viskell.ui.components.Block;
 
 /**
@@ -30,6 +31,25 @@ public interface BlockContainer {
     /** @return the container to which this container belongs, maybe return itself if it is the outermost container */
     public BlockContainer getParentContainer();
 
+    /**
+     * @return the ToplevelPane where this container is (indirectly) part of. 
+     * @throws IllegalStateException
+     */
+    public default ToplevelPane getToplevel() {
+        BlockContainer cont = this;
+        while (cont.getParentContainer() != cont) {
+            cont = cont.getParentContainer();
+        }
+        
+        if (cont instanceof ToplevelPane) {
+            return (ToplevelPane)cont;
+        }
+        
+        throw new IllegalStateException("Manipulating container that is not in a ToplevelPane");
+    }
+    
+    public abstract Node asNode();
+    
     /** @return Whether this container is (indirectly) contained with the other container. */
     public default boolean isContainedWithin(BlockContainer other) {
         if (this == other) {
