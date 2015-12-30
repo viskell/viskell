@@ -115,6 +115,8 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
         attachedBlocks.stream().filter(Block::isBottomMost).forEach(block -> {
             if (block instanceof MatchBlock) {
                 guards.addLetBinding(((MatchBlock)block).getPrimaryBinder(), block.getAllInputs().get(0).getFullExpr());
+            } else if (block instanceof SplitterBlock) {
+                guards.addLetBinding(((SplitterBlock)block).getPrimaryBinder(), block.getAllInputs().get(0).getFullExpr());
             } else {
                 block.getAllOutputs().forEach(anchor -> {
                     guards.addLetBinding(new ConstructorBinder("True"), anchor.getVariable());

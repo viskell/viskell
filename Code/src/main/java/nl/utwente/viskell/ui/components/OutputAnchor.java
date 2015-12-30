@@ -178,6 +178,8 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
             
             if (block instanceof MatchBlock) {
                 added = exprGraph.addLetBinding(((MatchBlock)block).getPrimaryBinder(), expr);
+            } else if (block instanceof SplitterBlock) {
+                added = exprGraph.addLetBinding(((SplitterBlock)block).getPrimaryBinder(), expr);
             } else {
                 added = exprGraph.addLetBinding(binder, expr);
             }

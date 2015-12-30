@@ -42,7 +42,11 @@ public class WireMenu extends TilePane {
             IntegerBlockButton.setOnAction(event -> addBlockWithOutput(new SliderBlock(this.toplevel, true)));
             IntegerBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new SliderBlock(this.toplevel, true)));
 
-            this.getChildren().addAll(cancelButton, lambdaBlockButton, rationalBlockButton, IntegerBlockButton);
+            Button joinBlockButton = new Button("Joiner");
+            joinBlockButton.setOnAction(event -> addBlockWithOutput(new JoinerBlock(this.toplevel,2)));
+            joinBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new JoinerBlock(this.toplevel,2)));
+            
+            this.getChildren().addAll(cancelButton, lambdaBlockButton, rationalBlockButton, IntegerBlockButton , joinBlockButton);
             
         } else {
             Button disBlockButton = new Button("Display");
@@ -53,7 +57,11 @@ public class WireMenu extends TilePane {
             graphBlockButton.setOnAction(event -> addBlockWithInput(new GraphBlock(this.toplevel)));
             graphBlockButton.setOnTouchPressed(event -> addBlockWithInput(new GraphBlock(this.toplevel)));
 
-            this.getChildren().addAll(cancelButton, disBlockButton, graphBlockButton);
+            Button splitBlockButton = new Button("Splitter");
+            splitBlockButton.setOnAction(event -> addBlockWithInput(new SplitterBlock(this.toplevel,2)));
+            splitBlockButton.setOnTouchPressed(event -> addBlockWithInput(new SplitterBlock(this.toplevel,2)));
+            
+            this.getChildren().addAll(cancelButton, disBlockButton, graphBlockButton, splitBlockButton);
         }
 
         // opening animation
