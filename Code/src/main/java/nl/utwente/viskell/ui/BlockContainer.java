@@ -11,8 +11,8 @@ import nl.utwente.viskell.ui.components.Block;
  */
 public interface BlockContainer {
 
-    /** Gets the bounds of this container transformed into the coordinate space of its scene. */
-    public Bounds getBoundsInScene();
+    /** Gets the bounds to be used for testing what is inside this container, transformed into the coordinate space of its scene. */
+    public Bounds containmentBoundsInScene();
     
     /** Attach a block to this container */
     public void attachBlock(Block block);

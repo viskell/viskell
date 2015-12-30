@@ -2,8 +2,8 @@
 <?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.ChoiceBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.ChoiceBlock" xmlns:fx="http://javafx.com/fxml/">
-    <VBox styleClass="def" pickOnBounds="false">
+    <VBox styleClass="block, def" pickOnBounds="false">
     	<HBox fx:id="altSpace"/>
-        <HBox fx:id="resultSpace" spacing="50" alignment="BOTTOM_CENTER" pickOnBounds="false" />
+        <HBox fx:id="resultSpace" alignment="BOTTOM_CENTER" pickOnBounds="false" />
     </VBox>
 </fx:root>

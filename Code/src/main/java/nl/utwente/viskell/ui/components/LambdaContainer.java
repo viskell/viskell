@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javafx.fxml.FXML;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -258,13 +259,16 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     }
 
     @Override
-    public Bounds getBoundsInScene() {
-        return this.localToScene(this.getBoundsInLocal());
+    public Bounds containmentBoundsInScene() {
+        Bounds local = this.getBoundsInLocal();
+        // include top and bottom border of the DefinitionBlock
+        BoundingBox withBorders = new BoundingBox(local.getMinX(), local.getMinY()-25, local.getWidth(), local.getHeight()+50);
+        return this.localToScene(withBorders);
     }
 
     @Override
     public void expandToFit(Bounds blockBounds) {
-        Bounds containerBounds = this.wrapper.getToplevel().sceneToLocal(this.getBoundsInScene());
+        Bounds containerBounds = this.wrapper.getToplevel().sceneToLocal(this.localToScene(this.getBoundsInLocal()));
         double shiftX = Math.min(0, blockBounds.getMinX() - containerBounds.getMinX());
         double shiftY = Math.min(0, blockBounds.getMinY() - containerBounds.getMinY());
         double extraX = Math.max(0, blockBounds.getMaxX() - containerBounds.getMaxX()) + Math.abs(shiftX);

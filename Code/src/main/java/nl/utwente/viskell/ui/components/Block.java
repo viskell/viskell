@@ -274,8 +274,8 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         Predicate<BlockContainer> notInSelf = con -> internals.stream().noneMatch(internal -> con.isContainedWithin(internal));
         
         BlockContainer newContainer = toplevel.getAllBlockContainers().
-            filter(container -> within.test(container.getBoundsInScene()) && notInSelf.test(container)).
-                reduce((a, b) -> !a.getBoundsInScene().contains(b.getBoundsInScene()) ? a : b).
+            filter(container -> within.test(container.containmentBoundsInScene()) && notInSelf.test(container)).
+                reduce((a, b) -> !a.containmentBoundsInScene().contains(b.containmentBoundsInScene()) ? a : b).
                     orElse(this.toplevel);
         
         this.moveIntoContainer(newContainer);

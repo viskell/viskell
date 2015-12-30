@@ -212,10 +212,10 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         boolean scopeOK = true;
 
         if (this.anchor instanceof OutputAnchor) {
-            scopeOK = anchorContainer.getBoundsInScene().contains(scenePoint);
+            scopeOK = anchorContainer.containmentBoundsInScene().contains(scenePoint);
         } else if (this.anchor instanceof InputAnchor) {
             scopeOK = pane.getAllBlockContainers().
-                    filter(con -> con.getBoundsInScene().contains(scenePoint)).
+                    filter(con -> con.containmentBoundsInScene().contains(scenePoint)).
                     allMatch(con -> anchorContainer.isContainedWithin(con));
         }
 

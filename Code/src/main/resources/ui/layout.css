@@ -39,6 +39,7 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
     -fx-font-family: Titillium;
     -fx-alignment: center-left;
     -fx-border-width: 2px;
+    -fx-border-style: solid outside;
 }
 
 .block .header {

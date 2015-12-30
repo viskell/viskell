@@ -198,7 +198,7 @@ public class ToplevelPane extends Region implements BlockContainer {
     }
     
     @Override
-    public Bounds getBoundsInScene() {
+    public Bounds containmentBoundsInScene() {
         return this.localToScene(this.getBoundsInLocal());
     }
 
