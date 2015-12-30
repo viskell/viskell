@@ -9,8 +9,8 @@
        	</Pane>
         <!-- The internal LambdaContainer will be inserted here. -->
        	<Pane styleClass="lambdaBorder">
-       		<Label fx:id="signature" styleClass="inputType" />
+       		<Label fx:id="signature" styleClass="inputType" translateY="16"/>
        	</Pane>	
-		<HBox fx:id="funSpace" translateX="20" alignment="BOTTOM_LEFT" pickOnBounds="false"/>
+		<HBox fx:id="funSpace" translateX="20" translateY="9" alignment="BOTTOM_LEFT" pickOnBounds="false"/>
     </VBox>
 </fx:root>

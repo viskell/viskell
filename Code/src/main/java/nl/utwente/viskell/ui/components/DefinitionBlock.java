@@ -110,7 +110,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         triangle.setLayoutY(10);
         this.resizer.setManaged(false);
         this.getChildren().add(resizer);
-        this.resizer.relocate(400, 400);
+        this.resizer.relocate(300, 300);
 
         DragContext sizeDrag = new DragContext(this.resizer);
         sizeDrag.setDragLimits(new BoundingBox(200, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));
@@ -150,7 +150,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     
     @Override 
     protected double computePrefHeight(double width) {
-        this.body.setPrefHeight(this.resizer.getBoundsInParent().getMaxY() - this.signature.prefHeight(width));
+        this.body.setPrefHeight(this.resizer.getBoundsInParent().getMaxY() - 25);
         return super.computePrefHeight(width);
     }
     

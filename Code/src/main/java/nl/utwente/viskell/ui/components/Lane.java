@@ -195,7 +195,7 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
         triangle.setLayoutY(10);
         this.resizer.setManaged(false);
         this.getChildren().add(this.resizer);
-        this.resizer.relocate(300-20, 400-20);
+        this.resizer.relocate(240-20, 320-20);
 
         DragContext sizeDrag = new DragContext(this.resizer);
         sizeDrag.setDragLimits(new BoundingBox(200, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));

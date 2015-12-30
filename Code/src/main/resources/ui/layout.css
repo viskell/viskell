@@ -136,24 +136,23 @@ DrawWire {
     -fx-font-family: Titillium;
 }
 
+.lambdaBorder {
+     -fx-pref-height: 25px;
+}
+
 .signature {
     -fx-background-insets: 0, 0;
     -fx-background-radius: 0, 0;
 }
 
-ChoiceBlock {
-	-fx-min-width: 200px;
-	-fx-min-height: 150px;
-}
-
 ChoiceBlock #altSpace {
-	-fx-padding: 20 20 20 20;
-	-fx-spacing: 20;
+	-fx-padding: 25 10 25 10;
+	-fx-spacing: 10;
 }
 
 Lane #guardSpace {
-	-fx-pref-width: 300px;
-	-fx-pref-height: 400px;
+	-fx-pref-width: 240px;
+	-fx-pref-height: 320px;
 }
 
 Lane #resultSpace {
