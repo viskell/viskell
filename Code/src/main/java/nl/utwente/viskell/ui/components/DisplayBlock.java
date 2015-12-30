@@ -11,7 +11,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.expr.Expression;
+import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ToplevelPane;
 
@@ -34,9 +36,6 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
     /** The space containing the input anchor. */
     @FXML protected Pane inputSpace;
 
-    /** The label on which to display type information. */
-    @FXML protected Label inputType;
-    
     /** The label on which to display the value of this block */
     @FXML protected Label value;
     
@@ -66,28 +65,30 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
         this.inputAnchor.invalidateVisualState();
 
         if (inputAnchor.hasValidConnection()) {
-            inputSpace.setTranslateY(0);
-            this.inputType.setVisible(false);
+            try { 
+                TypeChecker.unify("is showable", inputAnchor.getType().getFresh(), showConstraint.getFresh());
             
-            GhciSession ghci = getToplevel().getGhciSession();
+                GhciSession ghci = getToplevel().getGhciSession();
 
-            ListenableFuture<String> result = ghci.pull(inputAnchor.getFullExpr());
+                ListenableFuture<String> result = ghci.pull(inputAnchor.getFullExpr());
 
-            Futures.addCallback(result, new FutureCallback<String>() {
-                public void onSuccess(String s) {
-                    // Can't call setOutput directly - this may not be JavaFX app thread.
-                    // Instead, schedule setting the output.
-                    Platform.runLater(() -> value.setText(s));
-                }
+                Futures.addCallback(result, new FutureCallback<String>() {
+                    public void onSuccess(String s) {
+                        // Can't call setOutput directly - this may not be JavaFX app thread.
+                        // Instead, schedule setting the output.
+                        Platform.runLater(() -> value.setText(s));
+                    }
 
-                public void onFailure(Throwable throwable) {
-                    Platform.runLater(() -> value.setText("?!?!?!"));
-                }
-            });
+                    public void onFailure(Throwable throwable) {
+                        Platform.runLater(() -> value.setText("?!?!?!"));
+                    }
+                });
+
+            } catch (HaskellTypeError e) {
+                value.setText("_ :: " + inputAnchor.getStringType());
+            }
+            
         } else {
-            inputSpace.setTranslateY(-9);
-            this.inputType.setText(this.inputAnchor.getStringType());
-            this.inputType.setVisible(true);
             value.setText("?");
         }
     }
@@ -124,7 +125,7 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
     
     @Override
     public void refreshAnchorTypes() {
-        this.inputAnchor.setFreshRequiredType(showConstraint, new TypeScope());        
+        this.inputAnchor.setFreshRequiredType(TypeScope.unique("q"), new TypeScope());        
     }
 
     @Override

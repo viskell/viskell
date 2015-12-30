@@ -7,9 +7,7 @@
             <Label fx:id="value" styleClass="content" maxWidth="300" alignment="CENTER"/>
         </center>
         <top>
-        	<VBox fx:id="inputSpace" pickOnBounds="false">
-        	    <Label fx:id="inputType" styleClass="inputType"/>
-        	</VBox>
+        	<VBox fx:id="inputSpace" pickOnBounds="false"/>
         </top>
     </BorderPane>
 </fx:root>
