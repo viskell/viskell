@@ -63,11 +63,18 @@ public class CircleMenu extends CircularPane {
         delete.setOnActivate(() -> delete());
         this.add(delete);
 
-        // Copy Option
-        image = makeImageView("/ui/icons/appbar.page.copy.png");
-        MenuButton copy = new MenuButton("copy", image);
-        copy.setOnActivate(() -> copy());
-        this.add(copy);
+        if (block instanceof DefinitionBlock) {
+            image = makeImageView("/ui/icons/appbar.arrow.collapsed.png");
+            MenuButton resize = new MenuButton("resize", image);
+            resize.setOnActivate(() -> ((DefinitionBlock)block).resizeToFitAll());
+            this.add(resize);
+        } else {
+            // Copy Option
+            image = makeImageView("/ui/icons/appbar.page.copy.png");
+            MenuButton copy = new MenuButton("copy", image);
+            copy.setOnActivate(() -> copy());
+            this.add(copy);
+        }
 
         if (block instanceof DefinitionBlock && ((DefinitionBlock)block).isLambda()) {
             image = makeImageView("/ui/icons/appbar.edit.add.png");
