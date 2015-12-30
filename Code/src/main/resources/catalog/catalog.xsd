@@ -42,6 +42,7 @@
       <xs:element type="instanceType" name="instance" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:token" name="name" use="required"/>
+    <xs:attribute type="xs:token" name="default" use="optional"/>
   </xs:complexType>
   <xs:complexType name="categoryType">
     <xs:sequence>

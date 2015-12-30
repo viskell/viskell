@@ -183,6 +183,12 @@ public class TypeVar extends Type {
 
             return this.constraints.prettyPrintWith(this.getName(), fixity);
         }
+
+        protected void defaultOrElse(ConcreteType backupType) throws HaskellTypeError {
+            if (this.type == null) {
+                this.set(this.constraints.tryGetDefaulted().orElse(backupType));
+            }
+        }
     }
 
     /**

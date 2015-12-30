@@ -1,6 +1,7 @@
 package nl.utwente.viskell.haskell.type;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,9 @@ public class TypeClass implements Comparable<TypeClass> {
      */
     private Set<TypeClass> supers;
     
+    /** The optional type constructor to use for the typeclass defaulting. */
+    private Optional<TypeCon> defaultType;
+    
     /**
      * @param name The name of this type class.
      * @param types The types that are a member of this type class.
@@ -66,6 +70,7 @@ public class TypeClass implements Comparable<TypeClass> {
         this.name = name;
         this.instances = new HashSet<>();
         this.supers = new HashSet<>();
+        this.defaultType = Optional.empty();
         for (TypeCon tc : cons) {
             this.addInstance(tc, 0);
         }
@@ -86,6 +91,14 @@ public class TypeClass implements Comparable<TypeClass> {
             this.instances.add(new Instance(tc, constrainedArgs));
     }
 
+    public void setDefaultType(TypeCon defType) {
+        this.defaultType = Optional.of(defType);
+    }
+    
+    protected Optional<TypeCon> getDefaultType() {
+        return this.defaultType;
+    }
+    
     /**
      * @return the super classes of this type class
      */

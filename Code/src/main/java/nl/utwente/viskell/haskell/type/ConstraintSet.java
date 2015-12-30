@@ -3,6 +3,7 @@ package nl.utwente.viskell.haskell.type;
 import com.google.common.collect.Sets;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class ConstraintSet {
 
@@ -117,6 +118,25 @@ public final class ConstraintSet {
         }
     }
 
+    protected Optional<ConcreteType> tryGetDefaulted() {
+        Set<TypeClass> classes = this.constraints;
+        // search through the type classes for a suitable default
+        while (!classes.isEmpty()) {
+            for (TypeClass tc : classes) {
+                if (tc.getDefaultType().isPresent()) {
+                    TypeCon def = tc.getDefaultType().get();
+                    if (this.allConstraintsMatch(def)) {
+                        return Optional.of(def);
+                    }
+                }
+            }
+            // fall back on super classes
+            classes = classes.stream().flatMap(tc -> tc.getSupers().stream()).collect(Collectors.toSet());
+        }
+
+        return Optional.empty();
+    }
+    
     /**
      * @param typeText the String representation of type being constrained 
      * @param The fixity of the context the type is shown in.
@@ -167,5 +187,4 @@ public final class ConstraintSet {
         return this.constraints.equals(((ConstraintSet)other).constraints);
     }
 
-    
 }

@@ -207,6 +207,14 @@ public class HaskellCatalog {
                     }
                 }
             }
+
+            Node def = node.getAttributes().getNamedItem("default");
+            if (def != null) {
+                Type dt = builder.build(def.getTextContent());
+                if (dt instanceof TypeCon) {
+                    tc.setDefaultType((TypeCon)dt);
+                }
+            }
             
             entries.put(name,tc);
         }
