@@ -41,6 +41,13 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
     -fx-border-width: 2px;
 }
 
+.nested {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-border-width: 1px;
+    -fx-border-style: solid outside;
+}
+
 .block .header {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
@@ -62,6 +69,10 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
     -fx-padding: 10;
 }
 
+.lifting.block {
+	-fx-padding: 0 10 0 10;
+}
+
 .display.block {
     -fx-padding: 0 10 0 10;
     -fx-min-width: 100px;
@@ -70,6 +81,10 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
 .value.block {
     -fx-padding: 3 6 -9 6;
     -fx-min-width: 80px;
+}
+
+.value.nested {
+    -fx-min-width: 60px;
 }
 
 .value.block Button {

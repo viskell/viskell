@@ -7,6 +7,11 @@ ToplevelPane {
     -fx-border-color: black;
 }
 
+.nested {
+    -fx-text-fill: black;
+    -fx-border-color: black;
+}
+
 .error .block {
     -fx-border-color: red;
 }
@@ -29,6 +34,14 @@ ToplevelPane {
 
 .value.block {
     -fx-background-color: #BD1550;
+}
+
+.value.nested {
+    -fx-background-color: #BD1550;
+}
+
+.block.lifting {
+	-fx-background-color: burlywood;
 }
 
 MatchBlock {
