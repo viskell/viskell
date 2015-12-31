@@ -1,7 +1,3 @@
-ToplevelPane {
-    -fx-background-image: url('grid.png');
-}
-
 .block {
     -fx-text-fill: black;
     -fx-border-color: black;

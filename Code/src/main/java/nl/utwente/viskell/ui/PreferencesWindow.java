@@ -23,6 +23,7 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
     private Preferences preferences;
 
     @FXML private ComboBox<GhciSession.Backend> ghci;
+    @FXML private ComboBox<String> background;
     @FXML private ComboBox<String> theme;
     @FXML protected CheckBox debugOverlay;
     @FXML private Button reloadTheme;
@@ -46,6 +47,12 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
             overlay.getMainPane().restartBackend();
         });
         
+        background.getItems().setAll(ImmutableList.of("/ui/grid.png", "/ui/light_grid.png"));
+        background.getSelectionModel().select(preferences.get("background", "/ui/grid.png"));
+        background.valueProperty().addListener(event -> {
+            preferences.put("background", background.getValue());
+            refreshTheme();
+        });
         
         theme.getItems().setAll(ImmutableList.of("/ui/colours.css", "/ui/debugColours.css"));
         theme.getSelectionModel().select(preferences.get("theme", "/ui/colours.css"));
@@ -76,6 +83,8 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
         Main.primaryStage.getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
         stage.getScene().getStylesheets().clear();
         stage.getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
+        String backGroundImage = preferences.get("background", "/ui/grid.png");
+        Main.overlay.getMainPane().setStyle("-fx-background-image: url('" + backGroundImage + "');");
     }
 
     public void show() {
