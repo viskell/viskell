@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -18,6 +19,7 @@ import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.DragContext;
@@ -110,7 +112,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         triangle.setLayoutY(10);
         this.resizer.setManaged(false);
         this.getChildren().add(resizer);
-        this.resizer.relocate(400, 400);
+        this.resizer.relocate(300, 300);
 
         DragContext sizeDrag = new DragContext(this.resizer);
         sizeDrag.setDragLimits(new BoundingBox(200, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));
@@ -150,7 +152,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     
     @Override 
     protected double computePrefHeight(double width) {
-        this.body.setPrefHeight(this.resizer.getBoundsInParent().getMaxY() - this.signature.prefHeight(width));
+        this.body.setPrefHeight(this.resizer.getBoundsInParent().getMaxY() - 25);
         return super.computePrefHeight(width);
     }
     
@@ -233,4 +235,23 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         this.resizer.relocate(this.resizer.getLayoutX() + extraX, this.resizer.getLayoutY() + extraY);
     }
 
+    public void resizeToFitAll() {
+        if (this.body.getAttachedBlocks().count() == 0) {
+            // resize to default
+            double diffX = this.resizer.getLayoutX() - 300;
+            double diffY = this.resizer.getLayoutY() - 300;
+            this.shiftAndGrow(diffX/2, diffY/2, -diffX, -diffY);
+        } else {
+            // resize to the union of all contained blocks, taking in account minimum size and some margins
+            Bounds current = this.getToplevel().sceneToLocal(this.body.localToScene(this.body.getBoundsInLocal()));
+            Bounds union = this.body.getAttachedBlocks().map(b -> b.getBoundsInParent()).reduce(BlockContainer::union).get();
+            double shiftX = union.getMinX() - current.getMinX();
+            double shiftY = union.getMinY() - current.getMinY();
+            double extraX = union.getWidth() - current.getWidth();
+            double extraY = union.getHeight() - current.getHeight();
+            double marginX = Math.max(20, 200 - union.getWidth());
+            double marginY = Math.max(20, 200 - union.getHeight());
+            this.shiftAndGrow(shiftX - marginX/2 , shiftY - marginY/2 , extraX + marginX, extraY + marginY);
+        }
+    }
 }

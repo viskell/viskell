@@ -197,7 +197,7 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
         triangle.setLayoutY(10);
         this.resizer.setManaged(false);
         this.getChildren().add(this.resizer);
-        this.resizer.relocate(300-20, 400-20);
+        this.resizer.relocate(240-20, 320-20);
 
         DragContext sizeDrag = new DragContext(this.resizer);
         sizeDrag.setDragLimits(new BoundingBox(200, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));
@@ -248,8 +248,11 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
     }
     
     @Override
-    public Bounds getBoundsInScene() {
-        return this.localToScene(this.getBoundsInLocal());
+    public Bounds containmentBoundsInScene() {
+        Bounds local = this.getBoundsInLocal();
+        // include border area around this lane
+        BoundingBox withBorders = new BoundingBox(local.getMinX()-10, local.getMinY()-25, local.getWidth()+20, local.getHeight()+50);
+        return this.localToScene(withBorders);
     }
     
     @Override
@@ -261,7 +264,7 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
 
     @Override
     public void expandToFit(Bounds blockBounds) {
-        Bounds containerBounds = this.parent.getToplevel().sceneToLocal(this.getBoundsInScene());
+        Bounds containerBounds = this.parent.getToplevel().sceneToLocal(this.localToScene(this.getBoundsInLocal()));
         double shiftX = Math.min(0, blockBounds.getMinX() - containerBounds.getMinX());
         double shiftY = Math.min(0, blockBounds.getMinY() - containerBounds.getMinY());
         double extraX = Math.max(0, blockBounds.getMaxX() - containerBounds.getMaxX()) + Math.abs(shiftX);

@@ -19,7 +19,7 @@ public final class TrashContainer implements BlockContainer {
     }
     
     @Override
-    public Bounds getBoundsInScene() {
+    public Bounds containmentBoundsInScene() {
         return new BoundingBox(0, 0, 0, 0);
     }
 

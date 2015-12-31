@@ -2,6 +2,7 @@ package nl.utwente.viskell.ui;
 
 import java.util.stream.Stream;
 
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import nl.utwente.viskell.ui.components.Block;
@@ -11,8 +12,8 @@ import nl.utwente.viskell.ui.components.Block;
  */
 public interface BlockContainer {
 
-    /** Gets the bounds of this container transformed into the coordinate space of its scene. */
-    public Bounds getBoundsInScene();
+    /** Gets the bounds to be used for testing what is inside this container, transformed into the coordinate space of its scene. */
+    public Bounds containmentBoundsInScene();
     
     /** Attach a block to this container */
     public void attachBlock(Block block);
@@ -72,4 +73,15 @@ public interface BlockContainer {
      * @param blockBounds of the Block that needs to fit in the container.
      */
     public void expandToFit(Bounds blockBounds);
+    
+    /** Return the union of two Bounds, i.e. a Bound that contains both. */
+    public static Bounds union(Bounds a, Bounds b) {
+        double left   = Math.min(a.getMinX(), b.getMinX());
+        double right  = Math.max(a.getMaxX(), b.getMaxX());
+        double top    = Math.min(a.getMinY(), b.getMinY());
+        double bottom = Math.max(a.getMaxY(), b.getMaxY());
+
+        return new BoundingBox(left, top, right - left, bottom - top);
+    }
+
 }
