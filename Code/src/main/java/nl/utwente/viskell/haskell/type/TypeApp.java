@@ -56,8 +56,12 @@ public class TypeApp extends ConcreteType {
     public String prettyPrint(int fixity) {
         List<Type> chain = this.asFlattenedAppChain();
         Type ftype = chain.remove(0);
-        String apptype = ftype.prettyPrintAppChain(fixity, chain);
-        return this.constraints.prettyPrintWith(apptype, fixity);
+        if (this.constraints.hasConstraints()) {
+            String apptype = ftype.prettyPrintAppChain(9, chain);
+            return this.constraints.prettyPrintWith(apptype, fixity);
+        } else {
+           return ftype.prettyPrintAppChain(fixity, chain);
+        }
     }
 
     public final List<Type> asFlattenedAppChain(){
