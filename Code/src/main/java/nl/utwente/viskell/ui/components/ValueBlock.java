@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableMap;
  * Block should be extended instead.
  * </p>
  */
-public class ValueBlock extends Block implements ConnectionAnchor.Target {
+public abstract class ValueBlock extends Block implements ConnectionAnchor.Target {
     /** The OutputAnchor of this ValueBlock. */
     protected OutputAnchor output;
 
@@ -43,11 +43,6 @@ public class ValueBlock extends Block implements ConnectionAnchor.Target {
      * Construct a new ValueBlock.
      * @param pane The parent pane this Block resides on.
      */
-    public ValueBlock(ToplevelPane pane, Type type, String value) {
-        this("ValueBlock", pane, type);
-        this.setValue(value);
-    }
-    
     protected ValueBlock(String fxml, ToplevelPane pane, Type type) {
         super(pane);
         loadFXML(fxml);
@@ -93,11 +88,6 @@ public class ValueBlock extends Block implements ConnectionAnchor.Target {
     @Override
     public List<OutputAnchor> getAllOutputs() {
         return ImmutableList.of(output);
-    }
-    
-    @Override
-    public Optional<Block> getNewCopy() {
-        return Optional.of(new ValueBlock(this.getToplevel(), this.output.binder.getFreshAnnotationType(), this.value.getText()));
     }
     
     @Override

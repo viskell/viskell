@@ -1,5 +1,7 @@
 package nl.utwente.viskell.ui;
 
+import java.util.Optional;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
@@ -99,11 +101,19 @@ public class CircleMenu extends CircularPane {
             this.add(removeLane);
 
         } else {
-            // Paste Option
-            image = makeImageView("/ui/icons/appbar.clipboard.paste.png");
-            MenuButton paste = new MenuButton("paste", image);
-            paste.setOnActivate(() -> paste());
-            this.add(paste);
+            if (block instanceof ConstantBlock) {
+                image = makeImageView("/ui/icons/appbar.page.edit.png");
+                MenuButton edit = new MenuButton("edit", image);
+                edit.setOnActivate(() -> ((ConstantBlock)block).editValue(Optional.empty()));
+                this.add(edit);
+                
+            } else {
+                // Paste Option
+                image = makeImageView("/ui/icons/appbar.clipboard.paste.png");
+                MenuButton paste = new MenuButton("paste", image);
+                paste.setOnActivate(() -> paste());
+                this.add(paste);
+            }
 
             // Save Option
             image = makeImageView("/ui/icons/appbar.save.png");

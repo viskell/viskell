@@ -18,7 +18,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.util.Duration;
 import nl.utwente.viskell.ghcj.GhciSession;
-import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.env.CatalogFunction;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.haskell.type.FunType;
@@ -97,7 +96,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             if (e.getButton() == MouseButton.SECONDARY && entry.isConstructor()) {
                                 addBlock(new MatchBlock(entry, parent));
                             } else if (!(entry.getFreshSignature() instanceof FunType)) {
-                                addBlock(new ValueBlock(pane, entry.getFreshSignature(), entry.getName()));
+                                addBlock(new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
                             } else if (e.isControlDown() || verticalCurry) {
                             	if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
                             		addBlock(new BinOpApplyBlock(entry, parent));
@@ -134,8 +133,8 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         Button closeButton = new Button("Close");
         closeButton.setOnMouseClicked(event -> close(true));
         closeButton.setOnTouchPressed(event -> close(false));
-        Button valBlockButton = new Button("Value");
-        valBlockButton.setOnAction(event -> addValueBlock());
+        Button valBlockButton = new Button("Constant");
+        valBlockButton.setOnAction(event -> addConstantBlock());
         Button arbBlockButton = new Button("Arbitrary");
         arbBlockButton.setOnAction(event -> addBlock(new ArbitraryBlock(parent)));
         Button disBlockButton = new Button("Display");
@@ -194,26 +193,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         opening.play();
     }
 
-    private void addValueBlock() {
-        TextInputDialog dialog = new TextInputDialog("Value");
-        dialog.setTitle("Add value block");
-        dialog.setHeaderText("Add value block");
-        dialog.setContentText("Value");
-
-        Optional<String> result = dialog.showAndWait();
-
-        result.ifPresent(value -> {
-            GhciSession ghci = parent.getGhciSession();
-
-            try {
-                Type type = ghci.pullType(value, parent.getEnvInstance());
-                ValueBlock val = new ValueBlock(this.parent, type, value);
-                addBlock(val);
-            } catch (HaskellException e) {
-                // Retry.
-                addValueBlock();
-            }
-        });
+    private void addConstantBlock() {
+        ConstantBlock val = new ConstantBlock(this.parent);
+        addBlock(val);
+        val.editValue(Optional.of("\"Hello, World!\""));
     }
 
     /** Add a new definition block (named, typed lambda block) */
