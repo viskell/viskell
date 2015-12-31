@@ -60,6 +60,11 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
     }
 
     @Override
+    public Type getFreshType() {
+        return this.getType(Optional.empty()).getFresh();
+    }
+    
+    @Override
     public ConnectionAnchor getAssociatedAnchor() {
         return this;
     }

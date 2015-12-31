@@ -127,6 +127,11 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
         return this.type;
     }
     
+    @Override
+    public Type getFreshType() {
+        return this.type.getFresh();
+    }
+
     /**
      * @return the string representation of the in- or output type.
      */

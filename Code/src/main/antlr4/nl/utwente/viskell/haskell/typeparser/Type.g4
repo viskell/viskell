@@ -1,7 +1,7 @@
 grammar Type;
 
-CT : [A-Z][A-Za-z]+ ;
-VT : [a-z]+ ;
+CT : [A-Z][A-Za-z0-9]+ ;
+VT : [a-z0-9]+ ;
 WS : [ \t\r\n]+ -> skip ;
 
 LIST_CT : '[]';

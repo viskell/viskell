@@ -1,9 +1,12 @@
 package nl.utwente.viskell.ui;
 
+import java.util.List;
+
 import javafx.animation.ScaleTransition;
 import javafx.scene.control.Button;
 import javafx.scene.layout.TilePane;
 import javafx.util.Duration;
+import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.components.*;
 
 /** A menu for attaching something to an open wire. */
@@ -29,10 +32,21 @@ public class WireMenu extends TilePane {
         // FIXME: silly workaround, somehow the buttons in this menu don't work on touch click while those in FunctionMenu do...
         cancelButton.setOnTouchPressed(event -> this.attachedWire.remove());
         
+        Type type = wire.getAnchor().getFreshType();
+        
+        int tArity = 2;
+        if (type instanceof TypeApp) {
+            List<Type> appChain = ((TypeApp)type).asFlattenedAppChain();
+            if (appChain.get(0) instanceof TupleTypeCon) {
+                tArity = appChain.size()-1;
+            }
+        }
+        final int tupleArity = tArity; // why do I need such silly workaround when using lambda in Java...
+        
         if (wire.getAnchor() instanceof InputAnchor) {
             Button lambdaBlockButton = new Button("Lambda");
-            lambdaBlockButton.setOnAction(event -> addBlockWithOutput(new DefinitionBlock(this.toplevel, 1)));
-            lambdaBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new DefinitionBlock(this.toplevel, 1)));
+            lambdaBlockButton.setOnAction(event -> addBlockWithOutput(new DefinitionBlock(this.toplevel, type.countArguments())));
+            lambdaBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new DefinitionBlock(this.toplevel, type.countArguments())));
             
             Button rationalBlockButton = new Button("Rational");
             rationalBlockButton.setOnAction(event -> addBlockWithOutput(new SliderBlock(this.toplevel, false)));
@@ -43,8 +57,8 @@ public class WireMenu extends TilePane {
             IntegerBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new SliderBlock(this.toplevel, true)));
 
             Button joinBlockButton = new Button("Joiner");
-            joinBlockButton.setOnAction(event -> addBlockWithOutput(new JoinerBlock(this.toplevel,2)));
-            joinBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new JoinerBlock(this.toplevel,2)));
+            joinBlockButton.setOnAction(event -> addBlockWithOutput(new JoinerBlock(this.toplevel, tupleArity)));
+            joinBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new JoinerBlock(this.toplevel, tupleArity)));
             
             this.getChildren().addAll(cancelButton, lambdaBlockButton, rationalBlockButton, IntegerBlockButton , joinBlockButton);
             
@@ -58,8 +72,8 @@ public class WireMenu extends TilePane {
             graphBlockButton.setOnTouchPressed(event -> addBlockWithInput(new GraphBlock(this.toplevel)));
 
             Button splitBlockButton = new Button("Splitter");
-            splitBlockButton.setOnAction(event -> addBlockWithInput(new SplitterBlock(this.toplevel,2)));
-            splitBlockButton.setOnTouchPressed(event -> addBlockWithInput(new SplitterBlock(this.toplevel,2)));
+            splitBlockButton.setOnAction(event -> addBlockWithInput(new SplitterBlock(this.toplevel, tupleArity)));
+            splitBlockButton.setOnTouchPressed(event -> addBlockWithInput(new SplitterBlock(this.toplevel, tupleArity)));
             
             this.getChildren().addAll(cancelButton, disBlockButton, graphBlockButton, splitBlockButton);
         }
