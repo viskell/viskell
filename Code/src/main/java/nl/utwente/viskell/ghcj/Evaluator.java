@@ -137,6 +137,4 @@ abstract public class Evaluator {
     /** @return the list of modules to load automatically. */
     protected abstract List<String> getModules();
 
-    /** @return the path of the catalog to use for this evaluator. */
-    protected abstract String getCatalogPath();
 }

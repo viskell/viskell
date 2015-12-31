@@ -60,6 +60,14 @@ public final class GhciSession extends AbstractExecutionThreadService {
 
         queue = new ArrayBlockingQueue<>(1024);
         errors = EvictingQueue.create(LOG_SIZE);
+        switch (pickBackend()) {
+            case Clash: 
+                this.catalog = new HaskellCatalog("/catalog/clash.xml");
+                break;
+            default:
+                this.catalog = new HaskellCatalog("/catalog/haskell.xml");
+                break;
+        }
     }
 
     @Override
@@ -174,7 +182,6 @@ public final class GhciSession extends AbstractExecutionThreadService {
         }
 
         this.ghci = evaluatorFactory(pickBackend());
-        this.catalog = new HaskellCatalog(this.ghci.getCatalogPath());
     }
 
     /** Build the Evaluator that corresponds to the given Backend identifier. */
@@ -199,7 +206,6 @@ public final class GhciSession extends AbstractExecutionThreadService {
     }
 
     public HaskellCatalog getCatalog() {
-        awaitRunning();
         return catalog;
     }
 
