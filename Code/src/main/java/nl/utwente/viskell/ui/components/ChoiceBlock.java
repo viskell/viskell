@@ -65,6 +65,16 @@ public class ChoiceBlock extends Block {
     }
 
     @Override
+    public List<ConnectionAnchor> getAllAnchors() {
+        List<ConnectionAnchor> result = new ArrayList<>();
+        result.add(this.output);
+        for (Lane lane : this.lanes) {
+            result.addAll(lane.getAllAnchors());
+        }
+        return result;
+    }
+    
+    @Override
     public Optional<Block> getNewCopy() {
         // copying the internal is too complex for now
         return Optional.empty();

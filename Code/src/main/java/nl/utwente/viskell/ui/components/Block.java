@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui.components;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +92,12 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      * @return All OutputAnchors of the Block.
      */
     public abstract List<OutputAnchor> getAllOutputs();
+    
+    public List<ConnectionAnchor> getAllAnchors() {
+        List<ConnectionAnchor> result = new ArrayList<>(this.getAllInputs());
+        result.addAll(this.getAllOutputs());
+        return result;
+    }
     
     /** @return true if no connected output anchor exist */
     public boolean isBottomMost() {

@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableMap;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Expression;
@@ -191,6 +192,23 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
         }
     }
     
+    @Override
+    protected void setNearbyWireReaction(int goodness) {
+        if (goodness > 0) {
+            this.openWire.setStroke(Color.STEELBLUE);
+            this.openWire.setStrokeWidth(5);
+            this.visibleAnchor.setFill(Color.STEELBLUE);
+        } else if (goodness < 0) {
+            this.openWire.setStroke(Color.RED);
+            this.openWire.setStrokeWidth(3);
+            this.visibleAnchor.setFill(Color.RED);
+        } else {
+            this.openWire.setStroke(Color.BLACK);
+            this.openWire.setStrokeWidth(3);
+            this.visibleAnchor.setFill(Color.BLACK);
+        }
+    }
+
     @Override
     public void setWireInProgress(DrawWire wire) {
         super.setWireInProgress(wire);
