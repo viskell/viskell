@@ -149,6 +149,11 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             }
         }
 
+        if (sink.block == source.block && !(sink instanceof ResultAnchor)) {
+            // self recursive wires are not allowed
+            return null;
+        }
+        
         return new Connection(source, sink);
     }
 
