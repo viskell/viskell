@@ -66,7 +66,6 @@ public class LiftingBlock extends Block {
         
         inputSpace.setPickOnBounds(false);
         inputSpace.setAlignment(Pos.CENTER);
-        inputSpace.setTranslateY(-9);
         
         VBox body = new VBox(inputSpace, nested, outputSpace);
         body.getStyleClass().addAll("block", "lifting");
@@ -149,7 +148,7 @@ public class LiftingBlock extends Block {
             this.getChildren().addAll(this.anchor, this.inputType);
             this.setTranslateY(-9);
             this.setPickOnBounds(false);
-
+            this.setAlignment(Pos.CENTER);
         }
 
         @Override

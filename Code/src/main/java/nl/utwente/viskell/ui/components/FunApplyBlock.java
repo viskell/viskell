@@ -211,6 +211,10 @@ public class FunApplyBlock extends Block {
         }
     }
     
+    public FunctionInfo getFunInfo() {
+        return this.funInfo;
+    }
+    
     @Override
     public List<InputAnchor> getAllInputs() {
         return this.inputs.stream().map(i -> i.anchor).collect(Collectors.toList());

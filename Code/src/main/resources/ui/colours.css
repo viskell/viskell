@@ -32,6 +32,10 @@ ToplevelPane {
     -fx-background-color: #E97F02;
 }
 
+.function.nested {
+    -fx-background-color: #E97F02;
+}
+
 .value.block {
     -fx-background-color: #BD1550;
 }

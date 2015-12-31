@@ -214,6 +214,10 @@ public class BinOpApplyBlock extends Block {
         }
 	}
 
+    public FunctionInfo getFunInfo() {
+        return this.funInfo;
+    }
+	
 	@Override
 	public List<InputAnchor> getAllInputs() {
 		return ImmutableList.of(this.leftInput.anchor, this.rightInput.anchor);
