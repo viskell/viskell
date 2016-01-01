@@ -1,5 +1,9 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -20,6 +24,8 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Transform;
 import javafx.util.Duration;
+import nl.utwente.viskell.haskell.type.HaskellTypeError;
+import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ToplevelPane;
@@ -89,9 +95,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
     protected void handleMouseDrag(MouseEvent event) {
         if (this.menu == null && !event.isSynthesized()) {
             Point2D localPos = this.anchor.getPane().sceneToLocal(event.getSceneX(), event.getSceneY());
-            this.toucharea.setLayoutX(localPos.getX());
-            this.toucharea.setLayoutY(localPos.getY());
-            this.setFreePosition(localPos);
+            this.toucharea.dragTo(localPos.getX(), localPos.getY());
         }
         event.consume();
     }
@@ -240,8 +244,13 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         /** Whether this touch area has been dragged further than the drag threshold. */
         private boolean dragStarted;
         
-        /** */
-        private final Timeline disapperance; 
+        /** Timed animation for toucharea and drawwire self removal */
+        private final Timeline disapperance;
+        
+        /** List of nearby anchors that have visually reacted to this wire. */
+        private List<ConnectionAnchor> nearbyAnchors;
+        
+        private Point2D lastNearbyUpdate;
         
         /**
          * @param touchPoint that is the center of new active touch area, or null if the mouse
@@ -253,6 +262,8 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             
             this.touchID = touchPoint == null ? -1 : touchPoint.getId();
             this.dragStarted = true;
+            this.nearbyAnchors = new ArrayList<>();
+            this.lastNearbyUpdate = Point2D.ZERO;
             
             this.disapperance = new Timeline(new KeyFrame(Duration.millis(2000),
                     e -> DrawWire.this.remove(),
@@ -296,6 +307,10 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         }
         
         private void remove() {
+            for (ConnectionAnchor anchor : this.nearbyAnchors) {
+                anchor.setNearbyWireReaction(0);
+            }
+            
             ToplevelPane pane = DrawWire.this.anchor.getPane();
             pane.removeTouchArea(this);
         }
@@ -366,9 +381,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 double deltaX = event.getTouchPoint().getX() * scaleFactor;
                 double deltaY = event.getTouchPoint().getY() * scaleFactor;
                 
-                if (Math.abs(deltaX) + Math.abs(deltaY) < 2) {
-                    // ignore very small movements
-                } else if ((deltaX*deltaX + deltaY*deltaY) > 10000) {
+                if ((deltaX*deltaX + deltaY*deltaY) > 10000) {
                     // FIXME: ignore too large movements
                 } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 35) {
                     if (!this.dragStarted) {
@@ -377,10 +390,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
  
                     double newX = this.getLayoutX() + deltaX;
                     double newY = this.getLayoutY() + deltaY;
-                    this.setLayoutX(newX);
-                    this.setLayoutY(newY);
-                    DrawWire.this.setFreePosition(new Point2D(newX, newY));
-                }
+                    this.dragTo(newX, newY);                }
             }
             
             event.consume();
@@ -391,11 +401,63 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 double scaleFactor = this.getScaleX();
                 double newX = this.getLayoutX() + event.getX() * scaleFactor;
                 double newY = this.getLayoutY() + event.getY() * scaleFactor;
-                this.setLayoutX(newX);
-                this.setLayoutY(newY);
-                DrawWire.this.setFreePosition(new Point2D(newX, newY));
+                this.dragTo(newX, newY);
             }
             event.consume();
+        }
+        
+        private void dragTo(double newX, double newY) {
+            this.setLayoutX(newX);
+            this.setLayoutY(newY);
+            Point2D newPos = new Point2D(newX, newY);
+            DrawWire.this.setFreePosition(newPos);
+
+            // threshold to avoid doing a quite expensive computation too often
+            if (this.lastNearbyUpdate.distance(newPos) > 10) {
+                this.lastNearbyUpdate = newPos;
+                List<ConnectionAnchor> targetAnchors = anchor.block.getToplevel().allNearbyFreeAnchors(newPos, 166);
+                List<ConnectionAnchor> newNearby = new ArrayList<>();
+
+                // trial unification on all nearby opposite free anchor so see if they could fit
+                if (DrawWire.this.anchor instanceof InputAnchor) {
+                    InputAnchor anchor = (InputAnchor)DrawWire.this.anchor;
+                    for (ConnectionAnchor target : targetAnchors) {
+                        if (target instanceof OutputAnchor) {
+                            target.setNearbyWireReaction(determineWireReaction((OutputAnchor)target, anchor));
+                            newNearby.add(target);
+                        }
+                    }
+                } else {
+                    OutputAnchor anchor = (OutputAnchor)DrawWire.this.anchor;
+                    for (ConnectionAnchor target : targetAnchors) {
+                        if (target instanceof InputAnchor) {
+                            newNearby.add(target);
+                            target.setNearbyWireReaction(determineWireReaction(anchor, (InputAnchor)target));
+                        }
+                    }
+                }
+                
+                // reset all anchors that are not nearby anymore
+                for (ConnectionAnchor oldNear : this.nearbyAnchors) {
+                    if (! newNearby.contains(oldNear)) {
+                        oldNear.setNearbyWireReaction(0);
+                    }
+                }
+                
+                this.nearbyAnchors = newNearby;
+            }
+        }
+        
+        private int determineWireReaction(OutputAnchor source, InputAnchor sink) {
+            if (sink.block == source.block && !(sink instanceof ResultAnchor)) {
+                return 0;
+            }
+            try {
+                TypeChecker.unify("wire reaction", source.getType(Optional.empty()).getFresh(), sink.getType().getFresh());
+                return 1;
+            } catch (HaskellTypeError e) {
+                return -1;
+            }
         }
         
         private void handleDragStart() {

@@ -226,6 +226,12 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
         return this.wrapper;
     }
     
+    public List<ConnectionAnchor> getAllAnchors() {
+        List<ConnectionAnchor> result = new ArrayList<>(this.args);
+        result.add(this.res);
+        return result;
+    }
+    
     @Override
     public void attachBlock(Block block) {
         attachedBlocks.add(block);
