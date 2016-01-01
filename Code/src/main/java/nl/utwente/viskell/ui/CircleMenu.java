@@ -16,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import jfxtras.scene.layout.CircularPane;
+import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.ui.components.*;
 
 /**
@@ -110,6 +111,76 @@ public class CircleMenu extends CircularPane {
             MenuButton save = new MenuButton("save", image);
             save.setOnActivate(() -> saveBlock());
             this.add(save);
+        }
+        
+        if (block instanceof ValueBlock) {
+            image = makeImageView("/ui/icons/appbar.layer.up.png");
+            MenuButton lift = new MenuButton("lift", image);
+            lift.setOnActivate(() -> {
+                ToplevelPane toplevel = this.block.getToplevel();
+                toplevel.removeBlock(block);
+                Block lifter = new LiftingBlock(toplevel, new NestedValue((ValueBlock)block));
+                lifter.setLayoutX(block.getLayoutX()-10);
+                lifter.setLayoutY(block.getLayoutY()-10);
+                toplevel.addBlock(lifter);
+                lifter.initiateConnectionChanges();
+            });
+            this.add(lift);
+        } else if (block instanceof FunctionBlock) {
+            image = makeImageView("/ui/icons/appbar.layer.up.png");
+            MenuButton lift = new MenuButton("lift", image);
+            lift.setOnActivate(() -> {
+                ToplevelPane toplevel = this.block.getToplevel();
+                FunctionInfo funInfo = ((FunctionBlock)block).getFunInfo();
+                toplevel.removeBlock(block);
+                Block lifter = new LiftingBlock(toplevel, new NestedFunction(funInfo, block));
+                lifter.setLayoutX(block.getLayoutX()-10);
+                lifter.setLayoutY(block.getLayoutY()-10);
+                toplevel.addBlock(lifter);
+                lifter.initiateConnectionChanges();
+            });
+            this.add(lift);
+        } else if (block instanceof FunApplyBlock) {
+            image = makeImageView("/ui/icons/appbar.layer.up.png");
+            MenuButton lift = new MenuButton("lift", image);
+            lift.setOnActivate(() -> {
+                ToplevelPane toplevel = this.block.getToplevel();
+                FunctionInfo funInfo = ((FunApplyBlock)block).getFunInfo();
+                toplevel.removeBlock(block);
+                Block lifter = new LiftingBlock(toplevel, new NestedFunction(funInfo, block));
+                lifter.setLayoutX(block.getLayoutX()-10);
+                lifter.setLayoutY(block.getLayoutY()-10);
+                toplevel.addBlock(lifter);
+                lifter.initiateConnectionChanges();
+            });
+            this.add(lift);
+        } else if (block instanceof BinOpApplyBlock) {
+            image = makeImageView("/ui/icons/appbar.layer.up.png");
+            MenuButton lift = new MenuButton("lift", image);
+            lift.setOnActivate(() -> {
+                ToplevelPane toplevel = this.block.getToplevel();
+                FunctionInfo funInfo = ((BinOpApplyBlock)block).getFunInfo();
+                toplevel.removeBlock(block);
+                Block lifter = new LiftingBlock(toplevel, new NestedFunction(funInfo, block));
+                lifter.setLayoutX(block.getLayoutX()-10);
+                lifter.setLayoutY(block.getLayoutY()-10);
+                toplevel.addBlock(lifter);
+                lifter.initiateConnectionChanges();
+            });
+            this.add(lift);
+        } else if (block instanceof LiftingBlock) {
+            image = makeImageView("/ui/icons/appbar.layer.down.png");
+            MenuButton unlift = new MenuButton("unlift", image);
+            unlift.setOnActivate(() -> {
+                ToplevelPane toplevel = this.block.getToplevel();
+                Block original = ((LiftingBlock)block).getNested().getOriginal();
+                toplevel.removeBlock(block);
+                original.setLayoutX(block.getLayoutX());
+                original.setLayoutY(block.getLayoutY());
+                toplevel.addBlock(original);
+                original.initiateConnectionChanges();
+            });
+            this.add(unlift);
         }
         
         // opening animation

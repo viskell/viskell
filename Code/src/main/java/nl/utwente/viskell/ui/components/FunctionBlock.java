@@ -94,6 +94,10 @@ public class FunctionBlock extends Block {
         functionInfo.setMaxWidth(Region.USE_PREF_SIZE);
         
     }
+
+    public FunctionInfo getFunInfo() {
+        return this.funInfo;
+    }
     
     /** Updates the layout, if this Pane has a parent. */
     public void updateLayout() {

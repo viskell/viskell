@@ -148,6 +148,10 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
         this.type = type.getFresh(scope);
     }
 
+    public void setExactRequiredType(Type type) {
+        this.type = type;
+    }
+    
     /**
      * @return Optional of the connection's opposite output anchor.
      */
