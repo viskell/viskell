@@ -5,6 +5,11 @@ ToplevelPane {
 .block {
     -fx-text-fill: black;
     -fx-border-color: black;
+    -fx-effect: dropshadow(two-pass-box, black, 7, 0.0, 3, 3)
+}
+
+.activated .block {
+    -fx-effect: dropshadow(two-pass-box, beige, 10, 0.0, 0, 0)
 }
 
 .nested {
@@ -63,6 +68,7 @@ MatchBlock {
 .menu {
     -fx-background-color: #490A3D;
     -fx-border-color: black;
+    -fx-effect: dropshadow(two-pass-box, black, 15, 0.0, 8, 8)
 }
 
 .menu .title {

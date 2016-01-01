@@ -74,7 +74,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         
         this.dragContext = new DragContext(this);
         this.dragContext.setSecondaryClickAction((p, byMouse) -> CircleMenu.showFor(this, this.localToParent(p), byMouse));
-        dragContext.setDragFinishAction(event -> refreshContainer());
+        this.dragContext.setDragFinishAction(event -> refreshContainer());
+        this.dragContext.setContactAction(x -> this.getStyleClass().add("activated"));
+        this.dragContext.setReleaseAction(x -> this.getStyleClass().removeAll("activated"));
     }
 
     /** @return the parent CustomUIPane of this component. */
