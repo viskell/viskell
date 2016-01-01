@@ -282,6 +282,8 @@
       <function name="GT" signature="Ordering" isConstructor="true">
         Greater than
       </function>
+      <function name="compare" signature="Ord a => a -> a -> Ordering"/>
+      <function name="comparing" signature="Ord a => (b -> a) -> b -> b -> Ordering"/>
     </category>
 
     <category name="Enum, conversions">
@@ -338,6 +340,12 @@
       </function>
       <function name="minBound" signature="Bounded a => a"/>
       <function name="maxBound" signature="Bounded a => a"/>
+      <function name="digitToInt" signature="Char -> Int"/>
+      <function name="intToDigit" signature="Int -> Char"/>
+      <function name="chr" signature="Int -> Char"/>
+      <function name="ord" signature="Char -> Int"/>
+      <function name="toUpper" signature="Char -> Char"/>
+      <function name="toLower" signature="Char -> Char"/>
     </category>
 
     <category name="Arithmetic" isCommon="true">
@@ -565,7 +573,10 @@
       </function>
       <function name="mempty" signature="Monoid a => a" isCommon="true"/>
       <function name="mappend" signature="Monoid a => a -> a -> a" isCommon="true"/>
+      <function name="on" signature="(b -> b -> c) -> (a -> b) -> a -> a -> c"/>
+      <function name="fix" signature="(a -> a) -> a"/>
     </category>
+    
     <category name="Basic datatypes" isCommon="true">
       <function name="()" signature="()" isConstructor="true" isCommon="true"/>
       <function name="(,)" signature="a -> b -> (a, b)" isConstructor="true" isCommon="true"/>
