@@ -95,7 +95,7 @@ public class DragContext {
             } else if (type == TouchEvent.TOUCH_RELEASED) {
                 if (this.touchId == event.getTouchPoint().getId()) {
                     this.handleTouchReleased();
-                } else if (! this.dragStarted) {
+                } else if (!this.dragStarted && event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this.node)).count() == 2) {
                     if (this.secondaryClickAction != null) {
                         this.secondaryClickAction.accept(new Point2D(event.getTouchPoint().getX(), event.getTouchPoint().getY()), false);
                     }

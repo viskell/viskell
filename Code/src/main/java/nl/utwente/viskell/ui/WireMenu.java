@@ -104,7 +104,7 @@ public class WireMenu extends TilePane {
 
     private void addBlockWithOutput(Block block) {
         this.toplevel.addBlock(block);
-        block.relocate(this.attachedWire.getEndX(), this.attachedWire.getEndY() - block.prefHeight(-1));
+        block.relocate(this.attachedWire.getStartX(), this.attachedWire.getStartY() - block.prefHeight(-1));
         this.close();
         
         block.initiateConnectionChanges();
