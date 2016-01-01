@@ -2,6 +2,7 @@ package nl.utwente.viskell.ui.components;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ui.ToplevelPane;
 import org.junit.BeforeClass;
 
@@ -36,6 +37,8 @@ public class ComponentTest {
     }
 
     protected ToplevelPane getPane() {
-        return new ToplevelPane();
+        GhciSession ghci = new GhciSession();
+        ghci.startAsync();
+        return new ToplevelPane(ghci);
     }
 }

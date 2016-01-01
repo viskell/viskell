@@ -46,7 +46,7 @@ public class ToplevelPane extends Region implements BlockContainer {
     /**
      * Constructs a new instance.
      */
-    public ToplevelPane() {
+    public ToplevelPane(GhciSession ghci) {
         super();
         this.attachedBlocks = new HashSet<>();
         
@@ -55,8 +55,7 @@ public class ToplevelPane extends Region implements BlockContainer {
         this.wireLayer = new Pane(this.blockLayer);
         this.getChildren().add(this.wireLayer);
 
-        this.ghci = new GhciSession();
-        this.ghci.startAsync();
+        this.ghci = ghci;
 
         new TouchContext(this);
     }
@@ -67,7 +66,6 @@ public class ToplevelPane extends Region implements BlockContainer {
 
     /** Shows a new function menu at the specified location in this pane. */
     public void showFunctionMenuAt(double x, double y, boolean byMouse) {
-        ghci.awaitRunning();
         boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
         FunctionMenu menu = new FunctionMenu(byMouse, ghci.getCatalog(), this, verticalCurry);
         double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
@@ -80,7 +78,6 @@ public class ToplevelPane extends Region implements BlockContainer {
      * @return The Env instance to be used within this CustomUIPane.
      */
     public Environment getEnvInstance() {
-        ghci.awaitRunning();
         return ghci.getCatalog().asEnvironment();
     }
 

@@ -23,8 +23,4 @@ public class GhciEvaluator extends Evaluator {
         return ImmutableList.of("Data.List", "Data.Maybe", "Data.Either", "Data.Monoid", "Control.Applicative", "Test.QuickCheck");
     }
 
-    @Override
-    protected String getCatalogPath() {
-        return "/catalog/haskell.xml";
-    }
 }

@@ -23,8 +23,4 @@ public class ClashEvaluator extends GhciEvaluator {
         return ImmutableList.of("CLaSH.Prelude", "Data.List", "Data.Maybe", "Data.Either");
     }
 
-    @Override
-    protected String getCatalogPath() {
-        return "/catalog/clash.xml";
-    }
 }

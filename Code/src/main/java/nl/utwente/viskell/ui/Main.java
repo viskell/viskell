@@ -2,12 +2,18 @@ package nl.utwente.viskell.ui;
 
 import java.util.prefs.Preferences;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import nl.utwente.viskell.ghcj.GhciSession;
+import nl.utwente.viskell.ghcj.HaskellException;
 
 /**
  * Main application class for the GUI.
@@ -25,26 +31,13 @@ public class Main extends Application {
 
         Font.loadFont(this.getClass().getResourceAsStream("/ui/fonts/titillium.otf"), 20);
 
+        GhciSession ghci = new GhciSession();
+        ghci.startAsync();
+        
         // Init TactilePane
-        ToplevelPane tactilePane = new ToplevelPane();
+        ToplevelPane tactilePane = new ToplevelPane(ghci);
 
         overlay = new MainOverlay(tactilePane);
-
-        // Check if GHCI is available
-        try {
-            GhciSession testGhci = new GhciSession();
-            testGhci.startAsync();
-            testGhci.awaitRunning();
-            testGhci.stopAsync();
-        } catch (RuntimeException e) {
-            String msg = "It seems the Glasgow Haskell Compiler, GHC, is not " +
-                    "available. Executing programs will not be enabled. We " +
-                    "strongly recommend you install GHC, for example by " +
-                    "installing the Haskell Platform (haskell.org/platform).";
-            new Alert(Alert.AlertType.WARNING, msg).showAndWait();
-
-            e.printStackTrace(); // In case it's not a file-not-found
-        }
 
         // Init scene
         Scene scene = new Scene(overlay);
@@ -61,6 +54,35 @@ public class Main extends Application {
 
         stage.show();
         tactilePane.requestFocus();
+        
+        // Check if GHCI is available
+        try {
+            ghci.awaitRunning();
+            // trigger loading of libraries and test QuickCheck
+            ListenableFuture<String> test = ghci.pullRaw("sample' (arbitrary :: Gen Int)");
+            Futures.addCallback(test, new FutureCallback<String>() {
+                public void onSuccess(String result) {
+                    // all ok
+                }
+                public void onFailure(Throwable error) {
+                    error.printStackTrace();
+                    String msg = "It seems like QuickCheck is not working, thus the Arbitry block can not be used.";
+                    if (error instanceof HaskellException) {
+                        Platform.runLater(() -> new Alert(Alert.AlertType.WARNING, msg).showAndWait());
+                    }
+                }
+            });
+        } catch (RuntimeException e) {
+            String msg = "It seems the Glasgow Haskell Compiler, GHC, is not " +
+                    "available. Executing programs will not be enabled. We " +
+                    "strongly recommend you install GHC, for example by " +
+                    "installing the Haskell Platform (haskell.org/platform)." +
+                    "Or it might be that the QuickCheck is not installed.";
+            new Alert(Alert.AlertType.WARNING, msg).showAndWait();
+
+            e.printStackTrace(); // In case it's not a file-not-found
+        }
+
     }
 
     /**
