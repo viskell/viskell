@@ -43,9 +43,13 @@ public class Main extends Application {
         Scene scene = new Scene(overlay);
 
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
+        String backGroundImage = prefs.get("background", "/ui/grid.png");
+        overlay.getMainPane().setStyle("-fx-background-image: url('" + backGroundImage + "');");
         String theme = prefs.get("theme", "/ui/colours.css");
         scene.getStylesheets().addAll("/ui/layout.css", theme);
 
+        System.out.println(overlay.getStyle());
+        
         stage.setWidth(1024);
         stage.setHeight(768);
 

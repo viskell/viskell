@@ -9,15 +9,17 @@
             <children>
                 <Label GridPane.columnIndex="0" GridPane.rowIndex="0">GHCi implementation</Label>
                 <ComboBox fx:id="ghci" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">Theme</Label>
-                <HBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">Background image</Label>
+                <ComboBox fx:id="background" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="2">Theme</Label>
+                <HBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <ComboBox fx:id="theme"/>
                     <Button fx:id="reloadTheme" text="Reload"/>
                 </HBox>
-                <Label GridPane.columnIndex="0" GridPane.rowIndex="2">Debug overlay</Label>
-                <CheckBox fx:id="debugOverlay" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                <Label GridPane.columnIndex="0" GridPane.rowIndex="3">Vertical curry</Label>
-                <CheckBox fx:id="verticalCurry" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="3">Debug overlay</Label>
+                <CheckBox fx:id="debugOverlay" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="4">Vertical curry</Label>
+                <CheckBox fx:id="verticalCurry" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
             </children>
         </GridPane>
     </center>
