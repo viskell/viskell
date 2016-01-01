@@ -55,6 +55,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** The container to which this Block currently belongs */
     protected BlockContainer container;
 
+    /** Whether this block has a meaningful interpretation the current container context. */
+    protected boolean inValidContext;
+    
     /**
      * @param pane The pane this block belongs to.
      */
@@ -259,8 +262,18 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
                 ((WrappedContainer)target).handleConnectionChanges(true);
             }
             
+            this.inValidContext = this.checkValidInCurrentContainer();
+            if (this.inValidContext) {
+                this.getStyleClass().removeAll("invalid");
+            } else {
+                this.getStyleClass().removeAll("invalid");
+                this.getStyleClass().add("invalid");
+            }
+            
             this.initiateConnectionChanges();
         }
+        
+        
     }
     
     /** Scans for and attaches to a new container, if any */
@@ -287,6 +300,11 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         
         this.moveIntoContainer(newContainer);
         newContainer.expandToFit(this.getBoundsInParent());
+    }
+    
+    /** @return whether this block has a meaningful interpretation the current container. */
+    public boolean checkValidInCurrentContainer() {
+        return true;
     }
     
     @Override
