@@ -27,13 +27,13 @@ import com.google.common.collect.ImmutableMap;
 public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Target {
 
     /** The visual representation of the InputAnchor. */
-    @FXML private Shape visibleAnchor;
+    @FXML protected Shape visibleAnchor;
     
     /** The invisible part of the InputAnchor (the touch zone). */
-    @FXML private Shape invisibleAnchor;
+    @FXML protected Shape invisibleAnchor;
 
     /** The thing sticking out of an unconnected InputAnchor. */
-    @FXML private Shape openWire;
+    @FXML protected Shape openWire;
     
     /** The Optional connection this anchor has. */
     private Optional<Connection> connection;
@@ -59,6 +59,14 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
         this.errorState.addListener(this::checkError);
     }
 
+    /** For use in subclasses only. */
+    protected InputAnchor() {
+        super(null);
+        this.connection = Optional.empty();
+        this.errorState = new SimpleBooleanProperty(false);
+        this.errorState.addListener(this::checkError);
+    }
+    
     /**
      * @param block The Block this anchor is connected to.
      * @param type The type constraint for this anchor.

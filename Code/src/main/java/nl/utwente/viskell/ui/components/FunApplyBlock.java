@@ -144,6 +144,7 @@ public class FunApplyBlock extends Block {
         this.loadFXML("FunApplyBlock");
 
         this.funRef = funRef;
+        this.funRef.initializeBlock(this);
         ((HBox)this.bodySpace.getParent()).getChildren().add(0, funRef.asRegion());
 
         this.inputs = new ArrayList<>();
