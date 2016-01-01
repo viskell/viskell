@@ -4,8 +4,8 @@
 <fx:root type="nl.utwente.viskell.ui.components.FunctionBlock" xmlns:fx="http://javafx.com/fxml/1">
     <BorderPane pickOnBounds="false">
         <center>
-            <HBox styleClass="function, block" pickOnBounds="false">
-                <Label fx:id="functionInfo" styleClass="title" />
+            <HBox fx:id="bodySpace" styleClass="function, block" pickOnBounds="false">
+                <!-- the function reference will be inserted here -->
                 <Pane fx:id="nestSpace" pickOnBounds="false" />
             </HBox>
         </center>

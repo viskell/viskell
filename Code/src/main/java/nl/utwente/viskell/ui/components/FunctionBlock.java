@@ -7,17 +7,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import nl.utwente.viskell.haskell.env.FunctionInfo;
-import nl.utwente.viskell.haskell.expr.Apply;
-import nl.utwente.viskell.haskell.expr.Binder;
-import nl.utwente.viskell.haskell.expr.Expression;
-import nl.utwente.viskell.haskell.expr.FunVar;
-import nl.utwente.viskell.haskell.type.FunType;
-import nl.utwente.viskell.haskell.type.Type;
-import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.haskell.expr.*;
+import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.ToplevelPane;
 
 import com.google.common.collect.ImmutableList;
@@ -32,7 +24,7 @@ public class FunctionBlock extends Block {
     private OutputAnchor output;
     
     /** The information about the function. */
-    private FunctionInfo funInfo;
+    private FunctionReference funRef;
 
     /** The space containing the input anchor(s). */
     @FXML private Pane inputSpace;
@@ -40,14 +32,14 @@ public class FunctionBlock extends Block {
     /** The space containing the output anchor. */
     @FXML private Pane outputSpace;
 
+    /** The space containing the body of the function. */
+    @FXML private Pane bodySpace;
+    
     /** The space containing all the arguments of the function. */
     private ArgumentSpace argumentSpace;
     
     /** The space in which to nest the FunctionBlock's inner parts. */
     @FXML private Pane nestSpace;
-    
-    /** The Label in which the information of the function is displayed. */
-    @FXML private Label functionInfo;
     
     /**
      * Method that creates a newInstance of this class along with it's visual
@@ -58,15 +50,17 @@ public class FunctionBlock extends Block {
      * @param pane
      *            The parent pane in which this FunctionBlock exists.
      */
-    public FunctionBlock(FunctionInfo funInfo, ToplevelPane pane) {
+    public FunctionBlock(FunctionReference funRef, ToplevelPane pane) {
         super(pane);
-        this.funInfo = funInfo;
+        this.funRef = funRef;
+        funRef.initializeBlock(this);
 
         this.loadFXML("FunctionBlock");
+        this.bodySpace.getChildren().add(0, funRef.asRegion());
 
         // Collect argument types
         ArrayList<String> args = new ArrayList<>();
-        Type t = funInfo.getFreshSignature();
+        Type t = funRef.refreshedType(funRef.requiredArguments(), new TypeScope());
         int inputCount = 0;
         while (t instanceof FunType) {
             FunType ft = (FunType) t;
@@ -85,18 +79,13 @@ public class FunctionBlock extends Block {
         output = new OutputAnchor(this, new Binder("res"));
         outputSpace.getChildren().add(output);
         
-        functionInfo.setText(funInfo.getDisplayName());
-
         // Make sure the prefWidth is correctly updated.
-        this.prefWidthProperty().bind(functionInfo.widthProperty().add(argumentSpace.prefWidthProperty()));
-        
-        functionInfo.setMinWidth(Region.USE_PREF_SIZE);
-        functionInfo.setMaxWidth(Region.USE_PREF_SIZE);
+        this.prefWidthProperty().bind(funRef.asRegion().widthProperty().add(argumentSpace.prefWidthProperty()));
         
     }
 
-    public FunctionInfo getFunInfo() {
-        return this.funInfo;
+    public FunctionReference getFunReference() {
+        return this.funRef;
     }
     
     /** Updates the layout, if this Pane has a parent. */
@@ -113,14 +102,17 @@ public class FunctionBlock extends Block {
 
     @Override
     public final List<InputAnchor> getAllInputs() {
-        return argumentSpace.getInputArguments().stream().map(a -> a.getInputAnchor()).collect(Collectors.toList());
+        List<InputAnchor> res = new ArrayList<>(); 
+        argumentSpace.getInputArguments().stream().map(a -> a.getInputAnchor()).collect(Collectors.toCollection(() -> res));
+        this.funRef.getInputAnchor().ifPresent(fia -> res.add(0, fia));
+        return res;
     }
 
     /**
      * @return Only the active (as specified by the knot index) inputs.
      */
     public List<InputAnchor> getActiveInputs() {
-        return getAllInputs().subList(0, getKnotIndex());
+        return argumentSpace.getInputArguments().stream().map(a -> a.getInputAnchor()).collect(Collectors.toList()).subList(0, getKnotIndex());
     }
 
     @Override
@@ -131,7 +123,7 @@ public class FunctionBlock extends Block {
     @Override
     public Optional<Block> getNewCopy() {
         if (this.argumentSpace.getKnotIndex() == this.getAllInputs().size()) {
-            return Optional.of(new FunctionBlock(this.funInfo, this.getToplevel()));
+            return Optional.of(new FunctionBlock(this.funRef.getNewCopy(), this.getToplevel()));
         }
     
         return Optional.empty();
@@ -139,28 +131,29 @@ public class FunctionBlock extends Block {
     
     @Override
     public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
-        Expression expr = new FunVar(this.funInfo);
+        Expression expr = this.funRef.getLocalExpr(outsideAnchors);
         
         for (InputAnchor in : this.getActiveInputs()) {
             expr = new Apply(expr, in.getLocalExpr(outsideAnchors));
         }
         
-        outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
+       // TODO: deal with this in getLocalExpr for LocalDefUse
+       // outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
         
         return expr;
     }
     
     @Override
     public void refreshAnchorTypes() {
-        Type type = this.funInfo.getFreshSignature();
         TypeScope scope = new TypeScope();
+        Type type = this.funRef.refreshedType(argumentSpace.getInputArguments().size(), scope);
         for (InputAnchor arg : this.getActiveInputs()) {
             if (type instanceof FunType) {
                 FunType ftype = (FunType)type;
                 arg.setFreshRequiredType(ftype.getArgument(), scope);
                 type = ftype.getResult();
             } else {
-                new RuntimeException("too many arguments in this functionblock " + funInfo.getDisplayName());
+                new RuntimeException("too many arguments in this functionblock " + funRef.getName());
             }
         }
         this.output.setFreshRequiredType(type, scope);
@@ -168,6 +161,7 @@ public class FunctionBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
+        this.funRef.invalidateVisualState();
         this.argumentSpace.invalidateTypes();
     }
     
@@ -187,11 +181,11 @@ public class FunctionBlock extends Block {
     
     @Override
     public String toString() {
-        return funInfo.getName();
+        return this.funRef.getName();
     }
 
     @Override
     protected ImmutableMap<String, Object> toBundleFragment() {
-        return ImmutableMap.of("name", funInfo.getName(), "knotIndex", getKnotIndex());
+        return ImmutableMap.of("name", this.funRef.getName(), "knotIndex", getKnotIndex());
     }
 }

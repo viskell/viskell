@@ -141,13 +141,15 @@ public class CircleMenu extends CircularPane {
             MenuButton lift = new MenuButton("lift", image);
             lift.setOnActivate(() -> {
                 ToplevelPane toplevel = this.block.getToplevel();
-                FunctionInfo funInfo = ((FunctionBlock)block).getFunInfo();
-                toplevel.removeBlock(block);
-                Block lifter = new LiftingBlock(toplevel, new NestedFunction(funInfo, block));
-                lifter.setLayoutX(block.getLayoutX()-10);
-                lifter.setLayoutY(block.getLayoutY()-10);
-                toplevel.addBlock(lifter);
-                lifter.initiateConnectionChanges();
+                FunctionReference funRef = ((FunctionBlock)block).getFunReference();
+                if (funRef instanceof LibraryFunUse) {
+                    toplevel.removeBlock(block);
+                    Block lifter = new LiftingBlock(toplevel, new NestedFunction(((LibraryFunUse)funRef).getFunInfo(), block));
+                    lifter.setLayoutX(block.getLayoutX()-10);
+                    lifter.setLayoutY(block.getLayoutY()-10);
+                    toplevel.addBlock(lifter);
+                    lifter.initiateConnectionChanges();
+                }
             });
             this.add(lift);
         } else if (block instanceof FunApplyBlock) {
@@ -155,13 +157,15 @@ public class CircleMenu extends CircularPane {
             MenuButton lift = new MenuButton("lift", image);
             lift.setOnActivate(() -> {
                 ToplevelPane toplevel = this.block.getToplevel();
-                FunctionInfo funInfo = ((FunApplyBlock)block).getFunInfo();
-                toplevel.removeBlock(block);
-                Block lifter = new LiftingBlock(toplevel, new NestedFunction(funInfo, block));
-                lifter.setLayoutX(block.getLayoutX()-10);
-                lifter.setLayoutY(block.getLayoutY()-10);
-                toplevel.addBlock(lifter);
-                lifter.initiateConnectionChanges();
+                FunctionReference funRef = ((FunApplyBlock)block).getFunReference();
+                if (funRef instanceof LibraryFunUse) {
+                    toplevel.removeBlock(block);
+                    Block lifter = new LiftingBlock(toplevel, new NestedFunction(((LibraryFunUse)funRef).getFunInfo(), block));
+                    lifter.setLayoutX(block.getLayoutX()-10);
+                    lifter.setLayoutY(block.getLayoutY()-10);
+                    toplevel.addBlock(lifter);
+                    lifter.initiateConnectionChanges();
+                }
             });
             this.add(lift);
         } else if (block instanceof BinOpApplyBlock) {

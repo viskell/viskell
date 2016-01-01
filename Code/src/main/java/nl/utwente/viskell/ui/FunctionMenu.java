@@ -101,10 +101,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             	if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
                             		addBlock(new BinOpApplyBlock(entry, parent));
                             	} else {
-                            		addBlock(new FunApplyBlock(entry, parent));
+                            		addBlock(new FunApplyBlock(new LibraryFunUse(entry), parent));
                             	}
                             } else {
-                                addBlock(new FunctionBlock(entry, parent));
+                                addBlock(new FunctionBlock(new LibraryFunUse(entry), parent));
                             }
                         });
                     }

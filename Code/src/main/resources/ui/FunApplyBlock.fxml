@@ -7,7 +7,7 @@
 		<padding>
 			<Insets bottom="0" left="5" right="5" top="0" />
 		</padding>
-    	<Label fx:id="functionInfo" styleClass="title" />
+    	<!-- the function reference will be inserted here -->
 		<Pane fx:id="bodySpace" pickOnBounds="false" />
     </HBox>
 </fx:root>
