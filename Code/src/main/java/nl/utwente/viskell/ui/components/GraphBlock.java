@@ -93,7 +93,7 @@ public class GraphBlock extends Block {
     public void invalidateVisualState() {
     	this.input.invalidateVisualState();
     	
-        if (! this.input.hasValidConnection()) {
+        if (! (this.inValidContext && this.input.hasValidConnection())) {
             return;
         }
         
@@ -126,4 +126,13 @@ public class GraphBlock extends Block {
         chart.setData(lineChartData);
     }
 
+    @Override
+    public boolean checkValidInCurrentContainer() {
+        if (this.container instanceof LambdaContainer || this.container instanceof Lane) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
 }

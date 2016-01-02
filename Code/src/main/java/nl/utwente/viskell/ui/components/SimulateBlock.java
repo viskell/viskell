@@ -66,7 +66,7 @@ public class SimulateBlock extends Block implements ComponentLoader {
     	this.inputAnchor.invalidateVisualState();
         inputType.setText(inputAnchor.getStringType());
 
-        if (inputAnchor.hasValidConnection()) {
+        if (this.inValidContext && inputAnchor.hasValidConnection()) {
             GhciSession ghciSession = getToplevel().getGhciSession();
             String format = "Data.List.take %d $ simulate (%s) [1..]";
             String expr = String.format(format, iteration, inputAnchor.getFullExpr().toHaskell());
@@ -122,4 +122,14 @@ public class SimulateBlock extends Block implements ComponentLoader {
     public void refreshAnchorTypes() {
         inputAnchor.setFreshRequiredType(funConstraint, new TypeScope());
     }
+    
+    @Override
+    public boolean checkValidInCurrentContainer() {
+        if (this.container instanceof LambdaContainer || this.container instanceof Lane) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
 }

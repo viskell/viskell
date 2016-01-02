@@ -13,7 +13,7 @@
     -fx-border-color: black;
 }
 
-.error .block {
+.invalid .block {
     -fx-border-color: red;
 }
 
