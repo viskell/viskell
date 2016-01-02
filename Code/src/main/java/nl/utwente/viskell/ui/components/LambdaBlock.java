@@ -4,41 +4,39 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
+
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import nl.utwente.viskell.haskell.env.DefinitionFunction;
-import nl.utwente.viskell.haskell.env.FunctionInfo;
-import nl.utwente.viskell.haskell.expr.Binder;
-import nl.utwente.viskell.haskell.expr.Expression;
-import nl.utwente.viskell.haskell.type.Type;
-import nl.utwente.viskell.ui.BlockContainer;
-import nl.utwente.viskell.ui.ComponentLoader;
-import nl.utwente.viskell.ui.ToplevelPane;
-import nl.utwente.viskell.ui.DragContext;
+import nl.utwente.viskell.haskell.expr.*;
+import nl.utwente.viskell.haskell.type.*;
+import nl.utwente.viskell.ui.*;
 
-import com.google.common.collect.ImmutableList;
-
-/**
- * A definition block is a block that represents a named lambda. It can be used to build lambda abstractions.
- */
-public class DefinitionBlock extends Block implements ComponentLoader {
+/** Lambda block represent the externals of a lambda abstraction and can be named to become a local definition. */
+public class LambdaBlock extends Block {
 
     /** the area in which the function anchor is in */
     @FXML private Pane funSpace;
 
-    /* The label with the explicit name and type of this definition, if it has one. */
+    /** The label with the explicit name this definition, if it has one. */
+    @FXML private Label definitionName;
+    
+    /** The label with the result type of this lambda. */
     @FXML private Label signature;
 
-    /** Whether the type signature was given */
-    private boolean hasExplictiSignature;
+    /** The optional explicit type signature of this block */
+    private Optional<Type> explicitSignature;
     
     /** The internal lambda within this definition block */
     private LambdaContainer body;
@@ -49,20 +47,19 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     /** The draggable resizer in the bottom right corner */
     private Pane resizer;
 
-    /** The function info corresponding to this block */
-    protected Optional<DefinitionFunction> funInfo;
-
     /**
      * Constructs a DefinitionBlock that is an untyped lambda of n arguments.
      * @param pane the parent ui pane.
      * @param arity the number of arguments of this lambda.
      */
-    public DefinitionBlock(ToplevelPane pane, int arity) {
+    public LambdaBlock(ToplevelPane pane, int arity) {
         super(pane);
-        this.loadFXML("DefinitionBlock");
+        this.loadFXML("LambdaBlock");
 
         this.signature.setText("");
-        this.hasExplictiSignature = false;
+        this.explicitSignature = Optional.empty();
+        this.definitionName.setText("");
+        this.definitionName.setVisible(false);
         
         this.body = new LambdaContainer(this, arity);
         ((VBox)this.getChildren().get(0)).getChildren().add(1, this.body);
@@ -70,39 +67,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         this.fun = new PolyOutputAnchor(this, new Binder("lam"));
         this.funSpace.getChildren().add(this.fun);
         this.dragContext.setGoToForegroundOnContact(false);
-        this.setupResizer();
-        
-        funInfo = Optional.empty();
-    }
-            
-    /**
-     * Constructs a DefinitionBlock with an explicitly type function.
-     * @param pane the parent ui pane.
-     * @param name of the function.
-     * @param type the full function type.
-     */
-    public DefinitionBlock(ToplevelPane pane, String name, Type type) {
-        super(pane);
-        this.loadFXML("DefinitionBlock");
 
-        this.signature.setText(name + " :: " + type.prettyPrint());
-        this.hasExplictiSignature = true;
-
-        this.body = new LambdaContainer(this, name, type);
-        ((VBox)this.getChildren().get(0)).getChildren().add(1, this.body);
-        
-        this.fun = new PolyOutputAnchor(this, new Binder("lam"));
-        this.funSpace.getChildren().add(this.fun);
-        this.dragContext.setGoToForegroundOnContact(false);
-        this.setupResizer();
-        
-        funInfo = Optional.of(new DefinitionFunction(this, name, type));
-        
-        signature.addEventHandler(MouseEvent.MOUSE_RELEASED, this::createFunctionBlock);
-    }
-
-    /** Add and initializes a resizer element to this block */
-    private void setupResizer() {
         Polygon triangle = new Polygon();
         triangle.getPoints().addAll(new Double[]{20.0, 20.0, 20.0, 0.0, 0.0, 20.0});
         triangle.setFill(Color.BLUE);
@@ -120,24 +85,26 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     
     /** 
      * Construct a function block performing this block's actions
-     * @param event the mouse event triggering this creation
+     * @param event the event triggering this creation
      */
-    protected void createFunctionBlock(MouseEvent event) {
-        funInfo.ifPresent(info -> {
-            FunctionReference funRef = new LibraryFunUse(info);
-            Block block = (event.isControlDown()) ? new FunApplyBlock(funRef, getToplevel()) : new FunctionBlock(funRef, getToplevel());
-            getToplevel().addBlock(block);
-            Point2D pos = this.localToParent(0, 0);
-            block.relocate(pos.getX(), pos.getY());
-            block.initiateConnectionChanges();
-            
-            event.consume();
-        });
+    protected void createFunctionUseBlock(Event event) {
+        ToplevelPane toplevel = this.getToplevel();
+        FunctionReference funRef = new LocalDefUse(this);
+        Block block = toplevel.isVerticalCurryingEnabled() ? new FunApplyBlock(funRef, toplevel) : new FunctionBlock(funRef, toplevel);
+        toplevel.addBlock(block);
+        Bounds bounds = this.getBoundsInParent();
+        block.relocate(bounds.getMinX()-20, bounds.getMaxY()+10);
+        block.initiateConnectionChanges();
+        event.consume();
+    }
+    
+    public String getName() {
+        return this.definitionName.getText();
     }
     
     /** @return whether this is an unnamed lambda */
-    public boolean isLambda() {
-        return !this.funInfo.isPresent();
+    public boolean isTypedLambda() {
+        return this.explicitSignature.isPresent();
     }
     
     /** @return The output binder of this block */
@@ -178,7 +145,7 @@ public class DefinitionBlock extends Block implements ComponentLoader {
         // do typechecking internal connections first so that the lambda type is inferred
         body.handleConnectionChanges(false);
 
-        fun.setExactRequiredType(funInfo.map(FunctionInfo::getFreshSignature).orElse(body.getLambdaType().getFresh()));
+        fun.setExactRequiredType(explicitSignature.orElse(body.getLambdaType()).getFresh());
     }
 
     public void handleConnectionChanges(boolean finalPhase) {
@@ -197,10 +164,9 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     @Override
     public void invalidateVisualState() {
         this.body.invalidateVisualState();
-        if (!this.hasExplictiSignature) {
-        	this.signature.setText(this.fun.getStringType());
+        if (!this.explicitSignature.isPresent()) {
+            this.signature.setText(this.fun.getStringType());
         }
-
     }
     
     @Override
@@ -255,4 +221,41 @@ public class DefinitionBlock extends Block implements ComponentLoader {
             this.shiftAndGrow(shiftX - marginX/2 , shiftY - marginY/2 , extraX + marginX, extraY + marginY);
         }
     }
+    
+    public void editSignature() {
+        String input = this.definitionName.getText().isEmpty() ? "example" : this.definitionName.getText();
+        if (this.explicitSignature.isPresent()) {
+            input += " :: " + this.explicitSignature.get().prettyPrint();
+        }
+                
+        TextInputDialog dialog = new TextInputDialog(input);
+        dialog.setTitle("Edit lambda signature");
+        dialog.setHeaderText("Set the name and optionally the type");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(signature -> {
+            if (! this.definitionName.isVisible()) {
+                this.definitionName.addEventHandler(MouseEvent.MOUSE_RELEASED, this::createFunctionUseBlock);
+                this.definitionName.addEventHandler(TouchEvent.TOUCH_RELEASED, this::createFunctionUseBlock);
+            }
+            
+            List<String> parts = Splitter.on(" :: ").splitToList(signature);
+            if (parts.size() < 2) {
+                this.definitionName.setText(signature);
+                this.definitionName.setVisible(true);
+            } else {
+                this.definitionName.setText(parts.get(0));
+                this.definitionName.setVisible(true);
+                // FIXME: what to do in case type parsing fail?
+                Type type = this.getToplevel().getEnvInstance().buildType(parts.get(1));
+                if (type.countArguments() >= this.body.argCount()) {
+                    this.explicitSignature = Optional.of(type);
+                    this.signature.setText(type.prettyPrint());
+                    this.body.enforceExplicitType(type);
+                    this.initiateConnectionChanges();
+                }
+            }
+        });
+    }
+
 }

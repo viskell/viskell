@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -282,8 +281,6 @@ public class BinOpApplyBlock extends Block {
             expr = new Apply(expr, this.rightInput.anchor.getLocalExpr(outsideAnchors));
         }
 
-        outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
-        
         if (curriedArgs.isEmpty()) {
             return expr;
         } else {

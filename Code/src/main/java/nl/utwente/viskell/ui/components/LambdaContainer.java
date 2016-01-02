@@ -18,13 +18,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import nl.utwente.viskell.haskell.expr.Binder;
-import nl.utwente.viskell.haskell.expr.Expression;
-import nl.utwente.viskell.haskell.expr.Lambda;
-import nl.utwente.viskell.haskell.expr.LetExpression;
-import nl.utwente.viskell.haskell.type.FunType;
-import nl.utwente.viskell.haskell.type.Type;
-import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.haskell.expr.*;
+import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 
@@ -37,8 +32,8 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     /* area contain result anchor */
     @FXML private Pane resSpace;
 
-    /* The definition block this lambda is contained by. */
-    private DefinitionBlock wrapper;
+    /* The block this lambda is contained by. */
+    private LambdaBlock wrapper;
     
     /* The lambda argument anchors */
     private List<BinderAnchor> args;
@@ -59,7 +54,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
      * Constructs a LambdaContainer for an untyped lambda of n arguments.
      * @param arity the number of arguments of this lambda.
      */
-    public LambdaContainer(DefinitionBlock wrapper, int arity) {
+    public LambdaContainer(LambdaBlock wrapper, int arity) {
         super();
         this.loadFXML("LambdaContainer");
         this.wrapper = wrapper;
@@ -74,63 +69,46 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
         this.argSpace.getChildren().addAll(this.args);
         this.resSpace.getChildren().add(this.res);
         
-        this.setupHandlers();
+        this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> event.consume());
+        this.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> event.consume());
+        this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
+                if (event.getButton() != MouseButton.PRIMARY) {
+                    Point2D menuPos = this.wrapper.getToplevel().screenToLocal(new Point2D(event.getScreenX(), event.getScreenY()));
+                    this.wrapper.getToplevel().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), true);
+                }
+                event.consume();
+            });
+        this.addEventHandler(TouchEvent.TOUCH_PRESSED, event -> event.consume());
+        this.addEventHandler(TouchEvent.TOUCH_MOVED, event -> event.consume());
+        this.addEventHandler(TouchEvent.TOUCH_RELEASED, event -> {
+                if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 2) {
+                    Point2D screenPos = new Point2D(event.getTouchPoint().getScreenX(), event.getTouchPoint().getScreenY());
+                    Point2D menuPos = this.wrapper.getToplevel().screenToLocal(screenPos);
+                    this.wrapper.getToplevel().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), false);
+                }
+                event.consume();
+            });
     }
     
     /**
-     * Constructs a LambdaContainer with explicit types.
-     * @param name of the function.
+     * Set an explicit type requirement on this LambdaContainer.
      * @param signature the full function type.
      */
-    public LambdaContainer(DefinitionBlock wrapper, String name, Type signature) {
-        super();
-        this.loadFXML("LambdaContainer");
-        this.wrapper = wrapper;
-        attachedBlocks = new HashSet<>();
-        
-        // Make sure that the internal anchor typss stay as polymorphic as the signature
+    protected void enforceExplicitType(Type signature) {
         Type constraint = signature.getFresh();
         constraint.enforcePolymorphism();
-
-        // Collect argument types and result type
-        this.args = new ArrayList<>();
         Type t = constraint;
-        int i = 0;
-        while (t instanceof FunType) {
+        for (BinderAnchor arg : this.args) {
             FunType ft = (FunType) t;
-            args.add(new BinderAnchor(this, wrapper, new Binder(name + "_x" + i, ft.getArgument())));
-            i++;
-            t = ft.getResult();
+            arg.setExactRequiredType(ft.getArgument());
+            t = ft.getResult(); 
         }
-        this.res = new ResultAnchor(this, wrapper, Optional.of(t));
-
-        this.argSpace.getChildren().addAll(this.args);
-        this.resSpace.getChildren().add(this.res);
         
-        this.setupHandlers();
+        this.res.setExactRequiredType(t);
     }
 
-    //** Setup event handlers in the container area for function menu */
-    private void setupHandlers() {
-    	this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> event.consume());
-    	this.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> event.consume());
-    	this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-    			if (event.getButton() != MouseButton.PRIMARY) {
-    				Point2D menuPos = this.wrapper.getToplevel().screenToLocal(new Point2D(event.getScreenX(), event.getScreenY()));
-    				this.wrapper.getToplevel().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), true);
-    			}
-    		   	event.consume();
-    		});
-    	this.addEventHandler(TouchEvent.TOUCH_PRESSED, event -> event.consume());
-    	this.addEventHandler(TouchEvent.TOUCH_MOVED, event -> event.consume());
-    	this.addEventHandler(TouchEvent.TOUCH_RELEASED, event -> {
-    			if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 2) {
-    				Point2D screenPos = new Point2D(event.getTouchPoint().getScreenX(), event.getTouchPoint().getScreenY());
-    				Point2D menuPos = this.wrapper.getToplevel().screenToLocal(screenPos);
-    				this.wrapper.getToplevel().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), false);
-    			}
-    			event.consume();
-    		});
+    public int argCount() {
+        return this.args.size();
     }
     
     /** Adds extra input binder anchor to this lambda */
@@ -222,7 +200,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     }
 
     @Override
-    public DefinitionBlock getWrapper() {
+    public LambdaBlock getWrapper() {
         return this.wrapper;
     }
     

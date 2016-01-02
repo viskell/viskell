@@ -1,7 +1,5 @@
 package nl.utwente.viskell.ui;
 
-import com.google.common.base.Splitter;
-
 import javafx.animation.ScaleTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,13 +18,11 @@ import javafx.util.Duration;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.CatalogFunction;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
-import nl.utwente.viskell.haskell.type.FunType;
-import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.components.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -139,8 +135,6 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         arbBlockButton.setOnAction(event -> addBlock(new ArbitraryBlock(parent)));
         Button disBlockButton = new Button("Display");
         disBlockButton.setOnAction(event -> addBlock(new DisplayBlock(parent)));
-        Button defBlockButton = new Button("Definition");
-        defBlockButton.setOnAction(event -> addDefinitionBlock());
         Button lambdaBlockButton = new Button("Lambda");
         lambdaBlockButton.setOnAction(event -> addLambdaBlock());
         Button choiceBlockButton = new Button("Choice");
@@ -149,7 +143,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         applyBlockButton.setOnAction(event -> addBlock(new FunApplyBlock(new ApplyAnchor(1), parent)));
         
 
-        utilSpace.getChildren().addAll(closeButton, valBlockButton, arbBlockButton, disBlockButton, defBlockButton, lambdaBlockButton, choiceBlockButton, applyBlockButton);
+        utilSpace.getChildren().addAll(closeButton, valBlockButton, arbBlockButton, disBlockButton, lambdaBlockButton, choiceBlockButton, applyBlockButton);
 
         if (GhciSession.pickBackend() == GhciSession.Backend.GHCi) {
             // These blocks are specifically for GHCi
@@ -202,29 +196,8 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         val.editValue(Optional.of("\"Hello, World!\""));
     }
 
-    /** Add a new definition block (named, typed lambda block) */
-    private void addDefinitionBlock() {
-        TextInputDialog dialog = new TextInputDialog("example :: Int -> Int");
-        dialog.setTitle("Add definition block");
-        dialog.setHeaderText("Add function definition");
-        dialog.setContentText("Function signature:");
-
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(signature -> {
-            List<String> parts = Splitter.on(" :: ").splitToList(signature);
-            String name = parts.get(0);
-            String hs = parts.get(1);
-
-            Type type = parent.getEnvInstance().buildType(hs);
-
-            DefinitionBlock def = new DefinitionBlock(this.parent, name, type);
-            addBlock(def);
-        });
-    }
-
     private void addLambdaBlock() {
-        DefinitionBlock def = new DefinitionBlock(this.parent, 1);
-        addBlock(def);
+        addBlock(new LambdaBlock(this.parent, 1));
     }
     
     private void addChoiceBlock() {

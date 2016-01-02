@@ -63,12 +63,14 @@ public class ToplevelPane extends Region implements BlockContainer {
     /** Shows a new function menu at the specified location in this pane. */
     public void showFunctionMenuAt(double x, double y, boolean byMouse) {
         ghci.awaitRunning();
-        boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
-        FunctionMenu menu = new FunctionMenu(byMouse, ghci.getCatalog(), this, verticalCurry);
+        FunctionMenu menu = new FunctionMenu(byMouse, ghci.getCatalog(), this, this.isVerticalCurryingEnabled());
         double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
         menu.relocate(x, y - verticalCenter);
         this.addMenu(menu);
-    	
+    }
+    
+    public boolean isVerticalCurryingEnabled() {
+        return this.preferences != null && this.preferences.verticalCurry.isSelected();
     }
     
     /**

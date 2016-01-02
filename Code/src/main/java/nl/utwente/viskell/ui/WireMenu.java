@@ -45,8 +45,8 @@ public class WireMenu extends TilePane {
         
         if (wire.getAnchor() instanceof InputAnchor) {
             Button lambdaBlockButton = new Button("Lambda");
-            lambdaBlockButton.setOnAction(event -> addBlockWithOutput(new DefinitionBlock(this.toplevel, type.countArguments())));
-            lambdaBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new DefinitionBlock(this.toplevel, type.countArguments())));
+            lambdaBlockButton.setOnAction(event -> addBlockWithOutput(new LambdaBlock(this.toplevel, type.countArguments())));
+            lambdaBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new LambdaBlock(this.toplevel, type.countArguments())));
             
             Button rationalBlockButton = new Button("Rational");
             rationalBlockButton.setOnAction(event -> addBlockWithOutput(new SliderBlock(this.toplevel, false)));
