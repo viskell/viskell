@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
@@ -22,6 +23,7 @@ import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
+import nl.utwente.viskell.ui.Main;
 import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.DragContext;
 
@@ -126,7 +128,8 @@ public class DefinitionBlock extends Block implements ComponentLoader {
     protected void createFunctionBlock(MouseEvent event) {
         funInfo.ifPresent(info -> {
             FunctionReference funRef = new LibraryFunUse(info);
-            Block block = (event.isControlDown()) ? new FunApplyBlock(funRef, getToplevel()) : new FunctionBlock(funRef, getToplevel());
+            boolean useVerticalCurry = event.isControlDown() || Preferences.userNodeForPackage(Main.class).getBoolean("verticalCurry", true);
+            Block block = useVerticalCurry ? new FunApplyBlock(funRef, getToplevel()) : new FunctionBlock(funRef, getToplevel());
             getToplevel().addBlock(block);
             Point2D pos = this.localToParent(0, 0);
             block.relocate(pos.getX(), pos.getY());

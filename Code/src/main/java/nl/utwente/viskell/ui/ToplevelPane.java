@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,8 +67,7 @@ public class ToplevelPane extends Region implements BlockContainer {
 
     /** Shows a new function menu at the specified location in this pane. */
     public void showFunctionMenuAt(double x, double y, boolean byMouse) {
-        boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
-        FunctionMenu menu = new FunctionMenu(byMouse, ghci.getCatalog(), this, verticalCurry);
+        FunctionMenu menu = new FunctionMenu(byMouse, ghci.getCatalog(), this);
         double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
         menu.relocate(x, y - verticalCenter);
         this.addMenu(menu);
