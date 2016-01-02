@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -213,7 +212,7 @@ public class ToplevelPane extends Region implements BlockContainer {
         Bounds testBounds = new BoundingBox(pos.getX()-distance, pos.getY()-distance, distance*2, distance*2);
         for (Block nearBlock : this.streamChildren().filter(n -> n instanceof Block).map(n -> (Block)n).filter(b -> b.getBoundsInParent().intersects(testBounds)).collect(Collectors.toList())) {
             for (ConnectionAnchor anchor : nearBlock.getAllAnchors()) {
-                Point2D anchorPos = this.sceneToLocal(anchor.localToScene(new Point2D(anchor.getLayoutX(), anchor.getLayoutY())));
+                Point2D anchorPos = anchor.getAttachmentPoint();
                 if (pos.distance(anchorPos) < distance  && anchor.getWireInProgress() == null && !anchor.hasConnection()) {
                     anchors.add(anchor);
                 }
