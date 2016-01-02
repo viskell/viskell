@@ -16,17 +16,21 @@ public class CatalogFunction extends FunctionInfo implements Comparable<CatalogF
     /** Whether this function is a constructor **/
     private final boolean isConstructor;
 
+    /** Whether this function is common **/
+    private final boolean isCommon;
+    
     /**
      * @param name The function name.
      * @param category The category this function belongs to.
      * @param signature The type signature for this function.
      * @param documentation The documentation for this function.
      */
-    CatalogFunction(final String name, final String category, final Type signature, final String documentation, final boolean isConstructor) {
+    CatalogFunction(String name, String category, Type signature, String documentation, boolean isConstructor, boolean isCommon) {
         super(name, signature);
         this.category = category;
         this.documentation = documentation;
         this.isConstructor = isConstructor;
+        this.isCommon = isCommon;
     }
 
     /**
@@ -45,7 +49,11 @@ public class CatalogFunction extends FunctionInfo implements Comparable<CatalogF
 
     @Override
     public final int compareTo(final CatalogFunction entry) {
-        return this.getName().compareTo(entry.getName());
+        if (this.isCommon == entry.isCommon) {
+            return this.getName().compareTo(entry.getName());
+        } else {
+            return this.isCommon ? -1 : 1;
+        }
     }
 
     @Override
