@@ -383,7 +383,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 
                 if ((deltaX*deltaX + deltaY*deltaY) > 10000) {
                     // FIXME: ignore too large movements
-                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 35) {
+                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 63) {
                     if (!this.dragStarted) {
                         this.handleDragStart();
                     }
