@@ -41,6 +41,12 @@ public class DragContext {
     /** reference to internal mouse event handler */
     private final EventHandler<MouseEvent> mouseHandler;
     
+    /** the method to be called when the node is contact with touch or mouse, may be null */
+    private Consumer<DragContext> contactAction;
+    
+    /** the method to be called when the node has been released, may be null */
+    private Consumer<DragContext> releaseAction;
+    
     /** the method to be called when a drag action has started, may be null */
     private Consumer<DragContext> dragInitAction;
 
@@ -49,6 +55,8 @@ public class DragContext {
 
     /** the method to be called when a secondary action is performed, may be null. */
     private BiConsumer<Point2D, Boolean> secondaryClickAction;
+    
+    private boolean activated;
     
     /** bounds to wherein the dragging is constrained */
     private Bounds dragLimits;  
@@ -70,6 +78,7 @@ public class DragContext {
         this.node = draggable;
         this.goToForegroundOnContact = true;
         this.touchId = NULL_ID;
+        this.activated = false;
         this.dragLimits = new BoundingBox(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
         this.dragThreshold = 10.0;
         this.dragStarted = false;
@@ -93,6 +102,13 @@ public class DragContext {
                 }
                 event.consume();
             } else if (type == TouchEvent.TOUCH_RELEASED) {
+                if (this.touchId > MOUSE_ID && this.activated && event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this.node)).count() == 1) {
+                    this.activated = false;
+                    if (this.releaseAction != null) {
+                        this.releaseAction.accept(this);
+                    }
+                }
+                
                 if (this.touchId == event.getTouchPoint().getId()) {
                     this.handleTouchReleased();
                 } else if (! this.dragStarted) {
@@ -100,6 +116,7 @@ public class DragContext {
                         this.secondaryClickAction.accept(new Point2D(event.getTouchPoint().getX(), event.getTouchPoint().getY()), false);
                     }
                 }
+                
                 event.consume();
             }
         };
@@ -125,6 +142,12 @@ public class DragContext {
                     event.consume();
                 }
             } else if (type == MouseEvent.MOUSE_RELEASED) {
+                if (this.touchId == DragContext.MOUSE_ID && this.activated && !event.isPrimaryButtonDown() && !event.isSecondaryButtonDown()) {
+                    this.activated = false;
+                    if (this.releaseAction != null)
+                        this.releaseAction.accept(this);
+                }
+                
                 if (event.getButton() == MouseButton.SECONDARY && !this.dragStarted) {
                     event.consume();
                     if (this.secondaryClickAction != null) {
@@ -147,6 +170,13 @@ public class DragContext {
 
         if (this.goToForegroundOnContact) {
             node.toFront();
+        }
+        
+        if (!this.activated) {
+            this.activated = true;
+            if (this.contactAction != null) {
+                this.contactAction.accept(this);
+            }
         }
     }
 
@@ -222,6 +252,20 @@ public class DragContext {
         this.relocateThreshold = threshold;
     }
 
+    /**
+     * @param action the method to be called when the node is contacted with touch or mouse, may be null 
+     */
+    public void setContactAction(Consumer<DragContext> action) {
+        this.contactAction = action;
+    }
+
+    /**
+     * @param action the method to be called when the node has been released, may be null 
+     */
+    public void setReleaseAction(Consumer<DragContext> action) {
+        this.releaseAction = action;
+    }
+    
     /**
      * @param action the method to be called when a drag action has started, may be null 
      */
