@@ -57,6 +57,7 @@ public class JoinerBlock extends Block {
         
         VBox body = new VBox(inputSpace, joiner, outputSpace);
         this.getChildren().add(body);
+        this.setPickOnBounds(true);
     }
 
     @Override
