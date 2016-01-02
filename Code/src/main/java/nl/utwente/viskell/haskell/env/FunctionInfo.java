@@ -56,4 +56,9 @@ public abstract class FunctionInfo {
         return requiredBlocks;
     }
 
+    /** @return the number of argument this function can take. */
+    public int argumentCount() {
+        return this.signature.countArguments();
+    }
+
 }

@@ -17,7 +17,7 @@ import nl.utwente.viskell.haskell.type.Type;
 
 public class NestedFunction extends NestedBlock {
 
-    private final FunctionInfo funInfo;
+    private final FunctionInfo funInfo; // TODO: maybe use a FunctionReference here instead??
     
     private final Block original;
     

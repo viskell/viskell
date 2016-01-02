@@ -125,7 +125,8 @@ public class DefinitionBlock extends Block implements ComponentLoader {
      */
     protected void createFunctionBlock(MouseEvent event) {
         funInfo.ifPresent(info -> {
-            Block block = (event.isControlDown()) ? new FunApplyBlock(info, getToplevel()) : new FunctionBlock(info, getToplevel());
+            FunctionReference funRef = new LibraryFunUse(info);
+            Block block = (event.isControlDown()) ? new FunApplyBlock(funRef, getToplevel()) : new FunctionBlock(funRef, getToplevel());
             getToplevel().addBlock(block);
             Point2D pos = this.localToParent(0, 0);
             block.relocate(pos.getX(), pos.getY());

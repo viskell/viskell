@@ -21,7 +21,7 @@ public class FunctionBlockTest extends ComponentTest {
         Environment env = getPane().getEnvInstance();
         FunctionInfo add = env.lookupFun("(+)");
 
-        functionBlock = new FunctionBlock(add, getPane());
+        functionBlock = new FunctionBlock(new LibraryFunUse(add), getPane());
     }
 
     /**
