@@ -217,10 +217,11 @@ public class Connection extends CubicCurve implements
      * @param outsideAnchors a mutable set of required OutputAnchors from a surrounding container
      */
     protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<OutputAnchor> outsideAnchors) {
-        if (container.containsBlock(getStartAnchor().block))
-            getStartAnchor().extendExprGraph(exprGraph, container, outsideAnchors);
+        OutputAnchor anchor = this.getStartAnchor();
+        if (container == anchor.getContainer())
+            anchor.extendExprGraph(exprGraph, container, outsideAnchors);
         else
-            outsideAnchors.add(getStartAnchor());
+            outsideAnchors.add(anchor);
     }
 
 	public void invalidateVisualState() {
