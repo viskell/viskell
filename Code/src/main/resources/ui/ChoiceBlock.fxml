@@ -3,7 +3,7 @@
 <?import nl.utwente.viskell.ui.components.ChoiceBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.ChoiceBlock" xmlns:fx="http://javafx.com/fxml/">
     <VBox styleClass="block, def" pickOnBounds="false">
-    	<HBox fx:id="altSpace"/>
+    	<HBox fx:id="altSpace" pickOnBounds="false" />
         <HBox fx:id="resultSpace" alignment="BOTTOM_CENTER" pickOnBounds="false" />
     </VBox>
 </fx:root>

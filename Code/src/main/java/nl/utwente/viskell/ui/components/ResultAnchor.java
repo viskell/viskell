@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui.components;
 import java.util.Optional;
 import java.util.Set;
 
+import javafx.scene.control.Label;
 import nl.utwente.viskell.haskell.expr.Annotated;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
@@ -17,11 +18,22 @@ public class ResultAnchor extends InputAnchor {
     /** The optional type of the result of the function (the last part of the signature). */
     private Optional<Type> resType;
     
+    /** The type label of this anchor. */
+    private final Label typeLabel;
+    
     // FIXME ResultAnchor should not have or use the DefinitionBlock parent
     public ResultAnchor(WrappedContainer container, Block parent, Optional<Type> resType) {
         super(parent);
         this.container = container;
         this.resType = resType;
+        this.typeLabel = new Label(".....");
+        this.typeLabel.setMinWidth(USE_PREF_SIZE);
+        this.typeLabel.setPickOnBounds(false);
+        this.typeLabel.setMouseTransparent(true);
+        this.typeLabel.getStyleClass().add("resultType");
+        this.typeLabel.setTranslateY(9);
+        this.getChildren().add(this.typeLabel);
+        this.setTranslateY(-9);
     }
     
     @Override
@@ -54,6 +66,15 @@ public class ResultAnchor extends InputAnchor {
     @Override
     public BlockContainer getContainer() {
         return this.container;
+    }
+    
+    @Override
+    public void invalidateVisualState() {
+        super.invalidateVisualState();
+        boolean validConnection = this.hasValidConnection();
+        this.setTranslateY(validConnection ? 0 : -9);
+        this.typeLabel.setText(validConnection ? "zyxwv" : this.getStringType()); 
+        this.typeLabel.setVisible(!validConnection);
     }
     
 }
