@@ -8,6 +8,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.ui.BlockContainer;
 
 public class ApplyAnchor extends InputAnchor implements FunctionReference {
 
@@ -89,6 +90,11 @@ public class ApplyAnchor extends InputAnchor implements FunctionReference {
     @Override
     public String getName() {
         return "@pply_" + this.hashCode();
+    }
+
+    @Override
+    public boolean isScopeCorrectIn(BlockContainer container) {
+        return true; // don't care for now, scope errors are already shown on the anchor itself 
     }
 
 }

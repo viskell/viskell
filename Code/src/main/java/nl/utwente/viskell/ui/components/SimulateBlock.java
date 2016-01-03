@@ -128,7 +128,7 @@ public class SimulateBlock extends Block implements ComponentLoader {
         if (this.container instanceof LambdaContainer || this.container instanceof Lane) {
             return false;
         } else {
-            return true;
+            return super.checkValidInCurrentContainer();
         }
     }
 

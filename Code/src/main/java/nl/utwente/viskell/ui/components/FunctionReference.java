@@ -6,6 +6,7 @@ import java.util.Set;
 import javafx.scene.layout.Region;
 import nl.utwente.viskell.haskell.expr.*;
 import nl.utwente.viskell.haskell.type.*;
+import nl.utwente.viskell.ui.BlockContainer;
 
 public interface FunctionReference {
     
@@ -26,5 +27,7 @@ public interface FunctionReference {
     public FunctionReference getNewCopy();
     
     public String getName();
+    
+    public boolean isScopeCorrectIn(BlockContainer container);
 
 }

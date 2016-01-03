@@ -131,7 +131,7 @@ public class GraphBlock extends Block {
         if (this.container instanceof LambdaContainer || this.container instanceof Lane) {
             return false;
         } else {
-            return true;
+            return super.checkValidInCurrentContainer();
         }
     }
     

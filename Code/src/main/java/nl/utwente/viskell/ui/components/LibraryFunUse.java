@@ -8,6 +8,7 @@ import javafx.scene.layout.Region;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.*;
 import nl.utwente.viskell.haskell.type.*;
+import nl.utwente.viskell.ui.BlockContainer;
 
 public class LibraryFunUse extends Label implements FunctionReference {
     
@@ -66,6 +67,11 @@ public class LibraryFunUse extends Label implements FunctionReference {
     @Override
     public String getName() {
         return this.funInfo.getDisplayName();
+    }
+
+    @Override
+    public boolean isScopeCorrectIn(BlockContainer container) {
+        return true;
     }
 
 }

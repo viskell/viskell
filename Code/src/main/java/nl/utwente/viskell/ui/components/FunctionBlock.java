@@ -175,6 +175,11 @@ public class FunctionBlock extends Block {
     }
     
     @Override
+    public boolean checkValidInCurrentContainer() {
+        return this.funRef.isScopeCorrectIn(this.container) && super.checkValidInCurrentContainer(); 
+    }
+    
+    @Override
     public String toString() {
         return this.funRef.getName();
     }

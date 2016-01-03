@@ -49,6 +49,8 @@ public class LambdaBlock extends Block {
     /** The draggable resizer in the bottom right corner */
     private Pane resizer;
 
+    private List<LocalDefUse> allDefinitionUsers;
+    
     /**
      * Constructs a DefinitionBlock that is an untyped lambda of n arguments.
      * @param pane the parent ui pane.
@@ -62,6 +64,8 @@ public class LambdaBlock extends Block {
         this.explicitSignature = Optional.empty();
         this.definitionName.setText("");
         this.definitionName.setVisible(false);
+        
+        this.allDefinitionUsers = new ArrayList<>();
         
         this.body = new LambdaContainer(this, arity);
         ((VBox)this.getChildren().get(0)).getChildren().add(1, this.body);
@@ -91,11 +95,13 @@ public class LambdaBlock extends Block {
      */
     protected void createFunctionUseBlock(Event event) {
         ToplevelPane toplevel = this.getToplevel();
-        FunctionReference funRef = new LocalDefUse(this);
+        LocalDefUse funRef = new LocalDefUse(this);
+        this.allDefinitionUsers.add(funRef);
         Block block = Preferences.userNodeForPackage(Main.class).getBoolean("verticalCurry", true) ? new FunApplyBlock(funRef, toplevel) : new FunctionBlock(funRef, toplevel);
         toplevel.addBlock(block);
         Bounds bounds = this.getBoundsInParent();
         block.relocate(bounds.getMinX()-20, bounds.getMaxY()+10);
+        block.refreshContainer();
         block.initiateConnectionChanges();
         event.consume();
     }
@@ -161,6 +167,11 @@ public class LambdaBlock extends Block {
         // first propagate into the internals
         this.body.handleConnectionChanges(finalPhase);
 
+        // also users of this function block need to be updated
+        for (LocalDefUse user : this.allDefinitionUsers) {
+            user.handleConnectionChanges(finalPhase);
+        }
+        
         // continue as normal with propagating changes on the outside
         super.handleConnectionChanges(finalPhase);
     }

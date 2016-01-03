@@ -67,7 +67,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         this.updateInProgress = false;
         this.container = pane;
         this.container.attachBlock(this);
-        this.inValidContext = checkValidInCurrentContainer();
+        this.inValidContext = true;
         
         // only the actual shape should be selected for events, not the larger outside bounds
         this.setPickOnBounds(false);
@@ -133,6 +133,14 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         }
         this.freshAnchorTypes = true;
         this.refreshAnchorTypes();
+
+        this.inValidContext = this.checkValidInCurrentContainer();
+        if (this.inValidContext) {
+            this.getStyleClass().removeAll("invalid");
+        } else {
+            this.getStyleClass().removeAll("invalid");
+            this.getStyleClass().add("invalid");
+        }
     }
     
     /**
@@ -265,17 +273,8 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
                 ((WrappedContainer)target).handleConnectionChanges(true);
             }
             
-            this.inValidContext = this.checkValidInCurrentContainer();
-            if (this.inValidContext) {
-                this.getStyleClass().removeAll("invalid");
-            } else {
-                this.getStyleClass().removeAll("invalid");
-                this.getStyleClass().add("invalid");
-            }
-            
             this.initiateConnectionChanges();
         }
-        
         
     }
     
@@ -307,7 +306,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     
     /** @return whether this block has a meaningful interpretation the current container. */
     public boolean checkValidInCurrentContainer() {
-        return true;
+        return ! (this.container instanceof TrashContainer);
     }
     
     @Override

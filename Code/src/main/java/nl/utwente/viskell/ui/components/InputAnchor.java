@@ -184,7 +184,7 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
         
         BlockContainer currentContainer = block.container;
         
-        //iterate over all wrapping containers to try adding the required expressions
+        //iterate over all wrapping containers to try adding the required expressions  // FIXME when does this make sense ???
         while (currentContainer != currentContainer.getParentContainer()) {
             final BlockContainer container = currentContainer;
             extendExprGraph(fullExpr, container, outsideAnchors);

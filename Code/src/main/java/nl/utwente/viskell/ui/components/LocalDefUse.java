@@ -7,10 +7,13 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import nl.utwente.viskell.haskell.expr.*;
 import nl.utwente.viskell.haskell.type.*;
+import nl.utwente.viskell.ui.BlockContainer;
 
 public class LocalDefUse extends Label implements FunctionReference {
 
     private final LambdaBlock definition;
+    
+    private Block funBlock;
     
     public LocalDefUse(LambdaBlock definition) {
         super(definition.getName());
@@ -22,7 +25,7 @@ public class LocalDefUse extends Label implements FunctionReference {
 
     @Override
     public void initializeBlock(Block funBlock) {
-        // TODO
+        this.funBlock = funBlock;
     }
 
     @Override
@@ -42,6 +45,9 @@ public class LocalDefUse extends Label implements FunctionReference {
 
     @Override
     public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
+        // gather everything that is needed for the definition, even though we don't use the resulting expression here
+        this.definition.getLocalExpr(outsideAnchors);
+        
         outsideAnchors.addAll(this.definition.getAllOutputs());
         return new LocalVar(this.definition.getBinder());
     }
@@ -63,6 +69,15 @@ public class LocalDefUse extends Label implements FunctionReference {
     @Override
     public String getName() {
         return this.definition.getName();
+    }
+
+    @Override
+    public boolean isScopeCorrectIn(BlockContainer container) {
+        return container.isContainedWithin(this.definition.getContainer());
+    }
+
+    public void handleConnectionChanges(boolean finalPhase) {
+        this.funBlock.handleConnectionChanges(finalPhase);        
     }
     
 
