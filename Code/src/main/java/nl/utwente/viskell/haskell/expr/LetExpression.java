@@ -74,7 +74,7 @@ public class LetExpression extends Expression {
             builder.append("} in ");
             builder.append(this.body.toHaskell());
         }
-        return builder.toString();
+        return "(" + builder.toString() + ")";
     }
 
     @Override

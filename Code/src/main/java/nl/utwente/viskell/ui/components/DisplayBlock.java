@@ -10,11 +10,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
-import nl.utwente.viskell.haskell.expr.Expression;
-import nl.utwente.viskell.haskell.type.HaskellTypeError;
-import nl.utwente.viskell.haskell.type.Type;
-import nl.utwente.viskell.haskell.type.TypeChecker;
-import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.haskell.expr.*;
+import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.ToplevelPane;
 
 import java.util.List;
@@ -70,7 +67,19 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
             
                 GhciSession ghci = getToplevel().getGhciSession();
 
-                ListenableFuture<String> result = ghci.pull(inputAnchor.getFullExpr());
+                Expression expr = inputAnchor.getFullExpr();
+                Type type = inputAnchor.getType().getConcrete();
+                if (type instanceof TypeApp) {
+                    List<Type> tapps = ((TypeApp)type).asFlattenedAppChain();
+                    if (tapps.get(0) instanceof ListTypeCon) {
+                        // add an extra take on lists, so we don't try to fully eval infinite ones
+                        FunVar take = new FunVar(this.getToplevel().getEnvInstance().lookupFun("take"));
+                        expr = new Apply (new Apply(take, new Value(Type.con("Int"), "32")), expr);
+                    }
+                }
+                System.err.println(type.prettyPrint() + " " + expr.toHaskell());
+                
+                ListenableFuture<String> result = ghci.pull(expr);
 
                 Futures.addCallback(result, new FutureCallback<String>() {
                     public void onSuccess(String s) {
