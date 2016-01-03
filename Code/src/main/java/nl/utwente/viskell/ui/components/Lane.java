@@ -119,8 +119,10 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
                 guards.addLetBinding(((SplitterBlock)block).getPrimaryBinder(), block.getAllInputs().get(0).getFullExpr());
             } else {
                 block.getAllOutputs().forEach(anchor -> {
-                    guards.addLetBinding(new ConstructorBinder("True"), anchor.getVariable());
-                    anchor.extendExprGraph(guards, this, outsideAnchors);
+                    if (anchor.getStringType().equals("Bool")) {
+                        guards.addLetBinding(new ConstructorBinder("True"), anchor.getVariable());
+                        anchor.extendExprGraph(guards, this, outsideAnchors);
+                    }
                 });
             }
             block.extendExprGraph(guards, this, outsideAnchors);
