@@ -66,8 +66,7 @@ public class ToplevelPane extends Region implements BlockContainer {
 
     /** Shows a new function menu at the specified location in this pane. */
     public void showFunctionMenuAt(double x, double y, boolean byMouse) {
-        boolean verticalCurry = this.preferences != null && this.preferences.verticalCurry.isSelected();
-        FunctionMenu menu = new FunctionMenu(byMouse, ghci.getCatalog(), this, verticalCurry);
+        FunctionMenu menu = new FunctionMenu(byMouse, ghci.getCatalog(), this);
         double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
         menu.relocate(x, y - verticalCenter);
         this.addMenu(menu);
@@ -213,7 +212,7 @@ public class ToplevelPane extends Region implements BlockContainer {
         Bounds testBounds = new BoundingBox(pos.getX()-distance, pos.getY()-distance, distance*2, distance*2);
         for (Block nearBlock : this.streamChildren().filter(n -> n instanceof Block).map(n -> (Block)n).filter(b -> b.getBoundsInParent().intersects(testBounds)).collect(Collectors.toList())) {
             for (ConnectionAnchor anchor : nearBlock.getAllAnchors()) {
-                Point2D anchorPos = this.sceneToLocal(anchor.localToScene(new Point2D(anchor.getLayoutX(), anchor.getLayoutY())));
+                Point2D anchorPos = anchor.getAttachmentPoint();
                 if (pos.distance(anchorPos) < distance  && anchor.getWireInProgress() == null && !anchor.hasConnection()) {
                     anchors.add(anchor);
                 }

@@ -193,6 +193,8 @@ public class CircleMenu extends CircularPane {
                 original.setLayoutY(block.getLayoutY());
                 toplevel.addBlock(original);
                 original.initiateConnectionChanges();
+                //FIXME do not thrash the original block, making this call obsolete
+                original.refreshContainer();
             });
             this.add(unlift);
         }

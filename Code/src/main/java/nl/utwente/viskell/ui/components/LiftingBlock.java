@@ -110,7 +110,7 @@ public class LiftingBlock extends Block {
         List<Expression> args = this.inputs.stream().map(input -> input.anchor.getLocalExpr(outsideAnchors)).collect(Collectors.toList());
         Expression expr = new Apply(new Apply(new FunVar(fmap), this.nested.getExpr()), args.get(0));
         for (int i = 1; i < args.size(); i++) {
-            expr = new Apply(new Apply(new FunVar(ap), expr), args.get(0));
+            expr = new Apply(new Apply(new FunVar(ap), expr), args.get(i));
         }
         return expr;
     }
