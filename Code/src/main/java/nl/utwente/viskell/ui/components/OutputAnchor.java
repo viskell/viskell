@@ -151,7 +151,7 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
 
     @Override
     public Point2D getAttachmentPoint() {
-        return this.getPane().sceneToLocal(this.localToScene(new Point2D(0, 9)));
+        return this.getPane().sceneToLocal(this.localToScene(new Point2D(0, 7)));
     }
     
     /** Initiate connection changes at the Block this anchor is attached to. */

@@ -272,6 +272,10 @@ public class Connection extends CubicCurve implements
 		return 3 + arity;
 	}
 
+	public boolean hasTypeError() {
+	    return this.errorState;
+	}
+	
     public boolean hasScopeError() {
         return this.scopeError;
     }
