@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.ghcj.GhciSession;
+import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.expr.*;
 import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.ToplevelPane;
@@ -77,7 +78,6 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
                         expr = new Apply (new Apply(take, new Value(Type.con("Int"), "32")), expr);
                     }
                 }
-                System.err.println(type.prettyPrint() + " " + expr.toHaskell());
                 
                 ListenableFuture<String> result = ghci.pull(expr);
 
@@ -89,7 +89,11 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
                     }
 
                     public void onFailure(Throwable throwable) {
-                        Platform.runLater(() -> value.setText("?!?!?!"));
+                        if (throwable instanceof HaskellException && "Open expression".equals(throwable.getMessage())) {
+                            Platform.runLater(() -> value.setText("unfinished?"));
+                        } else {
+                            Platform.runLater(() -> value.setText("?!?!?!"));
+                        }
                     }
                 });
 
