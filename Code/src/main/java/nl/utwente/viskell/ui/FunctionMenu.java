@@ -23,6 +23,7 @@ import nl.utwente.viskell.ui.components.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.prefs.Preferences;
 
@@ -125,14 +126,14 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             CatalogFunction entry = this.getItem();
                             if (!(entry.getFreshSignature() instanceof FunType)) {
                                 addBlock(new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
-                            } else if (e.isControlDown() || verticalCurry) {
+                            } else if (e.isControlDown() || Preferences.userNodeForPackage(Main.class).getBoolean("verticalCurry", true)) {
                                 if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
                                     addBlock(new BinOpApplyBlock(entry, parent));
                                 } else {
-                                    addBlock(new FunApplyBlock(entry, parent));
+                                    addBlock(new FunApplyBlock(new LibraryFunUse(entry), parent));
                                 }
                             } else {
-                                addBlock(new FunctionBlock(entry, parent));
+                                addBlock(new FunctionBlock(new LibraryFunUse(entry), parent));
                             }
                         });
                     }
@@ -155,7 +156,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             categoryContainer.getPanes().addAll(submenu);
         }
 
-        // Hiding all other categories on expandign one of them.
+        // Hiding all other categories on expanding one of them.
         List<TitledPane> allCatPanes = new ArrayList<>(categoryContainer.getPanes());
         categoryContainer.expandedPaneProperty().addListener(e -> {
             TitledPane expPane = categoryContainer.getExpandedPane();
