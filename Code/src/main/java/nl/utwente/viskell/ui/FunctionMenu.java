@@ -46,6 +46,9 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     /** The context that deals with dragging for this Menu */
     protected DragContext dragContext;
 
+    /** Keep track of how many blocks are placed from this menu */
+    private int blockCounter = 0;
+    
     private Accordion categoryContainer = new Accordion();
     private ToplevelPane parent;
     @FXML
@@ -84,8 +87,13 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             listView.setCellFactory((list) -> {
                 return new ListCell<CatalogFunction>() {
                     {
+                        
                         this.setOnMouseReleased(e -> {
                             if (this.isEmpty()) {
+                                return;
+                            }
+                            
+                            if ((e.isSynthesized() && e.getButton() != MouseButton.SECONDARY) || !this.contains(e.getX(), e.getY())) {
                                 return;
                             }
                             
@@ -102,6 +110,29 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             	}
                             } else {
                                 addBlock(new FunctionBlock(new LibraryFunUse(entry), parent));
+                            }
+                        });
+                        
+                        this.setOnTouchReleased(e -> {
+                            if (this.isEmpty()) {
+                                return;
+                            }
+                            
+                            if (!this.contains(e.getTouchPoint().getX(), e.getTouchPoint().getY())) {
+                                return;
+                            }
+                            
+                            CatalogFunction entry = this.getItem();
+                            if (!(entry.getFreshSignature() instanceof FunType)) {
+                                addBlock(new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
+                            } else if (e.isControlDown() || verticalCurry) {
+                                if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
+                                    addBlock(new BinOpApplyBlock(entry, parent));
+                                } else {
+                                    addBlock(new FunApplyBlock(entry, parent));
+                                }
+                            } else {
+                                addBlock(new FunctionBlock(entry, parent));
                             }
                         });
                     }
@@ -124,6 +155,18 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             categoryContainer.getPanes().addAll(submenu);
         }
 
+        // Hiding all other categories on expandign one of them.
+        List<TitledPane> allCatPanes = new ArrayList<>(categoryContainer.getPanes());
+        categoryContainer.expandedPaneProperty().addListener(e -> {
+            TitledPane expPane = categoryContainer.getExpandedPane();
+            if (expPane != null) {
+                categoryContainer.getPanes().retainAll(expPane);
+            } else {
+                categoryContainer.getPanes().clear();
+                categoryContainer.getPanes().addAll(allCatPanes);
+            }
+        });
+        
         this.categorySpace.getChildren().add(categoryContainer);
 
         /* Create content for utilSpace. */
@@ -209,8 +252,11 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     private void addBlock(Block block) {
         parent.addBlock(block);
         Point2D pos = this.localToParent(0, 0);
-        block.relocate(pos.getX() - 200, pos.getY());
+        int offSetX = (this.blockCounter % 5) * 10 - 200;
+        int offSetY = (this.blockCounter % 5) * 20 + (block.getAllOutputs().isEmpty() ? 250 : 125);
+        block.relocate(pos.getX() + offSetX, pos.getY()+ offSetY);
         block.initiateConnectionChanges();
+        this.blockCounter++;
     }
 
     /** Closes this menu by removing it from it's parent. */
