@@ -81,7 +81,7 @@ MatchBlock {
     -fx-focus-color: white;
 }
 
-.menu Button {
+.menu .menuButton {
     -fx-background-color: #A4849E;
 }
 

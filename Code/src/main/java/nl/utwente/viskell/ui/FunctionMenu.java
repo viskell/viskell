@@ -1,6 +1,8 @@
 package nl.utwente.viskell.ui;
 
+import javafx.animation.KeyFrame;
 import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -25,7 +27,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.prefs.Preferences;
+import java.util.stream.Collectors;
 
 /**
  * FunctionMenu is a viskell specific menu implementation. A FunctionMenu is an
@@ -74,12 +78,20 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
         /* Create content for categorySpace. */
         ArrayList<String> categories = new ArrayList<>(catalog.getCategories());
+        categories.add("Deconstructors");
         Collections.sort(categories);
 
         for (String category : categories) {
             ObservableList<CatalogFunction> items = FXCollections.observableArrayList();
 
-            ArrayList<CatalogFunction> entries = new ArrayList<>(catalog.getCategory(category));
+            ArrayList<CatalogFunction> entries; 
+            if ("Deconstructors".equals(category)) {
+                entries = categories.stream().flatMap(c -> 
+                        catalog.getCategory(c).stream()).filter(e -> e.isConstructor())
+                        .collect(Collectors.toCollection(() -> new ArrayList<>()));
+            } else {
+                entries = new ArrayList<>(catalog.getCategory(category));
+            }
             Collections.sort(entries);
             items.addAll(entries);
 
@@ -99,7 +111,9 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             }
                             
                             CatalogFunction entry = this.getItem();
-                            if (e.getButton() == MouseButton.SECONDARY && entry.isConstructor()) {
+                            if ("Deconstructors".equals(category) && entry.isConstructor()) {
+                                addBlock(new MatchBlock(entry, parent));
+                            } else if (e.getButton() == MouseButton.SECONDARY && entry.isConstructor()) {
                                 addBlock(new MatchBlock(entry, parent));
                             } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                 addBlock(new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
@@ -124,7 +138,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             }
                             
                             CatalogFunction entry = this.getItem();
-                            if (!(entry.getFreshSignature() instanceof FunType)) {
+                            
+                            if ("Deconstructors".equals(category) && entry.isConstructor()) {
+                                addBlock(new MatchBlock(entry, parent));
+                            } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                 addBlock(new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
                             } else if (e.isControlDown() || Preferences.userNodeForPackage(Main.class).getBoolean("verticalCurry", true)) {
                                 if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
@@ -150,8 +167,15 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             TitledPane submenu = new TitledPane(category, listView);
             submenu.setAnimated(false);
             
+            // toggling of the submenu by touch
+            submenu.setOnTouchReleased(event -> {
+                if (event.getTouchPoint().getY() < 24) {
+                    submenu.setExpanded(! submenu.isExpanded());
+                }
+            });
+            
             //Prevent dragging the whole menu when dragging inside a category list 
-            submenu.addEventHandler(TouchEvent.ANY, Event::consume);
+            submenu.addEventHandler(TouchEvent.TOUCH_MOVED, Event::consume);
             
             categoryContainer.getPanes().addAll(submenu);
         }
@@ -171,33 +195,22 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         this.categorySpace.getChildren().add(categoryContainer);
 
         /* Create content for utilSpace. */
-        Button closeButton = new Button("Close");
-        closeButton.setOnMouseClicked(event -> close(true));
-        closeButton.setOnTouchPressed(event -> close(false));
-        Button valBlockButton = new Button("Constant");
-        valBlockButton.setOnAction(event -> addConstantBlock());
-        Button arbBlockButton = new Button("Arbitrary");
-        arbBlockButton.setOnAction(event -> addBlock(new ArbitraryBlock(parent)));
-        Button disBlockButton = new Button("Display");
-        disBlockButton.setOnAction(event -> addBlock(new DisplayBlock(parent)));
-        Button lambdaBlockButton = new Button("Lambda");
-        lambdaBlockButton.setOnAction(event -> addLambdaBlock());
-        Button choiceBlockButton = new Button("Choice");
-        choiceBlockButton.setOnAction(event -> addChoiceBlock());
-        Button applyBlockButton = new Button("Apply");
-        applyBlockButton.setOnAction(event -> addBlock(new FunApplyBlock(new ApplyAnchor(1), parent)));
+        Button closeButton = new MenuButton("Close", bm -> close(bm));
+        Button valBlockButton = new MenuButton("Constant", bm -> addConstantBlock());
+        Button arbBlockButton = new MenuButton("Arbitrary", bm -> addBlock(new ArbitraryBlock(parent)));
+        Button disBlockButton = new MenuButton("Observe", bm -> addBlock(new DisplayBlock(parent)));
+        Button lambdaBlockButton = new MenuButton("Lambda", bm -> addLambdaBlock());
+        Button choiceBlockButton = new MenuButton("Choice", bm -> addChoiceBlock());
+        Button applyBlockButton = new MenuButton("Apply", bm -> addBlock(new FunApplyBlock(new ApplyAnchor(1), parent)));
         
 
         utilSpace.getChildren().addAll(closeButton, valBlockButton, arbBlockButton, disBlockButton, lambdaBlockButton, choiceBlockButton, applyBlockButton);
 
         if (GhciSession.pickBackend() == GhciSession.Backend.GHCi) {
             // These blocks are specifically for GHCi
-            Button rationalBlockButton = new Button("Rational");
-            rationalBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent, false)));
-            Button IntegerBlockButton = new Button("Integer");
-            IntegerBlockButton.setOnAction(event -> addBlock(new SliderBlock(parent, true)));
-            Button graphBlockButton = new Button("Graph");
-            graphBlockButton.setOnAction(event -> addBlock(new GraphBlock(parent)));
+            Button rationalBlockButton = new MenuButton("Rational", bm -> addBlock(new SliderBlock(parent, false)));
+            Button IntegerBlockButton = new MenuButton("Integer", bm -> addBlock(new SliderBlock(parent, true)));
+            Button graphBlockButton = new MenuButton("Graph", bm -> addBlock(new GraphBlock(parent)));
 
             utilSpace.getChildren().addAll(rationalBlockButton, IntegerBlockButton, graphBlockButton);
         }
@@ -205,17 +218,14 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         if (GhciSession.pickBackend() == GhciSession.Backend.Clash) {
             // These blocks are specifically for Clash
 
-            Button simulateBlockButton = new Button("Simulate");
-            simulateBlockButton.setOnAction(event -> addBlock(new SimulateBlock(parent)));
+            Button simulateBlockButton = new MenuButton("Simulate", bm -> addBlock(new SimulateBlock(parent)));
 
             utilSpace.getChildren().addAll(simulateBlockButton);
         }
 
         // with an odd number of block buttons fill the last spot with a close button
         if (utilSpace.getChildren().size() % 2 == 1) {
-            Button extraCloseButton = new Button("Close");
-            extraCloseButton.setOnMouseClicked(event -> close(true));
-            extraCloseButton.setOnTouchPressed(event -> close(false));
+            Button extraCloseButton = new MenuButton("Close", bm -> close(bm));
             utilSpace.getChildren().add(extraCloseButton);
         }
         
@@ -235,6 +245,24 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         opening.play();
     }
 
+    /** Specialized Button that behaves better in a many touch environment. */
+    private static class MenuButton extends Button {
+        
+        private int touchDragCounter;
+
+        private MenuButton(String text, Consumer<Boolean> action) {
+            super(text);
+            this.touchDragCounter = 0;
+            this.getStyleClass().add("menuButton");
+            this.setOnMouseClicked(event -> {if (!event.isSynthesized()) action.accept(true);});
+
+            Timeline dragReset = new Timeline(new KeyFrame(Duration.millis(500), e -> this.touchDragCounter = 0));
+            this.setOnTouchReleased(event -> {if (this.touchDragCounter < 7) action.accept(false);});
+            this.setOnTouchPressed(event -> dragReset.play());
+            this.setOnTouchMoved(event -> this.touchDragCounter++);
+        }
+    }
+    
     private void addConstantBlock() {
         ConstantBlock val = new ConstantBlock(this.parent);
         addBlock(val);
