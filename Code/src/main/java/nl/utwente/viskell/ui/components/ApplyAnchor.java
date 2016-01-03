@@ -26,6 +26,7 @@ public class ApplyAnchor extends InputAnchor implements FunctionReference {
         this.visibleAnchor = new Rectangle(48, 12);
         this.visibleAnchor.setTranslateY(3);
         this.visibleAnchor.getStyleClass().add("anchorPoint");
+        this.visibleAnchor.setMouseTransparent(true);
         this.openWire = new Line(0, 0, 0, 8);
         this.openWire.setTranslateX(-8);
         this.openWire.setTranslateY(-8);

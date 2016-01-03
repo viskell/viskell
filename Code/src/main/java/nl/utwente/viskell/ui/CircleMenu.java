@@ -263,6 +263,7 @@ public class CircleMenu extends CircularPane {
             backing.setStrokeWidth(1);
             this.getChildren().addAll(backing, image);
             this.setPrefSize(64, 64);
+            this.setPickOnBounds(false);
             
             this.wasPressed = false;
             

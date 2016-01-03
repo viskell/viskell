@@ -62,7 +62,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
         
         this.args = new ArrayList<>();
         for (int i = 0; i < arity; i++) {
-            this.args.add(new BinderAnchor(this, wrapper, new Binder("" + (char)('a' + i))));
+            this.args.add(new BinderAnchor(this, wrapper, new Binder("arg_" + i)));
         }
         this.res = new ResultAnchor(this, wrapper, Optional.empty());
         
@@ -104,7 +104,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
             t = ft.getResult(); 
         }
         
-        this.res.setExactRequiredType(t);
+        this.res.setConstraintType(t);
     }
 
     public int argCount() {
@@ -113,7 +113,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
     
     /** Adds extra input binder anchor to this lambda */
     public void addExtraInput() {
-        BinderAnchor arg = new BinderAnchor(this, wrapper, new Binder("x_" + this.args.size()));
+        BinderAnchor arg = new BinderAnchor(this, wrapper, new Binder("arg_" + this.args.size()));
         this.args.add(arg);
         this.argSpace.getChildren().add(arg);
         this.wrapper.initiateConnectionChanges();
@@ -189,6 +189,8 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
         List<Binder> binders = args.stream().map(arg -> arg.binder).collect(Collectors.toList());
         LetExpression body = new LetExpression(res.getLocalExpr(outsideAnchors), false);
         res.extendExprGraph(body, this, outsideAnchors);
+        
+        System.err.println(outsideAnchors);
         
         return new Lambda(binders, body);
     }
