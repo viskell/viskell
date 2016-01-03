@@ -89,6 +89,10 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         return this.toplevel;
     }
 
+    public boolean isActivated() {
+        return this.dragContext.isActivated();
+    }
+    
     /**
      * @return All InputAnchors of the block.
      */

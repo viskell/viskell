@@ -27,7 +27,11 @@ public interface WrappedContainer extends BlockContainer {
 
     /** Move the attached blocks with the specified offset */
     default void moveNodes(double dx, double dy) {
-        this.getAttachedBlocks().forEach(node -> node.relocate(node.getLayoutX()+dx, node.getLayoutY()+dy));
+        this.getAttachedBlocks().forEach(node -> {
+            if (! node.isActivated()) {
+                node.relocate(node.getLayoutX()+dx, node.getLayoutY()+dy);
+            }
+        });
     }
     
     /** Delete all associations of this container with others in preparation of deletion, including all connections */

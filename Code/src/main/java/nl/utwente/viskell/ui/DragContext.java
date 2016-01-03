@@ -102,16 +102,21 @@ public class DragContext {
                 }
                 event.consume();
             } else if (type == TouchEvent.TOUCH_RELEASED) {
-                if (this.touchId > MOUSE_ID && this.activated && event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this.node)).count() == 1) {
-                    this.activated = false;
-                    if (this.releaseAction != null) {
-                        this.releaseAction.accept(this);
+                long fingerCount = event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this.node)).count();
+                if (this.touchId > MOUSE_ID && fingerCount == 1) {
+                    if (this.activated) {
+                        this.activated = false;
+                        if (this.releaseAction != null) {
+                            this.releaseAction.accept(this);
+                        }
                     }
-                }
-                
-                if (this.touchId == event.getTouchPoint().getId()) {
-                    this.handleTouchReleased();
-                } else if (!this.dragStarted && event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this.node)).count() == 2) {
+                    
+                    if (this.dragStarted) {
+                        this.handleTouchReleased();
+                    }
+                    
+                    this.touchId = DragContext.NULL_ID;
+                } else if (!this.dragStarted && fingerCount == 2) {
                     if (this.secondaryClickAction != null) {
                         this.secondaryClickAction.accept(new Point2D(event.getTouchPoint().getX(), event.getTouchPoint().getY()), false);
                     }
@@ -133,14 +138,14 @@ public class DragContext {
                 if (this.touchId == DragContext.NULL_ID) {
                     this.touchId = DragContext.MOUSE_ID;
                     this.handleTouchPressed(event.getX(), event.getY());
-                    event.consume();
                 }
+                event.consume();
             } else if (type == MouseEvent.MOUSE_DRAGGED) {
                 
                 if (this.touchId == DragContext.MOUSE_ID) {
                     this.handleTouchMoved(event.getX(), event.getY());
-                    event.consume();
                 }
+                event.consume();
             } else if (type == MouseEvent.MOUSE_RELEASED) {
                 if (this.touchId == DragContext.MOUSE_ID && this.activated && !event.isPrimaryButtonDown() && !event.isSecondaryButtonDown()) {
                     this.activated = false;
@@ -149,15 +154,15 @@ public class DragContext {
                 }
                 
                 if (event.getButton() == MouseButton.SECONDARY && !this.dragStarted) {
-                    event.consume();
                     if (this.secondaryClickAction != null) {
                         this.secondaryClickAction.accept(new Point2D(event.getX(), event.getY()), true);
                     }
                 } else if (this.touchId == DragContext.MOUSE_ID) {
+                    this.touchId = DragContext.NULL_ID;
                     handleTouchReleased();
-                    event.consume();
                 }
                 
+                event.consume();
                 this.touchId = DragContext.NULL_ID;
             }
         };
@@ -208,7 +213,6 @@ public class DragContext {
     }
 
     private void handleTouchReleased() {
-        this.touchId = DragContext.NULL_ID;
         this.dragStarted = false;
         if (this.dragFinishAction != null) {
             this.dragFinishAction.accept(this);
@@ -291,34 +295,13 @@ public class DragContext {
         this.dragFinishAction = action;
     }
 
-    /**
-     * Binds the DragContext to a different TouchEvent. This allows a TouchPoint other than
-     * the one that started the drag operation to take over the drag gesture.
-     * 
-     * @throws IllegalArgumentException Thrown when the TouchEvent is not of 
-     * type TouchEvent.TOUCH_PRESSED, or when the event's target is not the Node that this
-     * DragContext belongs to, or have that Node as ancestor.
-     */
-    public void bind(TouchEvent event) {
-        if (event.getTouchPoint().getId() == touchId) return;
-        
-        Node target = (Node) event.getTarget();
-        while (target.getParent() != this.node) {
-            target = target.getParent();
-            if (target == null) {
-                throw new IllegalArgumentException("TouchEvent's target should be draggable, or have draggable as ancestor");
-            }
-        }
-        if (event.getEventType() != TouchEvent.TOUCH_PRESSED) {
-            throw new IllegalArgumentException("TouchEvent should be of type TOUCH_PRESSED");
-        }
-        
-        touchId = event.getTouchPoint().getId();
-        this.handleTouchPressed(event.getTouchPoint().getX(), event.getTouchPoint().getY());
+    public boolean isActivated() {
+        return this.activated;
     }
     
     @Override
     public String toString() {
         return String.format("DragContext [draggable = %s, ,touchId = %d, localOffsetX = %f, localOffsetY = %f]", node.toString(), touchId, localOffsetX, localOffsetY);
     }
+
 }
