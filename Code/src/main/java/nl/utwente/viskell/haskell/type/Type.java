@@ -13,7 +13,7 @@ public abstract class Type {
 	/** @return The number of arguments that can be applied to a value of this type. */
 	public int countArguments() {
 		int count = 0;
-		Type type = this;
+		Type type = this.getConcrete();
 		while (type instanceof FunType) {
 			count++;
 			type = ((FunType)type).getResult();

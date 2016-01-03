@@ -66,12 +66,15 @@ public class ApplyAnchor extends InputAnchor implements FunctionReference {
             this.setFreshRequiredType(this.getType().getFresh(scope), scope);
             return this.getType();
         } else {
-            Type res = scope.getVar("a_0");
-            for (int i = 1; i < argCount; i++) {
-                res = Type.fun(res, scope.getVar("a_"+i));
+            if (argCount < 1) {
+                return scope.getVar("xr");
+            }
+            
+            Type res = Type.fun(scope.getVar("a_0"), scope.getVar("xr"));
+            for (int i = argCount-1; i > 0 ; i--) {
+                res = Type.fun(scope.getVar("a_"+i), res);
             }
 
-            res = Type.fun(res, scope.getVar("xr"));
             this.setFreshRequiredType(res, scope);
             return res;
         }
@@ -97,4 +100,10 @@ public class ApplyAnchor extends InputAnchor implements FunctionReference {
         return true; // don't care for now, scope errors are already shown on the anchor itself 
     }
 
+    @Override
+    public void deleteLinks() {
+        this.removeConnections();
+    }
+
+    
 }

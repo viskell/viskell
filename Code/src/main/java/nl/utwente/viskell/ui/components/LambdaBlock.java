@@ -9,6 +9,8 @@ import java.util.prefs.Preferences;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 
+import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
@@ -87,6 +89,16 @@ public class LambdaBlock extends Block {
 
         DragContext sizeDrag = new DragContext(this.resizer);
         sizeDrag.setDragLimits(new BoundingBox(200, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));
+        // make the width of the name/signature to lower limit for the resizer  
+        ((Pane)this.signature.getParent()).widthProperty().addListener(e -> {
+            double width = ((ReadOnlyDoubleProperty)e).doubleValue();
+            if (width > 200) {
+                sizeDrag.setDragLimits(new BoundingBox(width, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));
+            }
+            if ((width-20) > this.resizer.getLayoutX()) {
+                Platform.runLater(() -> this.resizer.relocate(width-20, this.resizer.getLayoutY()));
+            }
+        });
     }
     
     /** 
@@ -155,6 +167,10 @@ public class LambdaBlock extends Block {
         return Optional.empty();
     }
 
+    public void removeUser(LocalDefUse user) {
+        this.allDefinitionUsers.remove(user);
+    }
+    
     @Override
     public void refreshAnchorTypes() {
         // do typechecking internal connections first so that the lambda type is inferred
@@ -213,6 +229,10 @@ public class LambdaBlock extends Block {
 
     @Override
     public void deleteAllLinks() {
+        for (LocalDefUse user : new ArrayList<>(this.allDefinitionUsers)) {
+            user.onDefinitionRemoved();
+        }
+        
         this.body.deleteAllLinks();
         super.deleteAllLinks();
     }
@@ -239,6 +259,20 @@ public class LambdaBlock extends Block {
             double marginX = Math.max(20, 200 - union.getWidth());
             double marginY = Math.max(20, 200 - union.getHeight());
             this.shiftAndGrow(shiftX - marginX/2 , shiftY - marginY/2 , extraX + marginX, extraY + marginY);
+        }
+    }
+    
+    @Override
+    public boolean canAlterAnchors() {
+        return !this.isTypedLambda();
+    }
+    
+    @Override
+    public void alterAnchorCount(boolean isRemove) {
+        if (isRemove) {
+            this.body.removeLastInput();
+        } else {
+            this.body.addExtraInput();
         }
     }
     

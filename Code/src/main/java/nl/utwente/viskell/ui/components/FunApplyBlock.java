@@ -139,6 +139,8 @@ public class FunApplyBlock extends Block {
     /** The space containing anchors and type labels. */
     @FXML private Pane bodySpace;
     
+    private final Pane inputSpace;
+    
     public FunApplyBlock(FunctionReference funRef, ToplevelPane pane) {
         super(pane);
         this.loadFXML("FunApplyBlock");
@@ -166,8 +168,8 @@ public class FunApplyBlock extends Block {
         }
         Iterables.getLast(FunApplyBlock.this.inputs).curryArrow.setManaged(false);
 
-        Pane inputSpace = new HBox(0, this.inputs.toArray(new Node[this.inputs.size()]));
-        inputSpace.setPickOnBounds(false);
+        this.inputSpace = new HBox(5, this.inputs.toArray(new Node[this.inputs.size()]));
+        this.inputSpace.setPickOnBounds(false);
         
         this.curriedOutput = new Pane() {
                 @Override
@@ -179,12 +181,12 @@ public class FunApplyBlock extends Block {
         this.curriedOutput.getStyleClass().add("curriedOutput");
         this.curriedOutput.setBorder(new Border(new BorderStroke(null, BorderStrokeStyle.SOLID, null, null)));
             
-        this.bodySpace.getChildren().addAll(this.curriedOutput, inputSpace, outputSpace);
-        outputSpace.layoutYProperty().bind(inputSpace.heightProperty());
-        outputSpace.layoutXProperty().bind(inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2)));
+        this.bodySpace.getChildren().addAll(this.curriedOutput, this.inputSpace, outputSpace);
+        outputSpace.layoutYProperty().bind(this.inputSpace.heightProperty());
+        outputSpace.layoutXProperty().bind(this.inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2)));
         outputSpace.setTranslateY(9);
         
-        this.curriedOutput.prefHeightProperty().bind(inputSpace.heightProperty().multiply(2));
+        this.curriedOutput.prefHeightProperty().bind(this.inputSpace.heightProperty().multiply(2));
         this.curriedOutput.translateYProperty().bind(outputSpace.translateYProperty());
     }
 
@@ -204,6 +206,14 @@ public class FunApplyBlock extends Block {
     
     public FunctionReference getFunReference() {
         return this.funRef;
+    }
+
+    public void convertToOpenApply(ApplyAnchor apply) {
+        this.funRef.deleteLinks();
+        this.funRef = apply;
+        apply.initializeBlock(this);
+        ((HBox)this.bodySpace.getParent()).getChildren().set(0, funRef.asRegion());
+        this.initiateConnectionChanges();
     }
     
     @Override
@@ -289,6 +299,43 @@ public class FunApplyBlock extends Block {
     public boolean checkValidInCurrentContainer() {
         return this.funRef.isScopeCorrectIn(this.container) && super.checkValidInCurrentContainer(); 
     }
+    
+    @Override
+    public void deleteAllLinks() {
+        this.funRef.deleteLinks();
+        super.deleteAllLinks();
+    }
+    
+    @Override
+    public boolean canAlterAnchors() {
+        return this.funRef instanceof ApplyAnchor;
+    }
+
+    @Override
+    public void alterAnchorCount(boolean isRemove) {
+        if (this.funRef instanceof ApplyAnchor) {
+            ApplyAnchor apply = (ApplyAnchor)this.funRef; 
+            if (apply.hasConnection()) {
+                if (isRemove && apply.getType().countArguments() <= this.inputs.size()) {
+                    return;
+                }
+                if (!isRemove && apply.getType().countArguments() >= this.inputs.size()) {
+                    return;
+                }
+            }
+            
+            if (isRemove) {
+                FunInputAnchor removed = this.inputs.remove(this.inputs.size()-1);
+                this.inputSpace.getChildren().remove(removed);
+            } else {
+                FunInputAnchor extra = new FunInputAnchor();
+                this.inputs.add(extra);
+                this.inputSpace.getChildren().add(extra);
+            }
+            this.initiateConnectionChanges();
+        }
+    }
+    
     
     @Override
     public String toString() {

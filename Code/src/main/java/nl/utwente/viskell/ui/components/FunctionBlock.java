@@ -88,6 +88,14 @@ public class FunctionBlock extends Block {
         return this.funRef;
     }
     
+    public void convertToOpenApply(ApplyAnchor apply) {
+        this.funRef.deleteLinks();
+        this.funRef = apply;
+        apply.initializeBlock(this);
+        this.bodySpace.getChildren().set(0, funRef.asRegion());
+        this.initiateConnectionChanges();
+    }
+    
     /** Updates the layout, if this Pane has a parent. */
     public void updateLayout() {
         if (this.getParent() != null) {
@@ -177,6 +185,12 @@ public class FunctionBlock extends Block {
     @Override
     public boolean checkValidInCurrentContainer() {
         return this.funRef.isScopeCorrectIn(this.container) && super.checkValidInCurrentContainer(); 
+    }
+    
+    @Override
+    public void deleteAllLinks() {
+        this.funRef.deleteLinks();
+        super.deleteAllLinks();
     }
     
     @Override

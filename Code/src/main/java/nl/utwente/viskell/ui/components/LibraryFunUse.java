@@ -74,4 +74,8 @@ public class LibraryFunUse extends Label implements FunctionReference {
         return true;
     }
 
+    @Override
+    public void deleteLinks() {
+    }
+
 }
