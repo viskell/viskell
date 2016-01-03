@@ -24,6 +24,7 @@ import nl.utwente.viskell.ui.components.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
+import java.util.prefs.Preferences;
 
 /**
  * FunctionMenu is a viskell specific menu implementation. A FunctionMenu is an
@@ -54,7 +55,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     @FXML
     private Pane utilSpace;
 
-    public FunctionMenu(boolean byMouse, HaskellCatalog catalog, ToplevelPane pane, boolean verticalCurry) {
+    public FunctionMenu(boolean byMouse, HaskellCatalog catalog, ToplevelPane pane) {
         this.parent = pane;
         this.loadFXML("FunctionMenu");
         this.dragContext = new DragContext(this);
@@ -93,7 +94,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                                 addBlock(new MatchBlock(entry, parent));
                             } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                 addBlock(new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
-                            } else if (e.isControlDown() || verticalCurry) {
+                            } else if (e.isControlDown() || Preferences.userNodeForPackage(Main.class).getBoolean("verticalCurry", true)) {
                             	if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
                             		addBlock(new BinOpApplyBlock(entry, parent));
                             	} else {

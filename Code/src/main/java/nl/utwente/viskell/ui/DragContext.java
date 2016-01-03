@@ -157,6 +157,8 @@ public class DragContext {
                     handleTouchReleased();
                     event.consume();
                 }
+                
+                this.touchId = DragContext.NULL_ID;
             }
         };
         

@@ -459,7 +459,7 @@
       <function name="liftA2" signature="Applicative f => (a -> b -> c) -> f a -> f b -> f c" isCommon="true"/>
       <function name="liftA3" signature="Applicative f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d"/>
       <function name="empty" signature="Alternative f => f a"/>
-      <function name="(&lt;|&gt;)" signature="Alternative f a -> f a -> f a"/>
+      <function name="(&lt;|&gt;)" signature="Alternative f => f a -> f a -> f a"/>
       <function name="mapM" signature="Monad m => (a -> m b) -> [a] -> m [b]" isCommon="true"/>
       <function name="mapM_" signature="Monad m => (a -> m b) -> [a] -> m ()"/>
       <function name="sequence" signature="Monad m => [m a] -> m [a]"/>
@@ -550,7 +550,7 @@
       <function name="snd" signature="(a, b) -> b" isCommon="true">
         Extract the second component of a pair
       </function>
-      <function name="curry" signature="((a, b) -> c) -> (a, b) -> c" isCommon="true">
+      <function name="curry" signature="((a, b) -> c) -> a -> b -> c" isCommon="true">
         curry converts an uncurried function to a curried function
       </function>
       <function name="uncurry" signature="(a -> b -> c) -> (a, b) -> c" isCommon="true">

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
@@ -91,7 +92,7 @@ public class LambdaBlock extends Block {
     protected void createFunctionUseBlock(Event event) {
         ToplevelPane toplevel = this.getToplevel();
         FunctionReference funRef = new LocalDefUse(this);
-        Block block = toplevel.isVerticalCurryingEnabled() ? new FunApplyBlock(funRef, toplevel) : new FunctionBlock(funRef, toplevel);
+        Block block = Preferences.userNodeForPackage(Main.class).getBoolean("verticalCurry", true) ? new FunApplyBlock(funRef, toplevel) : new FunctionBlock(funRef, toplevel);
         toplevel.addBlock(block);
         Bounds bounds = this.getBoundsInParent();
         block.relocate(bounds.getMinX()-20, bounds.getMaxY()+10);
