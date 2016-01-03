@@ -64,7 +64,7 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
     public void invalidateVisualState() {
         this.inputAnchor.invalidateVisualState();
 
-        if (inputAnchor.hasValidConnection()) {
+        if (this.inValidContext && inputAnchor.hasValidConnection()) {
             try { 
                 TypeChecker.unify("is showable", inputAnchor.getType().getFresh(), showConstraint.getFresh());
             
@@ -131,6 +131,15 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
     @Override
     public String toString() {
         return "DisplayBlock[" + value.getText() + "]";
+    }
+
+    @Override
+    public boolean checkValidInCurrentContainer() {
+        if (this.container instanceof LambdaContainer || this.container instanceof Lane) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 }

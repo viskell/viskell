@@ -3,6 +3,7 @@ package nl.utwente.viskell.ui.components;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     /** The container to which this Block currently belongs */
     protected BlockContainer container;
 
+    /** Whether this block has a meaningful interpretation the current container context. */
+    protected boolean inValidContext;
+    
     /**
      * @param pane The pane this block belongs to.
      */
@@ -74,7 +78,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         
         this.dragContext = new DragContext(this);
         this.dragContext.setSecondaryClickAction((p, byMouse) -> CircleMenu.showFor(this, this.localToParent(p), byMouse));
-        dragContext.setDragFinishAction(event -> refreshContainer());
+        this.dragContext.setDragFinishAction(event -> refreshContainer());
+        this.dragContext.setContactAction(x -> this.getStyleClass().add("activated"));
+        this.dragContext.setReleaseAction(x -> this.getStyleClass().removeAll("activated"));
     }
 
     /** @return the parent CustomUIPane of this component. */
@@ -91,6 +97,12 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
      * @return All OutputAnchors of the Block.
      */
     public abstract List<OutputAnchor> getAllOutputs();
+    
+    public List<ConnectionAnchor> getAllAnchors() {
+        List<ConnectionAnchor> result = new ArrayList<>(this.getAllInputs());
+        result.addAll(this.getAllOutputs());
+        return result;
+    }
     
     /** @return true if no connected output anchor exist */
     public boolean isBottomMost() {
@@ -252,8 +264,18 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
                 ((WrappedContainer)target).handleConnectionChanges(true);
             }
             
+            this.inValidContext = this.checkValidInCurrentContainer();
+            if (this.inValidContext) {
+                this.getStyleClass().removeAll("invalid");
+            } else {
+                this.getStyleClass().removeAll("invalid");
+                this.getStyleClass().add("invalid");
+            }
+            
             this.initiateConnectionChanges();
         }
+        
+        
     }
     
     /** Scans for and attaches to a new container, if any */
@@ -280,6 +302,11 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         
         this.moveIntoContainer(newContainer);
         newContainer.expandToFit(this.getBoundsInParent());
+    }
+    
+    /** @return whether this block has a meaningful interpretation the current container. */
+    public boolean checkValidInCurrentContainer() {
+        return true;
     }
     
     @Override

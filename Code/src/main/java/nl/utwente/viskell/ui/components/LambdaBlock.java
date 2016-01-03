@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -132,6 +133,13 @@ public class LambdaBlock extends Block {
     @Override
     public List<OutputAnchor> getAllOutputs() {
         return ImmutableList.of(this.fun);
+    }
+
+    @Override
+    public List<ConnectionAnchor> getAllAnchors() {
+        List<ConnectionAnchor> result = new ArrayList<>(this.body.getAllAnchors());
+        result.add(this.fun);
+        return result;
     }
 
     @Override

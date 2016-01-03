@@ -82,9 +82,15 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public abstract Point2D getAttachmentPoint();
     
     /**
+     * Make this anchor visually react to a draw wire getting nearby.  
+     * @param goodness 0 is neutral, negative is error causing, and positive is an connectable wire.
+     */
+    protected abstract void setNearbyWireReaction(int goodness);
+
+    /**
      * @returns the wire is being drawn from this connection anchor, or null if none.
      */
-    protected DrawWire getWireInProgress() {
+    public DrawWire getWireInProgress() {
         return this.wireInProgress;
     }
 

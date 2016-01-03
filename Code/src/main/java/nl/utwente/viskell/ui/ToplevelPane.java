@@ -2,10 +2,14 @@ package nl.utwente.viskell.ui;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -14,6 +18,7 @@ import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.ui.components.Block;
 import nl.utwente.viskell.ui.components.Connection;
+import nl.utwente.viskell.ui.components.ConnectionAnchor;
 import nl.utwente.viskell.ui.components.DrawWire;
 import nl.utwente.viskell.ui.components.WrappedContainer;
 
@@ -41,7 +46,7 @@ public class ToplevelPane extends Region implements BlockContainer {
     /**
      * Constructs a new instance.
      */
-    public ToplevelPane() {
+    public ToplevelPane(GhciSession ghci) {
         super();
         this.attachedBlocks = new HashSet<>();
         
@@ -50,8 +55,7 @@ public class ToplevelPane extends Region implements BlockContainer {
         this.wireLayer = new Pane(this.blockLayer);
         this.getChildren().add(this.wireLayer);
 
-        this.ghci = new GhciSession();
-        this.ghci.startAsync();
+        this.ghci = ghci;
 
         new TouchContext(this);
     }
@@ -62,7 +66,6 @@ public class ToplevelPane extends Region implements BlockContainer {
 
     /** Shows a new function menu at the specified location in this pane. */
     public void showFunctionMenuAt(double x, double y, boolean byMouse) {
-        ghci.awaitRunning();
         FunctionMenu menu = new FunctionMenu(byMouse, ghci.getCatalog(), this, this.isVerticalCurryingEnabled());
         double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
         menu.relocate(x, y - verticalCenter);
@@ -77,7 +80,6 @@ public class ToplevelPane extends Region implements BlockContainer {
      * @return The Env instance to be used within this CustomUIPane.
      */
     public Environment getEnvInstance() {
-        ghci.awaitRunning();
         return ghci.getCatalog().asEnvironment();
     }
 
@@ -204,6 +206,25 @@ public class ToplevelPane extends Region implements BlockContainer {
         return this.localToScene(this.getBoundsInLocal());
     }
 
+    /**
+     * @param pos the position to look around in coordinate system of this pane. 
+     * @param distance the maximum 'nearby' distance.
+     */
+    public List<ConnectionAnchor> allNearbyFreeAnchors(Point2D pos, double distance) {
+        ArrayList<ConnectionAnchor> anchors = new ArrayList<>(); 
+        Bounds testBounds = new BoundingBox(pos.getX()-distance, pos.getY()-distance, distance*2, distance*2);
+        for (Block nearBlock : this.streamChildren().filter(n -> n instanceof Block).map(n -> (Block)n).filter(b -> b.getBoundsInParent().intersects(testBounds)).collect(Collectors.toList())) {
+            for (ConnectionAnchor anchor : nearBlock.getAllAnchors()) {
+                Point2D anchorPos = this.sceneToLocal(anchor.localToScene(new Point2D(anchor.getLayoutX(), anchor.getLayoutY())));
+                if (pos.distance(anchorPos) < distance  && anchor.getWireInProgress() == null && !anchor.hasConnection()) {
+                    anchors.add(anchor);
+                }
+            }
+        }
+        
+        return anchors;
+    }
+    
     @Override
     public void attachBlock(Block block) {
         this.attachedBlocks.add(block);

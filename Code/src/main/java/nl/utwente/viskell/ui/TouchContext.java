@@ -64,10 +64,12 @@ public class TouchContext {
     }
     
     private void handleMouseRelease(MouseEvent e) {
+        if (e.isSynthesized()) {
+            return;
+        }
+        
         if (e.getButton() == MouseButton.PRIMARY) {
-            if (!e.isSynthesized()) {
-                this.panning = false;
-            }
+            this.panning = false;
         } else if (!this.panning) {
             this.container.getToplevel().showFunctionMenuAt(e.getX(), e.getY(), true);
         }
@@ -169,7 +171,7 @@ public class TouchContext {
                     // ignore very small movements
                 } else if ((deltaX*deltaX + deltaY*deltaY) > 10000) {
                     // FIXME: ignore too large movements
-                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 24) {
+                } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 63) {
                     this.dragStarted = true;
                     TouchContext.this.panWithDelta(deltaX, deltaY);
                 }

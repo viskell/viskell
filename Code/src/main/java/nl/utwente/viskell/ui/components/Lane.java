@@ -134,6 +134,12 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
         return result;
     }
 
+    public List<ConnectionAnchor> getAllAnchors() {
+        List<ConnectionAnchor> anchors = new ArrayList<>(this.arguments);
+        anchors.add(this.result);
+        return anchors;
+    }
+    
     @Override
     public void refreshAnchorTypes() {
         // refresh anchor types only once at the start of the typechecking process
