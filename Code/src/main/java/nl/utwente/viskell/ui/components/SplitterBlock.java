@@ -82,7 +82,7 @@ public class SplitterBlock extends Block {
     protected void refreshAnchorTypes() {
         List<Type> elems = new ArrayList<>();
         for (int i = 0; i < this.outputs.size(); i++) {
-            elems.add(TypeScope.unique("e_+arity"));
+            elems.add(TypeScope.unique("e_"+i));
         }
 
         this.input.setFreshRequiredType(Type.tupleOf(elems.toArray(new Type[elems.size()])), new TypeScope());
