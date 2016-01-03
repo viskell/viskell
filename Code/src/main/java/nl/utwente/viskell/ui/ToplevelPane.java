@@ -70,7 +70,10 @@ public class ToplevelPane extends Region implements BlockContainer {
         double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
         menu.relocate(x, y - verticalCenter);
         this.addMenu(menu);
-    	
+    }
+    
+    public boolean isVerticalCurryingEnabled() {
+        return this.preferences != null && this.preferences.verticalCurry.isSelected();
     }
     
     /**

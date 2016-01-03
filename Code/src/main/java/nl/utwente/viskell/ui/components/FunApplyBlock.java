@@ -267,9 +267,6 @@ public class FunApplyBlock extends Block {
             }
         }
         
-        // TODO: deal with this in getLocalExpr for LocalDefUse
-        //outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
-        
         if (curriedArgs.isEmpty()) {
             return expr;
         } else {
@@ -288,6 +285,11 @@ public class FunApplyBlock extends Block {
         }
     }
 
+    @Override
+    public boolean checkValidInCurrentContainer() {
+        return this.funRef.isScopeCorrectIn(this.container) && super.checkValidInCurrentContainer(); 
+    }
+    
     @Override
     public String toString() {
         return funRef.getName();

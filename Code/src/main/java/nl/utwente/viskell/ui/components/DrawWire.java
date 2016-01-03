@@ -58,7 +58,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         ToplevelPane pane = anchor.getPane();
         pane.addWire(this);
         this.setFreePosition(startingPoint);
-        anchor.localToSceneTransformProperty().addListener(x -> this.invalidateAnchorPosition());
+        anchor.localToSceneTransformProperty().addListener(this);
         
         this.toucharea = new TouchArea(touchPoint);
         pane.addTouchArea(this.toucharea);
@@ -154,7 +154,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             }
         }
 
-        if (sink.block == source.block && !(sink instanceof ResultAnchor)) {
+        if (sink.block == source.block && !(sink instanceof ResultAnchor && source instanceof BinderAnchor)) {
             // self recursive wires are not allowed
             return null;
         }

@@ -15,12 +15,14 @@ import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Case;
 import nl.utwente.viskell.haskell.expr.Case.Alternative;
 import nl.utwente.viskell.haskell.expr.Expression;
+import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.HaskellTypeError;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeChecker;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.haskell.type.TypeVar;
+import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ToplevelPane;
 
 /**
@@ -111,6 +113,11 @@ public class ChoiceBlock extends Block {
         List<Alternative> bindings = lanes.stream().map(lane -> lane.getAlternative(outsideAnchors)).collect(Collectors.toList());
         return new Case(new Value(Type.tupleOf(), "()"), bindings);
     }
+
+    @Override
+    protected void extendExprGraph(LetExpression exprGraph, BlockContainer container, Set<OutputAnchor> outsideAnchors) {
+        return; // FIXME this override is only because Choice block return internal anchors in getAllInputs()
+   }
 
     @Override
     public void invalidateVisualState() {

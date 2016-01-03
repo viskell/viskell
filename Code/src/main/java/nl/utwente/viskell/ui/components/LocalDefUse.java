@@ -5,29 +5,27 @@ import java.util.Set;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
-import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.*;
 import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.BlockContainer;
 
-public class LibraryFunUse extends Label implements FunctionReference {
+public class LocalDefUse extends Label implements FunctionReference {
+
+    private final LambdaBlock definition;
     
-    private final FunctionInfo funInfo;
+    private Block funBlock;
     
-    public LibraryFunUse(FunctionInfo funInfo) {
-        super(funInfo.getDisplayName());
-        this.funInfo = funInfo;
+    public LocalDefUse(LambdaBlock definition) {
+        super(definition.getName());
+        this.definition = definition;
         this.setMinWidth(USE_PREF_SIZE);
         this.setMaxWidth(USE_PREF_SIZE);
         this.getStyleClass().add("title");
     }
 
-    public FunctionInfo getFunInfo() {
-        return this.funInfo;
-    }
-    
     @Override
     public void initializeBlock(Block funBlock) {
+        this.funBlock = funBlock;
     }
 
     @Override
@@ -37,17 +35,21 @@ public class LibraryFunUse extends Label implements FunctionReference {
 
     @Override
     public int requiredArguments() {
-        return this.funInfo.argumentCount();
+        return this.definition.getBody().argCount();
     }
 
     @Override
     public Type refreshedType(int argCount, TypeScope scope) {
-        return this.funInfo.getFreshSignature();
+        return this.definition.getBinder().getBoundType().getFresh(scope);
     }
 
     @Override
     public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
-        return new FunVar(this.funInfo);
+        // gather everything that is needed for the definition, even though we don't use the resulting expression here
+        this.definition.getLocalExpr(outsideAnchors);
+        
+        outsideAnchors.addAll(this.definition.getAllOutputs());
+        return new LocalVar(this.definition.getBinder());
     }
 
     @Override
@@ -61,17 +63,22 @@ public class LibraryFunUse extends Label implements FunctionReference {
 
     @Override
     public FunctionReference getNewCopy() {
-        return new LibraryFunUse(this.funInfo);
+        return new LocalDefUse(this.definition);
     }
 
     @Override
     public String getName() {
-        return this.funInfo.getDisplayName();
+        return this.definition.getName();
     }
 
     @Override
     public boolean isScopeCorrectIn(BlockContainer container) {
-        return true;
+        return container.isContainedWithin(this.definition.getContainer());
     }
+
+    public void handleConnectionChanges(boolean finalPhase) {
+        this.funBlock.handleConnectionChanges(finalPhase);        
+    }
+    
 
 }

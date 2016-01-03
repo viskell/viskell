@@ -132,14 +132,9 @@ public class FunctionBlock extends Block {
     @Override
     public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
         Expression expr = this.funRef.getLocalExpr(outsideAnchors);
-        
         for (InputAnchor in : this.getActiveInputs()) {
             expr = new Apply(expr, in.getLocalExpr(outsideAnchors));
         }
-        
-       // TODO: deal with this in getLocalExpr for LocalDefUse
-       // outsideAnchors.addAll(funInfo.getRequiredBlocks().stream().flatMap(block -> block.getAllOutputs().stream()).collect(Collectors.toList()));
-        
         return expr;
     }
     
@@ -177,6 +172,11 @@ public class FunctionBlock extends Block {
         
         // Trigger invalidation for the now changed output type.
         this.initiateConnectionChanges();
+    }
+    
+    @Override
+    public boolean checkValidInCurrentContainer() {
+        return this.funRef.isScopeCorrectIn(this.container) && super.checkValidInCurrentContainer(); 
     }
     
     @Override

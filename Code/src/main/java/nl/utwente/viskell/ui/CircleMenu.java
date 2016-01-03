@@ -66,10 +66,10 @@ public class CircleMenu extends CircularPane {
         delete.setOnActivate(() -> delete());
         this.add(delete);
 
-        if (block instanceof DefinitionBlock) {
+        if (block instanceof LambdaBlock) {
             image = makeImageView("/ui/icons/appbar.arrow.collapsed.png");
             MenuButton resize = new MenuButton("resize", image);
-            resize.setOnActivate(() -> ((DefinitionBlock)block).resizeToFitAll());
+            resize.setOnActivate(() -> ((LambdaBlock)block).resizeToFitAll());
             this.add(resize);
         } else {
             // Copy Option
@@ -79,16 +79,23 @@ public class CircleMenu extends CircularPane {
             this.add(copy);
         }
 
-        if (block instanceof DefinitionBlock && ((DefinitionBlock)block).isLambda()) {
-            image = makeImageView("/ui/icons/appbar.edit.add.png");
-            MenuButton addInput = new MenuButton("add input", image);
-            addInput.setOnActivate(() -> ((DefinitionBlock)block).getBody().addExtraInput());
-            this.add(addInput);
+        if (block instanceof LambdaBlock) {
+            image = makeImageView("/ui/icons/appbar.input.pen.png");
+            MenuButton editSig = new MenuButton("editSignature", image);
+            editSig.setOnActivate(() -> ((LambdaBlock)block).editSignature());
+            this.add(editSig);
             
-            image = makeImageView("/ui/icons/appbar.edit.minus.png");
-            MenuButton removeInput = new MenuButton("remove input", image);
-            removeInput.setOnActivate(() -> ((DefinitionBlock)block).getBody().removeLastInput());
-            this.add(removeInput);
+            if (! ((LambdaBlock)block).isTypedLambda()) {
+                image = makeImageView("/ui/icons/appbar.edit.add.png");
+                MenuButton addInput = new MenuButton("add input", image);
+                addInput.setOnActivate(() -> ((LambdaBlock)block).getBody().addExtraInput());
+                this.add(addInput);
+
+                image = makeImageView("/ui/icons/appbar.edit.minus.png");
+                MenuButton removeInput = new MenuButton("remove input", image);
+                removeInput.setOnActivate(() -> ((LambdaBlock)block).getBody().removeLastInput());
+                this.add(removeInput);
+            }
             
         } else if (block instanceof ChoiceBlock) {
             image = makeImageView("/ui/icons/appbar.layout.collapse.right.png");
@@ -258,6 +265,7 @@ public class CircleMenu extends CircularPane {
             backing.setStrokeWidth(1);
             this.getChildren().addAll(backing, image);
             this.setPrefSize(64, 64);
+            this.setPickOnBounds(false);
             
             this.wasPressed = false;
             

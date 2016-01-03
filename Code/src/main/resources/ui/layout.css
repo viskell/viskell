@@ -139,6 +139,14 @@ SliderBlock Slider.inactive .track {
     -fx-alignment: center;
 }
 
+.defName {
+    -fx-padding: 0 5 0 5;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-width: 1px;
+    -fx-border-style: solid outside;
+}
+
 DrawWire {
     -fx-stroke-width: 5px;
 }
@@ -154,11 +162,6 @@ DrawWire {
 
 .lambdaBorder {
      -fx-pref-height: 25px;
-}
-
-.signature {
-    -fx-background-insets: 0, 0;
-    -fx-background-radius: 0, 0;
 }
 
 ChoiceBlock #altSpace {

@@ -121,6 +121,12 @@ MatchBlock {
     -fx-background-color: white;
 }
 
+.defName {
+	-fx-text-fill: black;
+	-fx-background-color: #E97F02;
+	-fx-border-color: black;
+}
+
 DrawWire {
     -fx-stroke: #0066FF;
     -fx-fill: null;

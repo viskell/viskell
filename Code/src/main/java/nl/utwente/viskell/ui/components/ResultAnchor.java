@@ -15,7 +15,7 @@ public class ResultAnchor extends InputAnchor {
     private final WrappedContainer container;
     
     /** The optional type of the result of the function (the last part of the signature). */
-    private final Optional<Type> resType;
+    private Optional<Type> resType;
     
     // FIXME ResultAnchor should not have or use the DefinitionBlock parent
     public ResultAnchor(WrappedContainer container, Block parent, Optional<Type> resType) {
@@ -33,12 +33,16 @@ public class ResultAnchor extends InputAnchor {
         return super.getLocalExpr(outsideAnchors);
     }
     
+    protected void setConstraintType(Type ctype) {
+        this.resType = Optional.of(ctype);
+    }
+    
     /** Set fresh type for the next typechecking cycle.*/
     protected void refreshAnchorType(TypeScope scope) {
         if (resType.isPresent()) {
             setFreshRequiredType(resType.get(), scope);
         } else {
-            setFreshRequiredType(new TypeScope().getVar("x"), scope);
+            setFreshRequiredType(new TypeScope().getVar("res"), scope);
         }
     }
 

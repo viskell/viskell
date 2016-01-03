@@ -138,7 +138,7 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
         if (this.container instanceof LambdaContainer || this.container instanceof Lane) {
             return false;
         } else {
-            return true;
+            return super.checkValidInCurrentContainer();
         }
     }
 
