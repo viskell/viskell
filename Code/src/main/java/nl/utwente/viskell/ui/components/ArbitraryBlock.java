@@ -19,8 +19,8 @@ public class ArbitraryBlock extends ValueBlock {
     /** The button for getting the next randomly generated value */
     @FXML private Button rngTrigger; 
     
-    /** Whether a value has been generated for this block. */
-    private boolean hasValue;
+    /** The last type a for which a value has been generated, or empty is this block has no value. */
+    private Optional<Type> lastGenType;
     
     /**
      * Constructs a new ArbitraryBlock
@@ -28,24 +28,36 @@ public class ArbitraryBlock extends ValueBlock {
      */
     public ArbitraryBlock(ToplevelPane pane) {
         super("ArbitraryBlock", pane, pane.getEnvInstance().buildType("Arbitrary a => a"));
-        this.rngTrigger.setOnAction(event -> this.getNextValue(event.hashCode()));
-        this.hasValue = false;
-        this.getNextValue(this.hashCode());
+        this.rngTrigger.setOnAction(event -> this.getNextValue(event.hashCode(), true));
+        this.lastGenType = Optional.empty();
+        this.output.refreshType(new TypeScope());
+        this.getNextValue(this.hashCode(), false);
     }
 
-    private void getNextValue(int seed) {
-        this.setValue("???");
-        this.hasValue = false;
-        
-        if (! this.output.hasConnection()) {
+    private void getNextValue(int seed, boolean fromClick) {
+        Type outputType = this.output.getType(Optional.empty());
+        if ((! this.output.hasConnection()) || ((outputType instanceof TypeVar) && !((TypeVar)outputType).hasConcreteInstance())) {
+            this.setValue("???");
+            this.lastGenType = Optional.empty();
             return;
         }
 
-        Type outputType = this.output.getType(Optional.empty());
-
-        // we first attempt to apply the defaulting mechanism to eliminate polymorphism
         Optional<Type> defType = outputType.getFresh().defaultedConcreteType(Type.con("Bool"));
         Type type = defType.orElse(outputType);
+        
+        if (this.lastGenType.isPresent() && !fromClick) {
+            try {
+                TypeChecker.unify("arbitrary type changed", this.lastGenType.get().getFresh(), type.getFresh());
+                // no incompatible type change, keep current value
+                return;
+            } catch (HaskellTypeError e) {
+                // time for a new generated value
+            }
+        }
+       
+        
+        this.setValue("???");
+        this.lastGenType = Optional.empty();
 
         // we cannot generate values for polymorphic types and we don't try to for function types
         if (type instanceof TypeVar || type instanceof FunType) {
@@ -59,9 +71,9 @@ public class ArbitraryBlock extends ValueBlock {
         }
         
         // now let QuickCheck try to generate an arbitrary value of this type
-        this.hasValue = true;
+        this.lastGenType = Optional.of(type);
         GhciSession ghci = this.getToplevel().getGhciSession();
-        int genOffset = Math.abs(seed) % 10;
+        int genOffset = 2 + Math.abs(seed) % 7;
         String haskellType = type.prettyPrint(10);
         ListenableFuture<String> result = ghci.pullRaw("fmap (!!" + genOffset + ") $ sample' (arbitrary :: Gen " + haskellType + ")");
 
@@ -84,11 +96,7 @@ public class ArbitraryBlock extends ValueBlock {
     
     @Override
     public void invalidateVisualState() {
-        if (this.hasValue != this.output.hasConnection()) {
-            // attempt to refresh the value
-            this.getNextValue(5);
-        }
-
+        this.getNextValue(5, false);
         super.invalidateVisualState();
     }
     
