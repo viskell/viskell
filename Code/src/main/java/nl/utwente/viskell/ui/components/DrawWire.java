@@ -25,8 +25,7 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Transform;
 import javafx.util.Duration;
-import nl.utwente.viskell.haskell.type.HaskellTypeError;
-import nl.utwente.viskell.haskell.type.TypeChecker;
+import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ToplevelPane;
@@ -396,7 +395,9 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             if (event.getTouchPoint().getId() != this.touchID) {
                 // we use only primary finger for drag movement
                 if (this.dragStarted && Math.abs(deltaX) > 175) {
-                    this.splittingAction(event);
+                    this.horizontalSplittingAction(event);
+                } else if (this.dragStarted && Math.abs(deltaY) > 150){
+                    this.verticalSplittingAction(event);
                 }
             } else {
                 
@@ -493,7 +494,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             this.setStrokeWidth(90);
         }
 
-        private void splittingAction(TouchEvent event) {
+        private void horizontalSplittingAction(TouchEvent event) {
             ToplevelPane toplevel = DrawWire.this.anchor.block.getToplevel();
             TouchPoint tpA = event.getTouchPoint();
             Point2D posA = toplevel.sceneToLocal(new Point2D(tpA.getSceneX(), tpA.getSceneY()));
@@ -507,8 +508,16 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             this.dragStarted = false;
             this.touchID = -1;
 
+            int tupleArity = 2;
+            Type type = DrawWire.this.anchor.getFreshType();
+            if (type instanceof TypeApp) {
+                List<Type> ts = ((TypeApp)type).asFlattenedAppChain();
+                if (ts.get(0) instanceof TupleTypeCon) {
+                    tupleArity = ts.size()-1;
+                }
+            } 
+            
             if (DrawWire.this.anchor instanceof OutputAnchor) {
-                int tupleArity  = 2;
                 Block block = new SplitterBlock(toplevel, tupleArity);
                 toplevel.addBlock(block);
                 double offsetX = tpA.getX() < 0 ? -75 : 75;
@@ -535,7 +544,6 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 DrawWire.this.remove();
                 
             } else {
-                int tupleArity  = 2;
                 Block block = new JoinerBlock(toplevel, tupleArity);
                 toplevel.addBlock(block);
                 double offsetX = tpA.getX() < 0 ? -75 : 75;
@@ -560,11 +568,86 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                     wireB.toucharea.dragTo(posB.getX(), posB.getY());
                 }
                 DrawWire.this.remove();
+            }
+        }
+
+        private void verticalSplittingAction(TouchEvent event) {
+            ToplevelPane toplevel = DrawWire.this.anchor.block.getToplevel();
+            TouchPoint tpA = event.getTouchPoint();
+            Point2D posA = toplevel.sceneToLocal(new Point2D(tpA.getSceneX(), tpA.getSceneY()));
+            List<TouchPoint> tpis = event.getTouchPoints().stream().filter(tp -> tp.getId() == this.touchID).collect(Collectors.toList());
+            if (tpis.isEmpty()) {
+                return; // something is wrong with primary touchpoint, give up
+            }
+            
+            TouchPoint tpB = tpis.get(0);
+            Point2D posB = new Point2D(this.getLayoutX(), this.getLayoutY());
+            this.dragStarted = false;
+            this.touchID = -1;
+
+            Type type = DrawWire.this.anchor.getFreshType();
+            int arity = type.countArguments();
+            if (arity < 1) {
+                return; // we only we with functions for now
+            }
+            
+            if (DrawWire.this.anchor instanceof OutputAnchor) {
+                Block block = new FunApplyBlock(new ApplyAnchor(arity), toplevel);
+                toplevel.addBlock(block);
+                double offsetY = tpA.getY() < 0 ? -100 : 50;
+                block.relocate(DrawWire.this.getEndX() - 40, DrawWire.this.getEndY()+offsetY);
+                block.initiateConnectionChanges();
+
+                InputAnchor input = block.getAllInputs().get(0);
+                Connection connection = DrawWire.this.buildConnectionTo(input);
+                if (connection != null) {
+                    connection.getStartAnchor().initiateConnectionChanges();
+                }
                 
+                if (tpA.getY() < 0) {
+                    DrawWire wireA = DrawWire.initiate(block.getAllInputs().get(1), tpA);
+                    wireA.toucharea.dragTo(posA.getX(), posA.getY());
+                    DrawWire wireB = DrawWire.initiate(block.getAllOutputs().get(0), tpB);
+                    wireB.toucharea.dragTo(posB.getX(), posB.getY());
+                } else {
+                    DrawWire wireA = DrawWire.initiate(block.getAllOutputs().get(0), tpA);
+                    wireA.toucharea.dragTo(posA.getX(), posA.getY());
+                    DrawWire wireB = DrawWire.initiate(block.getAllInputs().get(1), tpB);
+                    wireB.toucharea.dragTo(posB.getX(), posB.getY());
+                }
+                DrawWire.this.remove();
+                
+            } else {
+                LambdaBlock block = new LambdaBlock(toplevel, arity);
+                toplevel.addBlock(block);
+                double offsetY = tpA.getY() < 0 ? -240 : -100;
+                block.relocate(DrawWire.this.getStartX()-150, DrawWire.this.getStartY() + offsetY);
+                block.initiateConnectionChanges();
+
+                OutputAnchor input = block.getAllOutputs().get(0);
+                Connection connection = DrawWire.this.buildConnectionTo(input);
+                if (connection != null) {
+                    connection.getStartAnchor().initiateConnectionChanges();
+                }
+                LambdaContainer body = block.getBody(); 
+                
+                if (tpA.getY() < 0) {
+                    DrawWire wireA = DrawWire.initiate(body.getAllAnchors().get(0), tpA);
+                    wireA.toucharea.dragTo(posA.getX(), posA.getY());
+                    DrawWire wireB = DrawWire.initiate(body.getAllAnchors().get(arity), tpB);
+                    wireB.toucharea.dragTo(posB.getX(), posB.getY());
+                } else {
+                    DrawWire wireA = DrawWire.initiate(body.getAllAnchors().get(arity), tpA);
+                    wireA.toucharea.dragTo(posA.getX(), posA.getY());
+                    DrawWire wireB = DrawWire.initiate(body.getAllAnchors().get(0), tpB);
+                    wireB.toucharea.dragTo(posB.getX(), posB.getY());
+                }
+                DrawWire.this.remove();
             }
             
         }
 
     }
+
 
 }
