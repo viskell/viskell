@@ -226,11 +226,6 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
         }
     }
 
-    /** invalidates the visual state of the block this anchor belongs to*/
-    public void invalidateVisualState() {
-        this.block.invalidateVisualState();
-    }
-
     @Override
     public BlockContainer getContainer() {
         return this.block.getContainer();

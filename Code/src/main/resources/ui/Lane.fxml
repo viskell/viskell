@@ -1,18 +1,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import nl.utwente.viskell.ui.components.Lane?>
-<fx:root type="nl.utwente.viskell.ui.components.Lane" xmlns:fx="http://javafx.com/fxml/">
+<fx:root type="nl.utwente.viskell.ui.components.Lane" xmlns:fx="http://javafx.com/fxml/" pickOnBounds="false">
 	<center>
         <Pane fx:id="guardSpace"/>
 	</center>
 	<top>
-		<VBox>
-			<HBox fx:id="argumentSpace"/>
+		<VBox pickOnBounds="false">
+			<HBox fx:id="argumentSpace" pickOnBounds="false" />
 		</VBox>
 	</top>
 	<bottom>
-		<VBox>
-			<HBox fx:id="resultSpace"/>
+		<VBox pickOnBounds="false">
+			<HBox fx:id="resultSpace" pickOnBounds="false" />
 		</VBox>
 	</bottom>
 </fx:root>
