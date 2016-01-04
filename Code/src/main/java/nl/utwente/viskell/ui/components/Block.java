@@ -309,6 +309,14 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         return ! (this.container instanceof TrashContainer);
     }
     
+    public boolean canAlterAnchors() {
+        return false;
+    }
+    
+    public void alterAnchorCount(boolean isRemove) {
+        // does not if not supported
+    }
+
     @Override
     public Map<String, Object> toBundle() {
         return ImmutableMap.of(
@@ -319,4 +327,5 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
             "properties", toBundleFragment()
         );
     }
+
 }

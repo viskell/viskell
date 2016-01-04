@@ -80,5 +80,18 @@ public class LocalDefUse extends Label implements FunctionReference {
         this.funBlock.handleConnectionChanges(finalPhase);        
     }
     
+    public void onDefinitionRemoved() {
+        ApplyAnchor apply = new ApplyAnchor(this.requiredArguments());
+        if (this.funBlock instanceof FunctionBlock) {
+            ((FunctionBlock)this.funBlock).convertToOpenApply(apply);
+        } else if (this.funBlock instanceof FunApplyBlock) {
+            ((FunApplyBlock)this.funBlock).convertToOpenApply(apply);
+        }
+    }
+
+    @Override
+    public void deleteLinks() {
+        this.definition.removeUser(this);        
+    }
 
 }

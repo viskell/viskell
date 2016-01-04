@@ -71,7 +71,7 @@ public class CircleMenu extends CircularPane {
             MenuButton resize = new MenuButton("resize", image);
             resize.setOnActivate(() -> ((LambdaBlock)block).resizeToFitAll());
             this.add(resize);
-        } else {
+        } else if (! (block instanceof ChoiceBlock)) {
             // Copy Option
             image = makeImageView("/ui/icons/appbar.page.copy.png");
             MenuButton copy = new MenuButton("copy", image);
@@ -84,19 +84,7 @@ public class CircleMenu extends CircularPane {
             MenuButton editSig = new MenuButton("editSignature", image);
             editSig.setOnActivate(() -> ((LambdaBlock)block).editSignature());
             this.add(editSig);
-            
-            if (! ((LambdaBlock)block).isTypedLambda()) {
-                image = makeImageView("/ui/icons/appbar.edit.add.png");
-                MenuButton addInput = new MenuButton("add input", image);
-                addInput.setOnActivate(() -> ((LambdaBlock)block).getBody().addExtraInput());
-                this.add(addInput);
 
-                image = makeImageView("/ui/icons/appbar.edit.minus.png");
-                MenuButton removeInput = new MenuButton("remove input", image);
-                removeInput.setOnActivate(() -> ((LambdaBlock)block).getBody().removeLastInput());
-                this.add(removeInput);
-            }
-            
         } else if (block instanceof ChoiceBlock) {
             image = makeImageView("/ui/icons/appbar.layout.collapse.right.png");
             MenuButton addLane = new MenuButton("add lane", image);
@@ -108,27 +96,25 @@ public class CircleMenu extends CircularPane {
             removeLane.setOnActivate(() -> ((ChoiceBlock)block).removeLastLane());
             this.add(removeLane);
 
-        } else {
-            if (block instanceof ConstantBlock) {
-                image = makeImageView("/ui/icons/appbar.page.edit.png");
-                MenuButton edit = new MenuButton("edit", image);
-                edit.setOnActivate(() -> ((ConstantBlock)block).editValue(Optional.empty()));
-                this.add(edit);
-                
-            } else {
-                // Paste Option
-                image = makeImageView("/ui/icons/appbar.clipboard.paste.png");
-                MenuButton paste = new MenuButton("paste", image);
-                paste.setOnActivate(() -> paste());
-                this.add(paste);
-            }
-
-            // Save Option
-            image = makeImageView("/ui/icons/appbar.save.png");
-            MenuButton save = new MenuButton("save", image);
-            save.setOnActivate(() -> saveBlock());
-            this.add(save);
+        } else if (block instanceof ConstantBlock) {
+            image = makeImageView("/ui/icons/appbar.page.edit.png");
+            MenuButton edit = new MenuButton("edit", image);
+            edit.setOnActivate(() -> ((ConstantBlock)block).editValue(Optional.empty()));
+            this.add(edit);
         }
+        
+        if (block.canAlterAnchors()) {
+            image = makeImageView("/ui/icons/appbar.edit.add.png");
+            MenuButton addInput = new MenuButton("add input", image);
+            addInput.setOnActivate(() -> block.alterAnchorCount(false));
+            this.add(addInput);
+
+            image = makeImageView("/ui/icons/appbar.edit.minus.png");
+            MenuButton removeInput = new MenuButton("remove input", image);
+            removeInput.setOnActivate(() -> block.alterAnchorCount(true));
+            this.add(removeInput);
+        }
+
         
         if (block instanceof ValueBlock) {
             image = makeImageView("/ui/icons/appbar.layer.up.png");
@@ -231,20 +217,11 @@ public class CircleMenu extends CircularPane {
         block.getToplevel().copyBlock(block);
     }
 
-    /** Paste {@link Block} from memory. */
-    private void paste() {
-    }
-
     /** Delete the {@link Block} in this context. */
     private void delete() {
         block.getToplevel().removeBlock(block);
     }
 
-    /** Saves the {@link Block} in this context. */
-    private void saveBlock() {
-        // TODO store block in custom catalog?
-    }
-    
     /** A touch enabled button within this circle menu */
     private class MenuButton extends StackPane {
         /** Whether this button has been pressed */

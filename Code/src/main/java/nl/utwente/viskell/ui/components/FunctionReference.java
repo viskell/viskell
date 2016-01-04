@@ -30,4 +30,6 @@ public interface FunctionReference {
     
     public boolean isScopeCorrectIn(BlockContainer container);
 
+    public void deleteLinks();
+
 }
