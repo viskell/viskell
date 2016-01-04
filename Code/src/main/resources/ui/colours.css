@@ -180,7 +180,7 @@ ImageView.hoverMenu {
 }
 
 .lambdalambda {
-    -fx-text-fill: rgba(127, 127, 127, 0.15);
+    -fx-text-fill: rgba(255, 255, 255, 0.15);
     -fx-font-family: Titillium;
     -fx-font-size: 150px;
 }
