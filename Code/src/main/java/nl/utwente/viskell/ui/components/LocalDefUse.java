@@ -46,7 +46,9 @@ public class LocalDefUse extends Label implements FunctionReference {
     @Override
     public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors) {
         // gather everything that is needed for the definition, even though we don't use the resulting expression here
-        this.definition.getLocalExpr(outsideAnchors);
+        if (! this.funBlock.getContainer().isContainedWithin(this.definition.getBody())) {
+            this.definition.getLocalExpr(outsideAnchors);
+        }
         
         outsideAnchors.addAll(this.definition.getAllOutputs());
         return new LocalVar(this.definition.getBinder());
