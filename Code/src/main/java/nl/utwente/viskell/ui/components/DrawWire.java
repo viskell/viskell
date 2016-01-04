@@ -65,20 +65,28 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
     }
 
     protected static DrawWire initiate(ConnectionAnchor anchor, TouchPoint touchPoint) {
-        if (anchor instanceof InputAnchor && ((InputAnchor)anchor).hasConnection()) {
+        if (anchor instanceof InputAnchor && anchor.hasConnection()) {
             Connection conn = ((InputAnchor)anchor).getConnection().get();
             OutputAnchor startAnchor = conn.getStartAnchor();
             if (startAnchor.getWireInProgress() == null) {
                 // make room for a new connection by removing existing one
                 conn.remove();
                 // keep the other end of old connection to initiate the new one
-                return new DrawWire(conn.getStartAnchor(), anchor.getAttachmentPoint(), touchPoint);
+                return new DrawWire(startAnchor, anchor.getAttachmentPoint(), touchPoint);
             } else {
                 return null;
             }
-        } else {
-            return new DrawWire(anchor, anchor.getAttachmentPoint(), touchPoint);
+        } else if (anchor instanceof OutputAnchor && anchor.hasConnection() && ((OutputAnchor)anchor).connections.get(0).hasTypeError()) {
+            Connection conn = ((OutputAnchor)anchor).connections.get(0);
+            InputAnchor endAnchor = conn.getEndAnchor();
+            if (endAnchor.getWireInProgress() == null) {
+                // trying to solve the type error by changing the connection
+                conn.remove();
+                return new DrawWire(endAnchor, anchor.getAttachmentPoint(), touchPoint);
+            }
         }
+
+        return new DrawWire(anchor, anchor.getAttachmentPoint(), touchPoint);
     }
 
     public ConnectionAnchor getAnchor() {
@@ -300,18 +308,24 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         }
 
         private void makeVisible() {
+            this.clearWireReactions();
             this.setScaleX(0.25);
             this.setScaleY(0.25);
             this.setOpacity(0.6);
             this.setStrokeWidth(99);
             DrawWire.this.setOpacity(1);
+            // avoid clicking the hole with a non moving mouse
+            this.setLayoutY(this.getLayoutY() + (DrawWire.this.anchor instanceof InputAnchor ? -2 : 2));   
         }
         
-        private void remove() {
+        private void clearWireReactions() {
             for (ConnectionAnchor anchor : this.nearbyAnchors) {
                 anchor.setNearbyWireReaction(0);
             }
-            
+        }
+        
+        private void remove() {
+            this.clearWireReactions();
             ToplevelPane pane = DrawWire.this.anchor.getPane();
             pane.removeTouchArea(this);
         }
@@ -454,7 +468,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         }
         
         private int determineWireReaction(OutputAnchor source, InputAnchor sink) {
-            if (sink.block == source.block && !(sink instanceof ResultAnchor)) {
+            if (sink.block == source.block && !(sink instanceof ResultAnchor  && source instanceof BinderAnchor)) {
                 return 0;
             }
             try {

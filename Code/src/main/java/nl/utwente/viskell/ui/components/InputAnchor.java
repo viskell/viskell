@@ -126,7 +126,7 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
     
     @Override
     public Point2D getAttachmentPoint() {
-        return this.getPane().sceneToLocal(this.localToScene(new Point2D(0, -9)));
+        return this.getPane().sceneToLocal(this.localToScene(new Point2D(0, -7)));
     }
 
     /**

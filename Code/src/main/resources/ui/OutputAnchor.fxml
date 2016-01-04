@@ -3,6 +3,6 @@
 <?import nl.utwente.viskell.ui.components.OutputAnchor?>
 <fx:root type="nl.utwente.viskell.ui.components.OutputAnchor" xmlns:fx="http://javafx.com/fxml/" maxHeight="0" minHeight="0" maxWidth="0" minWidth="0" pickOnBounds="false">
     <Rectangle fx:id="invisibleAnchor" translateY="20" height="40" width="40" styleClass="invisTouchZone"/>
-    <Rectangle fx:id="visibleAnchor" translateY="4" height="8" width="20" styleClass="anchorPoint"/>
+    <Rectangle fx:id="visibleAnchor" translateY="3" height="6" width="20" styleClass="anchorPoint"/>
     <Line fx:id="openWire" endY="14" strokeWidth="3" translateY="12"/>
 </fx:root>
