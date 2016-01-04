@@ -23,7 +23,7 @@ public class Hole extends Variable {
 
     @Override
     public String toHaskell() {
-        return "(error \"Nothing to see yet in this hole\")";
+        return "(error \"Open expression\")";
     }
 
     @Override
