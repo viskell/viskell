@@ -45,6 +45,11 @@
     -fx-background-color: #BD1550;
 }
 
+.value.block Button {
+    -fx-background-color: royalblue;
+    -fx-effect: dropshadow(two-pass-box, black, 3, 0.0, 1, 1)
+}
+
 .block.lifting {
 	-fx-background-color: burlywood;
 }
@@ -79,6 +84,10 @@ MatchBlock {
 .menu .title .arrow-button .arrow {
     -fx-background-color: #EDE6EC;
     -fx-focus-color: white;
+}
+
+.menu Button {
+    -fx-background-color: #A4849E;
 }
 
 .menu .menuButton {

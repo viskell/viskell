@@ -75,7 +75,7 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
 }
 
 .display.block {
-    -fx-padding: 0 10 0 10;
+    -fx-padding: 0 10 5 10;
     -fx-min-width: 100px;
 }
 
@@ -91,6 +91,7 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
 .value.block Button {
     -fx-font-size: 15px;
     -fx-font-weight: normal;
+    -fx-padding: 1 8 1 8;
 }
 
 SliderBlock Slider.inactive .track {

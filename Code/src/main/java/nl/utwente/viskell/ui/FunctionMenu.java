@@ -11,6 +11,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
@@ -180,6 +181,9 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             categoryContainer.getPanes().addAll(submenu);
         }
 
+        // drop all synthesized mouse events
+        categoryContainer.addEventFilter(MouseEvent.ANY, e -> {if (e.isSynthesized()) e.consume();});
+        
         // Hiding all other categories on expanding one of them.
         List<TitledPane> allCatPanes = new ArrayList<>(categoryContainer.getPanes());
         categoryContainer.expandedPaneProperty().addListener(e -> {
