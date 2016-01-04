@@ -179,6 +179,12 @@ ImageView.hoverMenu {
 	-fx-background-color: rgba(127, 255, 127, 0.3);
 }
 
+.lambdalambda {
+    -fx-text-fill: rgba(127, 127, 127, 0.15);
+    -fx-font-family: Titillium;
+    -fx-font-size: 150px;
+}
+
 ChoiceBlock * {
 	-fx-background-color: transparent;
 }

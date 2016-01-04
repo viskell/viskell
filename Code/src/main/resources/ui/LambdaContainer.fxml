@@ -1,9 +1,12 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.LambdaContainer?>
+<?import javafx.scene.control.Label?>
 <fx:root type="nl.utwente.viskell.ui.components.LambdaContainer" xmlns:fx="http://javafx.com/fxml/" styleClass="def" pickOnBounds="false">
 	<center>
-		<Pane/>
+		<StackPane>
+			<Label text="λ" alignment="CENTER" styleClass="lambdalambda" />
+		</StackPane>
 	</center>
 	<top>
 		<VBox pickOnBounds="false">
