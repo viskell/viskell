@@ -49,10 +49,10 @@ public class SliderBlock extends ValueBlock {
     private double computeCurrentValue() {
         double offset = this.slider.getValue();
         if (this.isIntegral) {
-            return Math.rint(this.baseValue + Math.signum(offset) * 7 * Math.expm1(Math.abs(offset) * 5));
+            return Math.rint(this.baseValue + Math.signum(offset) * 4 * Math.expm1(Math.abs(offset) * 4));
         }
         else {
-            return this.baseValue + Math.signum(offset) * Math.expm1(Math.abs(offset) * 7);
+            return this.baseValue + Math.signum(offset) * Math.expm1(Math.abs(offset) * 5);
         }
     }
     
@@ -71,6 +71,12 @@ public class SliderBlock extends ValueBlock {
             this.baseValue = this.computeCurrentValue();
             this.slider.setValue(0.0);
         }
+    }
+    
+    public void resetSlider() {
+        this.baseValue = 0;
+        this.slider.setValue(0);
+        this.updateValue();
     }
     
     @Override
