@@ -33,6 +33,10 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
     -fx-spacing: 6px;
 }
 
+.menu .scroll-bar .increment-button {
+    -fx-padding: 5px;
+}
+
 .block {
     -fx-font-size: 20px;
     -fx-font-weight: bold;

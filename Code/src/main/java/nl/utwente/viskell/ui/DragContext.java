@@ -99,6 +99,10 @@ public class DragContext {
             } else if (type == TouchEvent.TOUCH_MOVED) {
                 if (this.touchId == event.getTouchPoint().getId()) {
                     this.handleTouchMoved(event.getTouchPoint().getX(), event.getTouchPoint().getY());
+                } else if (this.touchId == DragContext.NULL_ID) {
+                    // this can happen when dragging from menu
+                    this.touchId = event.getTouchPoint().getId();
+                    this.handleTouchMoved(event.getTouchPoint().getX(), event.getTouchPoint().getY());
                 }
                 event.consume();
             } else if (type == TouchEvent.TOUCH_RELEASED) {
