@@ -187,4 +187,8 @@ public final class ConstraintSet {
         return this.constraints.equals(((ConstraintSet)other).constraints);
     }
 
+    public int count() {
+        return this.constraints.size();
+    }
+
 }

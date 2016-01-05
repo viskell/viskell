@@ -267,7 +267,7 @@ public class TypeVar extends Type {
     /**
      * @return The set of type class constraints associated with this type variable
      */
-    ConstraintSet getConstraints() {
+    public ConstraintSet getConstraints() {
         return this.instance.constraints;
     }
 
