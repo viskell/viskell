@@ -176,12 +176,19 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
         LetExpression body = new LetExpression(res.getLocalExpr(escapingAnchors), false);
         res.extendExprGraph(body, this, escapingAnchors);
 
-        for (OutputAnchor anchor : escapingAnchors) {
-            if (anchor.getContainer() == this) {
-                anchor.extendExprGraph(body, this, outsideAnchors);
-            } else {
-                outsideAnchors.add(anchor);
+        /**
+         * Iterate over the container until it doesn't find new nodes.
+         */
+        boolean cont = true;
+        for (int numAnchors = -1; numAnchors != escapingAnchors.size() || cont; numAnchors = escapingAnchors.size()) {
+            for (OutputAnchor anchor : new ArrayList<>(escapingAnchors)) {
+                if (anchor.getContainer() == this) {
+                    anchor.extendExprGraph(body, this, escapingAnchors);
+                } else {
+                    outsideAnchors.add(anchor);
+                }
             }
+            cont = (numAnchors != escapingAnchors.size());
         }
         
         return new Lambda(binders, body);

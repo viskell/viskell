@@ -176,33 +176,23 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
     }
     
     /**
+     * This function assumes that the function is in the top level container.
      * @return The full expression carried by the connection connected to this anchor.
      */
     public Expression getFullExpr() {
         Set<OutputAnchor> outsideAnchors = new HashSet<>();
         LetExpression fullExpr = new LetExpression(this.getLocalExpr(outsideAnchors), false);
         
-        BlockContainer currentContainer = block.container;
-        boolean isGlobalContainerDone = false;
-        
         /**
-         * Iterate over this container starting with this one until it doesn't find new nodes,
-         * then repeat for every parent container including the global one.
+         * Iterate over the container until it doesn't find new nodes.
          */
-        while (currentContainer != currentContainer.getParentContainer() || !isGlobalContainerDone) {
-            isGlobalContainerDone = (currentContainer == currentContainer.getParentContainer());
-            final BlockContainer container = currentContainer;
-            
-            boolean cont = true;
-            for (int numAnchors = -1; numAnchors != outsideAnchors.size() || cont; numAnchors = outsideAnchors.size()) {
-                cont = (numAnchors != outsideAnchors.size());
-                extendExprGraph(fullExpr, container, outsideAnchors);
-                outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, container, outsideAnchors));
-            }
-            
-            currentContainer = container.getParentContainer();
+        boolean cont = true;
+        for (int numAnchors = -1; numAnchors != outsideAnchors.size() || cont; numAnchors = outsideAnchors.size()) {
+            cont = (numAnchors != outsideAnchors.size());
+            extendExprGraph(fullExpr, block.container, outsideAnchors);
+            outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, block.container, outsideAnchors));
         }
-        
+    
         return fullExpr;
     }
     

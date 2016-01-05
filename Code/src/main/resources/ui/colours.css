@@ -54,7 +54,7 @@
 	-fx-background-color: burlywood;
 }
 
-MatchBlock {
+.match.block {
     -fx-background-color: #8DD0D0;
 }
 
