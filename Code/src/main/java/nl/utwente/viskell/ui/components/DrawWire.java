@@ -60,7 +60,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         anchor.localToSceneTransformProperty().addListener(this);
         
         this.toucharea = new TouchArea(touchPoint);
-        pane.addTouchArea(this.toucharea);
+        pane.addUpperTouchArea(this.toucharea);
     }
 
     protected static DrawWire initiate(ConnectionAnchor anchor, TouchPoint touchPoint) {
@@ -326,7 +326,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         private void remove() {
             this.clearWireReactions();
             ToplevelPane pane = DrawWire.this.anchor.getPane();
-            pane.removeTouchArea(this);
+            pane.removeUpperTouchArea(this);
         }
 
         private void handleTouchPress(TouchEvent event) {

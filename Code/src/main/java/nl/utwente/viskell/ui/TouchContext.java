@@ -1,5 +1,7 @@
 package nl.utwente.viskell.ui;
 
+import java.util.function.BiConsumer;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -26,12 +28,16 @@ public class TouchContext {
     /** Boolean to indicate that a drag (pan) action has started, yet not finished. */
     private boolean panning;
     
+    /** the action to be executed on a panning movement, may be null. */
+    private BiConsumer<Double, Double> panningAction;
+    
     public TouchContext(BlockContainer container) {
         super();
         this.container = container;
         
         this.lastPanPosition = Point2D.ZERO;
         this.panning = false;
+        this.panningAction = null;
         
         container.asNode().addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePress);
         container.asNode().addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDrag);
@@ -44,10 +50,12 @@ public class TouchContext {
             lastPanPosition = new Point2D(e.getScreenX(), e.getScreenY());
             panning = true;
         }
+        e.consume();
     }
 
     private void handleMouseDrag(MouseEvent e) {
         if (e.isSynthesized()) {
+            e.consume();
             return;
         }
         
@@ -55,12 +63,15 @@ public class TouchContext {
             Point2D currentPos = new Point2D(e.getScreenX(), e.getScreenY());
             if (this.panning) {
                 Point2D delta = currentPos.subtract(this.lastPanPosition);
-                this.panWithDelta(delta.getX(), delta.getY());
+                if (this.panningAction != null) {
+                    this.panningAction.accept(delta.getX(), delta.getY());
+                }
             } else {
                 this.panning = true;
             }
             this.lastPanPosition = currentPos;
         }
+        e.consume();
     }
     
     private void handleMouseRelease(MouseEvent e) {
@@ -71,19 +82,21 @@ public class TouchContext {
         if (e.getButton() == MouseButton.PRIMARY) {
             this.panning = false;
         } else if (!this.panning) {
-            this.container.getToplevel().showFunctionMenuAt(e.getX(), e.getY(), true);
+            Point2D pos = this.container.getToplevel().sceneToLocal(this.container.asNode().localToScene(e.getX(), e.getY()));
+            this.container.getToplevel().showFunctionMenuAt(pos.getX(), pos.getY(), true);
         }
-    }
-    
-    private void handleTouchPress(TouchEvent e) {
-        this.container.getToplevel().addTouchArea(new TouchArea(e.getTouchPoint()));
         e.consume();
     }
     
-    private void panWithDelta(double deltaX, double deltaY) {
-        this.container.asNode().setTranslateX(this.container.asNode().getTranslateX() + deltaX);
-        this.container.asNode().setTranslateY(this.container.asNode().getTranslateY() + deltaY);
+    private void handleTouchPress(TouchEvent e) {
+        this.container.getToplevel().addLowerTouchArea(new TouchArea(e.getTouchPoint()));
+        e.consume();
     }
+    
+    public void setPanningAction(BiConsumer<Double, Double> action) {
+        this.panningAction = action;
+    }
+    
     
     /** A circular local area for handling multi finger touch actions. */
     private class TouchArea extends Circle {
@@ -124,12 +137,12 @@ public class TouchContext {
         }
         
         private void remove(ActionEvent event) {
-            this.toplevel.removeTouchArea(this);
+            this.toplevel.removeLowerTouchArea(this);
         }
         
         private void finishMenu(ActionEvent event) {
             this.toplevel.showFunctionMenuAt(this.getCenterX(), this.getCenterY(), false);
-            this.toplevel.removeTouchArea(this);
+            this.toplevel.removeLowerTouchArea(this);
             this.menuCreated = true;
         }
         
@@ -173,7 +186,9 @@ public class TouchContext {
                     // FIXME: ignore too large movements
                 } else if (this.dragStarted || (deltaX*deltaX + deltaY*deltaY) > 63) {
                     this.dragStarted = true;
-                    TouchContext.this.panWithDelta(deltaX, deltaY);
+                    if (TouchContext.this.panningAction != null) {
+                        TouchContext.this.panningAction.accept(deltaX, deltaY);
+                    }
                 }
             }
             
