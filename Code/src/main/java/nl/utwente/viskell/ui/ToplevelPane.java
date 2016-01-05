@@ -57,7 +57,11 @@ public class ToplevelPane extends Region implements BlockContainer {
 
         this.ghci = ghci;
 
-        new TouchContext(this);
+        TouchContext context = new TouchContext(this);
+        context.setPanningAction((deltaX, deltaY) -> {
+            this.setTranslateX(this.getTranslateX() + deltaX);
+            this.setTranslateY(this.getTranslateY() + deltaY);
+        });
     }
 
     public void setPreferences(PreferencesWindow prefs) {
@@ -151,12 +155,20 @@ public class ToplevelPane extends Region implements BlockContainer {
         return this.getChildren().remove(drawWire);
     }
 
-    public boolean addTouchArea(Shape area) {
+    public boolean addUpperTouchArea(Shape area) {
         return this.getChildren().add(area);
     }
     
-    public boolean removeTouchArea(Shape area) {
+    public boolean removeUpperTouchArea(Shape area) {
         return this.getChildren().remove(area);
+    }
+
+    public boolean addLowerTouchArea(Shape area) {
+        return this.bottomLayer.getChildren().add(area);
+    }
+    
+    public boolean removeLowerTouchArea(Shape area) {
+        return this.bottomLayer.getChildren().remove(area);
     }
     
     public void clearChildren() {

@@ -10,11 +10,7 @@ import java.util.stream.Stream;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -26,6 +22,7 @@ import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.DragContext;
+import nl.utwente.viskell.ui.TouchContext;
 
 /**
  * A single alternative within a ChoiceBlock
@@ -78,25 +75,12 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
         resultSpace.getChildren().add(result);
         setupResizer();
         
-    	this.addEventHandler(MouseEvent.MOUSE_PRESSED, event -> event.consume());
-    	this.addEventHandler(MouseEvent.MOUSE_DRAGGED, event -> event.consume());
-    	this.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-    			if (event.getButton() != MouseButton.PRIMARY) {
-    				Point2D menuPos = this.parent.getToplevel().screenToLocal(new Point2D(event.getScreenX(), event.getScreenY()));
-    				this.parent.getToplevel().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), true);
-    			}
-    		   	event.consume();
-    		});
-    	this.addEventHandler(TouchEvent.TOUCH_PRESSED, event -> event.consume());
-    	this.addEventHandler(TouchEvent.TOUCH_MOVED, event -> event.consume());
-    	this.addEventHandler(TouchEvent.TOUCH_RELEASED, event -> {
-    			if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 2) {
-    				Point2D screenPos = new Point2D(event.getTouchPoint().getScreenX(), event.getTouchPoint().getScreenY());
-    				Point2D menuPos = this.parent.getToplevel().screenToLocal(screenPos);
-    				this.parent.getToplevel().showFunctionMenuAt(menuPos.getX(), menuPos.getY(), false);
-    			}
-    			event.consume();
-    		});
+        TouchContext context = new TouchContext(this);
+        context.setPanningAction((deltaX, deltaY) -> {
+            if (! this.parent.isActivated()) {
+                this.parent.relocate(this.parent.getLayoutX() + deltaX, this.parent.getLayoutY() + deltaY);
+            }
+        });
     }
 
     /**
