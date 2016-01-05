@@ -105,7 +105,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
 
     /** Removes the last input binder anchor of this lambda */
     public void removeLastInput() {
-        if (!this.args.isEmpty()) {
+        if (this.args.size() > 1) {
             BinderAnchor arg = this.args.remove(this.args.size()-1);
             arg.removeConnections();
             this.argSpace.getChildren().remove(arg);
