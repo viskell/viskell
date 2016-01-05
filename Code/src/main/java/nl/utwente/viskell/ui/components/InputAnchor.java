@@ -183,18 +183,26 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
         LetExpression fullExpr = new LetExpression(this.getLocalExpr(outsideAnchors), false);
         
         BlockContainer currentContainer = block.container;
+        boolean isGlobalContainerDone = false;
         
-        //iterate over all wrapping containers to try adding the required expressions  // FIXME when does this make sense ???
-        while (currentContainer != currentContainer.getParentContainer()) {
+        /**
+         * Iterate over this container starting with this one until it doesn't find new nodes,
+         * then repeat for every parent container including the global one.
+         */
+        while (currentContainer != currentContainer.getParentContainer() || !isGlobalContainerDone) {
+            isGlobalContainerDone = (currentContainer == currentContainer.getParentContainer());
             final BlockContainer container = currentContainer;
-            extendExprGraph(fullExpr, container, outsideAnchors);
-            outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, container, outsideAnchors));
+            
+            boolean cont = true;
+            for (int numAnchors = -1; numAnchors != outsideAnchors.size() || cont; numAnchors = outsideAnchors.size()) {
+                cont = (numAnchors != outsideAnchors.size());
+                extendExprGraph(fullExpr, container, outsideAnchors);
+                outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, container, outsideAnchors));
+            }
+            
             currentContainer = container.getParentContainer();
         }
         
-        final BlockContainer container = currentContainer;
-        extendExprGraph(fullExpr, container, outsideAnchors);
-        outsideAnchors.forEach(connection -> connection.extendExprGraph(fullExpr, container, new HashSet<>()));
         return fullExpr;
     }
     

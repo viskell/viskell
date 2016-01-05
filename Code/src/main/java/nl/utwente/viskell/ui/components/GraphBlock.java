@@ -106,7 +106,7 @@ public class GraphBlock extends Block {
         try {
             GhciSession ghciSession = getToplevel().getGhciSession();
             String funName = "graph_fun_" + Integer.toHexString(this.hashCode());
-            ghciSession.push(funName, this.getFullExpr());
+            ghciSession.push(funName, this.getAllInputs().get(0).getFullExpr());
             String range = String.format(Locale.US, " [%f,%f..%f]", min, min+step, max);
             String results = ghciSession.pullRaw("putStrLn $ unwords $ map show $ map " + funName + range).get();
 

@@ -197,6 +197,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     public abstract Expression getLocalExpr(Set<OutputAnchor> outsideAnchors);
     
     /**
+     * This method is only used for the inspector window.
      * @return A complete expression of this block and all its dependencies.
      */
     public final Expression getFullExpr() {
