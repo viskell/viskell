@@ -60,8 +60,8 @@ public class CircleMenu extends CircularPane {
         
         // Define menu items
         
-        // Cut Option
-        ImageView image = makeImageView("/ui/icons/appbar.scissor.png");
+        // Delete Option
+        ImageView image = makeImageView("/ui/icons/appbar.delete.png");
         MenuButton delete = new MenuButton("cut", image);
         delete.setOnActivate(() -> delete());
         this.add(delete);
@@ -79,7 +79,13 @@ public class CircleMenu extends CircularPane {
             this.add(copy);
         }
 
-        if (block instanceof LambdaBlock) {
+        if (block instanceof SliderBlock) {
+            image = makeImageView("/ui/icons/appbar.reset.png");
+            MenuButton reset = new MenuButton("resetSlider", image);
+            reset.setOnActivate(() -> ((SliderBlock)block).resetSlider());
+            this.add(reset);
+        
+        } else if (block instanceof LambdaBlock) {
             image = makeImageView("/ui/icons/appbar.input.pen.png");
             MenuButton editSig = new MenuButton("editSignature", image);
             editSig.setOnActivate(() -> ((LambdaBlock)block).editSignature());
