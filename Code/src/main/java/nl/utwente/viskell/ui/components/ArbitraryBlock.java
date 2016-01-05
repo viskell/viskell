@@ -36,10 +36,19 @@ public class ArbitraryBlock extends ValueBlock {
 
     private void getNextValue(int seed, boolean fromClick) {
         Type outputType = this.output.getType(Optional.empty());
-        if ((! this.output.hasConnection()) || ((outputType instanceof TypeVar) && !((TypeVar)outputType).hasConcreteInstance())) {
-            this.setValue("???");
+        if (! this.output.hasConnection()) {
+            this.setValue("??");
             this.lastGenType = Optional.empty();
             return;
+        }
+
+        if (outputType instanceof TypeVar) {
+            TypeVar tv = (TypeVar)outputType;    
+            if (!(tv.hasConcreteInstance() || tv.getConstraints().count() > 1)) {
+                this.setValue("???");
+                this.lastGenType = Optional.empty();
+                return;
+            }
         }
 
         Optional<Type> defType = outputType.getFresh().defaultedConcreteType(Type.con("Bool"));
