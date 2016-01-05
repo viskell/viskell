@@ -75,7 +75,7 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
         resultSpace.getChildren().add(result);
         setupResizer();
         
-        TouchContext context = new TouchContext(this);
+        TouchContext context = new TouchContext(this, false);
         context.setPanningAction((deltaX, deltaY) -> {
             if (! this.parent.isActivated()) {
                 this.parent.relocate(this.parent.getLayoutX() + deltaX, this.parent.getLayoutY() + deltaY);

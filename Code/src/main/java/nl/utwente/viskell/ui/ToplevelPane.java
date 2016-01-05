@@ -57,7 +57,7 @@ public class ToplevelPane extends Region implements BlockContainer {
 
         this.ghci = ghci;
 
-        TouchContext context = new TouchContext(this);
+        TouchContext context = new TouchContext(this, true);
         context.setPanningAction((deltaX, deltaY) -> {
             this.setTranslateX(this.getTranslateX() + deltaX);
             this.setTranslateY(this.getTranslateY() + deltaY);
