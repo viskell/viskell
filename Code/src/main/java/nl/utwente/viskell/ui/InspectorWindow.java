@@ -33,8 +33,10 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
         stage = new Stage();
         stage.setTitle("Inspect");
         stage.setScene(new Scene(this, 450, 450));
-        stage.setX(Main.primaryStage.getX()+Main.primaryStage.getWidth());
-        stage.setY(Main.primaryStage.getY());
+        if (! (Main.primaryStage.isMaximized() || Main.primaryStage.isFullScreen())) {
+            stage.setX(Main.primaryStage.getX()+Main.primaryStage.getWidth());
+            stage.setY(Main.primaryStage.getY());
+        }
     }
 
     public void show() {
