@@ -7,26 +7,23 @@ This project is exploring the possibilities and challenges of interactive visual
 
 ![Screenshot](screenshot.png)
 
-While many visual programming languages/environments exist they are often restricted to a specific application domain or a special target audience.
-The potential of an advanced type systems and higher level abstractions in visual programming has barely been explored yet.
+While many visual programming languages/environments exist, they are often restricted to some application domain or a specific target audience.
+The potential of advanced type systems and higher level abstractions in visual programming has barely been explored yet.
 
 ### Goals and focus points
 
-  * Creating readable and compact visualisations for functional language constructs
-  * Immediate feedback on every program modification, avoiding the slow edit-compile-debug cycle
-  * Exploring alternative inputs methods, i.e. multi-touch devices
-  * Type-guided development: program fragments show their types, and type error are visualised.
-  * Programming with less local variables ('wirefull' approach as alternative to 'pointfree' style).
+  * Creating readable and compact visualisations for functional language constructs.
+  * Immediate feedback on every program modification, avoiding the slow edit-compile-debug cycle.
+  * Experimenting with a multi-touch focused user interface, supporting multiple independently acting hands.
+  * Type-guided development: program fragments show their types, and type error are locally visualised.
   * Raising the level of abstraction (good support for higher order functions and other common Haskell abstractions).
   * Addressing the scalability issues common to creating large visual programs.
-  * Supporting collaborative programming on eg. a large multi-touch screen.
-  * Refactoring as a first class programming action.
 
 ### Status
 
-Viskell is not yet usable for any practical purpose, but suggestions or feedback from overly interested souls is very welcome.
-Many essential basic features are still missing and te implementation is in the middle of big rewrite.
-The plan is to have demo-ready version with basic features by the end of the year.
+Viskell is not yet usable for anything practical, however suggestions from curious souls are very welcome.
+While being nowhere near a complete programming language, most basic features have an initial implementation.
+Every aspect of the design and implementation is still work in progress, but ready for demonstration purposes and giving an impression of its potential.
 
 ### Building Viskell
 
