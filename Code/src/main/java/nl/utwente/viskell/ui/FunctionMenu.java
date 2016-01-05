@@ -15,6 +15,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
+import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
@@ -155,6 +156,36 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                                 addBlock(new FunctionBlock(new LibraryFunUse(entry), parent));
                             }
                         });
+                        
+                        this.setOnTouchMoved(e -> {
+                            if (this.isEmpty()) {
+                                return;
+                            }
+          
+                            if (this.contains(e.getTouchPoint().getX(), e.getTouchPoint().getY())) {
+                                return;
+                            }
+                            
+                            double sceneX = e.getTouchPoint().getSceneX();
+                            Bounds bounds = FunctionMenu.this.localToScene(FunctionMenu.this.getBoundsInLocal());
+                            if (sceneX < bounds.getMinX()-75 || sceneX > bounds.getMaxX()+25) {
+                                CatalogFunction entry = this.getItem();
+                                if ("Deconstructors".equals(category) && entry.isConstructor()) {
+                                    addDraggedBlock(e.getTouchPoint(), new MatchBlock(entry, parent));
+                                } else if (!(entry.getFreshSignature() instanceof FunType)) {
+                                    addDraggedBlock(e.getTouchPoint(), new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
+                                } else if (e.isControlDown() || Preferences.userNodeForPackage(Main.class).getBoolean("verticalCurry", true)) {
+                                    if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
+                                        addDraggedBlock(e.getTouchPoint(), new BinOpApplyBlock(entry, parent));
+                                    } else {
+                                        addDraggedBlock(e.getTouchPoint(), new FunApplyBlock(new LibraryFunUse(entry), parent));
+                                    }
+                                } else {
+                                    addDraggedBlock(e.getTouchPoint(), new FunctionBlock(new LibraryFunUse(entry), parent));
+                                }
+                                e.consume();
+                            }
+                        });
                     }
 
                     @Override
@@ -162,6 +193,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                         super.updateItem(item, empty);
                         this.setText(item == null ? null : item.getDisplayName());
                     }
+
                 };
             });
 
@@ -297,6 +329,14 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         }
         block.initiateConnectionChanges();
         this.blockCounter++;
+    }
+
+    private void addDraggedBlock(TouchPoint touchPoint, Block block) {
+        Point2D pos = parent.sceneToLocal(touchPoint.getSceneX(), touchPoint.getSceneY());
+        parent.addBlock(block);
+        block.relocate(pos.getX(), pos.getY());
+        touchPoint.grab(block);
+        block.initiateConnectionChanges();
     }
 
     /** Closes this menu by removing it from it's parent. */
