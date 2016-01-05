@@ -92,9 +92,14 @@ MatchBlock {
 
 .menu .menuButton {
     -fx-background-color: #A4849E;
+    -fx-effect: dropshadow(two-pass-box, black, 5, 0.0, 2, 2)
 }
 
 .menu Button:hover {
+    -fx-background-color: #926C8B;
+}
+
+.menu .menuButton:hover {
     -fx-background-color: #926C8B;
 }
 

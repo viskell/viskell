@@ -198,6 +198,10 @@ public class CircleMenu extends CircularPane {
             this.add(unlift);
         }
         
+        // pressing the menu area outside a button closes it
+        this.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {this.hide(); e.consume();});
+        this.addEventHandler(TouchEvent.TOUCH_PRESSED, e -> {this.hide(); e.consume();});
+        
         // opening animation
         this.setScaleX(0.1);
         this.setScaleY(0.1);

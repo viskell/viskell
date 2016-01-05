@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -208,7 +209,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         Button applyBlockButton = new MenuButton("Apply", bm -> addBlock(new FunApplyBlock(new ApplyAnchor(1), parent)));
         
 
-        utilSpace.getChildren().addAll(closeButton, valBlockButton, arbBlockButton, disBlockButton, lambdaBlockButton, choiceBlockButton, applyBlockButton);
+        utilSpace.getChildren().addAll(closeButton, disBlockButton, arbBlockButton, valBlockButton, lambdaBlockButton, applyBlockButton, choiceBlockButton);
 
         if (GhciSession.pickBackend() == GhciSession.Backend.GHCi) {
             // These blocks are specifically for GHCi
@@ -216,7 +217,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             Button IntegerBlockButton = new MenuButton("Integer", bm -> addBlock(new SliderBlock(parent, true)));
             Button graphBlockButton = new MenuButton("Graph", bm -> addBlock(new GraphBlock(parent)));
 
-            utilSpace.getChildren().addAll(rationalBlockButton, IntegerBlockButton, graphBlockButton);
+            utilSpace.getChildren().addAll(graphBlockButton, IntegerBlockButton, rationalBlockButton);
         }
 
         if (GhciSession.pickBackend() == GhciSession.Backend.Clash) {
@@ -284,10 +285,16 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
     
     private void addBlock(Block block) {
         parent.addBlock(block);
-        Point2D pos = this.localToParent(0, 0);
-        int offSetX = (this.blockCounter % 5) * 10 - 200;
+        Bounds menuBounds = this.getBoundsInParent();
         int offSetY = (this.blockCounter % 5) * 20 + (block.getAllOutputs().isEmpty() ? 250 : 125);
-        block.relocate(pos.getX() + offSetX, pos.getY()+ offSetY);
+        if (this.localToScene(Point2D.ZERO).getX() < 200) {
+            // too close to the left side of screen, put block on the right
+            int offSetX = (this.blockCounter % 5) * 10 + 100;
+            block.relocate(menuBounds.getMaxX() + offSetX, menuBounds.getMinY()+ offSetY);
+        } else {
+            int offSetX = (this.blockCounter % 5) * 10 - 200;
+            block.relocate(menuBounds.getMinX() + offSetX, menuBounds.getMinY()+ offSetY);
+        }
         block.initiateConnectionChanges();
         this.blockCounter++;
     }
