@@ -3,17 +3,25 @@
 <?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.LambdaBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.LambdaBlock" xmlns:fx="http://javafx.com/fxml/">
-    <VBox styleClass="block" pickOnBounds="false">
-    	<Pane styleClass="lambdaBorder">
-        	<Label text="Spacer" styleClass="inputType" visible="false"/>
-       	</Pane>
-        <!-- The internal LambdaContainer will be inserted here. -->
-       	<Pane styleClass="lambdaBorder" pickOnBounds="false">
-       		<HBox translateY="16" spacing="1" pickOnBounds="false">
-       			<Label fx:id="definitionName" styleClass="defName"/>
-       			<Label fx:id="signature" styleClass="inputType"/>
-       		</HBox>
-       	</Pane>	
-		<HBox fx:id="funSpace" translateX="30" translateY="9" alignment="BOTTOM_LEFT" pickOnBounds="false"/>
-    </VBox>
+    <BorderPane styleClass="block" pickOnBounds="false">
+    	<top>
+    		<Pane styleClass="lambdaBorder">
+        		<Label text="Spacer" styleClass="inputType" visible="false"/>
+       		</Pane>
+    	</top>
+    	<bottom>
+    		<VBox pickOnBounds="false">
+       			<Pane styleClass="lambdaBorder" pickOnBounds="false">
+       				<HBox translateY="16" spacing="1" pickOnBounds="false">
+       					<Label fx:id="definitionName" styleClass="defName"/>
+       					<Label fx:id="signature" styleClass="inputType"/>
+       				</HBox>
+       			</Pane>	
+				<HBox fx:id="funSpace" translateX="30" translateY="9" alignment="BOTTOM_LEFT" pickOnBounds="false"/>
+			</VBox>
+    	</bottom>
+    	<center>
+    		<Pane fx:id="bodySpace" pickOnBounds="false"/>
+    	</center>
+    </BorderPane>
 </fx:root>

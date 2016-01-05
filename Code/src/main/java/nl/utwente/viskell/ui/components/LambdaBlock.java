@@ -20,7 +20,6 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import nl.utwente.viskell.haskell.expr.*;
@@ -30,7 +29,10 @@ import nl.utwente.viskell.ui.*;
 /** Lambda block represent the externals of a lambda abstraction and can be named to become a local definition. */
 public class LambdaBlock extends Block {
 
-    /** the area in which the function anchor is in */
+    /** the area which the lambda container body is in */
+    @FXML private Pane bodySpace;
+    
+    /** the area which the function anchor is in */
     @FXML private Pane funSpace;
 
     /** The label with the explicit name this definition, if it has one. */
@@ -70,7 +72,7 @@ public class LambdaBlock extends Block {
         this.allDefinitionUsers = new ArrayList<>();
         
         this.body = new LambdaContainer(this, arity);
-        ((VBox)this.getChildren().get(0)).getChildren().add(1, this.body);
+        this.bodySpace.getChildren().add(this.body);
         
         this.fun = new PolyOutputAnchor(this, new Binder("lam"));
         this.funSpace.getChildren().add(this.fun);

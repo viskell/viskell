@@ -54,7 +54,7 @@ public class ResultAnchor extends InputAnchor {
         if (resType.isPresent()) {
             setFreshRequiredType(resType.get(), scope);
         } else {
-            setFreshRequiredType(new TypeScope().getVar("r"), scope);
+            setFreshRequiredType(new TypeScope().getVar("res"), scope);
         }
     }
 
