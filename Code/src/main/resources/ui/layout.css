@@ -37,6 +37,12 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
     -fx-padding: 5px;
 }
 
+.menu .scroll-bar .thumb {
+    -fx-background-color: darkgrey;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 4, 0, 0;
+}
+
 .block {
     -fx-font-size: 20px;
     -fx-font-weight: bold;

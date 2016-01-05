@@ -130,9 +130,21 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                                 addBlock(new FunctionBlock(new LibraryFunUse(entry), parent));
                             }
                         });
+              
+                        final double[] touchStartY = new double[]{0.0};
+                        
+                        this.setOnTouchPressed(e -> {
+                            touchStartY[0] = this.localToParent(e.getTouchPoint().getX(), e.getTouchPoint().getY()).getY();
+                        });
                         
                         this.setOnTouchReleased(e -> {
                             if (this.isEmpty()) {
+                                return;
+                            }
+                            
+                            double touchParentY = this.localToParent(e.getTouchPoint().getX(), e.getTouchPoint().getY()).getY();
+                            if (Math.abs(touchStartY[0] - touchParentY) > 10) {
+                                // a release after scrolling is not intended as touch click
                                 return;
                             }
                             
