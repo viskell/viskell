@@ -67,14 +67,15 @@ public class LetExpression extends Expression {
             binders.forEach((binder, expr) -> builder.insert(0, binder.getUniqueName() + " <- " + expr.toHaskell() + ", "));
             builder.append("True -> ");
             builder.append(this.body.toHaskell());
+            return builder.toString();
         }
         else {
             binders.forEach((binder, expr) -> builder.insert(0, binder.getUniqueName() + " = " + expr.toHaskell() + "; "));
             builder.insert(0, "let {");
             builder.append("} in ");
             builder.append(this.body.toHaskell());
+            return "(" + builder.toString() + ")";
         }
-        return "(" + builder.toString() + ")";
     }
 
     @Override
