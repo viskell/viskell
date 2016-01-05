@@ -12,12 +12,12 @@
        <constructor name="GT" signature="Ordering"/>
      </datatype>
      <datatype name="Maybe" typeArity="1">
-       <constructor name="Nothing" signature="Maybe a"/>
-       <constructor name="Just" signature="a -> Maybe a"/>
+       <constructor name="Nothing" signature="Maybe x"/>
+       <constructor name="Just" signature="x -> Maybe x"/>
      </datatype>
      <datatype name="Either" typeArity="2">
-       <constructor name="Left" signature="a -> Either a b"/>
-       <constructor name="Right" signature="b -> Either a b"/>
+       <constructor name="Left" signature="l -> Either l r"/>
+       <constructor name="Right" signature="r -> Either l r"/>
      </datatype>
      <datatype name="[]" typeArity="1">
        <constructor name="[]" signature="[a]"/>
@@ -250,14 +250,14 @@
 
   <functions>
     <category name="Comparison, logic" isCommon="true">
-      <function name="(==)" signature="Eq a => a -> a -> Bool" isCommon="true"/>
-      <function name="(/=)" signature="Eq a => a -> a -> Bool" isCommon="true"/>
-      <function name="(&lt;)" signature="Ord a => a -> a -> Bool"/>
-      <function name="(&lt;=)" signature="Ord a => a -> a -> Bool"/>
-      <function name="(&gt;)" signature="Ord a => a -> a -> Bool"/>
-      <function name="(&gt;=)" signature="Ord a => a -> a -> Bool"/>
-      <function name="max" signature="Ord a => a -> a -> a" isCommon="true"/>
-      <function name="min" signature="Ord a => a -> a -> a" isCommon="true"/>
+      <function name="(==)" signature="Eq e => e -> e -> Bool" isCommon="true"/>
+      <function name="(/=)" signature="Eq e => e -> e -> Bool" isCommon="true"/>
+      <function name="(&lt;)" signature="Ord o => o -> o -> Bool"/>
+      <function name="(&lt;=)" signature="Ord o => o -> o -> Bool"/>
+      <function name="(&gt;)" signature="Ord o => o -> o -> Bool"/>
+      <function name="(&gt;=)" signature="Ord o => o -> o -> Bool"/>
+      <function name="max" signature="Ord o => o -> o -> o" isCommon="true"/>
+      <function name="min" signature="Ord o => o -> o -> o" isCommon="true"/>
       <function name="(&amp;&amp;)" signature="Bool -> Bool -> Bool" isCommon="true">
         and
       </function>
@@ -282,8 +282,8 @@
       <function name="GT" signature="Ordering" isConstructor="true">
         Greater than
       </function>
-      <function name="compare" signature="Ord a => a -> a -> Ordering"/>
-      <function name="comparing" signature="Ord a => (b -> a) -> b -> b -> Ordering"/>
+      <function name="compare" signature="Ord o => o -> o -> Ordering"/>
+      <function name="comparing" signature="Ord o => (e -> o) -> e -> e -> Ordering"/>
     </category>
 
     <category name="Enum, conversions">
@@ -294,52 +294,52 @@
       <function name="read" signature="Read a => [Char] -> a" isCommon="true">
         the read function reads input from a string, which must be completely consumed by the input process.
       </function>
-      <function name="succ" signature="Enum a => a -> a" isCommon="true">
+      <function name="succ" signature="Enum e => e -> e" isCommon="true">
         The successor of a value.
       </function>
-      <function name="pred" signature="Enum a => a -> a" isCommon="true">
+      <function name="pred" signature="Enum e => e -> e" isCommon="true">
         The predecessor of a value.
       </function>
-      <function name="toEnum" signature="Enum a => Int -> a" isCommon="true">
+      <function name="toEnum" signature="Enum e => Int -> e" isCommon="true">
         Convert from an Int.
       </function>
-      <function name="fromEnum" signature="Enum a => a -> Int" isCommon="true">
+      <function name="fromEnum" signature="Enum e => e -> Int" isCommon="true">
         Convert to an Int. It is implementation-dependent what fromEnum returns when applied to a value that is too large to fit in an Int.
       </function>
-      <function name="enumFrom" signature="Enum a => a -> [a]" isCommon="true">
+      <function name="enumFrom" signature="Enum e => e -> [e]" isCommon="true">
         Used in Haskell's translation of [n..].
       </function>
-      <function name="enumFromTo" signature="Enum a => a -> a -> [a]" isCommon="true">
+      <function name="enumFromTo" signature="Enum e => e -> e -> [e]" isCommon="true">
         used in Haskell's translation of [n..m].
       </function>
-      <function name="enumFromThen" signature="Enum a => a -> a -> [a]">
+      <function name="enumFromThen" signature="Enum e => e -> e -> [e]">
         used in Haskell's translation of [n, n'..].
       </function>
-      <function name="enumFromThenTo" signature="Enum a => a -> a -> a -> [a]">
+      <function name="enumFromThenTo" signature="Enum e => e -> e -> e -> [e]">
         used in Haskell's translation of [n, n'..m].
       </function>
-      <function name="fromInteger" signature="Num a => Integer -> a">
+      <function name="fromInteger" signature="Num n => Integer -> n">
         Conversion from an Integer. An integer literal represents the application of the
         function fromInteger to the appropriate value of type Integer, so such literals have
         type (Num a) => a.
       </function>
-      <function name="toRational" signature="Real a => a -> Rational">
+      <function name="toRational" signature="Real r => r -> Rational">
         the rational equivalent of its real argument with full precision.
       </function>
-      <function name="fromRational" signature="Fractional a => Rational -> a">
+      <function name="fromRational" signature="Fractional f => Rational -> f">
         Conversion from a Rational (that is Ratio Integer).
       </function>
-      <function name="toInteger" signature="Integral a => a -> Integer">
+      <function name="toInteger" signature="Integral i => i -> Integer">
         Conversion to Integer.
       </function>
-      <function name="fromIntegral" signature="(Num b, Integral a) => a -> b" isCommon="true">
+      <function name="fromIntegral" signature="(Num n, Integral i) => i -> n" isCommon="true">
         general coercion from integral types.
       </function>
-      <function name="realToFrac" signature="(Real a, Fractional b) => a -> b">
+      <function name="realToFrac" signature="(Real r, Fractional f) => r -> f">
         general coercion to fractional types
       </function>
-      <function name="minBound" signature="Bounded a => a"/>
-      <function name="maxBound" signature="Bounded a => a"/>
+      <function name="minBound" signature="Bounded e => e"/>
+      <function name="maxBound" signature="Bounded e => e"/>
       <function name="digitToInt" signature="Char -> Int"/>
       <function name="intToDigit" signature="Int -> Char"/>
       <function name="chr" signature="Int -> Char"/>
@@ -349,39 +349,39 @@
     </category>
 
     <category name="Arithmetic" isCommon="true">
-      <function name="(+)" signature="Num a => a -> a -> a" isCommon="true">
+      <function name="(+)" signature="Num n => n -> n -> n" isCommon="true">
         Mathematical addition.
       </function>
-      <function name="(*)" signature="Num a => a -> a -> a" isCommon="true">
+      <function name="(*)" signature="Num n => n -> n -> n" isCommon="true">
         Mathematical multiplication.
       </function>
-      <function name="(-)" signature="Num a => a -> a -> a" isCommon="true">
+      <function name="(-)" signature="Num n => n -> n -> n" isCommon="true">
         Mathematical subtraction.
       </function>
-      <function name="negate" signature="Num a => a -> a" isCommon="true">
+      <function name="negate" signature="Num n => n -> n" isCommon="true">
         Unary negation.
       </function>
-      <function name="abs" signature="Num a => a -> a" isCommon="true">
+      <function name="abs" signature="Num n => n -> n" isCommon="true">
         Absolute value.
       </function>
-      <function name="signum" signature="Num a => a -> a">
+      <function name="signum" signature="Num n => n -> n">
         Sign of a number.
       </function>
-      <function name="quot" signature="Integral a => a -> a -> a">
+      <function name="quot" signature="Integral i => i -> i -> i">
         integer division truncated toward zero.
       </function>
-      <function name="rem" signature="Integral a => a -> a -> a">
+      <function name="rem" signature="Integral i => i -> i -> i">
         integer remainder, satisfying (x 'quot' y)*y + (x 'rem' y) == x.
       </function>
-      <function name="div" signature="Integral a => a -> a -> a" isCommon="true">
+      <function name="div" signature="Integral i => i -> i -> i" isCommon="true">
         integer division truncated toward negative infinity.
       </function>
-      <function name="mod" signature="Integral a => a -> a -> a" isCommon="true">
+      <function name="mod" signature="Integral i => i -> i -> i" isCommon="true">
         integer modulus, satisfying (x 'div' y)*y + (x 'mod y) == x.
       </function>
-      <function name="even" signature="Integral a => a -> Bool" isCommon="true"/>
-      <function name="odd" signature="Integral a => a -> Bool" isCommon="true"/>
-      <function name="gcd" signature="Integral a => a -> a -> a">
+      <function name="even" signature="Integral i => i -> Bool" isCommon="true"/>
+      <function name="odd" signature="Integral i => i -> Bool" isCommon="true"/>
+      <function name="gcd" signature="Integral i => i -> i -> i">
         gcd x y is the non-negative factor of both x and y of which every common factor of x and
         y is also a factor; for example gcd 4 2 = 2, gcd (-4) 6 = 2, gcd 0 4 = 4. gcd 0 0
         = 0. (That is, the common divisor that is "greatest" in the divisibility preordering.)
@@ -390,10 +390,10 @@
         negative if one of the arguments is minBound (and necessarily is if the other is 0 or
         minBound) for such types.
       </function>
-      <function name="lcm" signature="Integral a => a -> a -> a">
+      <function name="lcm" signature="Integral i => i -> i -> i">
         lcm x y is the smallest positive integer that both x and y divide.
       </function>
-      <function name="(^)" signature="(Num a, Integral b) => a -> b -> a">
+      <function name="(^)" signature="(Num n, Integral i) => n -> i -> n">
         raise a number to an non-negative integral power.
       </function>
     </category>
@@ -417,21 +417,21 @@
       <function name="asin" signature="Floating a => a -> a"/>
       <function name="acos" signature="Floating a => a -> a"/>
       <function name="atan" signature="Floating a => a -> a"/>
-      <function name="properFraction" signature="(RealFrac a, Integral b) => a -> (b, a)">
+      <function name="properFraction" signature="(RealFrac a, Integral i) => a -> (i, a)">
         The function properFraction takes a real fractional number x and returns a pair (n,f) such that x = n+f, and:
         - n is an integral number with the same sign as x; and
         - f is a fraction with the same type and sign as x; and with absolute value less than 1.
       </function>
-      <function name="truncate" signature="(RealFrac a, Integral b) => a -> b">
+      <function name="truncate" signature="(RealFrac a, Integral i) => a -> i">
         truncate x returns the integer nearest x between zero and x
       </function>
-      <function name="round" signature="(RealFrac a, Integral b) => a -> b" isCommon="true">
+      <function name="round" signature="(RealFrac a, Integral i) => a -> i" isCommon="true">
         round x returns the nearest integer to x; the even integer if x is equidistant between two integers.
       </function>
-      <function name="ceiling" signature="(RealFrac a, Integral b) => a -> b">
+      <function name="ceiling" signature="(RealFrac a, Integral i) => a -> i">
         ceiling x returns the least integer not less than x.
       </function>
-      <function name="floor" signature="(RealFrac a, Integral b) => a -> b">
+      <function name="floor" signature="(RealFrac a, Integral i) => a -> i">
         floor x returns the greatest integer not greater than x.
       </function>
       <function name="isNaN" signature="RealFloat a => a -> Bool">
@@ -440,7 +440,7 @@
       <function name="isInfinite" signature="RealFloat a => a -> Bool">
         True if the argument is an IEEE infinity or negative infinity
       </function>
-      <function name="(^^)" signature="(Integral b, Fractional a) => a -> b -> a" isCommon="true">
+      <function name="(^^)" signature="(Integral i, Fractional a) => a -> i -> a" isCommon="true">
         raise a number to an integral power
       </function>
     </category>
@@ -501,10 +501,10 @@
         container must be finite; True, however, results from a True value finitely far from
         the left end.
       </function>
-      <function name="any" signature="(a -> Bool) -> [a] -> Bool" isCommon="true">
+      <function name="any" signature="(e -> Bool) -> [e] -> Bool" isCommon="true">
         Determines whether any element of the structure satisfies the predicate.
       </function>
-      <function name="all" signature="(a -> Bool) -> [a] -> Bool" isCommon="true">
+      <function name="all" signature="(e -> Bool) -> [e] -> Bool" isCommon="true">
         Determines whether all elements of the structure satisfy the pradicate.
       </function>
       <function name="scanl" signature="(b -> a -> b) -> b -> [a] -> [b]">
@@ -527,10 +527,10 @@
     </category>
 
     <category name="Utility functions" isCommon="true">
-      <function name="id" signature="a -> a" isCommon="true">
+      <function name="id" signature="x -> x" isCommon="true">
         identity function.
       </function>
-      <function name="const" signature="a -> b -> a" isCommon="true">
+      <function name="const" signature="k -> x -> k" isCommon="true">
         constant function.
       </function>
       <function name="(.)" signature="(b -> c) -> (a -> b) -> a -> c" isCommon="true">
@@ -544,10 +544,10 @@
         the same as (f $ x). However, $ has low, right-associative binding precedence, so it
         sometimes allows parentheses to be omitted.
       </function>
-      <function name="fst" signature="(a, b) -> a" isCommon="true">
+      <function name="fst" signature="(a, x) -> a" isCommon="true">
         Extract the first component of a pair.
       </function>
-      <function name="snd" signature="(a, b) -> b" isCommon="true">
+      <function name="snd" signature="(x, b) -> b" isCommon="true">
         Extract the second component of a pair
       </function>
       <function name="curry" signature="((a, b) -> c) -> a -> b -> c" isCommon="true">
@@ -559,7 +559,7 @@
       <function name="until" signature="(a -> Bool) -> (a -> a) -> a -> a">
         until p f yields the result of applying f until p holds.
       </function>
-      <function name="undefined" signature="a">
+      <function name="undefined" signature="x">
         A special case of error. It is expected that compilers will recognize this and insert error
         messages which are more appropriate to the context in which undefined appears.
       </function>
@@ -571,8 +571,8 @@
         Strict (call-by-value) application operator. It takes a function and an argument, evaluates the
         argument to weak head normal form (WHNF), then calls the function with that value.
       </function>
-      <function name="mempty" signature="Monoid a => a" isCommon="true"/>
-      <function name="mappend" signature="Monoid a => a -> a -> a" isCommon="true"/>
+      <function name="mempty" signature="Monoid m => m" isCommon="true"/>
+      <function name="mappend" signature="Monoid m => m -> m -> m" isCommon="true"/>
       <function name="on" signature="(b -> b -> c) -> (a -> b) -> a -> a -> c"/>
       <function name="fix" signature="(a -> a) -> a"/>
     </category>
@@ -584,25 +584,25 @@
       <function name="(,,,)" signature="a -> b -> c -> d -> (a, b, c, d)" isConstructor="true"/>
       <function name="(,,,,)" signature="a -> b -> c -> d -> e -> (a, b, c, d, e)" isConstructor="true"/>
 
-      <function name="Nothing" signature="Maybe a" isConstructor="true" isCommon="true"/>
-      <function name="Just" signature="a -> Maybe a" isConstructor="true" isCommon="true"/>
-      <function name="maybe" signature="b -> (a -> b) -> Maybe a -> b" isCommon="true"/>
-      <function name="isJust" signature="Maybe a -> Bool" isCommon="true"/>
-      <function name="isNothing" signature="Maybe a -> Bool"/>
-      <function name="fromJust" signature="Maybe a -> a" isCommon="true"/>
-      <function name="fromMaybe" signature="a -> Maybe a -> a" isCommon="true"/>
-      <function name="maybeToList" signature="Maybe a -> [a] "/>
-      <function name="listToMaybe" signature="[a] -> Maybe a "/>
-      <function name="catMaybes" signature="[Maybe a] -> [a] " isCommon="true"/>
+      <function name="Nothing" signature="Maybe x" isConstructor="true" isCommon="true"/>
+      <function name="Just" signature="x -> Maybe x" isConstructor="true" isCommon="true"/>
+      <function name="maybe" signature="r -> (x -> r) -> Maybe x -> r" isCommon="true"/>
+      <function name="isJust" signature="Maybe x -> Bool" isCommon="true"/>
+      <function name="isNothing" signature="Maybe x -> Bool"/>
+      <function name="fromJust" signature="Maybe x -> x" isCommon="true"/>
+      <function name="fromMaybe" signature="x -> Maybe x -> x" isCommon="true"/>
+      <function name="maybeToList" signature="Maybe x -> [x] "/>
+      <function name="listToMaybe" signature="[x] -> Maybe x "/>
+      <function name="catMaybes" signature="[Maybe x] -> [x] " isCommon="true"/>
 
-      <function name="Left" signature="a -> Either a b" isConstructor="true"/>
-      <function name="Right" signature="b -> Either a b" isConstructor="true"/>
-      <function name="either" signature="(a -> c) -> (b -> c) -> Either a b -> c" isCommon="true"/>
-      <function name="lefts" signature="[Either a b] -> [a]"/>
-      <function name="rights" signature="[Either a b] -> [b]"/>
-      <function name="isLeft" signature="Either a b -> Bool"/>
-      <function name="isRight" signature="Either a b -> Bool"/>
-      <function name="partitionEithers" signature="[Either a b] -> ([a],[b])"/>
+      <function name="Left" signature="l -> Either l r" isConstructor="true"/>
+      <function name="Right" signature="l -> Either l r" isConstructor="true"/>
+      <function name="either" signature="(l -> x) -> (r -> x) -> Either l r -> x" isCommon="true"/>
+      <function name="lefts" signature="[Either l r] -> [l]"/>
+      <function name="rights" signature="[Either l r] -> [r]"/>
+      <function name="isLeft" signature="Either l r -> Bool"/>
+      <function name="isRight" signature="Either l r -> Bool"/>
+      <function name="partitionEithers" signature="[Either l r] -> ([l],[r])"/>
     </category>
 
     <category name="Basic list operations" isCommon="true">
@@ -673,25 +673,25 @@
         unzip transforms a list of pairs into a list of first components and a list of second
         components.
       </function>
-      <function name="null" signature="[a] -> Bool">
+      <function name="null" signature="[x] -> Bool">
         Test whether the structure is empty. The default implementation is optimized for
         structures that are similar to cons-lists, because there is no general way to do better.
       </function>
-      <function name="length" signature="[a] -> Int" isCommon="true">
+      <function name="length" signature="[x] -> Int" isCommon="true">
         Returns the size/length of a finite structure as an Int. The default implementation is
         optimized for structures that are similar to cons-lists, because there is no general way to
         do better.
       </function>
-      <function name="elem" signature="Eq a => a -> [a] -> Bool" isCommon="true">
+      <function name="elem" signature="Eq e => e -> [e] -> Bool" isCommon="true">
         Does the element occur in the structure?
       </function>
-      <function name="notElem" signature="Eq a => a -> [a] -> Bool">
+      <function name="notElem" signature="Eq e => e -> [e] -> Bool">
         notElem is the negation of elem.
       </function>
-      <function name="group" signature="Eq a => [a] -> [[a]]"/>
-      <function name="insert" signature="Ord a => a -> [a] -> [a]"/>
-      <function name="nub" signature="Eq a => [a] -> [a]"/>
-      <function name="sort" signature="Ord a => [a] -> [a]"/>
+      <function name="group" signature="Eq a => [e] -> [[e]]"/>
+      <function name="insert" signature="Ord e => e -> [e] -> [e]"/>
+      <function name="nub" signature="Eq e => [e] -> [e]"/>
+      <function name="sort" signature="Ord e => [e] -> [e]"/>
     </category>
     
     <category name="More list operations">

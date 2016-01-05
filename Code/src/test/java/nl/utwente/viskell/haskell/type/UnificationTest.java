@@ -19,11 +19,11 @@ public class UnificationTest {
 
         Expression e0 = env.useFun("const");
         Type t0 = e0.inferType();
-        assertEquals("a -> b -> a", t0.prettyPrint());
+        assertEquals("k -> x -> k", t0.prettyPrint());
 
         Expression e1 = new Apply(e0, new Hole());
         Type t1 = e1.inferType();
-        assertEquals("b -> a", t1.prettyPrint());
+        assertEquals("x -> k", t1.prettyPrint());
 
         Expression e2 = new Apply(e1, new Hole());
         Type t2 = e2.inferType();
@@ -38,11 +38,11 @@ public class UnificationTest {
         
         Expression e0 = env.useFun("const");
         Type t0 = e0.inferType();
-        assertEquals("a -> b -> a", t0.prettyPrint());
+        assertEquals("k -> x -> k", t0.prettyPrint());
 
         Expression e1 = new Apply(e0, new Value(Type.con("Float"), "5.0"));
         Type t1 = e1.inferType();
-        assertEquals("b -> Float", t1.prettyPrint());
+        assertEquals("x -> Float", t1.prettyPrint());
 
         Expression e2 = new Apply(e1, new Value(Type.con("Float"), "5.0"));
         Type t2 = e2.inferType();

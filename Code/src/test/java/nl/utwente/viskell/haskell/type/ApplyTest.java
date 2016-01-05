@@ -18,7 +18,7 @@ public class ApplyTest {
         
         Expression e0 = env.useFun("(+)");
         Type t0 = e0.inferType();
-        assertEquals("Num a -> Num a -> Num a", t0.prettyPrint());
+        assertEquals("Num n -> Num n -> Num n", t0.prettyPrint());
         
         Expression e1 = new Value(Type.con("Float"), "5.0");
         Type t1 = e1.inferType();
@@ -43,7 +43,7 @@ public class ApplyTest {
         
         Expression e0 = env.useFun("(+)");
         Type t0 = e0.inferType();
-        assertEquals("Num a -> Num a -> Num a", t0.prettyPrint());
+        assertEquals("Num n -> Num n -> Num n", t0.prettyPrint());
         
         Expression e1 = new Hole();
         Type t1 = e1.inferType();
