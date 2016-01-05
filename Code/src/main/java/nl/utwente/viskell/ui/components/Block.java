@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import javafx.application.Platform;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.StackPane;
@@ -305,8 +306,9 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
                 reduce((a, b) -> !a.containmentBoundsInScene().contains(b.containmentBoundsInScene()) ? a : b).
                     orElse(this.toplevel);
         
+        Bounds fitBounds = this.getBoundsInParent();
         this.moveIntoContainer(newContainer);
-        newContainer.expandToFit(this.getBoundsInParent());
+        newContainer.expandToFit(new BoundingBox(fitBounds.getMinX()-10, fitBounds.getMinY()-10, fitBounds.getWidth()+20, fitBounds.getHeight()+20));
     }
     
     /** @return whether this block has a meaningful interpretation the current container. */

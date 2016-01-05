@@ -257,6 +257,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
         this.wrapper.shiftAndGrow(shiftX, shiftY, extraX, extraY);
         
         // also resize its parent in case of nested containers
-        this.getParentContainer().expandToFit(this.wrapper.getBoundsInParent());
+        Bounds fitBounds = this.wrapper.getBoundsInParent();
+        this.getParentContainer().expandToFit(new BoundingBox(fitBounds.getMinX()-10, fitBounds.getMinY()-10, fitBounds.getWidth()+20, fitBounds.getHeight()+20));
     }
 }
