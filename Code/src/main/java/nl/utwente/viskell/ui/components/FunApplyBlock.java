@@ -80,7 +80,7 @@ public class FunApplyBlock extends Block {
             dragContext.setDragInitAction(c -> {this.curried = false;});
             dragContext.setDragFinishAction(c -> {
                 double height = this.inputType.getHeight();
-                boolean mostlyDown = this.typePane.getLayoutY() > height;
+                boolean mostlyDown = (this.typePane.getLayoutY() > height) && !this.anchor.hasConnection();
                 double newY = mostlyDown ? 1.5*height : 0;
                 this.typePane.relocate(0, newY);
                 this.curried = mostlyDown;
