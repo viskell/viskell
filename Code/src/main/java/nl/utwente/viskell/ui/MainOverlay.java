@@ -108,10 +108,10 @@ public class MainOverlay extends StackPane {
 
     private FlowPane makeZoomBar() {
         Button zoomIn = new Button("+");
-        zoomIn.setOnAction(e -> this.zoom(1.25));
+        zoomIn.setOnAction(e -> this.zoom(1.1));
 
         Button zoomOut = new Button("–");
-        zoomOut.setOnAction(e -> this.zoom(0.8));
+        zoomOut.setOnAction(e -> this.zoom(1/1.1));
 
         FlowPane buttons = new FlowPane(10, 0, zoomIn, zoomOut);
         buttons.setPrefSize(100, 20);
