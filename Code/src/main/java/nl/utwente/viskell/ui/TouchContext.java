@@ -31,9 +31,12 @@ public class TouchContext {
     /** the action to be executed on a panning movement, may be null. */
     private BiConsumer<Double, Double> panningAction;
     
-    public TouchContext(BlockContainer container) {
+    private boolean willPanTouchArea;
+    
+    public TouchContext(BlockContainer container, boolean willPanTouchArea) {
         super();
         this.container = container;
+        this.willPanTouchArea = willPanTouchArea;
         
         this.lastPanPosition = Point2D.ZERO;
         this.panning = false;
@@ -121,11 +124,17 @@ public class TouchContext {
          * @param touchPoint that is the center of new active touch area.
          */
         private TouchArea(TouchPoint touchPoint) {
-            super(touchPoint.getX(), touchPoint.getY(), 100, Color.TRANSPARENT);
+            super();
             this.toplevel = TouchContext.this.container.getToplevel();
             this.touchID = touchPoint.getId();
             this.dragStarted = false;
             this.menuCreated = false;
+
+            Point2D pos = this.toplevel.sceneToLocal(touchPoint.getSceneX(), touchPoint.getSceneY());
+            this.setCenterX(pos.getX());
+            this.setCenterY(pos.getY());
+            this.setRadius(100);
+            this.setFill(Color.TRANSPARENT);
             
             this.removeDelay = new Timeline(new KeyFrame(Duration.millis(250), this::remove));
             this.menuDelay = new Timeline(new KeyFrame(Duration.millis(200), this::finishMenu));
@@ -188,6 +197,10 @@ public class TouchContext {
                     this.dragStarted = true;
                     if (TouchContext.this.panningAction != null) {
                         TouchContext.this.panningAction.accept(deltaX, deltaY);
+                        if (!TouchContext.this.willPanTouchArea) {
+                            this.setLayoutX(this.getLayoutX() + deltaX);
+                            this.setLayoutY(this.getLayoutY() + deltaY);
+                        }
                     }
                 }
             }

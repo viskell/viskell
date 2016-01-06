@@ -66,7 +66,7 @@ public class LambdaContainer extends BorderPane implements ComponentLoader, Wrap
         this.argSpace.getChildren().addAll(this.args);
         this.resSpace.getChildren().add(this.res);
         
-        TouchContext context = new TouchContext(this);
+        TouchContext context = new TouchContext(this, false);
         context.setPanningAction((deltaX, deltaY) -> {
             if (! this.wrapper.isActivated()) {
                 this.wrapper.relocate(this.wrapper.getLayoutX() + deltaX, this.wrapper.getLayoutY() + deltaY);
