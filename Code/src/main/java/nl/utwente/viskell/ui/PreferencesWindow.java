@@ -47,7 +47,7 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
             overlay.getMainPane().restartBackend();
         });
         
-        background.getItems().setAll(ImmutableList.of("/ui/grid.png", "/ui/light_grid.png"));
+        background.getItems().setAll(ImmutableList.of("/ui/grid.png", "/ui/light_grid.png", "/ui/white.png"));
         background.getSelectionModel().select(preferences.get("background", "/ui/grid.png"));
         background.valueProperty().addListener(event -> {
             preferences.put("background", background.getValue());
