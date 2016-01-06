@@ -450,9 +450,9 @@
         Map over a functor.
       </function>
       <function name="(&lt;$)" signature="Functor f => a -> f b -> f a"/>
-      <function name="(&lt;$&gt;)" signature="Functor f => (a -> b) -> f b -> f a" isCommon="true"/>
+      <function name="(&lt;$&gt;)" signature="Functor f => (a -> b) -> f a -> f b" isCommon="true"/>
       <function name="pure" signature="Applicative f => a -> f a" isCommon="true"/>
-      <function name="(&lt;*&gt;)" signature="Applicative f => f (a -> b) -> f b -> f a" isCommon="true"/>
+      <function name="(&lt;*&gt;)" signature="Applicative f => f (a -> b) -> f a -> f b" isCommon="true"/>
       <function name="(&gt;&gt;=)" signature="Monad m => m a -> (a -> m b) -> m b" isCommon="true"/>
       <function name="(&gt;&gt;)" signature="Monad m => m a -> m b -> m b"/>
       <function name="return" signature="Monad m => a -> m a" isCommon="true"/>
