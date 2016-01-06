@@ -119,6 +119,7 @@ SliderBlock Slider.inactive .track {
 .operator {
     -fx-font-size: 32px;
     -fx-font-weight: bolder;
+    -fx-padding: -2 0 2 0;
 }
 
 .resultType {
