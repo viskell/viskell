@@ -2,8 +2,22 @@
 <?import javafx.scene.layout.*?>
 <?import nl.utwente.viskell.ui.components.ChoiceBlock?>
 <fx:root type="nl.utwente.viskell.ui.components.ChoiceBlock" xmlns:fx="http://javafx.com/fxml/">
-    <VBox styleClass="block, def" pickOnBounds="false">
-    	<HBox fx:id="altSpace" pickOnBounds="false" />
-        <HBox fx:id="resultSpace" alignment="BOTTOM_CENTER" pickOnBounds="false" />
-    </VBox>
+    <BorderPane styleClass="block" pickOnBounds="false">
+    	<top>
+    		<Pane styleClass="choiceBorder">
+        		<Label text="Spacer" styleClass="inputType" visible="false"/>
+       		</Pane>
+    	</top>
+    	<bottom>
+    		<VBox styleClass="choiceBorder" pickOnBounds="false">
+       				<HBox translateY="16" spacing="1" alignment="CENTER" pickOnBounds="false">
+       					<Label fx:id="signature" styleClass="inputType"/>
+       				</HBox>
+				<HBox fx:id="resultSpace" translateY="16" alignment="BOTTOM_CENTER" pickOnBounds="false"/>
+			</VBox>
+    	</bottom>
+    	<center>
+    		<HBox fx:id="altSpace" pickOnBounds="false" />
+    	</center>
+    </BorderPane>
 </fx:root>

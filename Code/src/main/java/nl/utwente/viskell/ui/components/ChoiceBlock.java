@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableList;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Case;
@@ -39,6 +40,9 @@ public class ChoiceBlock extends Block {
     
     /** The container Node for the Lanes */
     @FXML protected Pane altSpace;
+    
+    /** The label with the result type of this lambda. */
+    @FXML private Label signature;
     
     /** The container Node for the OutputAnchor */
     @FXML protected Pane resultSpace;
@@ -121,8 +125,8 @@ public class ChoiceBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
-        // TODO update anchors when they get a type label       
         lanes.forEach(lane -> lane.invalidateVisualState());
+        signature.setText(output.getStringType());
     }
     
     @Override
