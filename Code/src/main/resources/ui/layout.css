@@ -71,7 +71,8 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
 }
 
 .match.block {
-    -fx-padding: 10;
+    -fx-padding: 2 0 2 0;
+    -fx-min-width: 40;
 }
 
 .lifting.block {
