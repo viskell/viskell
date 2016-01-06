@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Insets;
@@ -86,6 +87,9 @@ public class FunApplyBlock extends Block {
                 this.curried = mostlyDown;
                 FunApplyBlock.this.dragShiftOuput(newY - height);
                 FunApplyBlock.this.initiateConnectionChanges();
+                if (curried && this.anchor.getWireInProgress() != null) {
+                    this.anchor.getWireInProgress().remove();
+                }
             });
         }
 
@@ -179,6 +183,10 @@ public class FunApplyBlock extends Block {
                 public double computePrefWidth(double height) {
                     return Math.max(inputSpace.prefWidth(height), outputSpace.getLayoutX()+resTypeLabel.prefWidth(height));
                 }
+                @Override
+                public double computePrefHeight(double width) {
+                    return resTypeLabel.prefHeight(width)*2;
+                }
             };
         this.curriedOutput.setVisible(false);
         this.curriedOutput.getStyleClass().add("curriedOutput");
@@ -186,10 +194,9 @@ public class FunApplyBlock extends Block {
             
         this.bodySpace.getChildren().addAll(this.curriedOutput, this.inputSpace, outputSpace);
         outputSpace.layoutYProperty().bind(this.inputSpace.heightProperty());
-        outputSpace.layoutXProperty().bind(this.inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2)));
+        outputSpace.layoutXProperty().bind(Bindings.max(0, this.inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2))));
         outputSpace.setTranslateY(9);
         
-        this.curriedOutput.prefHeightProperty().bind(this.inputSpace.heightProperty().multiply(2));
         this.curriedOutput.translateYProperty().bind(outputSpace.translateYProperty());
     }
 
