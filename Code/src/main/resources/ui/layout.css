@@ -70,9 +70,8 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
     -fx-font-weight: normal;
 }
 
-.match.block {
-    -fx-padding: 2 0 2 0;
-    -fx-min-width: 40;
+MatchBlock #name {
+    -fx-padding: 0 7 0 7;
 }
 
 .lifting.block {

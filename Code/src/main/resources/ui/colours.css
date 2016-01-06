@@ -64,8 +64,8 @@
 
 .match.block {
     -fx-background-color: #8DD0D0;
-    -fx-background-radius: 10 10 0 0;
-    -fx-border-radius: 12 12 0 0;
+    -fx-background-radius: 10 0 10 0;
+    -fx-border-radius: 12 0 12 0;
 }
 
 .display.block {

@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import jfxtras.scene.layout.VBox;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.ConstructorBinder;
@@ -28,8 +30,8 @@ public class MatchBlock extends Block {
     /** The InputAnchor of this Matchblock. */
     protected InputAnchor input;
 
-    /** A list of OutputAnchors for every constructor element. */
-    protected List<OutputAnchor> outputs;
+    /** A list of nodes with an OutputAnchor and Label for every constructor element. */
+    protected List<Pane> outputs;
     
     /** The space containing the input anchor(s). */
     @FXML protected Pane inputSpace;
@@ -41,6 +43,8 @@ public class MatchBlock extends Block {
     @FXML protected Label name;
 
     protected ConstructorBinder primaryBinder;
+
+    protected Label inputLabel;
     
     public MatchBlock(FunctionInfo funInfo, ToplevelPane pane) {
         super(pane);
@@ -53,25 +57,36 @@ public class MatchBlock extends Block {
         
         int outputCount = 0;
         while (type instanceof FunType) {
-            FunType ft = (FunType) type;
+            FunType ftype = (FunType) type;
             
-            Binder binder = new Binder("res"+outputCount, ft.getArgument());
+            Binder binder = new Binder("res"+outputCount, ftype.getArgument());
             elemBinders.add(binder);
-            outputs.add(new OutputAnchor(this, binder));
-            type = ft.getResult();
+            OutputAnchor anchor = new OutputAnchor(this, binder);
+            
+            VBox box = new VBox(0);
+            box.setTranslateY(9);
+            box.getStyleClass().add("argumentSpace");
+            Label typeLabel = new Label(ftype.getArgument().prettyPrint());
+            typeLabel.getStyleClass().add("outputType");
+            box.getChildren().addAll(typeLabel, anchor);
+            
+            outputs.add(box);
+            type = ftype.getResult();
             outputCount++;
         }
 
         primaryBinder = new ConstructorBinder(info.getName(), elemBinders);
         
         input = new InputAnchor(this, type);
+        inputLabel = new Label(info.getFreshSignature().prettyPrint());
+        inputLabel.getStyleClass().add("inputType");
         
-        name.setText(info.getName());
+        String fname = funInfo.getDisplayName();
+        name.setText(fname.charAt(0) == '(' && fname.length() > 2 ? fname.substring(1, fname.length()-1) : fname);
         
-        //TODO Fill in the type space
-        
+        inputSpace.getChildren().addAll(input, inputLabel);
+        inputSpace.setTranslateY(-9);
         outputSpace.getChildren().addAll(outputs);
-        inputSpace.getChildren().add(input);
     }
     
     @Override
@@ -81,7 +96,7 @@ public class MatchBlock extends Block {
     
     @Override
     public List<OutputAnchor> getAllOutputs() {
-        return outputs;
+        return outputs.stream().map(box -> (OutputAnchor)(box.getChildren().get(1))).collect(Collectors.toList());
     }
 
     @Override
@@ -94,9 +109,11 @@ public class MatchBlock extends Block {
         Type type = info.getFreshSignature();
         TypeScope scope = new TypeScope();
         
-        for (OutputAnchor anchor : outputs) {
+        for (Pane box : outputs) {
             if (type instanceof FunType) {
                 FunType ftype = (FunType)type;
+                OutputAnchor anchor = (OutputAnchor)box.getChildren().get(1);
+                
                 anchor.setFreshRequiredType(ftype.getArgument(), scope);
                 type = ftype.getResult();
             } else {
@@ -115,7 +132,18 @@ public class MatchBlock extends Block {
     @Override
     public void invalidateVisualState() {
     	this.input.invalidateVisualState();
-        // TODO Propagate new visual state to anchors
+    	
+        boolean validConnection = input.hasValidConnection();
+        inputSpace.setTranslateY(validConnection ? 0 : -9);
+        inputLabel.setText(validConnection ? "zyxwv" : input.getStringType()); 
+        inputLabel.setVisible(!validConnection);
+    	
+        for (Pane box : outputs) {
+            OutputAnchor anchor = (OutputAnchor)box.getChildren().get(1);
+            Label label = (Label)box.getChildren().get(0);
+            
+            label.setText(anchor.getStringType());
+        }
     }
 
     public Binder getPrimaryBinder() {
