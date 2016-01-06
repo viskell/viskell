@@ -112,6 +112,21 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
             block.extendExprGraph(guards, this, outsideAnchors);
         });
         
+        /**
+         * Iterate over the container until it doesn't find new nodes.
+         */
+        boolean cont = true;
+        for (int numAnchors = -1; numAnchors != outsideAnchors.size() || cont; numAnchors = outsideAnchors.size()) {
+            for (OutputAnchor anchor : new ArrayList<>(outsideAnchors)) {
+                if (anchor.getContainer() == this) {
+                    anchor.extendExprGraph(guards, this, outsideAnchors);
+                } else {
+                    outsideAnchors.add(anchor);
+                }
+            }
+            cont = (numAnchors != outsideAnchors.size());
+        }
+        
         return (new Case.Alternative(new ConstructorBinder("()"), guards));
     }
 
