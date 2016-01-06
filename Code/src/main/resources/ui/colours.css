@@ -1,7 +1,7 @@
 .block {
     -fx-text-fill: black;
     -fx-border-color: black;
-    -fx-effect: dropshadow(two-pass-box, black, 7, 0.0, 3, 3)
+    -fx-effect: dropshadow(two-pass-box, rgba(0,0,0,0.8), 10, 0.0, 3, 3)
 }
 
 .activated .block {
@@ -11,6 +11,8 @@
 .nested {
     -fx-text-fill: black;
     -fx-border-color: black;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 7px;
 }
 
 .invalid .block {
@@ -31,6 +33,8 @@
 
 .function.block {
     -fx-background-color: #E97F02;
+    -fx-background-radius: 7px;
+    -fx-border-radius: 9px;
 }
 
 .function.nested {
@@ -39,6 +43,8 @@
 
 .value.block {
     -fx-background-color: #BD1550;
+    -fx-background-radius: 7px;
+	-fx-border-radius: 9px;
 }
 
 .value.nested {
@@ -52,10 +58,14 @@
 
 .block.lifting {
 	-fx-background-color: burlywood;
+	-fx-background-radius: 7px;
+    -fx-border-radius: 9px;
 }
 
 .match.block {
     -fx-background-color: #8DD0D0;
+    -fx-background-radius: 10 0 10 0;
+    -fx-border-radius: 12 0 12 0;
 }
 
 .display.block {
@@ -128,11 +138,13 @@
 .resultType {
     -fx-text-fill: black;
     -fx-background-color: white;
+    -fx-background-radius: 4;
 }
 
 .inputType {
     -fx-text-fill: black;
     -fx-background-color: white;
+    -fx-background-radius: 4;
 }
 
 .defName {
@@ -173,7 +185,7 @@ DrawWire {
 }
 
 ImageView.hoverMenu {
-    -fx-effect: dropshadow(three-pass-box, black, 20, 0, 0, 0);
+    -fx-effect: dropshadow(two-pass-box, black, 15, 0, 5, 5);
 }
 
 .def {

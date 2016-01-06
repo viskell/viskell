@@ -31,7 +31,7 @@ public class NestedFunction extends NestedBlock {
         this.original = original;
         this.refreshTypes();
         
-        HBox inputSpace = new HBox(50);
+        HBox inputSpace = new HBox(60);
         inputSpace.setAlignment(Pos.CENTER);
         for (int i = 0; i < this.inputTypes.size(); i++) {
             inputSpace.getChildren().add(new Bond(true));
