@@ -172,13 +172,8 @@ DrawWire {
     -fx-font-family: Titillium;
 }
 
-.lambdaBorder {
+.lambdaBorder, .choiceBorder {
      -fx-pref-height: 25px;
-}
-
-ChoiceBlock #altSpace {
-	-fx-padding: 25 10 25 10;
-	-fx-spacing: 10;
 }
 
 Lane #guardSpace {
@@ -188,6 +183,10 @@ Lane #guardSpace {
 
 Lane #resultSpace {
 	-fx-alignment: center;
+}
+
+Lane .padding {
+    -fx-pref-width: 5px;
 }
 
 .subtle {

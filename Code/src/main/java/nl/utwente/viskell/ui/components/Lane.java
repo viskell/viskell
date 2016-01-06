@@ -242,7 +242,7 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
     
     @Override
     protected double computePrefWidth(double height) {
-        guardSpace.setPrefWidth(resizer.getBoundsInParent().getMaxX());
+        guardSpace.setPrefWidth(resizer.getBoundsInParent().getMaxX()-5);
         return super.computePrefWidth(height);
     }
     

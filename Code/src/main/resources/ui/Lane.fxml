@@ -3,8 +3,14 @@
 <?import nl.utwente.viskell.ui.components.Lane?>
 <fx:root type="nl.utwente.viskell.ui.components.Lane" xmlns:fx="http://javafx.com/fxml/" pickOnBounds="false">
 	<center>
-        <Pane fx:id="guardSpace"/>
+        <Pane fx:id="guardSpace" styleClass="def" />
 	</center>
+	<left>
+		<Pane styleClass="padding"/>
+	</left>
+	<right>
+		<Pane styleClass="padding"/>
+	</right>
 	<top>
 		<VBox pickOnBounds="false">
 			<HBox fx:id="argumentSpace" pickOnBounds="false" />

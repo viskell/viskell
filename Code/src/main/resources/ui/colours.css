@@ -181,7 +181,7 @@ ImageView.hoverMenu {
 }
 
 .lambdaBorder {
-	-fx-background-color: rgba(127, 255, 127, 0.3);
+	-fx-background-color: darkslategrey;
 }
 
 .lambdalambda {
@@ -190,10 +190,11 @@ ImageView.hoverMenu {
     -fx-font-size: 150px;
 }
 
-ChoiceBlock * {
-	-fx-background-color: transparent;
+.choiceBorder {
+    -fx-background-color: #693333;
 }
 
-ChoiceBlock #guardSpace {
-	-fx-background-color: rgba(127, 127, 255, 0.3);
+Lane .padding {
+    -fx-background-color: #3d1d1d;
 }
+
