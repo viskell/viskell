@@ -41,7 +41,7 @@ public class ChoiceBlock extends Block {
     /** The container Node for the Lanes */
     @FXML protected Pane altSpace;
     
-    /** The label with the result type of this lambda. */
+    /** The label with the result type of this choiceblock. */
     @FXML private Label signature;
     
     /** The container Node for the OutputAnchor */
