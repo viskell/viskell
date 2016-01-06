@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -59,6 +60,7 @@ public class FunApplyBlock extends Block {
             this.curryArrow.setMinWidth(USE_PREF_SIZE);
             this.curryArrow.getStyleClass().add("curryArrow");
             this.curryArrow.setVisible(false);
+            this.curryArrow.setMouseTransparent(true);
             this.typePane = new HBox(this.inputType, this.curryArrow) {
                 @Override
                 public void relocate(double x, double y) {
@@ -67,6 +69,7 @@ public class FunApplyBlock extends Block {
                 }
             };
             this.typePane.setMinWidth(USE_PREF_SIZE);
+            this.typePane.setPickOnBounds(false);
             this.anchor = new InputAnchor(FunApplyBlock.this);
             this.anchor.layoutXProperty().bind(this.inputType.widthProperty().divide(2));
             this.getChildren().addAll(this.anchor, this.typePane);
@@ -77,7 +80,7 @@ public class FunApplyBlock extends Block {
             dragContext.setDragInitAction(c -> {this.curried = false;});
             dragContext.setDragFinishAction(c -> {
                 double height = this.inputType.getHeight();
-                boolean mostlyDown = this.typePane.getLayoutY() > height;
+                boolean mostlyDown = (this.typePane.getLayoutY() > height) && !this.anchor.hasConnection();
                 double newY = mostlyDown ? 1.5*height : 0;
                 this.typePane.relocate(0, newY);
                 this.curried = mostlyDown;
@@ -179,7 +182,7 @@ public class FunApplyBlock extends Block {
             };
         this.curriedOutput.setVisible(false);
         this.curriedOutput.getStyleClass().add("curriedOutput");
-        this.curriedOutput.setBorder(new Border(new BorderStroke(null, BorderStrokeStyle.SOLID, null, null)));
+        this.curriedOutput.setBorder(new Border(new BorderStroke(null, BorderStrokeStyle.SOLID, null, null, new Insets(-1))));
             
         this.bodySpace.getChildren().addAll(this.curriedOutput, this.inputSpace, outputSpace);
         outputSpace.layoutYProperty().bind(this.inputSpace.heightProperty());

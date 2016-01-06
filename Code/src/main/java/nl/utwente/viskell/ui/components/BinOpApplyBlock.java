@@ -10,6 +10,7 @@ import com.google.common.collect.ImmutableMap;
 
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Border;
@@ -64,6 +65,7 @@ public class BinOpApplyBlock extends Block {
             this.curryArrow.setMinWidth(USE_PREF_SIZE);
             this.curryArrow.getStyleClass().add("curryArrow");
             this.curryArrow.setVisible(false);
+            this.curryArrow.setMouseTransparent(true);
             this.typePane = new HBox(this.inputType, this.curryArrow) {
                 @Override
                 public void relocate(double x, double y) {
@@ -72,6 +74,7 @@ public class BinOpApplyBlock extends Block {
                 }
             };
             this.typePane.setMinWidth(USE_PREF_SIZE);
+            this.typePane.setPickOnBounds(false);
             this.anchor = new InputAnchor(BinOpApplyBlock.this);
             this.anchor.layoutXProperty().bind(this.inputType.widthProperty().divide(2));
             this.getChildren().addAll(this.anchor, this.typePane);
@@ -82,7 +85,7 @@ public class BinOpApplyBlock extends Block {
             dragContext.setDragInitAction(c -> {this.curried = false;});
             dragContext.setDragFinishAction(c -> {
                 double height = this.inputType.getHeight();
-                boolean mostlyDown = this.typePane.getLayoutY() > height*1.5;
+                boolean mostlyDown = (this.typePane.getLayoutY() > height*1.5) && !this.anchor.hasConnection();
                 double newY = mostlyDown ? 2.5*height : 0;
                 this.typePane.relocate(0, newY);
                 this.curried = mostlyDown;
@@ -109,9 +112,9 @@ public class BinOpApplyBlock extends Block {
             this.anchor.setLayoutY(y);
             this.anchor.setOpacity(1 - (y/(height)));
             this.anchor.setVisible(y < height);
-            this.curryArrow.setManaged(y > height*1.5 || this == BinOpApplyBlock.this.leftInput);
-            this.curryArrow.setVisible(y > height*1.5);
-            BinOpApplyBlock.this.dragShiftOuput(y - height*2);
+            this.curryArrow.setManaged(y > height*1 || this == BinOpApplyBlock.this.leftInput);
+            this.curryArrow.setVisible(y > height*1);
+            BinOpApplyBlock.this.dragShiftOuput(y - height*1.5);
         }
 
         /** Refresh visual information such as types */
@@ -131,6 +134,8 @@ public class BinOpApplyBlock extends Block {
     private final FunInputAnchor leftInput;
     
     private final FunInputAnchor rightInput;
+    
+    private final Pane currySpacer;
     
     /** Text label for the output type */
     private final Label resTypeLabel;
@@ -162,14 +167,7 @@ public class BinOpApplyBlock extends Block {
         infoArea.setMinHeight(36);
         infoArea.setMaxHeight(36);
         this.output = new OutputAnchor(this, new Binder("res"));
-        
-        this.resTypeLabel = new Label("");
-        this.resTypeLabel.setMinWidth(USE_PREF_SIZE);
-        this.resTypeLabel.getStyleClass().add("resultType");
-        VBox outputSpace = new VBox(this.resTypeLabel, this.output);
-        outputSpace.setAlignment(Pos.CENTER);
-        outputSpace.setPickOnBounds(false);
-        
+
         this.leftInput = new FunInputAnchor();
         this.rightInput = new FunInputAnchor();
         this.rightInput.curryArrow.setManaged(false);
@@ -179,7 +177,28 @@ public class BinOpApplyBlock extends Block {
         arrowSpacer.setVisible(false);
         Pane inputSpace = new HBox(0, this.leftInput, infoArea, arrowSpacer, this.rightInput);
         inputSpace.setPickOnBounds(false);
-
+        
+        this.currySpacer = new Pane();
+        this.currySpacer.setPrefHeight(0);
+        this.currySpacer.setVisible(false);
+        
+        this.resTypeLabel = new Label("");
+        this.resTypeLabel.setMinWidth(USE_PREF_SIZE);
+        this.resTypeLabel.getStyleClass().add("resultType");
+        this.resTypeLabel.translateYProperty().bind(this.currySpacer.heightProperty());
+        this.output.translateYProperty().bind(this.currySpacer.heightProperty());
+        
+        VBox outputSpace = new VBox(this.currySpacer, this.resTypeLabel, this.output) {
+            @Override
+            public double computePrefHeight(double width) {
+                return currySpacer.prefHeight(width) + resTypeLabel.prefHeight(width)/2;
+            }
+        };
+        outputSpace.setMinHeight(USE_PREF_SIZE);
+        outputSpace.setMaxHeight(USE_PREF_SIZE);
+        outputSpace.setAlignment(Pos.CENTER);
+        outputSpace.setPickOnBounds(false);
+        
         this.curriedOutput = new Pane() {
                 @Override
                 public double computePrefWidth(double heigth) {
@@ -188,28 +207,24 @@ public class BinOpApplyBlock extends Block {
             };
         this.curriedOutput.setVisible(false);
         this.curriedOutput.getStyleClass().add("curriedOutput");
-        this.curriedOutput.setBorder(new Border(new BorderStroke(null, BorderStrokeStyle.SOLID, null, null)));
+        this.curriedOutput.setBorder(new Border(new BorderStroke(null, BorderStrokeStyle.SOLID, null, null, new Insets(-1))));
             
         this.bodySpace.getChildren().addAll(this.curriedOutput, inputSpace, outputSpace);
         outputSpace.layoutYProperty().bind(inputSpace.heightProperty());
         outputSpace.layoutXProperty().bind(inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2)));
-        outputSpace.setTranslateY(9);
         
-        this.curriedOutput.prefHeightProperty().bind(inputSpace.heightProperty());
-        this.curriedOutput.layoutYProperty().bind(inputSpace.heightProperty().divide(2));
-        this.curriedOutput.translateYProperty().bind(outputSpace.translateYProperty());
+        this.curriedOutput.prefHeightProperty().bind(currySpacer.heightProperty().multiply(4));
+        this.curriedOutput.translateYProperty().bind(inputSpace.heightProperty());
     }
 
 	private void dragShiftOuput(double y) {
         double shift = Math.max(0, y);
         if (this.leftInput.curried || this.rightInput.curried) {
-            this.curriedOutput.setManaged(true);
             this.curriedOutput.setVisible(true);
             this.curriedOutput.requestLayout();
         } else { 
-            this.output.getParent().setTranslateY(9 + shift);
+            this.currySpacer.setPrefHeight(shift);
             this.curriedOutput.setVisible(false);
-            this.curriedOutput.setManaged(false);
         }
 	}
 
