@@ -11,7 +11,7 @@
             <VBox fx:id="inputSpace" pickOnBounds="false" />
         </top>
         <bottom>
-            <HBox fx:id="outputSpace" spacing="50" pickOnBounds="false">
+            <HBox fx:id="outputSpace" pickOnBounds="false">
                 <padding>
                     <Insets bottom="0" left="20" right="20" top="0" />
                 </padding>

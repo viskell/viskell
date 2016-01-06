@@ -71,7 +71,16 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
 }
 
 MatchBlock #name {
-    -fx-padding: 0 7 0 7;
+    -fx-padding: -7 7 -7 7;
+}
+
+MatchBlock #outputSpace {
+	-fx-min-height: 15px;
+	-fx-spacing: 30px;
+}
+
+MatchBlock {
+    -fx-min-width: 50px;
 }
 
 .lifting.block {
