@@ -166,6 +166,7 @@ public class FunctionBlock extends Block {
     public void invalidateVisualState() {
         this.funRef.invalidateVisualState();
         this.argumentSpace.invalidateTypes();
+        this.output.invalidateVisualState();
     }
     
     /**

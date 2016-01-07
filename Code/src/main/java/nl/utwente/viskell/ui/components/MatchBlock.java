@@ -141,8 +141,8 @@ public class MatchBlock extends Block {
         for (Pane box : outputs) {
             OutputAnchor anchor = (OutputAnchor)box.getChildren().get(1);
             Label label = (Label)box.getChildren().get(0);
-            
             label.setText(anchor.getStringType());
+            anchor.invalidateVisualState();
         }
     }
 

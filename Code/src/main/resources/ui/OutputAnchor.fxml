@@ -1,8 +1,15 @@
-<?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.*?>
 <?import nl.utwente.viskell.ui.components.OutputAnchor?>
 <fx:root type="nl.utwente.viskell.ui.components.OutputAnchor" xmlns:fx="http://javafx.com/fxml/" maxHeight="0" minHeight="0" maxWidth="0" minWidth="0" pickOnBounds="false">
     <Rectangle fx:id="invisibleAnchor" translateY="20" height="40" width="40" styleClass="invisTouchZone"/>
     <Rectangle fx:id="visibleAnchor" translateY="3" height="6" width="20" styleClass="anchorPoint"/>
     <Line fx:id="openWire" endY="14" strokeWidth="3" translateY="12"/>
+    <Path fx:id="guardMarker" visible="false" strokeWidth="4" translateY="12">
+        <elements>
+            <MoveTo x="-10" y="0"/>
+            <ArcTo radiusX="10" radiusY="10" x="10" y="0"/>
+            <ArcTo radiusX="10" radiusY="10" x="-10" y="0"/>
+            <ClosePath/>
+        </elements>
+    </Path>
 </fx:root>

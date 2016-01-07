@@ -299,6 +299,7 @@ public class FunApplyBlock extends Block {
         this.funRef.invalidateVisualState();
         
         this.resTypeLabel.setText(this.resType.prettyPrint());
+        this.output.invalidateVisualState();
 
         for (FunInputAnchor arg : this.inputs) {
         	arg.invalidateVisualState();

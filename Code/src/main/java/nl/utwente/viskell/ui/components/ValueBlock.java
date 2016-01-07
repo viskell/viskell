@@ -98,6 +98,7 @@ public abstract class ValueBlock extends Block implements ConnectionAnchor.Targe
     @Override
     public void invalidateVisualState() {
         valueType.setText(output.getStringType());
+        this.output.invalidateVisualState();
     }
 
     @Override

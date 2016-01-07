@@ -35,6 +35,9 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
     /** The thing sticking out of an unconnected OutputAnchor. */
     @FXML private Shape openWire;
     
+    /** The thing that is shown when this anchor is used as a boolean guard. */
+    @FXML private Shape guardMarker;
+    
     /** The connections this anchor has, can be empty for no connections. */
     protected List<Connection> connections;
 
@@ -127,6 +130,7 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
     protected void addConnection(Connection connection) {
         this.connections.add(connection);
         this.openWire.setVisible(false);
+        this.guardMarker.setVisible(false);
     }
 
     /**
@@ -203,14 +207,17 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
             this.openWire.setStroke(Color.STEELBLUE);
             this.openWire.setStrokeWidth(5);
             this.visibleAnchor.setFill(Color.STEELBLUE);
+            this.guardMarker.setStroke(Color.STEELBLUE);
         } else if (goodness < 0) {
             this.openWire.setStroke(Color.RED);
             this.openWire.setStrokeWidth(3);
             this.visibleAnchor.setFill(Color.RED);
+            this.guardMarker.setStroke(Color.RED);
         } else {
             this.openWire.setStroke(Color.BLACK);
             this.openWire.setStrokeWidth(3);
             this.visibleAnchor.setFill(Color.BLACK);
+            this.guardMarker.setStroke(Color.BLACK);
         }
     }
 
@@ -218,11 +225,22 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
     public void setWireInProgress(DrawWire wire) {
         super.setWireInProgress(wire);
         if (wire == null) {
-            this.openWire.setVisible(!this.hasConnection());
+            this.invalidateVisualState();
             this.invisibleAnchor.setMouseTransparent(false);
         } else {
             this.openWire.setVisible(false);
+            this.guardMarker.setVisible(false);
             this.invisibleAnchor.setMouseTransparent(true);
+        }
+    }
+    public void invalidateVisualState() {
+        if ("Bool".equals(this.getStringType()) && this.getContainer() instanceof Lane) {
+            this.guardMarker.setVisible(!this.hasConnection());
+            this.openWire.setVisible(false);
+            
+        } else {
+            this.openWire.setVisible(!this.hasConnection());
+            this.guardMarker.setVisible(false);
         }
     }
 

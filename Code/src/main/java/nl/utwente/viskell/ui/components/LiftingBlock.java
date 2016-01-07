@@ -122,6 +122,7 @@ public class LiftingBlock extends Block {
         for (LiftInputAnchor input : this.inputs) {
             input.invalidateVisualState();
         }
+        this.output.invalidateVisualState();
     }
 
     @Override
