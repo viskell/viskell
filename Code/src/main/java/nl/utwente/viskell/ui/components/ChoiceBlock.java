@@ -127,6 +127,7 @@ public class ChoiceBlock extends Block {
     public void invalidateVisualState() {
         lanes.forEach(lane -> lane.invalidateVisualState());
         signature.setText(output.getStringType());
+        this.output.invalidateVisualState();
     }
     
     @Override

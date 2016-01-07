@@ -309,6 +309,7 @@ public class BinOpApplyBlock extends Block {
         this.resTypeLabel.setText(this.resType.prettyPrint());
         this.leftInput.invalidateVisualState();
         this.rightInput.invalidateVisualState();
+        this.output.invalidateVisualState();
     }
 	
     @Override
