@@ -48,6 +48,10 @@ public class WireMenu extends TilePane {
             lambdaBlockButton.setOnAction(event -> addBlockWithOutput(new LambdaBlock(this.toplevel, type.countArguments())));
             lambdaBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new LambdaBlock(this.toplevel, type.countArguments())));
             
+            Button arbitraryBlockButton = new Button("Arbitrary");
+            arbitraryBlockButton.setOnAction(event -> addBlockWithOutput(new ArbitraryBlock(this.toplevel)));
+            arbitraryBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new ArbitraryBlock(this.toplevel)));
+            
             Button rationalBlockButton = new Button("Rational");
             rationalBlockButton.setOnAction(event -> addBlockWithOutput(new SliderBlock(this.toplevel, false)));
             rationalBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new SliderBlock(this.toplevel, false)));
@@ -60,10 +64,17 @@ public class WireMenu extends TilePane {
             joinBlockButton.setOnAction(event -> addBlockWithOutput(new JoinerBlock(this.toplevel, tupleArity)));
             joinBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new JoinerBlock(this.toplevel, tupleArity)));
             
-            this.getChildren().addAll(cancelButton, lambdaBlockButton, rationalBlockButton, IntegerBlockButton , joinBlockButton);
+            this.getChildren().addAll(cancelButton, arbitraryBlockButton, rationalBlockButton, IntegerBlockButton , joinBlockButton);
+            if (type.countArguments() > 0) {
+                this.getChildren().add(lambdaBlockButton);
+            }
             
         } else {
-            Button disBlockButton = new Button("Display");
+            Button applyBlockButton = new Button("Apply");
+            applyBlockButton.setOnAction(event -> addBlockWithInput(new FunApplyBlock(new ApplyAnchor(type.countArguments()), this.toplevel)));
+            applyBlockButton.setOnTouchPressed(event -> addBlockWithInput(new FunApplyBlock(new ApplyAnchor(type.countArguments()), this.toplevel)));
+
+            Button disBlockButton = new Button("Observe");
             disBlockButton.setOnAction(event -> addBlockWithInput(new DisplayBlock(this.toplevel)));
             disBlockButton.setOnTouchPressed(event -> addBlockWithInput(new DisplayBlock(this.toplevel)));
             
@@ -76,6 +87,9 @@ public class WireMenu extends TilePane {
             splitBlockButton.setOnTouchPressed(event -> addBlockWithInput(new SplitterBlock(this.toplevel, tupleArity)));
             
             this.getChildren().addAll(cancelButton, disBlockButton, graphBlockButton, splitBlockButton);
+            if (type.countArguments() > 0) {
+                this.getChildren().add(applyBlockButton);
+            }
         }
 
         // opening animation
@@ -93,6 +107,10 @@ public class WireMenu extends TilePane {
         block.relocate(this.attachedWire.getEndX(), this.attachedWire.getEndY());
         this.close();
         
+        if (! block.belongsOnBottom()) {
+            block.refreshContainer();
+        }
+        
         block.initiateConnectionChanges();
         InputAnchor input = block.getAllInputs().get(0);
         Connection connection = this.attachedWire.buildConnectionTo(input);
@@ -106,6 +124,10 @@ public class WireMenu extends TilePane {
         this.toplevel.addBlock(block);
         block.relocate(this.attachedWire.getStartX(), this.attachedWire.getStartY() - block.prefHeight(-1));
         this.close();
+        
+        if (! block.belongsOnBottom()) {
+            block.refreshContainer();
+        }
         
         block.initiateConnectionChanges();
         OutputAnchor output = block.getAllOutputs().get(0);

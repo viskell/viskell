@@ -522,6 +522,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 toplevel.addBlock(block);
                 double offsetX = tpA.getX() < 0 ? -75 : 75;
                 block.relocate(DrawWire.this.getEndX() + offsetX, DrawWire.this.getEndY()-100);
+                block.refreshContainer();
                 block.initiateConnectionChanges();
 
                 InputAnchor input = block.getAllInputs().get(0);
@@ -548,6 +549,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 toplevel.addBlock(block);
                 double offsetX = tpA.getX() < 0 ? -75 : 75;
                 block.relocate(DrawWire.this.getStartX() + offsetX, DrawWire.this.getStartY()+100);
+                block.refreshContainer();
                 block.initiateConnectionChanges();
 
                 OutputAnchor input = block.getAllOutputs().get(0);
@@ -596,6 +598,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 toplevel.addBlock(block);
                 double offsetY = tpA.getY() < 0 ? -100 : 50;
                 block.relocate(DrawWire.this.getEndX() - 40, DrawWire.this.getEndY()+offsetY);
+                block.refreshContainer();
                 block.initiateConnectionChanges();
 
                 InputAnchor input = block.getAllInputs().get(0);
