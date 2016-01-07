@@ -65,7 +65,7 @@ public class ChoiceBlock extends Block {
         inputAnchors = new ArrayList<>();
         resultSpace.getChildren().add(output);
         dragContext.setGoToForegroundOnContact(false);
-        setMinHeight(USE_PREF_SIZE);
+        inputSpace.setMinHeight(BASELINE_OFFSET_SAME_AS_HEIGHT);
         
         addLane();
         addLane();
@@ -159,7 +159,7 @@ public class ChoiceBlock extends Block {
 
     @Override
     public void invalidateVisualState() {
-        lanes.forEach(lane -> lane.invalidateVisualState());
+        lanes.forEach(Lane::invalidateVisualState);
         inputAnchors.forEach(ChoiceInputAnchor::invalidateVisualState);
         signature.setText(output.getStringType());
         output.invalidateVisualState();
@@ -181,11 +181,11 @@ public class ChoiceBlock extends Block {
     
     /** Removes the last alternative from this block */
     public void removeLastLane() {
-        if (this.lanes.size() > 1) { 
+        if (lanes.size() > 1) { 
             Lane lane = lanes.remove(lanes.size()-1);
             lane.deleteAllLinks();
             altSpace.getChildren().remove(lane);
-            this.initiateConnectionChanges();
+            initiateConnectionChanges();
         }
     }
     
@@ -252,6 +252,20 @@ public class ChoiceBlock extends Block {
         super.deleteAllLinks();
     }
 
+    @Override
+    public boolean canAlterAnchors() {
+        return true;
+    }
+    
+    @Override
+    public void alterAnchorCount(boolean isRemove) {
+        if (isRemove) {
+            removeLastInput();
+        } else {
+            addExtraInput();
+        }
+    }
+    
     /** Combined input anchor and type label. */
     private class ChoiceInputAnchor extends VBox implements ConnectionAnchor.Target {
 
