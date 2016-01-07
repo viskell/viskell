@@ -8,6 +8,7 @@ import java.util.Set;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Insets;
@@ -91,6 +92,9 @@ public class BinOpApplyBlock extends Block {
                 this.curried = mostlyDown;
                 BinOpApplyBlock.this.dragShiftOuput(newY);
                 BinOpApplyBlock.this.initiateConnectionChanges();
+                if (this.curried && this.anchor.getWireInProgress() != null) {
+                    this.anchor.getWireInProgress().remove();
+                }
             });
         }
 
@@ -204,6 +208,10 @@ public class BinOpApplyBlock extends Block {
                 public double computePrefWidth(double heigth) {
                     return Math.max(inputSpace.prefWidth(heigth), outputSpace.getLayoutX()+resTypeLabel.prefWidth(heigth));
                 }
+                @Override
+                public double computePrefHeight(double width) {
+                    return currySpacer.getHeight()*4;
+                }
             };
         this.curriedOutput.setVisible(false);
         this.curriedOutput.getStyleClass().add("curriedOutput");
@@ -211,9 +219,8 @@ public class BinOpApplyBlock extends Block {
             
         this.bodySpace.getChildren().addAll(this.curriedOutput, inputSpace, outputSpace);
         outputSpace.layoutYProperty().bind(inputSpace.heightProperty());
-        outputSpace.layoutXProperty().bind(inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2)));
+        outputSpace.layoutXProperty().bind(Bindings.max(0, inputSpace.widthProperty().divide(2).subtract(resTypeLabel.widthProperty().divide(2))));
         
-        this.curriedOutput.prefHeightProperty().bind(currySpacer.heightProperty().multiply(4));
         this.curriedOutput.translateYProperty().bind(inputSpace.heightProperty());
     }
 
@@ -225,6 +232,7 @@ public class BinOpApplyBlock extends Block {
         } else { 
             this.currySpacer.setPrefHeight(shift);
             this.curriedOutput.setVisible(false);
+            this.curriedOutput.requestLayout();
         }
 	}
 
