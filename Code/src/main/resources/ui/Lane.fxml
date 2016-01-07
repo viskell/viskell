@@ -13,7 +13,7 @@
 	</right>
 	<top>
 		<VBox pickOnBounds="false">
-			<HBox fx:id="argumentSpace" pickOnBounds="false" />
+			<HBox fx:id="argSpace" pickOnBounds="false" />
 		</VBox>
 	</top>
 	<bottom>

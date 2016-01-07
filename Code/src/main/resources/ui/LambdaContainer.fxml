@@ -13,7 +13,7 @@
 			<padding>
 				<Insets bottom="0" left="10.0" right="10.0" top="0" />
 			</padding>
-			<HBox fx:id="argSpace" spacing="50" alignment="CENTER" pickOnBounds="false" />
+			<HBox fx:id="argSpace" pickOnBounds="false" />
 		</VBox>
 	</top>
 	<bottom>

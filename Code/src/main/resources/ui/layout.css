@@ -198,6 +198,11 @@ Lane .padding {
     -fx-pref-width: 5px;
 }
 
+#argSpace {
+	-fx-spacing: 100;
+	-fx-alignment: center;
+}
+
 .subtle {
     -fx-background-color: rgba(0, 0, 0, 0);
     -fx-font-size: 12px;
