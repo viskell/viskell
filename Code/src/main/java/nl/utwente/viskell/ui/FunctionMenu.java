@@ -333,12 +333,17 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         int offSetY = (this.blockCounter % 5) * 20 + (block.getAllOutputs().isEmpty() ? 250 : 125);
         if (this.localToScene(Point2D.ZERO).getX() < 200) {
             // too close to the left side of screen, put block on the right
-            int offSetX = (this.blockCounter % 5) * 10 + 100;
+            int offSetX = (this.blockCounter % 5) * 10 + (block.belongsOnBottom() ? 50 : 100);
             block.relocate(menuBounds.getMaxX() + offSetX, menuBounds.getMinY()+ offSetY);
         } else {
-            int offSetX = (this.blockCounter % 5) * 10 - 200;
+            int offSetX = (this.blockCounter % 5) * 10 - (block.belongsOnBottom() ? 400 : 200);
             block.relocate(menuBounds.getMinX() + offSetX, menuBounds.getMinY()+ offSetY);
         }
+
+        if (! block.belongsOnBottom()) {
+            block.refreshContainer();
+        }
+        
         block.initiateConnectionChanges();
         this.blockCounter++;
     }
