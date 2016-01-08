@@ -4,9 +4,8 @@
 <fx:root type="nl.utwente.viskell.ui.components.ChoiceBlock" xmlns:fx="http://javafx.com/fxml/">
     <BorderPane styleClass="block" pickOnBounds="false">
     	<top>
-    		<Pane styleClass="choiceBorder">
-        		<Label text="Spacer" styleClass="inputType" visible="false"/>
-       		</Pane>
+    		<HBox fx:id="inputSpace" spacing="50" styleClass="choiceBorder" pickOnBounds="false">
+       		</HBox>
     	</top>
     	<bottom>
     		<VBox styleClass="choiceBorder" pickOnBounds="false">

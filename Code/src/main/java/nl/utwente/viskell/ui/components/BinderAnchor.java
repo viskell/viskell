@@ -56,6 +56,7 @@ public class BinderAnchor extends OutputAnchor {
     }
 
     public void invalidateVisualState() {
+        super.invalidateVisualState();
         this.typeLabel.setText(this.getStringType());
     }
 }

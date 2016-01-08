@@ -15,6 +15,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Case;
 import nl.utwente.viskell.haskell.expr.ConstructorBinder;
 import nl.utwente.viskell.haskell.expr.LetExpression;
@@ -52,7 +53,7 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
     private Pane resizer;
 
     /** The container Node for binder anchors */
-    @FXML protected Pane argumentSpace;
+    @FXML protected Pane argSpace;
     
     /** The resizable area on which blocks can be placed */
     @FXML protected Pane guardSpace;
@@ -70,8 +71,6 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
         arguments = new ArrayList<>();
         result = new ResultAnchor(this, wrapper, Optional.empty());
         attachedBlocks = new HashSet<>();
-        
-        argumentSpace.getChildren().addAll(arguments);
         resultSpace.getChildren().add(result);
         setupResizer();
         
@@ -189,8 +188,8 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
 
     /** Called when the VisualState changed. */
     public void invalidateVisualState() {
-    	// TODO update anchors when they get a type label  
-    	this.result.invalidateVisualState();
+        arguments.forEach(BinderAnchor::invalidateVisualState);
+    	result.invalidateVisualState();
     }
     
     /** Add and initializes a resizer element to this block */
@@ -208,6 +207,20 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
 
         DragContext sizeDrag = new DragContext(this.resizer);
         sizeDrag.setDragLimits(new BoundingBox(200, 200, Integer.MAX_VALUE, Integer.MAX_VALUE));
+    }
+    
+    /** Adds extra input binder anchor to this lane */
+    public void addExtraInput() {
+        BinderAnchor arg = new BinderAnchor(this, getWrapper(), new Binder("a_" + arguments.size()));
+        arguments.add(arg);
+        argSpace.getChildren().add(arg);
+    }
+
+    /** Removes the last input binder anchor of this lane */
+    public void removeLastInput() {
+        BinderAnchor arg = arguments.remove(arguments.size()-1);
+        arg.removeConnections();
+        argSpace.getChildren().remove(arg);
     }
     
     @Override
