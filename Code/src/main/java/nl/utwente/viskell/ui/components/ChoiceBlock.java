@@ -283,7 +283,7 @@ public class ChoiceBlock extends Block {
             this.anchor = new InputAnchor(ChoiceBlock.this);
             this.anchor.setAlignment(Pos.CENTER);
             this.getChildren().addAll(this.anchor, this.inputType);
-            this.setTranslateY(-9);
+            this.setTranslateY(-18);
             this.setPickOnBounds(false);
             this.setAlignment(Pos.CENTER);
         }
@@ -297,7 +297,7 @@ public class ChoiceBlock extends Block {
         private void invalidateVisualState() {
             this.anchor.invalidateVisualState();
             boolean validConnection = this.anchor.hasValidConnection();
-            this.setTranslateY(validConnection ? 0 : -9);
+            this.setTranslateY(validConnection ? -9 : -18);
             this.inputType.setText(validConnection ? "zyxwv" : this.anchor.getStringType()); 
             this.inputType.setVisible(!validConnection);
         }
