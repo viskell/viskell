@@ -186,13 +186,13 @@ public class Connection extends CubicCurve implements
 
     /** Returns the current bezier offset based on the current start and end positions. */
     private static double getBezierYOffset(CubicCurve wire) {
-        double distX = Math.abs(wire.getEndX() - wire.getStartX());
+        double distX = Math.abs(wire.getEndX() - wire.getStartX())/3;
         double diffY = wire.getEndY() - wire.getStartY();
-        double distY = diffY > 0 ? diffY/2 : -diffY; 
+        double distY = diffY > 0 ? diffY/2 : Math.max(0, -diffY-10); 
         if (distY < BEZIER_CONTROL_OFFSET) {
             if (distX < BEZIER_CONTROL_OFFSET) {
                 // short lines are extra flexible
-                return Math.max(BEZIER_CONTROL_OFFSET/10, Math.max(distX, distY));
+                return Math.max(1, Math.max(distX, distY));
             } else {
                 return BEZIER_CONTROL_OFFSET;
             }
