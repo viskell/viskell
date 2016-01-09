@@ -10,6 +10,9 @@ This project is exploring the possibilities and challenges of interactive visual
 While many visual programming languages/environments exist, they are often restricted to some application domain or a specific target audience.
 The potential of advanced type systems and higher level abstractions in visual programming has barely been explored yet.
 
+### Background information
+![Short project overview presentation](viskell-nlfpday.pdf) (as given on the dutch functional programming day, jan 8 2016)
+
 ### Goals and focus points
 
   * Creating readable and compact visualisations for functional language constructs.
