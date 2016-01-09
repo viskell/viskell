@@ -11,7 +11,7 @@ While many visual programming languages/environments exist, they are often restr
 The potential of advanced type systems and higher level abstractions in visual programming has barely been explored yet.
 
 ### Background information
-![Short project overview presentation](viskell-nlfpday.pdf) (as given on the dutch functional programming day, jan 8 2016)
+[Short project overview presentation](viskell-nlfpday.pdf) as given on the Dutch Functional Programming Day of Jan 8, 2016.
 
 ### Goals and focus points
 
