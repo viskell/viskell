@@ -314,7 +314,7 @@ public class TypeVar extends Type {
     @Override
     public Type getFresh(TypeScope scope) {
         if (this.instance.isPresent()) {
-            return this.instance.get().getFresh();
+            return this.instance.get().getFresh(scope);
         }
 
         return scope.pickFreshTypeVar(this);
