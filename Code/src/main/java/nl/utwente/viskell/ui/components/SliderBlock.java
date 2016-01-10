@@ -16,7 +16,7 @@ public class SliderBlock extends ValueBlock {
     @FXML protected Slider slider;
     
     /** Whether this slider represent an integral value. */
-    private final boolean isIntegral;
+    public final boolean isIntegral;
     
     /** The value as of the latest finished modification. */
     private double baseValue;

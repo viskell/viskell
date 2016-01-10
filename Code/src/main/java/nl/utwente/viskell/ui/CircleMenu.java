@@ -198,6 +198,40 @@ public class CircleMenu extends CircularPane {
             this.add(unlift);
         }
         
+        if (block instanceof ConstantBlock || (block instanceof SliderBlock && ((SliderBlock)block).isIntegral)) {
+            image = makeImageView("/ui/icons/appbar.refresh.counterclockwise.up.png");
+            MenuButton convertToMatch = new MenuButton("as match", image);
+            convertToMatch.setOnActivate(() -> {
+                ToplevelPane toplevel = this.block.getToplevel();
+                ValueBlock valBlock = (ValueBlock)block;
+                Block matcher = new ConstantMatchBlock(toplevel, valBlock.getAnnotationType(), valBlock.getValue());
+                matcher.setLayoutX(valBlock.getLayoutX());
+                matcher.setLayoutY(valBlock.getLayoutY());
+                toplevel.removeBlock(valBlock);
+                toplevel.addBlock(matcher);
+                matcher.initiateConnectionChanges();
+                matcher.refreshContainer();
+            });
+            this.add(convertToMatch);
+            
+        } else if (this.block instanceof ConstantMatchBlock) {
+            image = makeImageView("/ui/icons/appbar.refresh.counterclockwise.down.png");
+            MenuButton convertToValue = new MenuButton("as value", image);
+            convertToValue.setOnActivate(() -> {
+                ToplevelPane toplevel = this.block.getToplevel();
+                ConstantMatchBlock cmBlock = (ConstantMatchBlock)block;
+                Block valBlock = new ConstantBlock(toplevel, cmBlock.getAnnotationType(), cmBlock.getValue(), true);
+                valBlock.setLayoutX(cmBlock.getLayoutX());
+                valBlock.setLayoutY(cmBlock.getLayoutY());
+                toplevel.removeBlock(cmBlock);
+                toplevel.addBlock(valBlock);
+                valBlock.initiateConnectionChanges();
+                valBlock.refreshContainer();
+            });
+            this.add(convertToValue);
+            
+        }
+        
         // pressing the menu area outside a button closes it
         this.addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {this.hide(); e.consume();});
         this.addEventHandler(TouchEvent.TOUCH_PRESSED, e -> {this.hide(); e.consume();});

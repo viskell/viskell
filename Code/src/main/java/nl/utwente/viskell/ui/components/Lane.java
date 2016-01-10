@@ -17,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import nl.utwente.viskell.haskell.expr.Binder;
 import nl.utwente.viskell.haskell.expr.Case;
+import nl.utwente.viskell.haskell.expr.ConstantBinder;
 import nl.utwente.viskell.haskell.expr.ConstructorBinder;
 import nl.utwente.viskell.haskell.expr.LetExpression;
 import nl.utwente.viskell.haskell.type.TypeScope;
@@ -98,6 +99,8 @@ public class Lane extends BorderPane implements WrappedContainer, ComponentLoade
         attachedBlocks.stream().filter(Block::isBottomMost).forEach(block -> {
             if (block instanceof MatchBlock) {
                 guards.addLetBinding(((MatchBlock)block).getPrimaryBinder(), block.getAllInputs().get(0).getFullExpr());
+            } else if (block instanceof ConstantMatchBlock) {
+                guards.addLetBinding(new ConstantBinder(((ConstantMatchBlock)block).getValue()), block.getAllInputs().get(0).getFullExpr());
             } else if (block instanceof SplitterBlock) {
                 guards.addLetBinding(((SplitterBlock)block).getPrimaryBinder(), block.getAllInputs().get(0).getFullExpr());
             } else {

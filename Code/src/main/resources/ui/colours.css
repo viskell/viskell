@@ -56,6 +56,12 @@
     -fx-effect: dropshadow(two-pass-box, black, 3, 0.0, 1, 1)
 }
 
+.block.constantMatch {
+    -fx-background-color: #BD1550;
+    -fx-background-radius: 7px;
+	-fx-border-radius: 9px;
+}
+
 .block.lifting {
 	-fx-background-color: burlywood;
 	-fx-background-radius: 7px;
