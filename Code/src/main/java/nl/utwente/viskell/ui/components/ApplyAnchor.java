@@ -62,22 +62,17 @@ public class ApplyAnchor extends InputAnchor implements FunctionReference {
 
     @Override
     public Type refreshedType(int argCount, TypeScope scope) {
-        if (this.hasConnection()) {
-            this.setFreshRequiredType(this.getType().getFresh(scope), scope);
-            return this.getType();
-        } else {
-            if (argCount < 1) {
-                return scope.getVar("xr");
-            }
-            
-            Type res = Type.fun(scope.getVar("a_0"), scope.getVar("xr"));
-            for (int i = argCount-1; i > 0 ; i--) {
-                res = Type.fun(scope.getVar("a_"+i), res);
-            }
-
-            this.setFreshRequiredType(res, scope);
-            return res;
+        if (argCount < 1) {
+            return scope.getVar("xr");
         }
+
+        Type res = Type.fun(scope.getVar("a_0"), scope.getVar("xr"));
+        for (int i = argCount-1; i > 0 ; i--) {
+            res = Type.fun(scope.getVar("a_"+i), res);
+        }
+
+        this.setFreshRequiredType(res, scope);
+        return res;
     }
 
     @Override
