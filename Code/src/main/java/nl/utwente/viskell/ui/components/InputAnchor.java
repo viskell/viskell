@@ -112,6 +112,9 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
         }
         this.setErrorState(false);
         this.openWire.setVisible(true);
+        if (this.getWireInProgress() != null) {
+            this.getWireInProgress().remove();
+        }
     }
 
     @Override

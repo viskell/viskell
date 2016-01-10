@@ -151,6 +151,9 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
             connection.remove();
         }
         this.openWire.setVisible(true);
+        if (this.getWireInProgress() != null) {
+            this.getWireInProgress().remove();
+        }
     }
 
     @Override
