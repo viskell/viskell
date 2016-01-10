@@ -16,8 +16,8 @@ import nl.utwente.viskell.ui.ToplevelPane;
 
 public class ConstantMatchBlock extends Block {
     
-    /** The original type of the value.  */
-    private final Type baseType;
+    /** The original value block.  */
+    private final ValueBlock original;
     
     /** The space containing the input anchor. */
     private final VBox inputSpace;
@@ -31,12 +31,12 @@ public class ConstantMatchBlock extends Block {
     /** The label for placing the value of this block. */
     private final Label value;
 
-    public ConstantMatchBlock(ToplevelPane pane, Type type, String val) {
+    public ConstantMatchBlock(ToplevelPane pane, ValueBlock original) {
         super(pane);
-        this.baseType = type;
-        this.value = new Label(val);
+        this.original = original;
+        this.value = new Label(original.getValue());
         this.input = new InputAnchor(this);
-        this.input.setFreshRequiredType(this.baseType, new TypeScope());
+        this.input.setFreshRequiredType(original.getAnnotationType(), new TypeScope());
         this.inputType = new Label(this.input.getStringType());
         this.inputType.getStyleClass().add("inputType");
         this.value.setAlignment(Pos.CENTER);
@@ -58,9 +58,8 @@ public class ConstantMatchBlock extends Block {
     public final String getValue() {
         return this.value.getText();
     }
-    
-    public final Type getAnnotationType() {
-        return this.baseType.getFresh();
+    public final ValueBlock getOriginal() {
+        return this.original;
     }
     
     @Override
@@ -75,7 +74,7 @@ public class ConstantMatchBlock extends Block {
 
     @Override
     protected void refreshAnchorTypes() {
-        this.input.setFreshRequiredType(this.baseType, new TypeScope());
+        this.input.setFreshRequiredType(this.original.getAnnotationType(), new TypeScope());
         this.inputSpace.setTranslateY(this.input.hasConnection() ? 9 : 0);
         this.inputType.setVisible(! this.input.hasConnection());
     }
@@ -93,7 +92,7 @@ public class ConstantMatchBlock extends Block {
 
     @Override
     public Optional<Block> getNewCopy() {
-        return Optional.of(new ConstantMatchBlock(this.getToplevel(), this.baseType.getFresh(), this.value.getText()));
+        return this.original.getNewCopy().map(orig -> new ConstantMatchBlock(this.getToplevel(), (ValueBlock)orig));
     }
 
 }

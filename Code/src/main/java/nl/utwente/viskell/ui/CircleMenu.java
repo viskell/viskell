@@ -204,7 +204,7 @@ public class CircleMenu extends CircularPane {
             convertToMatch.setOnActivate(() -> {
                 ToplevelPane toplevel = this.block.getToplevel();
                 ValueBlock valBlock = (ValueBlock)block;
-                Block matcher = new ConstantMatchBlock(toplevel, valBlock.getAnnotationType(), valBlock.getValue());
+                Block matcher = new ConstantMatchBlock(toplevel, valBlock);
                 matcher.setLayoutX(valBlock.getLayoutX());
                 matcher.setLayoutY(valBlock.getLayoutY());
                 toplevel.removeBlock(valBlock);
@@ -220,7 +220,7 @@ public class CircleMenu extends CircularPane {
             convertToValue.setOnActivate(() -> {
                 ToplevelPane toplevel = this.block.getToplevel();
                 ConstantMatchBlock cmBlock = (ConstantMatchBlock)block;
-                Block valBlock = new ConstantBlock(toplevel, cmBlock.getAnnotationType(), cmBlock.getValue(), true);
+                Block valBlock = cmBlock.getOriginal();
                 valBlock.setLayoutX(cmBlock.getLayoutX());
                 valBlock.setLayoutY(cmBlock.getLayoutY());
                 toplevel.removeBlock(cmBlock);
