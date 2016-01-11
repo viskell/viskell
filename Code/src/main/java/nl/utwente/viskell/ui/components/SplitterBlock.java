@@ -64,8 +64,9 @@ public class SplitterBlock extends Block {
         splitter.setPickOnBounds(true);
         
         VBox body = new VBox(inputSpace, splitter, outputSpace);
+        body.setPickOnBounds(false);
         this.getChildren().add(body);
-        this.setPickOnBounds(true);
+        this.setPickOnBounds(false);
     }
 
     @Override
