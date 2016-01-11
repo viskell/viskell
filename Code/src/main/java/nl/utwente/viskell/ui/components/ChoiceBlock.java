@@ -99,15 +99,18 @@ public class ChoiceBlock extends Block {
 
     @Override
     protected void refreshAnchorTypes() {
-        lanes.stream().forEach(lane -> lane.handleConnectionChanges(false));
+        lanes.stream().forEach(lane -> lane.refreshAnchorTypes());
         
         // TODO make sure the last edited lane gets unified last to prevent
         // that large parts of a program become invalid in case of a type error,
         // but rather only the lane in which the edit took place.
         List<TypeVar> typeList = new ArrayList<>();
         TypeVar resultType = TypeScope.unique("choice_res");
+        output.setExactRequiredType(resultType);
         for (int i = 0; i < inputAnchors.size(); ++i) {
-            typeList.add(TypeScope.unique("choice_arg"+i));
+            TypeVar argType = TypeScope.unique("choice_arg"+i);
+            typeList.add(argType);
+            inputAnchors.get(i).anchor.setExactRequiredType(argType);
         }
         
         for (Lane lane : lanes) {
@@ -123,11 +126,6 @@ public class ChoiceBlock extends Block {
             } catch (HaskellTypeError e) {
             }
         }
-
-        for (int i = 0; i < typeList.size(); ++i) {
-            inputAnchors.get(i).anchor.setExactRequiredType(typeList.get(i));
-        }
-        output.setExactRequiredType(resultType);
     }
 
     public void handleConnectionChanges(boolean finalPhase) {
