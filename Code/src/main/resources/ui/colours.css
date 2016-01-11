@@ -62,7 +62,7 @@
     -fx-border-radius: 9px;
 }
 
-.match.block {
+.block.match, .block.constantMatch {
     -fx-background-color: #8DD0D0;
     -fx-background-radius: 10 0 10 0;
     -fx-border-radius: 12 0 12 0;

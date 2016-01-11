@@ -65,6 +65,10 @@ public abstract class ValueBlock extends Block implements ConnectionAnchor.Targe
         return value.getText();
     }
 
+    public Type getAnnotationType() {
+        return this.output.binder.getFreshAnnotationType();
+    }
+    
     @Override
     public ConnectionAnchor getAssociatedAnchor() {
         return output;

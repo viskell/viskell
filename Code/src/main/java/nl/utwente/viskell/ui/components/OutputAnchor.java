@@ -12,13 +12,8 @@ import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
-import nl.utwente.viskell.haskell.expr.Binder;
-import nl.utwente.viskell.haskell.expr.Expression;
-import nl.utwente.viskell.haskell.expr.LetExpression;
-import nl.utwente.viskell.haskell.expr.LocalVar;
-import nl.utwente.viskell.haskell.expr.Variable;
-import nl.utwente.viskell.haskell.type.Type;
-import nl.utwente.viskell.haskell.type.TypeScope;
+import nl.utwente.viskell.haskell.expr.*;
+import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.BlockContainer;
 
 /**
@@ -191,6 +186,8 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
             
             if (block instanceof MatchBlock) {
                 added = exprGraph.addLetBinding(((MatchBlock)block).getPrimaryBinder(), expr);
+            } else if (block instanceof ConstantMatchBlock) {
+                added = exprGraph.addLetBinding(new ConstantBinder(((ConstantMatchBlock)block).getValue()), expr);
             } else if (block instanceof SplitterBlock) {
                 added = exprGraph.addLetBinding(((SplitterBlock)block).getPrimaryBinder(), expr);
             } else {
