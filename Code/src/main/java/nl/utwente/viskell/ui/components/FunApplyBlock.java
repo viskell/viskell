@@ -173,7 +173,10 @@ public class FunApplyBlock extends Block {
             this.inputs.add(ia);
             t = ft.getResult();
         }
-        Iterables.getLast(FunApplyBlock.this.inputs).curryArrow.setManaged(false);
+        
+        if (! this.inputs.isEmpty()) {
+            Iterables.getLast(FunApplyBlock.this.inputs).curryArrow.setManaged(false);
+        }
 
         this.inputSpace = new HBox(5, this.inputs.toArray(new Node[this.inputs.size()]));
         this.inputSpace.setPickOnBounds(false);
