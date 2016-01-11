@@ -62,8 +62,8 @@ public class TouchContext {
             return;
         }
         
+        Point2D currentPos = new Point2D(e.getScreenX(), e.getScreenY());
         if (!e.isSecondaryButtonDown()) {
-            Point2D currentPos = new Point2D(e.getScreenX(), e.getScreenY());
             if (this.panning) {
                 Point2D delta = currentPos.subtract(this.lastPanPosition);
                 if (this.panningAction != null) {
@@ -72,8 +72,9 @@ public class TouchContext {
             } else {
                 this.panning = true;
             }
-            this.lastPanPosition = currentPos;
         }
+        this.lastPanPosition = currentPos;
+
         e.consume();
     }
     
