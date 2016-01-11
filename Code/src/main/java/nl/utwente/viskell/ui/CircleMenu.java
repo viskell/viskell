@@ -88,7 +88,10 @@ public class CircleMenu extends CircularPane {
         } else if (block instanceof LambdaBlock) {
             image = makeImageView("/ui/icons/appbar.input.pen.png");
             MenuButton editSig = new MenuButton("editSignature", image);
-            editSig.setOnActivate(() -> ((LambdaBlock)block).editSignature());
+            editSig.setOnActivate(() -> {
+                this.hide();
+                ((LambdaBlock)block).editSignature();
+            });
             this.add(editSig);
 
         } else if (block instanceof ChoiceBlock) {
@@ -105,7 +108,10 @@ public class CircleMenu extends CircularPane {
         } else if (block instanceof ConstantBlock) {
             image = makeImageView("/ui/icons/appbar.page.edit.png");
             MenuButton edit = new MenuButton("edit", image);
-            edit.setOnActivate(() -> ((ConstantBlock)block).editValue(Optional.empty()));
+            edit.setOnActivate(() -> {
+                this.hide();
+                ((ConstantBlock)block).editValue(Optional.empty());
+            });
             this.add(edit);
         }
         
