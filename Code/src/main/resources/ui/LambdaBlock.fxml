@@ -10,15 +10,14 @@
        		</Pane>
     	</top>
     	<bottom>
-    		<VBox pickOnBounds="false">
-       			<Pane styleClass="lambdaBorder" pickOnBounds="false">
-       				<HBox translateY="16" spacing="1" pickOnBounds="false">
-       					<Label fx:id="definitionName" styleClass="defName"/>
+       		<Pane styleClass="lambdaBorder" pickOnBounds="false">
+       			<HBox translateY="16" spacing="1" pickOnBounds="false">
+       				<Label fx:id="definitionName" styleClass="defName"/>
+       				<VBox fx:id="funSpace" alignment="CENTER" pickOnBounds="false">
        					<Label fx:id="signature" styleClass="inputType"/>
-       				</HBox>
-       			</Pane>	
-				<HBox fx:id="funSpace" translateX="30" translateY="9" alignment="BOTTOM_LEFT" pickOnBounds="false"/>
-			</VBox>
+       				</VBox>
+       			</HBox>
+       		</Pane>	
     	</bottom>
     	<center>
     		<Pane fx:id="bodySpace" pickOnBounds="false"/>
