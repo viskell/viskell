@@ -4,7 +4,7 @@ import java.util.List;
 
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Ellipse;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.type.Type;
 
@@ -36,8 +36,9 @@ public abstract class NestedBlock extends StackPane {
             super();
             this.setMinSize(0, 0);
             this.setMaxSize(0, 0);
-            Rectangle bond = new Rectangle(15, 6, Color.BLACK);
-            bond.setTranslateY(isInput ? -1 : 1);
+            Ellipse bond = new Ellipse(7, 3);
+            bond.setFill(Color.BLACK);
+            bond.setTranslateY(isInput ? -3 : 3);
             this.getChildren().add(bond);
         }
     }

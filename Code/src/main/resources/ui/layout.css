@@ -53,6 +53,7 @@ ToplevelPane, ToplevelPane > Pane > Pane > Pane {
 }
 
 .nested {
+    -fx-padding: 3 0 3 0;
     -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-border-width: 1px;
@@ -100,7 +101,7 @@ MatchBlock {
 
 .value.block {
     -fx-padding: 3 6 -9 6;
-    -fx-min-width: 80px;
+    -fx-min-width: 60px;
 }
 
 .value.nested {
