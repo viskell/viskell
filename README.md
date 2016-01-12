@@ -37,3 +37,11 @@ To build an executable `.jar` file that includes dependencies, check out this re
 Java 8, GHC and QuickCheck are required. Importing as a Maven project into any Java IDE should also work.
 
 You can also download a [pre-built binary jar archive](https://github.com/wandernauta/viskell/releases/download/nlfp-day-demo/viskell-0.1.jar).
+
+##### FAQ
+
+* Why is the implementation in Java 8/JavaFX?
+  * It was considered the least problematic option at the start of this project.
+    Haskell unfortunately lacks suitable GUI libraries, and we need good multi-touch support (3+ independently moving touchpoints) that is also cross platform.
+    And secondly not all of the initial contributors were experienced with Haskell.
+    Eventually we want to transition to a browser based GUI combined with Haskell on a local server.
