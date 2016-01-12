@@ -50,9 +50,8 @@ public class TouchContext {
     }
     
     private void handleMousePress(MouseEvent e) {
-        if (e.isPrimaryButtonDown() && !e.isSynthesized()) {
+        if (!e.isSynthesized()) {
             lastPanPosition = new Point2D(e.getScreenX(), e.getScreenY());
-            panning = true;
         }
         e.consume();
     }
@@ -64,14 +63,14 @@ public class TouchContext {
         }
         
         Point2D currentPos = new Point2D(e.getScreenX(), e.getScreenY());
-        if (!e.isSecondaryButtonDown()) {
+        if (!e.isPrimaryButtonDown()) {
+            Point2D delta = currentPos.subtract(this.lastPanPosition);
             if (this.panning) {
-                Point2D delta = currentPos.subtract(this.lastPanPosition);
                 if (this.panningAction != null) {
                     this.panningAction.accept(delta.getX(), delta.getY());
                 }
             } else {
-                this.panning = true;
+                this.panning = (Math.abs(delta.getX()) +  Math.abs(delta.getY())) > 2;
             }
         }
         this.lastPanPosition = currentPos;
@@ -84,12 +83,12 @@ public class TouchContext {
             return;
         }
         
-        if (e.getButton() == MouseButton.PRIMARY) {
-            this.panning = false;
-        } else if (!this.panning) {
+        if (e.getButton() != MouseButton.PRIMARY && !this.panning) {
             Point2D pos = this.container.getToplevel().sceneToLocal(this.container.asNode().localToScene(e.getX(), e.getY()));
             this.container.getToplevel().showFunctionMenuAt(pos.getX(), pos.getY(), true);
         }
+        
+        this.panning = false;
         e.consume();
     }
     
