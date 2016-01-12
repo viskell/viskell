@@ -12,6 +12,7 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 /**
@@ -121,6 +122,9 @@ public class TouchContext {
         /** Timed delay for the creation of the function menu. */
         private Timeline menuDelay;
         
+        /** The line shown for the wire cutting gesture, might be null if not valid. */
+        private Line wireCutter;
+
         /**
          * @param touchPoint that is the center of new active touch area.
          */
@@ -140,6 +144,12 @@ public class TouchContext {
             this.removeDelay = new Timeline(new KeyFrame(Duration.millis(250), this::remove));
             this.menuDelay = new Timeline(new KeyFrame(Duration.millis(200), this::finishMenu));
             
+            this.wireCutter = new Line(pos.getX(), pos.getY(), pos.getX(), pos.getY());
+            this.wireCutter.setStroke(Color.YELLOW);
+            this.wireCutter.setStrokeWidth(3);
+            this.wireCutter.setVisible(false);
+            this.toplevel.addUpperTouchArea(this.wireCutter);
+            
             touchPoint.grab(this);
             this.addEventHandler(TouchEvent.TOUCH_RELEASED, this::handleRelease);
             this.addEventHandler(TouchEvent.TOUCH_PRESSED, this::handlePress);
@@ -148,6 +158,14 @@ public class TouchContext {
         
         private void remove(ActionEvent event) {
             this.toplevel.removeLowerTouchArea(this);
+            this.removeCutter();
+        }
+       
+        private void removeCutter(){
+            if (this.wireCutter != null) {
+                this.toplevel.removeUpperTouchArea(this.wireCutter);
+                this.wireCutter = null;
+            }
         }
         
         private void finishMenu(ActionEvent event) {
@@ -161,6 +179,7 @@ public class TouchContext {
             this.removeDelay.stop();
             if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() == 2) {
                 this.menuDelay.stop();
+                this.removeCutter();
             }
             event.consume();
         }
@@ -182,13 +201,16 @@ public class TouchContext {
         }
         
         private void handleDrag(TouchEvent event) {
+            TouchPoint touchPoint = event.getTouchPoint();
+            
             if (event.getTouchPoint().getId() != this.touchID) {
                 // we use only primary finger for drag movement
             } else if (event.getTouchPoints().stream().filter(tp -> tp.belongsTo(this)).count() < 2) {
                 // not a multi finger drag
+                this.updateCutter(this.toplevel.sceneToLocal(touchPoint.getSceneX(), touchPoint.getSceneY()));
             } else {
-                double deltaX = event.getTouchPoint().getX() - this.getCenterX();
-                double deltaY = event.getTouchPoint().getY() - this.getCenterY();
+                double deltaX = touchPoint.getX() - this.getCenterX();
+                double deltaY = touchPoint.getY() - this.getCenterY();
                 
                 if (Math.abs(deltaX) + Math.abs(deltaY) < 2) {
                     // ignore very small movements
@@ -207,6 +229,35 @@ public class TouchContext {
             }
             
             event.consume();
+        }
+
+        private void updateCutter(Point2D newPos) {
+            if (this.wireCutter == null) {
+                return;
+            }
+            
+            double lineDiffX = this.wireCutter.getStartX() - this.wireCutter.getEndX();
+            double lineDiffY = this.wireCutter.getStartY() - this.wireCutter.getEndY();
+            double lengthSQ = lineDiffX*lineDiffX + lineDiffY*lineDiffY;
+            double distance = new Point2D(this.wireCutter.getStartX(), this.wireCutter.getStartY()).distance(newPos);
+            if (distance*distance > lengthSQ) {
+                this.wireCutter.setEndX(newPos.getX());
+                this.wireCutter.setEndY(newPos.getY());
+                if (distance > 300) {
+                    this.removeCutter();
+                } else if (distance > 75) {
+                    this.wireCutter.setVisible(true);
+                }
+                
+            } else if (distance < 20 && lengthSQ > 100*100) {
+                double midX = (this.wireCutter.getStartX()+this.wireCutter.getEndX())/2;
+                double midY = (this.wireCutter.getStartY()+this.wireCutter.getEndY())/2;
+                Circle cutArea = new Circle(midX, midY, 40);
+                this.toplevel.addUpperTouchArea(cutArea);
+                this.toplevel.cutIntersectingConnections(cutArea);
+                this.toplevel.removeUpperTouchArea(cutArea);
+                this.removeCutter();
+            }
         }
     }
 }

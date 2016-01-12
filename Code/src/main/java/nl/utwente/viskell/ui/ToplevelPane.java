@@ -13,6 +13,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
@@ -235,6 +236,17 @@ public class ToplevelPane extends Region implements BlockContainer {
         }
         
         return anchors;
+    }
+    
+    protected void cutIntersectingConnections(Shape cutter) {
+        for (Node node : new ArrayList<>(this.wireLayer.getChildren())) {
+           if (node instanceof Connection) {
+               Connection wire = (Connection)node;
+               if (((Path)Shape.intersect(wire, cutter)).getElements().size() > 0) {
+                   wire.remove();
+               }
+           }
+        }
     }
     
     @Override
