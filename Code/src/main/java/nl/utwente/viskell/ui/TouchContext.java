@@ -34,6 +34,9 @@ public class TouchContext {
     
     private boolean willPanTouchArea;
     
+    /** The line shown for the wire cutting mouse action, might be null if not valid. */
+    private Line mouseCutLine;
+    
     public TouchContext(BlockContainer container, boolean willPanTouchArea) {
         super();
         this.container = container;
@@ -49,9 +52,25 @@ public class TouchContext {
         container.asNode().addEventHandler(TouchEvent.TOUCH_PRESSED, this::handleTouchPress);
     }
     
+    private void dropMouseCutLine() {
+        if (this.mouseCutLine != null) {
+            this.container.getToplevel().removeUpperTouchArea(this.mouseCutLine);
+            this.mouseCutLine = null;
+        }
+    }
+    
     private void handleMousePress(MouseEvent e) {
         if (!e.isSynthesized()) {
-            lastPanPosition = new Point2D(e.getScreenX(), e.getScreenY());
+            this.lastPanPosition = new Point2D(e.getScreenX(), e.getScreenY());
+            
+            if (e.getButton() == MouseButton.PRIMARY && this.mouseCutLine == null) {
+                Point2D pos = this.container.getToplevel().sceneToLocal(e.getSceneX(), e.getSceneY());
+                this.mouseCutLine = new Line(pos.getX(), pos.getY(), pos.getX(), pos.getY());
+                this.mouseCutLine.setStroke(Color.YELLOW);
+                this.mouseCutLine.setStrokeWidth(3);
+                this.mouseCutLine.setVisible(false);
+                this.container.getToplevel().addUpperTouchArea(this.mouseCutLine);
+            }
         }
         e.consume();
     }
@@ -72,9 +91,33 @@ public class TouchContext {
             } else {
                 this.panning = (Math.abs(delta.getX()) +  Math.abs(delta.getY())) > 2;
             }
+        } else if (this.mouseCutLine != null) {
+            Point2D newPos = this.container.getToplevel().screenToLocal(currentPos);
+            double lineDiffX = this.mouseCutLine.getStartX() - this.mouseCutLine.getEndX();
+            double lineDiffY = this.mouseCutLine.getStartY() - this.mouseCutLine.getEndY();
+            double lengthSQ = lineDiffX*lineDiffX + lineDiffY*lineDiffY;
+            double distance = new Point2D(this.mouseCutLine.getStartX(), this.mouseCutLine.getStartY()).distance(newPos);
+            if (distance*distance > lengthSQ) {
+                this.mouseCutLine.setEndX(newPos.getX());
+                this.mouseCutLine.setEndY(newPos.getY());
+                if (distance > 300) {
+                    this.dropMouseCutLine();
+                } else if (distance > 75) {
+                    this.mouseCutLine.setVisible(true);
+                }
+                
+            } else if (distance < 10 && lengthSQ > 100*100) {
+                double midX = (this.mouseCutLine.getStartX()+this.mouseCutLine.getEndX())/2;
+                double midY = (this.mouseCutLine.getStartY()+this.mouseCutLine.getEndY())/2;
+                Circle cutArea = new Circle(midX, midY, 40);
+                this.container.getToplevel().addUpperTouchArea(cutArea);
+                this.container.getToplevel().cutIntersectingConnections(cutArea);
+                this.container.getToplevel().removeUpperTouchArea(cutArea);
+                this.dropMouseCutLine();
+            }
         }
+        
         this.lastPanPosition = currentPos;
-
         e.consume();
     }
     
@@ -89,6 +132,7 @@ public class TouchContext {
         }
         
         this.panning = false;
+        this.dropMouseCutLine();
         e.consume();
     }
     
