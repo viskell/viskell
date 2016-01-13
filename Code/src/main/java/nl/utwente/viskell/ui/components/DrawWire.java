@@ -103,7 +103,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
     protected void handleMouseDrag(MouseEvent event) {
         if (this.menu == null && !event.isSynthesized()) {
             Point2D localPos = this.anchor.getPane().sceneToLocal(event.getSceneX(), event.getSceneY());
-            this.toucharea.dragTo(localPos.getX(), localPos.getY());
+            this.toucharea.dragTo(localPos.getX(), localPos.getY(), event.getPickResult().getIntersectedNode());
         }
         event.consume();
     }
@@ -112,17 +112,21 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
         this.toucharea.handleMouseRelease(event);
     }
 
-    private void handleReleaseOn(Node picked) {
+    /** @return the ConnectionAnchor related to the picked Node, or null of none. */
+    private static ConnectionAnchor findPickedAnchor(Node picked) {
         Node next = picked;
-        ConnectionAnchor target = null;
         while (next != null) {
             if (next instanceof ConnectionAnchor.Target) {
-                target = ((ConnectionAnchor.Target)next).getAssociatedAnchor();
-                break;
+                return ((ConnectionAnchor.Target)next).getAssociatedAnchor();
             }
             next = next.getParent();
         }
-
+        
+        return null;
+    }
+    
+    private void handleReleaseOn(Node picked) {
+        ConnectionAnchor target = findPickedAnchor(picked);
         if (target != null && target.getWireInProgress() == null) {
             Connection connection = this.buildConnectionTo(target);
             if (connection != null) {
@@ -410,7 +414,8 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
  
                     double newX = this.getLayoutX() + deltaX;
                     double newY = this.getLayoutY() + deltaY;
-                    this.dragTo(newX, newY);                }
+                    this.dragTo(newX, newY, event.getTouchPoint().getPickResult().getIntersectedNode());
+                }
             }
             
             event.consume();
@@ -421,12 +426,16 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 double scaleFactor = this.getScaleX();
                 double newX = this.getLayoutX() + event.getX() * scaleFactor;
                 double newY = this.getLayoutY() + event.getY() * scaleFactor;
-                this.dragTo(newX, newY);
+                this.dragTo(newX, newY, event.getPickResult().getIntersectedNode());
             }
             event.consume();
         }
         
         private void dragTo(double newX, double newY) {
+            this.dragTo(newX, newY, null);
+        }
+        
+        private void dragTo(double newX, double newY, Node picked) {
             this.setLayoutX(newX);
             this.setLayoutY(newY);
             Point2D newPos = new Point2D(newX, newY);
@@ -441,18 +450,28 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                 // trial unification on all nearby opposite free anchor so see if they could fit
                 if (DrawWire.this.anchor instanceof InputAnchor) {
                     InputAnchor anchor = (InputAnchor)DrawWire.this.anchor;
+                    ConnectionAnchor releaseAnchor = DrawWire.findPickedAnchor(picked);
+                    if (releaseAnchor == anchor) {
+                        releaseAnchor = null;
+                    }
+                    
                     for (ConnectionAnchor target : targetAnchors) {
                         if (target instanceof OutputAnchor) {
-                            target.setNearbyWireReaction(determineWireReaction((OutputAnchor)target, anchor));
+                            target.setNearbyWireReaction(determineWireReaction((OutputAnchor)target, anchor, releaseAnchor));
                             newNearby.add(target);
                         }
                     }
                 } else {
                     OutputAnchor anchor = (OutputAnchor)DrawWire.this.anchor;
+                    ConnectionAnchor releaseAnchor = DrawWire.findPickedAnchor(picked);
+                    if (releaseAnchor == anchor) {
+                        releaseAnchor = null;
+                    }
+
                     for (ConnectionAnchor target : targetAnchors) {
                         if (target instanceof InputAnchor) {
                             newNearby.add(target);
-                            target.setNearbyWireReaction(determineWireReaction(anchor, (InputAnchor)target));
+                            target.setNearbyWireReaction(determineWireReaction(anchor, (InputAnchor)target, releaseAnchor));
                         }
                     }
                 }
@@ -468,13 +487,18 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             }
         }
         
-        private int determineWireReaction(OutputAnchor source, InputAnchor sink) {
+        private int determineWireReaction(OutputAnchor source, InputAnchor sink, ConnectionAnchor releaseAnchor) {
             if (sink.block == source.block && !(sink instanceof ResultAnchor  && source instanceof BinderAnchor)) {
                 return 0;
             }
+            
             try {
                 TypeChecker.unify("wire reaction", source.getType(Optional.empty()).getFresh(), sink.getType().getFresh());
-                return 1;
+                if (source == releaseAnchor || sink == releaseAnchor) {
+                    return 3;
+                } else {
+                    return 1;
+                }
             } catch (HaskellTypeError e) {
                 return -1;
             }

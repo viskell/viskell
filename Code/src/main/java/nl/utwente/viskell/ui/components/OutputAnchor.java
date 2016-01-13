@@ -203,11 +203,16 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
     
     @Override
     protected void setNearbyWireReaction(int goodness) {
-        if (goodness > 0) {
-            this.openWire.setStroke(Color.STEELBLUE);
+        if (goodness > 2) {
+            this.openWire.setStroke(Color.DODGERBLUE);
             this.openWire.setStrokeWidth(5);
-            this.visibleAnchor.setFill(Color.STEELBLUE);
-            this.guardMarker.setStroke(Color.STEELBLUE);
+            this.visibleAnchor.setFill(Color.DODGERBLUE);
+            this.guardMarker.setStroke(Color.DODGERBLUE);
+        } else if (goodness > 0) {
+            this.openWire.setStroke(Color.DARKGREEN);
+            this.openWire.setStrokeWidth(5);
+            this.visibleAnchor.setFill(Color.DARKGREEN);
+            this.guardMarker.setStroke(Color.DARKGREEN);
         } else if (goodness < 0) {
             this.openWire.setStroke(Color.RED);
             this.openWire.setStrokeWidth(3);
