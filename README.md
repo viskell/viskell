@@ -38,6 +38,17 @@ Java 8, GHC and QuickCheck are required. Importing as a Maven project into any J
 
 You can also download a [pre-built binary jar archive](https://github.com/wandernauta/viskell/releases/download/nlfp-day-demo/viskell-0.1.jar).
 
+#### Using the touch interface (and the mouse alternatives)
+ * Moving a block: dragging by one finger (or primary mouse button)
+ * Making a connection: draw with one finger from a connection point to another (or with primary mouse button)
+ * Open function menu: two finger tap on a background area (or click by secondary mouse button)
+ * Open context menu: two finger tap on the non transparent parts of a block (or click by secondary mouse button)
+ * Panning an area: two finger drag on background area (or drag with secondary mouse button)
+ * Cut a connection: draw a line across and trace it back to it starting point, by one finger (or primary mouse button)
+ * Wire context menu: while drawing a connection tap a second finger next to it (or click by secondary mouse button)
+ * Curry a function: on an orange function block drag down the type label by one finger (or primary mouse button)
+ * Splitting a wire based on type: while drawing a connection put down a finger next to it and pull them apart in either horizontal or vertical direction (this action is work in progress and has no mouse alternative yet)
+
 ##### FAQ
 
 * Why is the implementation in Java 8/JavaFX?
