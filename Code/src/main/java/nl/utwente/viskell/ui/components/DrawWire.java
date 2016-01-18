@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
@@ -25,6 +26,8 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.transform.Transform;
 import javafx.util.Duration;
+import nl.utwente.viskell.haskell.env.DataTypeInfo;
+import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ComponentLoader;
@@ -533,67 +536,162 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             this.touchID = -1;
 
             int tupleArity = 2;
-            Type type = DrawWire.this.anchor.getFreshType();
+            List<DataTypeInfo.Constructor> constrs = new ArrayList<>();
+            Type type = DrawWire.this.anchor.getFreshType().getConcrete();
             if (type instanceof TypeApp) {
                 List<Type> ts = ((TypeApp)type).asFlattenedAppChain();
                 if (ts.get(0) instanceof TupleTypeCon) {
                     tupleArity = ts.size()-1;
+                } else if (ts.get(0) instanceof TypeCon) {
+                    HaskellCatalog catalog = toplevel.getGhciSession().getCatalog();
+                    DataTypeInfo datatype = catalog.getDataType(((TypeCon)ts.get(0)).getName());
+                    if (datatype != null && !datatype.isBuiltin()) {
+                        constrs = datatype.getConstructors();
+                    }
                 }
-            } 
+            } else if (type instanceof TypeCon) {
+                HaskellCatalog catalog = toplevel.getGhciSession().getCatalog();
+                DataTypeInfo datatype = catalog.getDataType(((TypeCon)type).getName());
+                if (datatype != null && !datatype.isBuiltin()) {
+                    constrs = datatype.getConstructors();
+                }
+            }
             
-            if (DrawWire.this.anchor instanceof OutputAnchor) {
-                Block block = new SplitterBlock(toplevel, tupleArity);
-                toplevel.addBlock(block);
-                double offsetX = tpA.getX() < 0 ? -75 : 75;
-                block.relocate(DrawWire.this.getEndX() + offsetX, DrawWire.this.getEndY()-100);
-                block.refreshContainer();
-                block.initiateConnectionChanges();
+            if (constrs.size() >= 2 && constrs.size() <= 5) {
+                ChoiceBlock choice = new ChoiceBlock(toplevel);
+                for (int i = 2; i < constrs.size(); i++) {
+                    choice.addLane();
+                }
+                toplevel.addBlock(choice);
+                double offsetX = tpA.getX() < 0 ? -300 : -150;
 
-                InputAnchor input = block.getAllInputs().get(0);
-                Connection connection = DrawWire.this.buildConnectionTo(input);
-                if (connection != null) {
-                    connection.getStartAnchor().initiateConnectionChanges();
-                }
+                if (DrawWire.this.anchor instanceof OutputAnchor) {
+                    double posX = DrawWire.this.getEndX() + offsetX;
+                    double posY = DrawWire.this.getEndY()-100;
+                    choice.relocate(posX, posY);
+                    choice.addExtraInput();
+                    InputAnchor input = choice.getAllInputs().get(0);
+                    Connection connection = DrawWire.this.buildConnectionTo(input);
+                    if (connection != null) {
+                        connection.getStartAnchor().initiateConnectionChanges();
+                    }
+                    
+                    List<Block> decons = new ArrayList<>();
+                    List<Lane> lanes = choice.getLanes();
+                    for (int i = 0; i < constrs.size(); i++) {
+                        Lane lane = lanes.get(i);
+                        MatchBlock mblock = new MatchBlock(toplevel.getEnvInstance().lookupFun(constrs.get(i).getName()), toplevel);
+                        decons.add(mblock);
+                        toplevel.addBlock(mblock);
+                        OutputAnchor arg = (OutputAnchor)lane.getAllAnchors().get(0);
+                        mblock.relocate(posX+125 + (i*250), posY + 75);
+                        DrawWire tempWire = DrawWire.initiate(arg, null);
+                        tempWire.buildConnectionTo(mblock.input);
+                        tempWire.remove();
+                    }
                 
-                if (tpA.getX() < 0) {
-                    DrawWire wireA = DrawWire.initiate(block.getAllOutputs().get(0), tpA);
-                    wireA.toucharea.dragTo(posA.getX(), posA.getY());
-                    DrawWire wireB = DrawWire.initiate(block.getAllOutputs().get(1), tpB);
-                    wireB.toucharea.dragTo(posB.getX(), posB.getY());
+                    Platform.runLater(() -> {
+                        for (Block block : decons) {
+                            block.refreshContainer();
+                            block.initiateConnectionChanges();
+                        }
+                    });
+
+                    DrawWire.this.remove();
+
                 } else {
-                    DrawWire wireA = DrawWire.initiate(block.getAllOutputs().get(1), tpA);
-                    wireA.toucharea.dragTo(posA.getX(), posA.getY());
-                    DrawWire wireB = DrawWire.initiate(block.getAllOutputs().get(0), tpB);
-                    wireB.toucharea.dragTo(posB.getX(), posB.getY());
-                }
-                DrawWire.this.remove();
+                    double posX = DrawWire.this.getEndX() + offsetX;
+                    double posY = DrawWire.this.getEndY() - 450;
+                    choice.relocate(posX, posY);
+                    OutputAnchor output = choice.getAllOutputs().get(0);
+                    Connection connection = DrawWire.this.buildConnectionTo(output);
+                    if (connection != null) {
+                        connection.getStartAnchor().initiateConnectionChanges();
+                    }
+                    
+                    List<Block> conses = new ArrayList<>();
+                    List<Lane> lanes = choice.getLanes();
+                    for (int i = 0; i < constrs.size(); i++) {
+                        Lane lane = lanes.get(i);
+                        FunApplyBlock cblock = new FunApplyBlock(new LibraryFunUse(toplevel.getEnvInstance().lookupFun(constrs.get(i).getName())), toplevel);
+                        conses.add(cblock);
+                        toplevel.addBlock(cblock);
+                        cblock.initiateConnectionChanges();
+                        InputAnchor res = (InputAnchor)lane.getAllAnchors().get(0);
+                        cblock.relocate(posX+125 + (i*250), posY + 250);
+                        DrawWire tempWire = DrawWire.initiate(res, null);
+                        tempWire.buildConnectionTo(cblock.getAllOutputs().get(0));
+                        tempWire.remove();
+                    }
                 
+                    Platform.runLater(() -> {
+                        for (Block block : conses) {
+                            block.refreshContainer();
+                            block.initiateConnectionChanges();
+                        }
+                    });
+
+                    DrawWire.this.remove();
+     
+                }
+
+
             } else {
-                Block block = new JoinerBlock(toplevel, tupleArity);
-                toplevel.addBlock(block);
-                double offsetX = tpA.getX() < 0 ? -75 : 75;
-                block.relocate(DrawWire.this.getStartX() + offsetX, DrawWire.this.getStartY()+100);
-                block.refreshContainer();
-                block.initiateConnectionChanges();
+            
+                if (DrawWire.this.anchor instanceof OutputAnchor) {
+                    Block block = new SplitterBlock(toplevel, tupleArity);
+                    toplevel.addBlock(block);
+                    double offsetX = tpA.getX() < 0 ? -75 : 75;
+                    block.relocate(DrawWire.this.getEndX() + offsetX, DrawWire.this.getEndY()-100);
+                    block.refreshContainer();
+                    block.initiateConnectionChanges();
 
-                OutputAnchor input = block.getAllOutputs().get(0);
-                Connection connection = DrawWire.this.buildConnectionTo(input);
-                if (connection != null) {
-                    connection.getStartAnchor().initiateConnectionChanges();
-                }
-                
-                if (tpA.getX() < 0) {
-                    DrawWire wireA = DrawWire.initiate(block.getAllInputs().get(0), tpA);
-                    wireA.toucharea.dragTo(posA.getX(), posA.getY());
-                    DrawWire wireB = DrawWire.initiate(block.getAllInputs().get(1), tpB);
-                    wireB.toucharea.dragTo(posB.getX(), posB.getY());
+                    InputAnchor input = block.getAllInputs().get(0);
+                    Connection connection = DrawWire.this.buildConnectionTo(input);
+                    if (connection != null) {
+                        connection.getStartAnchor().initiateConnectionChanges();
+                    }
+
+                    if (tpA.getX() < 0) {
+                        DrawWire wireA = DrawWire.initiate(block.getAllOutputs().get(0), tpA);
+                        wireA.toucharea.dragTo(posA.getX(), posA.getY());
+                        DrawWire wireB = DrawWire.initiate(block.getAllOutputs().get(1), tpB);
+                        wireB.toucharea.dragTo(posB.getX(), posB.getY());
+                    } else {
+                        DrawWire wireA = DrawWire.initiate(block.getAllOutputs().get(1), tpA);
+                        wireA.toucharea.dragTo(posA.getX(), posA.getY());
+                        DrawWire wireB = DrawWire.initiate(block.getAllOutputs().get(0), tpB);
+                        wireB.toucharea.dragTo(posB.getX(), posB.getY());
+                    }
+                    DrawWire.this.remove();
+
                 } else {
-                    DrawWire wireA = DrawWire.initiate(block.getAllInputs().get(1), tpA);
-                    wireA.toucharea.dragTo(posA.getX(), posA.getY());
-                    DrawWire wireB = DrawWire.initiate(block.getAllInputs().get(0), tpB);
-                    wireB.toucharea.dragTo(posB.getX(), posB.getY());
+                    Block block = new JoinerBlock(toplevel, tupleArity);
+                    toplevel.addBlock(block);
+                    double offsetX = tpA.getX() < 0 ? -75 : 75;
+                    block.relocate(DrawWire.this.getStartX() + offsetX, DrawWire.this.getStartY()+100);
+                    block.refreshContainer();
+                    block.initiateConnectionChanges();
+
+                    OutputAnchor input = block.getAllOutputs().get(0);
+                    Connection connection = DrawWire.this.buildConnectionTo(input);
+                    if (connection != null) {
+                        connection.getStartAnchor().initiateConnectionChanges();
+                    }
+
+                    if (tpA.getX() < 0) {
+                        DrawWire wireA = DrawWire.initiate(block.getAllInputs().get(0), tpA);
+                        wireA.toucharea.dragTo(posA.getX(), posA.getY());
+                        DrawWire wireB = DrawWire.initiate(block.getAllInputs().get(1), tpB);
+                        wireB.toucharea.dragTo(posB.getX(), posB.getY());
+                    } else {
+                        DrawWire wireA = DrawWire.initiate(block.getAllInputs().get(1), tpA);
+                        wireA.toucharea.dragTo(posA.getX(), posA.getY());
+                        DrawWire wireB = DrawWire.initiate(block.getAllInputs().get(0), tpB);
+                        wireB.toucharea.dragTo(posB.getX(), posB.getY());
+                    }
+                    DrawWire.this.remove();
                 }
-                DrawWire.this.remove();
             }
         }
 
