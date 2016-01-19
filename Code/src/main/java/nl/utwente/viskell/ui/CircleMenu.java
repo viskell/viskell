@@ -141,22 +141,6 @@ public class CircleMenu extends CircularPane {
                 lifter.initiateConnectionChanges();
             });
             this.add(lift);
-        } else if (block instanceof FunctionBlock) {
-            image = makeImageView("/ui/icons/appbar.layer.up.png");
-            MenuButton lift = new MenuButton("lift", image);
-            lift.setOnActivate(() -> {
-                ToplevelPane toplevel = this.block.getToplevel();
-                FunctionReference funRef = ((FunctionBlock)block).getFunReference();
-                if (funRef instanceof LibraryFunUse) {
-                    toplevel.removeBlock(block);
-                    Block lifter = new LiftingBlock(toplevel, new NestedFunction(((LibraryFunUse)funRef).getFunInfo(), block));
-                    lifter.setLayoutX(block.getLayoutX()-10);
-                    lifter.setLayoutY(block.getLayoutY()-10);
-                    toplevel.addBlock(lifter);
-                    lifter.initiateConnectionChanges();
-                }
-            });
-            this.add(lift);
         } else if (block instanceof FunApplyBlock) {
             image = makeImageView("/ui/icons/appbar.layer.up.png");
             MenuButton lift = new MenuButton("lift", image);

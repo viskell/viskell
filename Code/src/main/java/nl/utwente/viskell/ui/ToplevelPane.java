@@ -39,7 +39,6 @@ public class ToplevelPane extends Region implements BlockContainer {
     private final Pane wireLayer;
 
     private GhciSession ghci;
-    private PreferencesWindow preferences;
 
     /** The set of blocks that logically belong to this top level */
     private final Set<Block> attachedBlocks;
@@ -65,20 +64,12 @@ public class ToplevelPane extends Region implements BlockContainer {
         });
     }
 
-    public void setPreferences(PreferencesWindow prefs) {
-        this.preferences = prefs;
-    }
-
     /** Shows a new function menu at the specified location in this pane. */
     public void showFunctionMenuAt(double x, double y, boolean byMouse) {
         FunctionMenu menu = new FunctionMenu(byMouse, ghci.getCatalog(), this);
         double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
         menu.relocate(x, y - verticalCenter);
         this.addMenu(menu);
-    }
-    
-    public boolean isVerticalCurryingEnabled() {
-        return this.preferences != null && this.preferences.verticalCurry.isSelected();
     }
     
     /**

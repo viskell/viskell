@@ -84,9 +84,7 @@ public class LocalDefUse extends Label implements FunctionReference {
     
     public void onDefinitionRemoved() {
         ApplyAnchor apply = new ApplyAnchor(this.requiredArguments());
-        if (this.funBlock instanceof FunctionBlock) {
-            ((FunctionBlock)this.funBlock).convertToOpenApply(apply);
-        } else if (this.funBlock instanceof FunApplyBlock) {
+        if (this.funBlock instanceof FunApplyBlock) {
             ((FunApplyBlock)this.funBlock).convertToOpenApply(apply);
         }
     }

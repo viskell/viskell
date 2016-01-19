@@ -27,7 +27,6 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
     @FXML private ComboBox<String> theme;
     @FXML protected CheckBox debugOverlay;
     @FXML private Button reloadTheme;
-    @FXML protected CheckBox verticalCurry;
 
     public PreferencesWindow(MainOverlay overlay) {
         super();
@@ -66,11 +65,6 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
         });
         
         reloadTheme.setOnAction(event -> refreshTheme());
-        
-        verticalCurry.setSelected(preferences.getBoolean("verticalCurry", true));
-        verticalCurry.setOnAction(event -> {
-            preferences.putBoolean("verticalCurry", verticalCurry.isSelected());
-        });
         
         stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean old, Boolean newVal) {

@@ -129,7 +129,6 @@ public class MainOverlay extends StackPane {
     public void showPreferences() {
         if (this.preferences == null) {
             this.preferences = new PreferencesWindow(this);
-            this.mainPane.setPreferences(this.preferences);
         }
 
         this.preferences.show();
