@@ -73,8 +73,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         // only the actual shape should be selected for events, not the larger outside bounds
         this.setPickOnBounds(false);
         
-        // due to the unstable internals of knot moving, we avoid this centering bind for function blocks 
-        if (! (this.belongsOnBottom() || this instanceof FunctionBlock)) {
+        if (! this.belongsOnBottom()) {
             // make all non container blocks resize themselves around horizontal midpoint to reduce visual movement 
             this.translateXProperty().bind(this.widthProperty().divide(2).negate());
         }

@@ -126,11 +126,6 @@
     -fx-background-color: white;
 }
 
-.argumentSpace Label.rightArgument {
-    -fx-text-fill: white;
-    -fx-background-color: black;
-}
-
 .curriedOutput {
     -fx-background-color: navajowhite;
 }

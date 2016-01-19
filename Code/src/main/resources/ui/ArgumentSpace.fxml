@@ -1,7 +1,0 @@
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.shape.Circle?>
-<?import nl.utwente.viskell.ui.components.ArgumentSpace?>
-<fx:root type="nl.utwente.viskell.ui.components.ArgumentSpace" xmlns:fx="http://javafx.com/fxml/1" styleClass="argumentSpace" pickOnBounds="false">
-    <Circle fx:id="knot" radius="10"/>
-    <Label fx:id="rightArgument" styleClass="rightArgument"/>
-</fx:root>

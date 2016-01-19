@@ -31,7 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 /**
@@ -120,14 +119,12 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                                 addBlock(new MatchBlock(entry, parent));
                             } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                 addBlock(new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
-                            } else if (e.isControlDown() || Preferences.userNodeForPackage(Main.class).getBoolean("verticalCurry", true)) {
+                            } else {
                             	if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
                             		addBlock(new BinOpApplyBlock(entry, parent));
                             	} else {
                             		addBlock(new FunApplyBlock(new LibraryFunUse(entry), parent));
                             	}
-                            } else {
-                                addBlock(new FunctionBlock(new LibraryFunUse(entry), parent));
                             }
                         });
               
@@ -158,14 +155,12 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                                 addBlock(new MatchBlock(entry, parent));
                             } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                 addBlock(new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
-                            } else if (e.isControlDown() || Preferences.userNodeForPackage(Main.class).getBoolean("verticalCurry", true)) {
+                            } else {
                                 if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
                                     addBlock(new BinOpApplyBlock(entry, parent));
                                 } else {
                                     addBlock(new FunApplyBlock(new LibraryFunUse(entry), parent));
                                 }
-                            } else {
-                                addBlock(new FunctionBlock(new LibraryFunUse(entry), parent));
                             }
                         });
                         
@@ -186,14 +181,12 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                                     addDraggedBlock(e.getTouchPoint(), new MatchBlock(entry, parent));
                                 } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                     addDraggedBlock(e.getTouchPoint(), new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
-                                } else if (e.isControlDown() || Preferences.userNodeForPackage(Main.class).getBoolean("verticalCurry", true)) {
+                                } else {
                                     if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
                                         addDraggedBlock(e.getTouchPoint(), new BinOpApplyBlock(entry, parent));
                                     } else {
                                         addDraggedBlock(e.getTouchPoint(), new FunApplyBlock(new LibraryFunUse(entry), parent));
                                     }
-                                } else {
-                                    addDraggedBlock(e.getTouchPoint(), new FunctionBlock(new LibraryFunUse(entry), parent));
                                 }
                                 e.consume();
                             }

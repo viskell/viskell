@@ -18,8 +18,6 @@
                 </HBox>
                 <Label GridPane.columnIndex="0" GridPane.rowIndex="3">Debug overlay</Label>
                 <CheckBox fx:id="debugOverlay" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                <Label GridPane.columnIndex="0" GridPane.rowIndex="4">Vertical curry</Label>
-                <CheckBox fx:id="verticalCurry" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
             </children>
         </GridPane>
     </center>
