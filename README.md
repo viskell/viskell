@@ -1,6 +1,6 @@
 # Viskell
 
-[![Build Status](https://travis-ci.org/wandernauta/viskell.svg?branch=master)](https://travis-ci.org/wandernauta/viskell)
+[![Build Status](https://travis-ci.org/viskell/viskell.svg?branch=master)](https://travis-ci.org/viskell/viskell)
 
 Viskell is an experimental visual programming environment for a typed (Haskell-like) functional programming language.
 This project is exploring the possibilities and challenges of interactive visual programming in combination with the strengths and weaknesses of functional languages.
@@ -36,7 +36,7 @@ To build an executable `.jar` file that includes dependencies, check out this re
 
 Java 8, GHC and QuickCheck are required. Importing as a Maven project into any Java IDE should also work.
 
-You can also download a [pre-built binary jar archive](https://github.com/wandernauta/viskell/releases/download/nlfp-day-demo/viskell-0.1.jar).
+You can also download a [pre-built binary jar archive](https://github.com/viskell/viskell/releases/download/nlfp-day-demo/viskell-0.1.jar).
 
 #### Using the touch interface (and the mouse alternatives)
  * Moving a block: dragging by one finger (or primary mouse button)
