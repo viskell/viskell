@@ -15,6 +15,7 @@ import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
@@ -284,9 +285,15 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         
     }
     
+    /** @return the bounds of this block in scene coordinates, excluding the parts sticking out such as anchors. */
+    public Bounds getBodyBounds() {
+        Node body = this.getChildren().get(0);
+        return body.localToScene(body.getLayoutBounds());
+    }
+    
     /** Scans for and attaches to a new container, if any */
     public void refreshContainer() {
-        Bounds myBounds = localToScene(getBoundsInLocal());
+        Bounds myBounds = this.getBodyBounds();
         Point2D center = new Point2D((myBounds.getMinX()+myBounds.getMaxX())/2, (myBounds.getMinY()+myBounds.getMaxY())/2);
         List<Point2D> corners = ImmutableList.of(
                 new Point2D(myBounds.getMinX(), myBounds.getMinY()),
@@ -306,7 +313,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
                 reduce((a, b) -> !a.containmentBoundsInScene().contains(b.containmentBoundsInScene()) ? a : b).
                     orElse(this.toplevel);
         
-        Bounds fitBounds = this.getBoundsInParent();
+        Bounds fitBounds = this.localToParent(this.sceneToLocal(myBounds));
         this.moveIntoContainer(newContainer);
         newContainer.expandToFit(new BoundingBox(fitBounds.getMinX()-10, fitBounds.getMinY()-10, fitBounds.getWidth()+20, fitBounds.getHeight()+20));
     }

@@ -67,7 +67,7 @@ public class MatchBlock extends Block {
             box.setTranslateY(9);
             box.getStyleClass().add("argumentSpace");
             Label typeLabel = new Label(ftype.getArgument().prettyPrint());
-            typeLabel.getStyleClass().add("outputType");
+            typeLabel.getStyleClass().add("resultType");
             box.getChildren().addAll(typeLabel, anchor);
             
             outputs.add(box);
