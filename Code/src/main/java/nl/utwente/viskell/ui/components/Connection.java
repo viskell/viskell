@@ -210,6 +210,12 @@ public class Connection extends CubicCurve implements
         wire.setControlY2(wire.getEndY() - yOffset);
     }
     
+    protected static double lengthSquared(CubicCurve wire) {
+        double diffX = wire.getStartX() - wire.getEndX();
+        double diffY = wire.getStartY() - wire.getEndY();
+        return diffX*diffX + diffY*diffY;
+    }
+    
     /**
      * Extends the expression graph to include all subexpression required
      * @param exprGraph the let expression representing the current expression graph

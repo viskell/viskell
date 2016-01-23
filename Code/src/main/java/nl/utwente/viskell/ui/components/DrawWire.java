@@ -130,13 +130,18 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
     
     private void handleReleaseOn(Node picked) {
         ConnectionAnchor target = findPickedAnchor(picked);
-        if (target != null && target.getWireInProgress() == null) {
+        if (target == this.anchor) {
+            this.toucharea.handleReleaseOnSelf();
+        } else if (target != null && target.getWireInProgress() == null) {
             Connection connection = this.buildConnectionTo(target);
             if (connection != null) {
                 connection.getStartAnchor().initiateConnectionChanges();
+                this.remove();
+            } else {
+                this.toucharea.handleReleaseOnNothing();
             }
-
-            this.remove();
+        } else if (Connection.lengthSquared(this) < 900) {
+            this.toucharea.handleReleaseOnSelf();
         } else {
             this.toucharea.handleReleaseOnNothing();
         }
@@ -313,6 +318,11 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             disapperance.playFromStart();
         }
 
+        private void handleReleaseOnSelf() {
+            this.makeVisible();
+            disapperance.playFrom(disapperance.getTotalDuration().multiply(0.9));
+        }
+        
         private void makeVisible() {
             this.clearWireReactions();
             this.setScaleX(0.25);
