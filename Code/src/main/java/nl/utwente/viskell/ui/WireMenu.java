@@ -28,6 +28,7 @@ public class WireMenu extends TilePane {
         this.setVgap(5);
         
         Button cancelButton = new Button("Cancel");
+        cancelButton.getStyleClass().add("escape");
         cancelButton.setOnAction(event -> this.attachedWire.remove());
         // FIXME: silly workaround, somehow the buttons in this menu don't work on touch click while those in FunctionMenu do...
         cancelButton.setOnTouchPressed(event -> this.attachedWire.remove());

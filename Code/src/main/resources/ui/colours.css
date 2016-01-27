@@ -100,17 +100,33 @@
     -fx-background-color: #A4849E;
 }
 
+.menu Button.escape {
+    -fx-background-color: #C0849E;
+}
+
 .menu .menuButton {
     -fx-background-color: #A4849E;
     -fx-effect: dropshadow(two-pass-box, black, 5, 0.0, 2, 2)
+}
+
+.menu .menuButton.escape {
+    -fx-background-color: #C0849E;
 }
 
 .menu Button:hover {
     -fx-background-color: #926C8B;
 }
 
+.menu Button.escape:hover {
+    -fx-background-color: #B0648E;
+}
+
 .menu .menuButton:hover {
     -fx-background-color: #926C8B;
+}
+
+.menu .menuButton.escape:hover {
+    -fx-background-color: #B0648E;
 }
 
 .menu .list-cell:even {

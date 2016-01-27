@@ -238,6 +238,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
 
         /* Create content for utilSpace. */
         Button closeButton = new MenuButton("Close", bm -> close(bm));
+        closeButton.getStyleClass().add("escape");
         Button valBlockButton = new MenuButton("Constant", bm -> addConstantBlock());
         Button arbBlockButton = new MenuButton("Arbitrary", bm -> addBlock(new ArbitraryBlock(parent)));
         Button disBlockButton = new MenuButton("Observe", bm -> addBlock(new DisplayBlock(parent)));
