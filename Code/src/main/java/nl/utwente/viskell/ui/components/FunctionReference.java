@@ -10,26 +10,26 @@ import nl.utwente.viskell.ui.BlockContainer;
 
 public interface FunctionReference {
     
-    public void initializeBlock(Block funBlock);
+    void initializeBlock(Block funBlock);
     
-    public Optional<InputAnchor> getInputAnchor();
+    Optional<InputAnchor> getInputAnchor();
     
-    public int requiredArguments();
+    int requiredArguments();
     
-    public Type refreshedType(int argCount, TypeScope scope);
+    Type refreshedType(int argCount, TypeScope scope);
     
-    public Expression getLocalExpr(Set<OutputAnchor> outsideAnchors);
+    Expression getLocalExpr(Set<OutputAnchor> outsideAnchors);
 
-    public void invalidateVisualState();
+    void invalidateVisualState();
     
-    public Region asRegion();
+    Region asRegion();
     
-    public FunctionReference getNewCopy();
+    FunctionReference getNewCopy();
     
-    public String getName();
+    String getName();
     
-    public boolean isScopeCorrectIn(BlockContainer container);
+    boolean isScopeCorrectIn(BlockContainer container);
 
-    public void deleteLinks();
+    void deleteLinks();
 
 }
