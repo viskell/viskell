@@ -18,9 +18,9 @@ import nl.utwente.viskell.ui.serialize.Bundleable;
 public abstract class ConnectionAnchor extends StackPane implements ComponentLoader, Bundleable {
 
     /** Helper interface for finding the associated connection anchor on release a wire onto something. */
-    public static interface Target {
+    public interface Target {
         /** @return the connection anchor directly related to the Target object. */
-        public ConnectionAnchor getAssociatedAnchor();
+        ConnectionAnchor getAssociatedAnchor();
     }
     
     /** The connection being drawn starting from this anchor, or null if none. */

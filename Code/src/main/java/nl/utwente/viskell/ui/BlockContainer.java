@@ -13,30 +13,30 @@ import nl.utwente.viskell.ui.components.Block;
 public interface BlockContainer {
 
     /** Gets the bounds to be used for testing what is inside this container, transformed into the coordinate space of its scene. */
-    public Bounds containmentBoundsInScene();
+    Bounds containmentBoundsInScene();
     
     /** Attach a block to this container */
-    public void attachBlock(Block block);
+    void attachBlock(Block block);
     
     /** Detach a block from this container */
-    public void detachBlock(Block block);
+    void detachBlock(Block block);
 
     /** @return a stream of all block attached to this container */
-    public Stream<Block> getAttachedBlocks();
+    Stream<Block> getAttachedBlocks();
     
     /** Check whether this container contains the specified block */
-    public default boolean containsBlock(Block block) {
+    default boolean containsBlock(Block block) {
         return this.getAttachedBlocks().anyMatch(a -> block.equals(a));
     }
     
     /** @return the container to which this container belongs, maybe return itself if it is the outermost container */
-    public BlockContainer getParentContainer();
+    BlockContainer getParentContainer();
 
     /**
      * @return the ToplevelPane where this container is (indirectly) part of. 
      * @throws IllegalStateException
      */
-    public default ToplevelPane getToplevel() {
+    default ToplevelPane getToplevel() {
         BlockContainer cont = this;
         while (cont.getParentContainer() != cont) {
             cont = cont.getParentContainer();
@@ -49,10 +49,10 @@ public interface BlockContainer {
         throw new IllegalStateException("Manipulating container that is not in a ToplevelPane");
     }
     
-    public abstract Node asNode();
+    Node asNode();
     
     /** @return Whether this container is (indirectly) contained with the other container. */
-    public default boolean isContainedWithin(BlockContainer other) {
+    default boolean isContainedWithin(BlockContainer other) {
         if (this == other) {
             return true;
         }
@@ -72,10 +72,10 @@ public interface BlockContainer {
      * Grows the bounds of this container to fit the given additional bounds.
      * @param blockBounds of the Block that needs to fit in the container.
      */
-    public void expandToFit(Bounds blockBounds);
+    void expandToFit(Bounds blockBounds);
     
     /** Return the union of two Bounds, i.e. a Bound that contains both. */
-    public static Bounds union(Bounds a, Bounds b) {
+    static Bounds union(Bounds a, Bounds b) {
         double left   = Math.min(a.getMinX(), b.getMinX());
         double right  = Math.max(a.getMaxX(), b.getMaxX());
         double top    = Math.min(a.getMinY(), b.getMinY());
