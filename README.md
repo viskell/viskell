@@ -34,7 +34,7 @@ To build an executable `.jar` file that includes dependencies, check out this re
 
     mvn package
 
-Java 8, GHC and QuickCheck are required. Importing as a Maven project into any Java IDE should also work.
+Java(FX) 8u40 or newer, GHC and QuickCheck are required. Importing as a Maven project into any Java IDE should also work.
 
 You can also download a [pre-built binary jar archive](https://github.com/viskell/viskell/releases/download/nlfp-day-demo/viskell-0.1.jar).
 
