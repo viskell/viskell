@@ -1,8 +1,5 @@
 package nl.utwente.viskell.ui;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,15 +8,15 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.TouchEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * MainOverlay provides an overlay with zoom buttons, toolbar buttons etc.
  */
-public class MainOverlay extends StackPane {
+public class MainOverlay extends BorderPane {
     public static final Pos TOOLBAR_POS = Pos.TOP_LEFT;
     public static final Pos ZOOMBAR_POS = Pos.BOTTOM_CENTER;
 
@@ -41,7 +38,7 @@ public class MainOverlay extends StackPane {
         super();
 
         this.mainPane = pane;
-        FlowPane toolBar = makeMenuBar();
+
         FlowPane buttons = makeZoomBar();
 
         circleByTouchId = new TreeMap<>();
@@ -50,7 +47,7 @@ public class MainOverlay extends StackPane {
         touchOverlay.setDisable(true);
         // touch overlay is invisible by default
         this.touchOverlay.setVisible(false);
-        
+
         addEventFilter(TouchEvent.TOUCH_PRESSED, event -> {
             int touchId = event.getTouchPoint().getId();
             Node target = (Node) event.getTarget();
@@ -79,24 +76,36 @@ public class MainOverlay extends StackPane {
             TouchDisplay circle = circleByTouchId.get(touchId);
             touchOverlay.getChildren().remove(circle);
         });
-                
-        this.getChildren().setAll(this.mainPane, buttons, toolBar, touchOverlay);
+
+        StackPane stack = new StackPane();
+
+        final String os = System.getProperty("os.name");
+        boolean topMenu = (os != null && os.startsWith ("Mac"));
+        stack.getChildren().setAll(this.mainPane, buttons, makeToolBars(topMenu), touchOverlay);
+        this.setCenter(stack);
     }
 
     public ToplevelPane getMainPane() {
         return this.mainPane;
     }
-    
-    
-    private FlowPane makeMenuBar() {
-        ContextMenu burgerMenu = new GlobalMenu(this);
 
-        Button menu = new Button(MENU_LABEL);
-        menu.setFocusTraversable(false);
-        menu.setContextMenu(burgerMenu);
-        menu.setOnAction(e -> menu.getContextMenu().show(menu, Side.BOTTOM, 0, 10));
+    private FlowPane makeToolBars(boolean topMenu) {
+        FlowPane toolBar;
+        MenuActions menuActions = new MenuActions(this);
 
-        FlowPane toolBar = new FlowPane(10, 0, menu);
+        if (topMenu) {
+            setTop(new MacTopMenu(menuActions));
+            toolBar = new FlowPane(10, 0);
+        } else {
+            ContextMenu burgerMenu = new GlobalContextMenu(menuActions);
+            Button menu = new Button(MENU_LABEL);
+            menu.setFocusTraversable(false);
+            menu.setContextMenu(burgerMenu);
+            menu.setOnAction(e -> menu.getContextMenu().show(menu, Side.BOTTOM, 0, 10));
+
+            toolBar = new FlowPane(10, 0, menu);
+        }
+
         toolBar.setMaxHeight(40);
         toolBar.setMaxWidth(40); // workaround to make it not confiscate the whole top of the screen
         toolBar.setPadding(new Insets(10));
