@@ -51,8 +51,8 @@ public class Connection extends CubicCurve implements
 
     /** 
      * Construct a new Connection.
-     * @param pane The Pane this Connection is on.
-     * @param anchor A ConnectionAnchor of this Connection.
+     * @param source The OutputAnchor this connection comes from
+     * @param sink The InputAnchor this connection goes to
      */
     public Connection(OutputAnchor source, InputAnchor sink) {
         this.setMouseTransparent(true);
@@ -159,8 +159,9 @@ public class Connection extends CubicCurve implements
     @Override
     public Map<String, Object> toBundle() {
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
-        bundle.putAll(this.startAnchor.toBundle());
-        bundle.putAll(this.endAnchor.toBundle());
+        bundle.put("kind", getClass().getSimpleName());
+        bundle.put("from", this.startAnchor.toBundle());
+        bundle.put("to", this.endAnchor.toBundle());
         return bundle.build();
     }
 
