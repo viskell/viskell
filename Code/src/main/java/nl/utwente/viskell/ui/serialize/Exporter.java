@@ -25,7 +25,6 @@ public class Exporter {
 
         return gson.toJson(pane.streamChildren()
                 .filter(n -> n instanceof Bundleable)
-                .sorted(Comparator.comparing(u -> u.getClass().getName()).thenComparing(Object::hashCode))
                 .map(n -> ((Bundleable) n).toBundle())
                 .toArray());
     }
