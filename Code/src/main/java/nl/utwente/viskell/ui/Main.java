@@ -30,13 +30,12 @@ public class Main extends Application {
         GhciSession ghci = new GhciSession();
         ghci.startAsync();
         
-        // Init TactilePane
-        ToplevelPane tactilePane = new ToplevelPane(ghci);
-        MainOverlay overlay = new MainOverlay(tactilePane);
+        ToplevelPane toplevelPane = new ToplevelPane(ghci);
+        MainOverlay overlay = new MainOverlay(toplevelPane);
         Scene scene = new Scene(overlay);
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
         String backGroundImage = prefs.get("background", "/ui/grid.png");
-        overlay.getMainPane().setStyle("-fx-background-image: url('" + backGroundImage + "');");
+        overlay.getToplevelPane().setStyle("-fx-background-image: url('" + backGroundImage + "');");
         String theme = prefs.get("theme", "/ui/colours.css");
         scene.getStylesheets().addAll("/ui/layout.css", theme);
 
@@ -47,7 +46,7 @@ public class Main extends Application {
         stage.setScene(scene);
 
         stage.show();
-        tactilePane.requestFocus();
+        toplevelPane.requestFocus();
         
         // Check if GHCI is available
         try {
