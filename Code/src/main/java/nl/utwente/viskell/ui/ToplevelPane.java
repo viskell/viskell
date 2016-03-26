@@ -164,7 +164,7 @@ public class ToplevelPane extends Region implements BlockContainer, Bundleable {
     public void clearChildren() {
         this.bottomLayer.getChildren().clear();
         this.blockLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
-        this.wireLayer.getChildren().remove(1, this.blockLayer.getChildren().size());
+        this.wireLayer.getChildren().remove(1, this.wireLayer.getChildren().size());
         this.attachedBlocks.clear();
     }
 
