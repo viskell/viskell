@@ -68,6 +68,7 @@ public class MenuActions {
 
     protected void onNew(ActionEvent actionEvent) {
         this.overlay.getMainPane().clearChildren();
+        this.currentFile = Optional.empty();
     }
 
     protected void onOpen(ActionEvent actionEvent) {
