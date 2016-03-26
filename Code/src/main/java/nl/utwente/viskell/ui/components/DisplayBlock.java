@@ -16,6 +16,7 @@ import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.ToplevelPane;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -48,7 +49,12 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
     public DisplayBlock(ToplevelPane pane) {
         this(pane, "DisplayBlock");
     }
-    
+
+    @SuppressWarnings("UnusedParameters")
+    public static DisplayBlock fromBundleFragment(ToplevelPane pane, Map<String, Object> bundleFragment) {
+        return new DisplayBlock(pane);
+    }
+
     protected DisplayBlock(ToplevelPane pane, String fxml) {
         super(pane);
         this.showConstraint = pane.getEnvInstance().buildType("Show a => a");

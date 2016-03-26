@@ -1,14 +1,20 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.Optional;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableMap;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
-import nl.utwente.viskell.haskell.expr.*;
-import nl.utwente.viskell.haskell.type.*;
+import nl.utwente.viskell.haskell.expr.Expression;
+import nl.utwente.viskell.haskell.expr.FunVar;
+import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.BlockContainer;
+import nl.utwente.viskell.ui.serialize.Bundleable;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class LibraryFunUse extends Label implements FunctionReference {
     
@@ -20,6 +26,19 @@ public class LibraryFunUse extends Label implements FunctionReference {
         this.setMinWidth(USE_PREF_SIZE);
         this.setMaxWidth(USE_PREF_SIZE);
         this.getStyleClass().add("title");
+    }
+
+    public Map<String, Object> toBundleFragment() {
+        return ImmutableMap.of(
+                Bundleable.KIND, this.getClass().getSimpleName(),
+                "funInfo", this.funInfo.toBundleFragment()
+        );
+    }
+
+    public static LibraryFunUse fromBundleFragment(Map<String, Object> bundleFragment) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Map<String, Object> funInfoBundle = (Map<String, Object>)bundleFragment.get("funInfo");
+        FunctionInfo funInfo = FunctionInfo.fromBundleFragment(funInfoBundle);
+        return new LibraryFunUse(funInfo);
     }
 
     public FunctionInfo getFunInfo() {

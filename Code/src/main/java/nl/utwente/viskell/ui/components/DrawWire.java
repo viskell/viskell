@@ -590,7 +590,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                     List<Lane> lanes = choice.getLanes();
                     for (int i = 0; i < constrs.size(); i++) {
                         Lane lane = lanes.get(i);
-                        MatchBlock mblock = new MatchBlock(toplevel.getEnvInstance().lookupFun(constrs.get(i).getName()), toplevel);
+                        MatchBlock mblock = new MatchBlock(toplevel, toplevel.getEnvInstance().lookupFun(constrs.get(i).getName()));
                         decons.add(mblock);
                         toplevel.addBlock(mblock);
                         OutputAnchor arg = (OutputAnchor)lane.getAllAnchors().get(0);
@@ -623,7 +623,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
                     List<Lane> lanes = choice.getLanes();
                     for (int i = 0; i < constrs.size(); i++) {
                         Lane lane = lanes.get(i);
-                        FunApplyBlock cblock = new FunApplyBlock(new LibraryFunUse(toplevel.getEnvInstance().lookupFun(constrs.get(i).getName())), toplevel);
+                        FunApplyBlock cblock = new FunApplyBlock(toplevel, new LibraryFunUse(toplevel.getEnvInstance().lookupFun(constrs.get(i).getName())));
                         conses.add(cblock);
                         toplevel.addBlock(cblock);
                         cblock.initiateConnectionChanges();
@@ -726,7 +726,7 @@ public class DrawWire extends CubicCurve implements ChangeListener<Transform>, C
             }
             
             if (DrawWire.this.anchor instanceof OutputAnchor) {
-                Block block = new FunApplyBlock(new ApplyAnchor(arity), toplevel);
+                Block block = new FunApplyBlock(toplevel, new ApplyAnchor(arity));
                 toplevel.addBlock(block);
                 double offsetY = tpA.getY() < 0 ? -100 : 50;
                 block.relocate(DrawWire.this.getEndX() - 40, DrawWire.this.getEndY()+offsetY);

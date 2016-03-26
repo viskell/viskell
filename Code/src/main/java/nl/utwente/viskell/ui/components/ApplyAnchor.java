@@ -1,7 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.Optional;
-
+import com.google.common.collect.ImmutableMap;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Line;
@@ -9,6 +8,11 @@ import javafx.scene.shape.Rectangle;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.BlockContainer;
+import nl.utwente.viskell.ui.serialize.Bundleable;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.Optional;
 
 public class ApplyAnchor extends InputAnchor implements FunctionReference {
 
@@ -35,7 +39,19 @@ public class ApplyAnchor extends InputAnchor implements FunctionReference {
         this.getChildren().addAll(this.invisibleAnchor, this.visibleAnchor, this.openWire);
         this.refreshedType(baseArity, new TypeScope());
     }
-        
+
+    public Map<String, Object> toBundleFragment() {
+        return ImmutableMap.of(
+                Bundleable.KIND, this.getClass().getSimpleName(),
+                "arity", this.baseArity
+        );
+    }
+
+    public static ApplyAnchor fromBundleFragment(Map<String, Object> bundleFragment) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        int arity = ((Double)bundleFragment.get("arity")).intValue();
+        return new ApplyAnchor(arity);
+    }
+
     @Override
     public void initializeBlock(Block funBlock) {
         this.block = funBlock;

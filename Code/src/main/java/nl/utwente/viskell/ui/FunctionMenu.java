@@ -114,16 +114,16 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             
                             CatalogFunction entry = this.getItem();
                             if ("Deconstructors".equals(category) && entry.isConstructor()) {
-                                addBlock(new MatchBlock(entry, parent));
+                                addBlock(new MatchBlock(parent, entry));
                             } else if (e.getButton() == MouseButton.SECONDARY && entry.isConstructor()) {
-                                addBlock(new MatchBlock(entry, parent));
+                                addBlock(new MatchBlock(parent, entry));
                             } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                 addBlock(new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
                             } else {
                             	if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
-                            		addBlock(new BinOpApplyBlock(entry, parent));
+                            		addBlock(new BinOpApplyBlock(parent, entry));
                             	} else {
-                            		addBlock(new FunApplyBlock(new LibraryFunUse(entry), parent));
+                            		addBlock(new FunApplyBlock(parent, new LibraryFunUse(entry)));
                             	}
                             }
                         });
@@ -152,14 +152,14 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             CatalogFunction entry = this.getItem();
                             
                             if ("Deconstructors".equals(category) && entry.isConstructor()) {
-                                addBlock(new MatchBlock(entry, parent));
+                                addBlock(new MatchBlock(parent, entry));
                             } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                 addBlock(new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
                             } else {
                                 if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
-                                    addBlock(new BinOpApplyBlock(entry, parent));
+                                    addBlock(new BinOpApplyBlock(parent, entry));
                                 } else {
-                                    addBlock(new FunApplyBlock(new LibraryFunUse(entry), parent));
+                                    addBlock(new FunApplyBlock(parent, new LibraryFunUse(entry)));
                                 }
                             }
                         });
@@ -178,14 +178,14 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
                             if (sceneX < bounds.getMinX()-75 || sceneX > bounds.getMaxX()+25) {
                                 CatalogFunction entry = this.getItem();
                                 if ("Deconstructors".equals(category) && entry.isConstructor()) {
-                                    addDraggedBlock(e.getTouchPoint(), new MatchBlock(entry, parent));
+                                    addDraggedBlock(e.getTouchPoint(), new MatchBlock(parent, entry));
                                 } else if (!(entry.getFreshSignature() instanceof FunType)) {
                                     addDraggedBlock(e.getTouchPoint(), new ConstantBlock(pane, entry.getFreshSignature(), entry.getName(), true));
                                 } else {
                                     if (entry.getName().startsWith("(") && entry.getFreshSignature().countArguments() == 2) {
-                                        addDraggedBlock(e.getTouchPoint(), new BinOpApplyBlock(entry, parent));
+                                        addDraggedBlock(e.getTouchPoint(), new BinOpApplyBlock(parent, entry));
                                     } else {
-                                        addDraggedBlock(e.getTouchPoint(), new FunApplyBlock(new LibraryFunUse(entry), parent));
+                                        addDraggedBlock(e.getTouchPoint(), new FunApplyBlock(parent, new LibraryFunUse(entry)));
                                     }
                                 }
                                 e.consume();
@@ -244,7 +244,7 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         Button disBlockButton = new MenuButton("Observe", bm -> addBlock(new DisplayBlock(parent)));
         Button lambdaBlockButton = new MenuButton("Lambda", bm -> addLambdaBlock());
         Button choiceBlockButton = new MenuButton("Choice", bm -> addChoiceBlock());
-        Button applyBlockButton = new MenuButton("Apply", bm -> addBlock(new FunApplyBlock(new ApplyAnchor(1), parent)));
+        Button applyBlockButton = new MenuButton("Apply", bm -> addBlock(new FunApplyBlock(parent, new ApplyAnchor(1))));
         
 
         utilSpace.getChildren().addAll(closeButton, disBlockButton, arbBlockButton, valBlockButton, lambdaBlockButton, applyBlockButton, choiceBlockButton);

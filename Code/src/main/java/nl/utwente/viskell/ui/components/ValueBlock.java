@@ -1,6 +1,7 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,6 +17,7 @@ import nl.utwente.viskell.ui.ToplevelPane;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import nl.utwente.viskell.ui.serialize.Bundleable;
 
 /**
  * ValueBlock is an extension of Block that contains only a value and does not
@@ -39,6 +41,8 @@ public abstract class ValueBlock extends Block implements ConnectionAnchor.Targe
     /** The label for placing the value of this block. */
     @FXML protected Label value;
 
+    protected Type type;
+
     /**
      * Construct a new ValueBlock.
      * @param pane The parent pane this Block resides on.
@@ -47,6 +51,7 @@ public abstract class ValueBlock extends Block implements ConnectionAnchor.Targe
         super(pane);
         loadFXML(fxml);
 
+        this.type = type;
         output = new OutputAnchor(this, new Binder("val", type));
         outputSpace.getChildren().add(output);
     }
@@ -103,10 +108,5 @@ public abstract class ValueBlock extends Block implements ConnectionAnchor.Targe
     public void invalidateVisualState() {
         valueType.setText(output.getStringType());
         this.output.invalidateVisualState();
-    }
-
-    @Override
-    protected ImmutableMap<String, Object> toBundleFragment() {
-        return ImmutableMap.of("value", getValue());
     }
 }

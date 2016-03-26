@@ -1,33 +1,19 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.ImmutableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import nl.utwente.viskell.haskell.expr.Binder;
-import nl.utwente.viskell.haskell.expr.Case;
+import nl.utwente.viskell.haskell.expr.*;
 import nl.utwente.viskell.haskell.expr.Case.Alternative;
-import nl.utwente.viskell.haskell.expr.Expression;
-import nl.utwente.viskell.haskell.expr.LetExpression;
-import nl.utwente.viskell.haskell.expr.LocalVar;
-import nl.utwente.viskell.haskell.expr.Value;
-import nl.utwente.viskell.haskell.type.HaskellTypeError;
-import nl.utwente.viskell.haskell.type.Type;
-import nl.utwente.viskell.haskell.type.TypeChecker;
-import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.haskell.type.TypeVar;
+import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.ToplevelPane;
 
-import com.google.common.collect.ImmutableList;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * An evaluation block with multiple guarded alternatives.
@@ -69,6 +55,11 @@ public class ChoiceBlock extends Block {
         
         addLane();
         addLane();
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    public static ChoiceBlock fromBundleFragment(ToplevelPane pane, Map<String, Object> bundleFragment) {
+        return new ChoiceBlock(pane);
     }
 
     @Override

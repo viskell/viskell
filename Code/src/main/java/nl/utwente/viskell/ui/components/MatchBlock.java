@@ -1,11 +1,10 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableMap;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -46,7 +45,7 @@ public class MatchBlock extends Block {
 
     protected Label inputLabel;
     
-    public MatchBlock(FunctionInfo funInfo, ToplevelPane pane) {
+    public MatchBlock(ToplevelPane pane, FunctionInfo funInfo) {
         super(pane);
         this.loadFXML("MatchBlock");
         
@@ -88,7 +87,20 @@ public class MatchBlock extends Block {
         inputSpace.setTranslateY(-9);
         outputSpace.getChildren().addAll(outputs);
     }
-    
+
+    /** @return a Map of class-specific properties of this Block. */
+    @Override
+    protected Map<String, Object> toBundleFragment() {
+        return ImmutableMap.of("funInfo", this.info.toBundleFragment());
+    }
+
+    /** return a new instance of this Block type deserializing class-specific properties used in constructor **/
+    public static MatchBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Map<String, Object> funInfoBundle = (Map<String, Object>)bundleFragment.get("funInfo");
+        FunctionInfo funInfo = FunctionInfo.fromBundleFragment(funInfoBundle);
+        return new MatchBlock(pane, funInfo);
+    }
+
     @Override
     public List<InputAnchor> getAllInputs() {
         return ImmutableList.of(input);
@@ -101,7 +113,7 @@ public class MatchBlock extends Block {
 
     @Override
     public Optional<Block> getNewCopy() {
-        return Optional.of(new MatchBlock(this.info, this.getToplevel()));
+        return Optional.of(new MatchBlock(this.getToplevel(), this.info));
     }
 
     @Override

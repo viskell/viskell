@@ -1,12 +1,10 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.collect.ImmutableList;
 
+import com.google.common.collect.ImmutableMap;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -67,6 +65,17 @@ public class SplitterBlock extends Block {
         body.setPickOnBounds(false);
         this.getChildren().add(body);
         this.setPickOnBounds(false);
+    }
+
+    /** @return class-specific properties of this Block. */
+    @Override
+    protected Map<String, Object> toBundleFragment() {
+        return ImmutableMap.of("arity", this.outputs.size());
+    }
+
+    public static SplitterBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) {
+        int arity = ((Double)bundleFragment.get("arity")).intValue();
+        return new SplitterBlock(pane, arity);
     }
 
     @Override

@@ -1,9 +1,9 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -16,10 +16,10 @@ import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ComponentLoader;
 import nl.utwente.viskell.ui.ToplevelPane;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * A CLaSH-specific block that is a counterpart to the `simulate` function in Clash. Expects a function that turns a
@@ -59,6 +59,11 @@ public class SimulateBlock extends Block implements ComponentLoader {
 
         String signature = "(Num a, Show b) => Signal a -> Signal b";
         funConstraint = getToplevel().getEnvInstance().buildType(signature);
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    public static SimulateBlock fromBundleFragment(ToplevelPane pane, Map<String, Object> bundleFragment) {
+        return new SimulateBlock(pane);
     }
 
     @Override

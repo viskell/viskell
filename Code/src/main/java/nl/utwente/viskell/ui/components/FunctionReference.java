@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -32,4 +33,5 @@ public interface FunctionReference {
 
     void deleteLinks();
 
+    Map<String, Object> toBundleFragment();
 }
