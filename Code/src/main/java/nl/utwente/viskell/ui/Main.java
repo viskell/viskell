@@ -1,11 +1,8 @@
 package nl.utwente.viskell.ui;
 
-import java.util.prefs.Preferences;
-
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -15,15 +12,14 @@ import javafx.stage.Stage;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 
+import java.util.prefs.Preferences;
+
 /**
  * Main application class for the GUI.
  */
 public class Main extends Application {
     /** A reference to the main window */
     public static Stage primaryStage;
-
-    /** A reference to the overlay */
-    public static MainOverlay overlay;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -36,20 +32,14 @@ public class Main extends Application {
         
         // Init TactilePane
         ToplevelPane tactilePane = new ToplevelPane(ghci);
-
-        overlay = new MainOverlay(tactilePane);
-
-        // Init scene
+        MainOverlay overlay = new MainOverlay(tactilePane);
         Scene scene = new Scene(overlay);
-
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
         String backGroundImage = prefs.get("background", "/ui/grid.png");
         overlay.getMainPane().setStyle("-fx-background-image: url('" + backGroundImage + "');");
         String theme = prefs.get("theme", "/ui/colours.css");
         scene.getStylesheets().addAll("/ui/layout.css", theme);
 
-        System.out.println(overlay.getStyle());
-        
         stage.setWidth(1024);
         stage.setHeight(768);
 
@@ -86,7 +76,6 @@ public class Main extends Application {
 
             e.printStackTrace(); // In case it's not a file-not-found
         }
-
     }
 
     /**

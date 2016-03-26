@@ -50,21 +50,21 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
         background.getSelectionModel().select(preferences.get("background", "/ui/grid.png"));
         background.valueProperty().addListener(event -> {
             preferences.put("background", background.getValue());
-            refreshTheme();
+            refreshTheme(overlay);
         });
         
         theme.getItems().setAll(ImmutableList.of("/ui/colours.css", "/ui/debugColours.css"));
         theme.getSelectionModel().select(preferences.get("theme", "/ui/colours.css"));
         theme.valueProperty().addListener(event -> {
             preferences.put("theme", theme.getValue());
-            refreshTheme();
+            refreshTheme(overlay);
         });
         
         debugOverlay.setOnAction(event -> {
-            Main.overlay.setTouchVisible(debugOverlay.isSelected());
+            overlay.setTouchVisible(debugOverlay.isSelected());
         });
         
-        reloadTheme.setOnAction(event -> refreshTheme());
+        reloadTheme.setOnAction(event -> refreshTheme(overlay));
         
         stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean old, Boolean newVal) {
@@ -74,16 +74,16 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
             }
         });
 
-        refreshTheme();
+        refreshTheme(overlay);
     }
 
-    protected void refreshTheme() {
+    protected void refreshTheme(MainOverlay overlay) {
         Main.primaryStage.getScene().getStylesheets().clear();
         Main.primaryStage.getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
         stage.getScene().getStylesheets().clear();
         stage.getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
         String backGroundImage = preferences.get("background", "/ui/grid.png");
-        Main.overlay.getMainPane().setStyle("-fx-background-image: url('" + backGroundImage + "');");
+        overlay.getMainPane().setStyle("-fx-background-image: url('" + backGroundImage + "');");
     }
 
     public void show() {
