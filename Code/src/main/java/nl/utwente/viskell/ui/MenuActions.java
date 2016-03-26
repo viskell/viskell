@@ -7,7 +7,6 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import nl.utwente.viskell.ui.components.Block;
 import nl.utwente.viskell.ui.serialize.Exporter;
 import nl.utwente.viskell.ui.serialize.Importer;
 
@@ -15,9 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * menu actions
@@ -67,7 +64,7 @@ public class MenuActions {
     }
 
     protected void onNew(ActionEvent actionEvent) {
-        this.overlay.getMainPane().clearChildren();
+        this.overlay.getToplevelPane().clearChildren();
     }
 
     protected void onOpen(ActionEvent actionEvent) {
@@ -75,7 +72,7 @@ public class MenuActions {
         File file = new FileChooser().showOpenDialog(window);
 
         if (file != null) {
-            addChildrenFrom(file, this.overlay.getMainPane());
+            addChildrenFrom(file, this.overlay.getToplevelPane());
         }
     }
 
@@ -97,12 +94,20 @@ public class MenuActions {
         }
     }
 
-    protected void addChildrenFrom(File file, ToplevelPane pane) {
+    protected void addChildrenFrom(File file, ToplevelPane toplevelPane) {
+        try (FileInputStream fis = new FileInputStream(file)) {
+            Map<String, Object> layers = Importer.readLayers(fis);
+            toplevelPane.fromBundle(layers);
+            fis.close();
+        } catch (IOException e) {
+            // TODO do something sensible here - like show a dialog
+            e.printStackTrace();
+        }
     }
 
     protected void saveTo(File file) {
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(Exporter.export(this.overlay.getMainPane()).getBytes(Charsets.UTF_8));
+            fos.write(Exporter.export(this.overlay.getToplevelPane()).getBytes(Charsets.UTF_8));
             fos.close();
         } catch (IOException e) {
             // TODO do something sensible here

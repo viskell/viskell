@@ -7,6 +7,8 @@ import java.util.Map;
  * objects), which can in turn be converted into JSON.
  */
 public interface Bundleable {
+    String KIND = "kind";
+
     /**
      * Serialization function.
      *

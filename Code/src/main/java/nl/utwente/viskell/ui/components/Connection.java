@@ -36,13 +36,18 @@ public class Connection extends CubicCurve implements
      * It determines how a far a line attempts to goes straight from its end points.
      */
     public static final double BEZIER_CONTROL_OFFSET = 150f;
-    
+
+    /**
+     * Labels for serialization to and from JSON
+     */
+    private static final String SOURCE_LABEL = "from";
+    private static final String SINK_LABEL = "to";
+
     /** Starting point of this Line that can be Anchored onto other objects. */
     private final OutputAnchor startAnchor;
     /** Ending point of this Line that can be Anchored onto other objects. */
     private final InputAnchor endAnchor;
 
-    
     /** Whether this connection produced an error in the latest type unification. */
     private boolean errorState;
 
@@ -159,10 +164,27 @@ public class Connection extends CubicCurve implements
     @Override
     public Map<String, Object> toBundle() {
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
-        bundle.put("kind", getClass().getSimpleName());
-        bundle.put("from", this.startAnchor.toBundle());
-        bundle.put("to", this.endAnchor.toBundle());
+        bundle.put(SOURCE_LABEL, this.startAnchor.toBundle());
+        bundle.put(SINK_LABEL, this.endAnchor.toBundle());
         return bundle.build();
+    }
+
+    public static void fromBundle(Map<String,Object> connectionBundle,
+                                        Map<Integer, Block> blockLookupTable) {
+        Map<String,Object> source = (Map<String,Object>)connectionBundle.get(SOURCE_LABEL);
+        Integer sourceId = ((Double)source.get("Block")).intValue();
+        Block sourceBlock = blockLookupTable.get(sourceId);
+        OutputAnchor sourceAnchor = sourceBlock.getAllOutputs().get(0);
+
+        Map<String,Object> sink = (Map<String,Object>)connectionBundle.get(SINK_LABEL);
+        Integer sinkId = ((Double)sink.get("Block")).intValue();
+        Integer sinkAnchorNumber = ((Double)sink.get("Anchor")).intValue();
+        Block sinkBlock = blockLookupTable.get(sinkId);
+        InputAnchor sinkAnchor = sinkBlock.getAllInputs().get(sinkAnchorNumber);
+
+        Connection connection = new Connection(sourceAnchor, sinkAnchor);
+        connection.invalidateVisualState();
+        sinkBlock.invalidateVisualState();
     }
 
     /**

@@ -1,13 +1,11 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.ImmutableList;
 
+import com.google.common.collect.ImmutableMap;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -70,6 +68,19 @@ public class LiftingBlock extends Block {
         VBox body = new VBox(inputSpace, nested, outputSpace);
         body.getStyleClass().addAll("block", "lifting");
         this.getChildren().add(body);
+    }
+
+    /** @return a Map of class-specific properties of this Block. */
+    @Override
+    protected Map<String, Object> toBundleFragment() {
+        return ImmutableMap.of("nestedId", this.nested.hashCode());
+    }
+
+    /** return a new instance of this Block type deserializing class-specific properties used in constructor **/
+    public static LiftingBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) {
+        int nestedId = ((Double)bundleFragment.get("nestedId")).intValue();
+        // TODO find the nested block using the ID
+        return new LiftingBlock(pane, null);
     }
 
     public NestedBlock getNested() {

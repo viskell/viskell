@@ -1,7 +1,9 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -12,9 +14,10 @@ import javafx.scene.control.Button;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.ToplevelPane;
+import nl.utwente.viskell.ui.serialize.Bundleable;
 
 /** This variant of the ValueBlock uses QuickCheck to generate values based on the output type. */
-public class ArbitraryBlock extends ValueBlock {
+public class ArbitraryBlock extends ValueBlock implements Bundleable {
     
     /** The button for getting the next randomly generated value */
     @FXML private Button rngTrigger; 
@@ -32,6 +35,17 @@ public class ArbitraryBlock extends ValueBlock {
         this.lastGenType = Optional.empty();
         this.output.refreshType(new TypeScope());
         this.getNextValue(this.hashCode(), false);
+    }
+
+    @Override
+    protected Map<String, Object> toBundleFragment() {
+        return ImmutableMap.of("value", getValue());
+    }
+
+    public static ArbitraryBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) {
+        ArbitraryBlock arbitraryBlock = new ArbitraryBlock(pane);
+        arbitraryBlock.setValue((String)bundleFragment.get("value"));
+        return arbitraryBlock;
     }
 
     private void getNextValue(int seed, boolean fromClick) {

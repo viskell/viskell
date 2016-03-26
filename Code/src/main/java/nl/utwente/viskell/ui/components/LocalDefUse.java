@@ -1,13 +1,16 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableMap;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import nl.utwente.viskell.haskell.expr.*;
 import nl.utwente.viskell.haskell.type.*;
 import nl.utwente.viskell.ui.BlockContainer;
+import nl.utwente.viskell.ui.serialize.Bundleable;
 
 public class LocalDefUse extends Label implements FunctionReference {
 
@@ -21,6 +24,18 @@ public class LocalDefUse extends Label implements FunctionReference {
         this.setMinWidth(USE_PREF_SIZE);
         this.setMaxWidth(USE_PREF_SIZE);
         this.getStyleClass().add("title");
+    }
+
+    public Map<String, Object> toBundleFragment() {
+        return ImmutableMap.of(
+                Bundleable.KIND, this.getClass().getSimpleName()
+                // TODO output the lambda block also
+        );
+    }
+
+    public static LocalDefUse fromBundleFragment(Map<String, Object> bundleFragment) {
+        // TODO deserialize the lambda block...
+        return new LocalDefUse(null);
     }
 
     @Override

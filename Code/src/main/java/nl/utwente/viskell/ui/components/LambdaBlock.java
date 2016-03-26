@@ -1,13 +1,8 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.collect.ImmutableMap;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.event.Event;
@@ -21,9 +16,14 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import nl.utwente.viskell.haskell.expr.*;
-import nl.utwente.viskell.haskell.type.*;
-import nl.utwente.viskell.ui.*;
+import nl.utwente.viskell.haskell.expr.Binder;
+import nl.utwente.viskell.haskell.expr.Expression;
+import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.ui.BlockContainer;
+import nl.utwente.viskell.ui.DragContext;
+import nl.utwente.viskell.ui.ToplevelPane;
+
+import java.util.*;
 
 /** Lambda block represent the externals of a lambda abstraction and can be named to become a local definition. */
 public class LambdaBlock extends Block {
@@ -45,6 +45,9 @@ public class LambdaBlock extends Block {
     
     /** The internal lambda within this definition block */
     private LambdaContainer body;
+
+    /** the arity of this block for serialization **/
+    private int arity;
     
     /** The function anchor (second bottom anchor) */
     private PolyOutputAnchor fun;
@@ -63,6 +66,7 @@ public class LambdaBlock extends Block {
         super(pane);
         this.loadFXML("LambdaBlock");
 
+        this.arity = arity;
         this.signature.setText("");
         this.explicitSignature = Optional.empty();
         this.definitionName.setText("");
@@ -101,7 +105,19 @@ public class LambdaBlock extends Block {
             }
         });
     }
-    
+
+    /** @return a Map of class-specific properties of this Block. */
+    @Override
+    protected Map<String, Object> toBundleFragment() {
+        return ImmutableMap.of("arity", this.arity);
+    }
+
+    /** return a new instance of this Block type deserializing class-specific properties used in constructor **/
+    public static LambdaBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) {
+        int arity = ((Double)bundleFragment.get("arity")).intValue();
+        return new LambdaBlock(pane, arity);
+    }
+
     /** 
      * Construct a function block performing this block's actions
      * @param event the event triggering this creation
@@ -110,7 +126,7 @@ public class LambdaBlock extends Block {
         ToplevelPane toplevel = this.getToplevel();
         LocalDefUse funRef = new LocalDefUse(this);
         this.allDefinitionUsers.add(funRef);
-        Block block = new FunApplyBlock(funRef, toplevel);
+        Block block = new FunApplyBlock(toplevel, funRef);
         toplevel.addBlock(block);
         Bounds bounds = this.getBoundsInParent();
         block.relocate(bounds.getMinX()-20, bounds.getMaxY()+10);
