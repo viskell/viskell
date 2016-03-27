@@ -4,6 +4,9 @@ import com.google.common.base.Charsets;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -35,18 +38,22 @@ public class MenuActions {
         List<MenuItem> list = new ArrayList<>();
 
         MenuItem menuNew = new MenuItem("New");
+        menuNew.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         menuNew.setOnAction(this::onNew);
         list.add(menuNew);
 
         MenuItem menuOpen = new MenuItem("Open...");
+        menuOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
         menuOpen.setOnAction(this::onOpen);
         list.add(menuOpen);
 
         MenuItem menuSave = new MenuItem("Save");
+        menuSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         menuSave.setOnAction(this::onSave);
         list.add(menuSave);
 
         MenuItem menuSaveAs = new MenuItem("Save as...");
+        menuSaveAs.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN));
         menuSaveAs.setOnAction(this::onSaveAs);
         list.add(menuSaveAs);
 
