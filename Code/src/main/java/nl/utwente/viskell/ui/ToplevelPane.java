@@ -24,8 +24,8 @@ import java.util.stream.Stream;
  * And represents the toplevel container of all blocks.
  */
 public class ToplevelPane extends Region implements BlockContainer, Bundleable {
-    private static final String BLOCKS_SERIALIZED_NAME = "Blocks";
-    private static final String CONNECTIONS_SERIALIZED_NAME = "Connections";
+    public static final String BLOCKS_SERIALIZED_NAME = "Blocks";
+    public static final String CONNECTIONS_SERIALIZED_NAME = "Connections";
 
     /** bottom pane layer intended for block container such as lambda's */
     private final Pane bottomLayer;

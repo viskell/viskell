@@ -26,7 +26,7 @@ import java.util.prefs.Preferences;
  *
  * Public methods are safe to use from multiple threads.
  */
-public final class GhciSession extends AbstractExecutionThreadService {
+public class GhciSession extends AbstractExecutionThreadService {
     /** Work queue. */
     private ArrayBlockingQueue<AbstractMap.SimpleEntry<String, SettableFuture<String>>> queue;
 
