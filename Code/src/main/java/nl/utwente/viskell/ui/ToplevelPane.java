@@ -319,4 +319,20 @@ public class ToplevelPane extends Region implements BlockContainer, Bundleable {
         // The toplevel is large enough to fit practical everything
     }
 
+    /**
+     * Zooms this pane in/out with a ratio, up to reasonable limits.
+     * @param ratio the additional zoom factor to apply.
+     */
+    public void zoom(double ratio) {
+        double scale = this.getScaleX();
+
+        /* Limit zoom to reasonable range. */
+        if (scale <= 0.2 && ratio < 1) return;
+        if (scale >= 3 && ratio > 1) return;
+
+        this.setScaleX(scale * ratio);
+        this.setScaleY(scale * ratio);
+        this.setTranslateX(this.getTranslateX() * ratio);
+        this.setTranslateY(this.getTranslateY() * ratio);
+    }
 }

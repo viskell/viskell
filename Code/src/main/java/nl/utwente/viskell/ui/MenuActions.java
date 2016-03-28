@@ -23,15 +23,25 @@ import java.util.*;
  * menu actions
  */
 public class MenuActions {
-    /** The main overlay of which this menu is a part */ 
+    /**
+     * The main overlay of which this menu is a part
+     */
     protected MainOverlay overlay;
 
-    /** The File we're currently working on, if any. */
+    /**
+     * The File we're currently working on, if any.
+     */
     private Optional<File> currentFile;
 
-    public MenuActions(MainOverlay overlay) {
-        this.overlay = overlay;
-        this.currentFile = Optional.empty();
+    /** The current preferences window, or null if not yet opened. */
+    private PreferencesWindow preferences;
+
+    /** The current inspector window, or null if not yet opened. */
+    private InspectorWindow inspector;
+
+    public MenuActions(MainOverlay ol) {
+        overlay = ol;
+        currentFile = Optional.empty();
     }
 
     protected List<MenuItem> fileMenuItems() {
@@ -62,42 +72,50 @@ public class MenuActions {
 
     @SuppressWarnings("UnusedParameters")
     protected void showPreferences(ActionEvent actionEvent) {
-        this.overlay.showPreferences();
+        if (preferences == null) {
+            preferences = new PreferencesWindow(overlay);
+        }
+
+        preferences.show();
     }
 
     @SuppressWarnings("UnusedParameters")
     protected void showInspector(ActionEvent actionEvent) {
-        this.overlay.showInspector();
+        if (inspector == null) {
+            inspector = new InspectorWindow(overlay);
+        }
+
+        inspector.show();
     }
 
     protected void onNew(ActionEvent actionEvent) {
-        this.overlay.getToplevelPane().clearChildren();
+        overlay.getToplevelPane().clearChildren();
     }
 
     protected void onOpen(ActionEvent actionEvent) {
-        Window window = this.overlay.getScene().getWindow();
+        Window window = overlay.getScene().getWindow();
         File file = new FileChooser().showOpenDialog(window);
 
         if (file != null) {
-            addChildrenFrom(file, this.overlay.getToplevelPane());
+            addChildrenFrom(file, overlay.getToplevelPane());
         }
     }
 
     protected void onSave(ActionEvent actionEvent) {
-        if (this.currentFile.isPresent()) {
-            saveTo(this.currentFile.get());
+        if (currentFile.isPresent()) {
+            saveTo(currentFile.get());
         } else {
             onSaveAs(actionEvent);
         }
     }
 
     protected void onSaveAs(ActionEvent actionEvent) {
-        Window window = this.overlay.getScene().getWindow();
+        Window window = overlay.getScene().getWindow();
         File file = new FileChooser().showSaveDialog(window);
 
         if (file != null) {
             saveTo(file);
-            this.currentFile = Optional.of(file);
+            currentFile = Optional.of(file);
         }
     }
 
@@ -114,14 +132,14 @@ public class MenuActions {
 
     protected void saveTo(File file) {
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(Exporter.export(this.overlay.getToplevelPane()).getBytes(Charsets.UTF_8));
+            fos.write(Exporter.export(overlay.getToplevelPane()).getBytes(Charsets.UTF_8));
             fos.close();
         } catch (IOException e) {
             // TODO do something sensible here
             e.printStackTrace();
         }
     }
-    
+
     @SuppressWarnings("UnusedParameters")
     protected void toggleFullScreen(ActionEvent actionEvent) {
         Stage stage = Main.primaryStage;
@@ -136,5 +154,15 @@ public class MenuActions {
     @SuppressWarnings("UnusedParameters")
     protected void onQuit(ActionEvent actionEvent) {
         Platform.exit();
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    protected void zoomIn(ActionEvent actionEvent) {
+        overlay.getToplevelPane().zoom(1.1);
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    protected void zoomOut(ActionEvent actionEvent) {
+        overlay.getToplevelPane().zoom(1 / 1.1);
     }
 }

@@ -35,10 +35,25 @@ public class MacTopMenu extends MenuBar {
         // View menu
         final Menu viewMenu = new Menu("_View");
         viewMenu.setMnemonicParsing(true);
+
         MenuItem menuInspector = new MenuItem("Inspector");
         menuInspector.setAccelerator(new KeyCodeCombination(KeyCode.I, KeyCombination.SHORTCUT_DOWN));
         menuInspector.setOnAction(menuActions::showInspector);
-        viewMenu.getItems().addAll(menuInspector);
+
+        MenuItem fullscreen = new MenuItem("Toggle Fullscreen");
+        fullscreen.setAccelerator(new KeyCodeCombination(KeyCode.F, KeyCombination.SHORTCUT_DOWN));
+        fullscreen.setOnAction(menuActions::toggleFullScreen);
+
+        MenuItem zoomIn = new MenuItem("Zoom In");
+        zoomIn.setAccelerator(new KeyCodeCombination(KeyCode.PLUS, KeyCombination.SHORTCUT_DOWN));
+        zoomIn.setOnAction(menuActions::zoomIn);
+
+        // FIXME The shortcut inexplicably doesn't work on a Mac!
+        MenuItem zoomOut = new MenuItem("Zoom Out");
+        zoomOut.setAccelerator(new KeyCodeCombination(KeyCode.MINUS, KeyCombination.SHORTCUT_DOWN));
+        zoomOut.setOnAction(menuActions::zoomOut);
+
+        viewMenu.getItems().addAll(menuInspector, fullscreen, zoomIn, zoomOut);
 
         // Help Menu
         final Menu helpMenu = new Menu("_Help");
