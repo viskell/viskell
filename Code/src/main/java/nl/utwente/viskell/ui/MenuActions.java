@@ -8,13 +8,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import nl.utwente.viskell.ui.serialize.Exporter;
-import nl.utwente.viskell.ui.serialize.Importer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * menu actions
@@ -65,6 +65,7 @@ public class MenuActions {
 
     protected void onNew(ActionEvent actionEvent) {
         this.overlay.getToplevelPane().clearChildren();
+        this.currentFile = Optional.empty();
     }
 
     protected void onOpen(ActionEvent actionEvent) {
