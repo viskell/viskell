@@ -78,8 +78,8 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
     }
 
     protected void refreshTheme(MainOverlay overlay) {
-        Main.primaryStage.getScene().getStylesheets().clear();
-        Main.primaryStage.getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
+        Main.getStage().getScene().getStylesheets().clear();
+        Main.getStage().getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
         stage.getScene().getStylesheets().clear();
         stage.getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
         String backGroundImage = preferences.get("background", "/ui/grid.png");

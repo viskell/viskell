@@ -37,7 +37,7 @@ public class GhciSession extends AbstractExecutionThreadService {
     private Evaluator ghci;
 
     /** Gets filled with a HaskellCatalog instance when ghci is ready. */
-    private HaskellCatalog catalog;
+    private static HaskellCatalog catalog;
 
     /** Gets filled with up to LOG_SIZE errors. */
     private EvictingQueue<String> errors;
@@ -203,6 +203,12 @@ public class GhciSession extends AbstractExecutionThreadService {
     /** @return the available backend identifiers. */
     public static List<Backend> getBackends() {
         return Lists.newArrayList(EnumSet.allOf(Backend.class));
+    }
+
+    // FIXME this is a bit of a hack to have a static method to get the catalog from static deserialization methods
+    // either that or we pass the catalog as a parameter to ALL deserialization methods so that have the same signature.
+    public static HaskellCatalog getHaskellCatalog() {
+        return catalog;
     }
 
     public HaskellCatalog getCatalog() {

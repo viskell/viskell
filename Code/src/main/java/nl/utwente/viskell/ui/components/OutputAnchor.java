@@ -254,7 +254,7 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
     public Map<String, Object> toBundle() {
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
         Block block = this.block;
-        bundle.put("Block", block.hashCode());
+        bundle.put(BLOCK_LABEL, block.hashCode());
         return bundle.build();
     }
 

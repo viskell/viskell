@@ -43,16 +43,10 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
             
     /**
      * Creates a new instance of DisplayBlock.
-     * @param pane
-     *            The pane on which this DisplayBlock resides.
+     * @param pane on which this DisplayBlock resides.
      */
     public DisplayBlock(ToplevelPane pane) {
         this(pane, "DisplayBlock");
-    }
-
-    @SuppressWarnings("UnusedParameters")
-    public static DisplayBlock fromBundleFragment(ToplevelPane pane, Map<String, Object> bundleFragment) {
-        return new DisplayBlock(pane);
     }
 
     protected DisplayBlock(ToplevelPane pane, String fxml) {
@@ -62,6 +56,11 @@ public class DisplayBlock extends Block implements ConnectionAnchor.Target {
 
         inputAnchor = new InputAnchor(this);
         inputSpace.getChildren().add(0, inputAnchor);
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    public static DisplayBlock fromBundleFragment(ToplevelPane pane, Map<String, Object> bundleFragment) {
+        return new DisplayBlock(pane);
     }
 
     @Override

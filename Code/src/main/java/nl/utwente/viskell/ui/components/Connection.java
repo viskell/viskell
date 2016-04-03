@@ -172,13 +172,13 @@ public class Connection extends CubicCurve implements
     public static void fromBundle(Map<String,Object> connectionBundle,
                                         Map<Integer, Block> blockLookupTable) {
         Map<String,Object> source = (Map<String,Object>)connectionBundle.get(SOURCE_LABEL);
-        Integer sourceId = ((Double)source.get("Block")).intValue();
+        Integer sourceId = ((Double)source.get(ConnectionAnchor.BLOCK_LABEL)).intValue();
         Block sourceBlock = blockLookupTable.get(sourceId);
         OutputAnchor sourceAnchor = sourceBlock.getAllOutputs().get(0);
 
         Map<String,Object> sink = (Map<String,Object>)connectionBundle.get(SINK_LABEL);
-        Integer sinkId = ((Double)sink.get("Block")).intValue();
-        Integer sinkAnchorNumber = ((Double)sink.get("Anchor")).intValue();
+        Integer sinkId = ((Double)sink.get(ConnectionAnchor.BLOCK_LABEL)).intValue();
+        Integer sinkAnchorNumber = ((Double)sink.get(ConnectionAnchor.ANCHOR_LABEL)).intValue();
         Block sinkBlock = blockLookupTable.get(sinkId);
         InputAnchor sinkAnchor = sinkBlock.getAllInputs().get(sinkAnchorNumber);
 

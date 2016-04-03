@@ -19,7 +19,7 @@ import java.util.prefs.Preferences;
  */
 public class Main extends Application {
     /** A reference to the main window */
-    public static Stage primaryStage;
+    private static Stage primaryStage;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -75,6 +75,15 @@ public class Main extends Application {
 
             e.printStackTrace(); // In case it's not a file-not-found
         }
+    }
+
+    /**
+     * Get the main stage for this app
+     *
+     * @return
+     */
+    public static Stage getStage() {
+        return primaryStage;
     }
 
     /**

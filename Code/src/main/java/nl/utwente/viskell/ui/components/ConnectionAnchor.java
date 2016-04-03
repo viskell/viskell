@@ -16,6 +16,8 @@ import nl.utwente.viskell.ui.serialize.Bundleable;
  * A ConnectionAnchor has an invisible part that acts as an enlargement of the touch zone.
  */
 public abstract class ConnectionAnchor extends StackPane implements ComponentLoader, Bundleable {
+    protected static final String BLOCK_LABEL = "block";
+    protected static final String ANCHOR_LABEL = "anchor";
 
     /** Helper interface for finding the associated connection anchor on release a wire onto something. */
     public interface Target {

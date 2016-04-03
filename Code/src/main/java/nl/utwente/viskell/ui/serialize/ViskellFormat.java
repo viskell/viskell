@@ -1,5 +1,8 @@
 package nl.utwente.viskell.ui.serialize;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by andrew on 03/04/16.
  *
@@ -13,7 +16,12 @@ package nl.utwente.viskell.ui.serialize;
  *
  */
 public class ViskellFormat {
-    public final static String VERSION_NUMBER_LABEL = "ViskellVersion"
+    /**
+     * This is the name given to the version number in the serialized file and should never be changed
+     */
+    public final static String VERSION_NUMBER_LABEL = "ViskellVersion";
+
+    /*************************************** EXPORT VERSIONS **********************************/
     /**
      * Added export capability -> version number 1 (initial version)
      */
@@ -24,9 +32,11 @@ public class ViskellFormat {
      */
     public final static int EXPORT_VERSION = EXPORT_VERSION_1;
 
+
+    /*************************************** IMPORT VERSIONS **********************************/
     /**
      * In the future, in case we attempt to support reading older version numbers, we can maintain a list of the
      * versions the current code can read
      */
-    public final static int[] SUPPORTED_IMPORT_VERSIONS = {EXPORT_VERSION_1};
+    public final static List<Integer> SUPPORTED_IMPORT_VERSIONS = Arrays.asList(EXPORT_VERSION_1);
 }

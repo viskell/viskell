@@ -1,7 +1,9 @@
 package nl.utwente.viskell.haskell.env;
 
 import com.google.common.base.MoreObjects;
+import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.ui.Main;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
 import java.util.HashMap;
@@ -42,24 +44,18 @@ public class CatalogFunction extends FunctionInfo implements Comparable<CatalogF
         Map<String, Object> bundleFragment = new HashMap<>();
         bundleFragment.put(Bundleable.KIND, this.getClass().getSimpleName());
         bundleFragment.put("name", name);
-        bundleFragment.put("signature", signature.toString());
-        bundleFragment.put("category", category);
-        bundleFragment.put("documentation", documentation);
-        bundleFragment.put("isConstructor", isConstructor);
-        bundleFragment.put("isCommon", isCommon);
         return bundleFragment;
     }
 
     /** return a new instance of this type deserializing class-specific properties used in constructor **/
     public static CatalogFunction fromBundleFragment(Map<String,Object> bundleFragment) {
         String name = (String)bundleFragment.get("name");
-        // TODO Create real Type from String
-        // Type signature = (Type)bundleFragment.get("signature");
-        String category = (String)bundleFragment.get("category");
-        String documentation = (String)bundleFragment.get("documentation");
-        Boolean isConstructor = (Boolean)bundleFragment.get("isConstructor");
-        Boolean isCommon = (Boolean)bundleFragment.get("isCommon");
-        return new CatalogFunction(name, category, null /* TODO */, documentation, isConstructor, isCommon);
+
+        /**
+         * TODO This code is suggested as better - but returns FunctionInfo not catalog function
+         return GhciSession.getHaskellCatalog().asEnvironment().lookupFun(name);
+          */
+        return GhciSession.getHaskellCatalog().getByPredicate(fn -> fn.getName().equals(name)).iterator().next();
     }
 
     /**

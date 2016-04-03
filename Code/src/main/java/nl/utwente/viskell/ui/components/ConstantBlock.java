@@ -40,9 +40,9 @@ public class ConstantBlock extends ValueBlock  implements Bundleable {
 
     public static ConstantBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) throws ClassNotFoundException {
         String value = (String)bundleFragment.get("value");
-        // TODO Use Environment/TypeBuilder to create Type from String?
-        // Has a whole type hierarchy to serialize/deserialize
-        // Type type = (String)bundleFragment.get("type");
+        // FIXME Use Environment/TypeBuilder to create Type from String?
+        // FIXME I got lost in the code trying to figure out how to do this isung DataTypeInfo, TypeCon, etc...
+        // FIXME Type type = (String)bundleFragment.get("type");
         boolean hasValidValue = (Boolean)bundleFragment.get("hasValidValue");
         return new ConstantBlock(pane, null, value, hasValidValue);
     }
