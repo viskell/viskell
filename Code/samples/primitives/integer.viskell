@@ -1,0 +1,16 @@
+{
+  "ViskellVersion": 1,
+  "Blocks": [
+    {
+      "kind": "SliderBlock",
+      "id": 1516432662,
+      "x": 643.0,
+      "y": 189.0,
+      "properties": {
+        "isIntegral": true,
+        "value": "0"
+      }
+    }
+  ],
+  "Connections": []
+}

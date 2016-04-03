@@ -1,0 +1,34 @@
+{
+  "ViskellVersion": 1,
+  "Blocks": [
+    {
+      "kind": "ConstantBlock",
+      "id": 1757359648,
+      "x": 105.0,
+      "y": 80.0,
+      "properties": {
+        "value": "\"Hello, World!\"",
+        "type": "x___0(1d2912b8)[]",
+        "hasValidValue": true
+      }
+    },
+    {
+      "kind": "DisplayBlock",
+      "id": 92674628,
+      "x": 105.0,
+      "y": 221.0,
+      "properties": {}
+    }
+  ],
+  "Connections": [
+    {
+      "from": {
+        "block": 1757359648
+      },
+      "to": {
+        "block": 92674628,
+        "anchor": 0
+      }
+    }
+  ]
+}

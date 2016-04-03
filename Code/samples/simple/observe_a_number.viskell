@@ -1,0 +1,33 @@
+{
+  "Connections": [
+    {
+      "from": {
+        "block": 1105681601
+      },
+      "to": {
+        "block": 730669711,
+        "anchor": 0
+      }
+    }
+  ],
+  "Blocks": [
+    {
+      "kind": "SliderBlock",
+      "id": 1105681601,
+      "x": 529.0,
+      "y": 229.0,
+      "properties": {
+        "isIntegral": true,
+        "value": "42"
+      }
+    },
+    {
+      "kind": "DisplayBlock",
+      "id": 730669711,
+      "x": 530.0,
+      "y": 400.0,
+      "properties": {}
+    }
+  ],
+  "ViskellVersion": 1
+}

@@ -1,0 +1,13 @@
+{
+  "Connections": [],
+  "Blocks": [
+    {
+      "kind": "DisplayBlock",
+      "id": 1046502880,
+      "x": 650.0,
+      "y": 408.0,
+      "properties": {}
+    }
+  ],
+  "ViskellVersion": 1
+}

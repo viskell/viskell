@@ -1,0 +1,21 @@
+{
+  "ViskellVersion": 1,
+  "Blocks": [
+    {
+      "kind": "FunApplyBlock",
+      "id": 1194165722,
+      "x": 678.0,
+      "y": 74.0,
+      "properties": {
+        "curriedArgs": [
+          false
+        ],
+        "funRef": {
+          "kind": "ApplyAnchor",
+          "arity": 1
+        }
+      }
+    }
+  ],
+  "Connections": []
+}

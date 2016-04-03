@@ -1,0 +1,15 @@
+{
+  "ViskellVersion": 1,
+  "Blocks": [
+    {
+      "kind": "ArbitraryBlock",
+      "id": 1496002405,
+      "x": 663.0,
+      "y": 229.0,
+      "properties": {
+        "value": "??"
+      }
+    }
+  ],
+  "Connections": []
+}
