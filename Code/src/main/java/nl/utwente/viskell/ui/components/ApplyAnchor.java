@@ -10,7 +10,6 @@ import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.BlockContainer;
 import nl.utwente.viskell.ui.serialize.Bundleable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,7 +46,7 @@ public class ApplyAnchor extends InputAnchor implements FunctionReference {
         );
     }
 
-    public static ApplyAnchor fromBundleFragment(Map<String, Object> bundleFragment) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static ApplyAnchor fromBundleFragment(Map<String, Object> bundleFragment) {
         int arity = ((Double)bundleFragment.get("arity")).intValue();
         return new ApplyAnchor(arity);
     }

@@ -1,10 +1,9 @@
 package nl.utwente.viskell.ui.serialize;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by andrew on 03/04/16.
  *
  * A class used by Importer and Exported to know what version of the serialized format is being read/written
  *
@@ -38,5 +37,5 @@ public class ViskellFormat {
      * In the future, in case we attempt to support reading older version numbers, we can maintain a list of the
      * versions the current code can read
      */
-    public final static List<Integer> SUPPORTED_IMPORT_VERSIONS = Arrays.asList(EXPORT_VERSION_1);
+    public final static List<Integer> SUPPORTED_IMPORT_VERSIONS = Collections.singletonList(EXPORT_VERSION_1);
 }
