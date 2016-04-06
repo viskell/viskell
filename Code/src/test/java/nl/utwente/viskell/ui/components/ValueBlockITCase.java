@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class ValueBlockTest extends ComponentTest {
+public class ValueBlockITCase extends ComponentIntegrationTest {
     @Test
     public void outputTest() throws Exception {
         ConstantBlock block = new ConstantBlock(getPane(), Type.con("Float"), "0.0", true);

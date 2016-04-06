@@ -9,7 +9,7 @@ import org.junit.BeforeClass;
 /**
  * Superclass for component tests.
  */
-public class ComponentTest {
+public class ComponentIntegrationTest {
     private static Thread t = null;
 
     /**

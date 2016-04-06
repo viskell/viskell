@@ -29,6 +29,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @PrepareForTest({Pane.class, Block.class})
 public class ToplevelPaneTest {
     private GhciSession mockGhci;
+
     @Before
     public void Setup() {
         mockGhci = mock(GhciSession.class);
