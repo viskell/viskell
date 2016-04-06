@@ -9,7 +9,10 @@ import nl.utwente.viskell.haskell.type.TypeCon;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.mockito.AdditionalMatchers.not;
 
 public class ExprTest {
     private final TypeCon integer = Type.con("Int");
@@ -61,7 +64,7 @@ public class ExprTest {
                         "[\"a\", \"b\", \"c\"]"
                 )
         );
-        assertNotEquals("[(String -> String)]", expr.inferType().prettyPrint());
+        assertThat("[(String -> String)]", is(not(expr.inferType().prettyPrint())));
     }
 
     @Test

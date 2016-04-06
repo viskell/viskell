@@ -1,7 +1,13 @@
 package nl.utwente.viskell.haskell.env;
 
 import com.google.common.base.MoreObjects;
+import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.ui.Main;
+import nl.utwente.viskell.ui.serialize.Bundleable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A function entry in the Haskell catalog.
@@ -31,6 +37,25 @@ public class CatalogFunction extends FunctionInfo implements Comparable<CatalogF
         this.documentation = documentation;
         this.isConstructor = isConstructor;
         this.isCommon = isCommon;
+    }
+
+    @Override
+    public Map<String, Object> toBundleFragment() {
+        Map<String, Object> bundleFragment = new HashMap<>();
+        bundleFragment.put(Bundleable.KIND, this.getClass().getSimpleName());
+        bundleFragment.put("name", name);
+        return bundleFragment;
+    }
+
+    /** return a new instance of this type deserializing class-specific properties used in constructor **/
+    public static CatalogFunction fromBundleFragment(Map<String,Object> bundleFragment) {
+        String name = (String)bundleFragment.get("name");
+
+        /**
+         * TODO This code is suggested as better - but returns FunctionInfo not catalog function
+         return GhciSession.getHaskellCatalog().asEnvironment().lookupFun(name);
+          */
+        return GhciSession.getHaskellCatalog().getByPredicate(fn -> fn.getName().equals(name)).iterator().next();
     }
 
     /**

@@ -72,8 +72,8 @@ public class WireMenu extends TilePane {
             
         } else {
             Button applyBlockButton = new Button("Apply");
-            applyBlockButton.setOnAction(event -> addBlockWithInput(new FunApplyBlock(new ApplyAnchor(type.countArguments()), this.toplevel)));
-            applyBlockButton.setOnTouchPressed(event -> addBlockWithInput(new FunApplyBlock(new ApplyAnchor(type.countArguments()), this.toplevel)));
+            applyBlockButton.setOnAction(event -> addBlockWithInput(new FunApplyBlock(this.toplevel, new ApplyAnchor(type.countArguments()))));
+            applyBlockButton.setOnTouchPressed(event -> addBlockWithInput(new FunApplyBlock(this.toplevel, new ApplyAnchor(type.countArguments()))));
 
             Button disBlockButton = new Button("Observe");
             disBlockButton.setOnAction(event -> addBlockWithInput(new DisplayBlock(this.toplevel)));

@@ -8,6 +8,11 @@ import java.util.Map;
  */
 public interface Bundleable {
     /**
+     * String used in serialization to indicate type of object in the serialized file
+     */
+    String KIND = "kind";
+
+    /**
      * Serialization function.
      *
      * @return a map that describes the bundleable object.

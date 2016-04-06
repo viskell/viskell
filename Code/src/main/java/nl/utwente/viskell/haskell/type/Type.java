@@ -30,7 +30,7 @@ public abstract class Type {
     }
 
     /**
-     * @param The fixity of the context the type is shown in.
+     * @param fixity of the context the type is shown in.
      * The fixity is small positive number derived from operator precedence (see also Section 4.4.2 of the Haskell language report)
      * @return The readable representation of this type for in the UI.
      */
@@ -38,8 +38,8 @@ public abstract class Type {
 
     
     /**
-     * @param The fixity of the context the type is shown in.
-     * @param The list of types applied to this type.
+     * @param fixity of the context the type is shown in.
+     * @param args list of types applied to this type.
      * @return the pretty representation of this type a list of of types 
      */
     protected String prettyPrintAppChain(final int fixity, final List<Type> args) {
@@ -107,7 +107,7 @@ public abstract class Type {
 
     /**
      * @return a new type constructor
-     * @param The name of type constructor.
+     * @param name of type constructor.
      */
     public final static TypeCon con(String name) {
         if ("[]".equals(name)) {
@@ -127,8 +127,8 @@ public abstract class Type {
 
     /**
      * @return a new type from a applied type constructor
-     * @param The name of type constructor.
-     * @param List of type argument to constructor is applied too
+     * @param name of type constructor.
+     * @param args of type argument to constructor is applied too
      */
     public final static Type con(String name, Type... args) {
         Type t = Type.con(name);
@@ -141,7 +141,7 @@ public abstract class Type {
 
     /**
      * @return a new function type in a chain with all arguments
-     * @param List of types 
+     * @param elems of types
      */
     public final static Type fun(Type... elems) {
         if (elems.length == 0) {
@@ -159,7 +159,7 @@ public abstract class Type {
 
     /**
      * @return a chained type application of all the arguments
-     * @param List of types 
+     * @param elems of types
      */
     public final static Type app(Type... elems) {
         if (elems.length == 0) {
@@ -176,7 +176,7 @@ public abstract class Type {
 
     /**
      * @return an applied list type construction
-     * @param the element type
+     * @param elem element type
      */
     public final static Type listOf(Type elem) {
         return new TypeApp(new ListTypeCon(), elem);
@@ -184,7 +184,7 @@ public abstract class Type {
 
     /**
      * @return a fully applied tuple type construction
-     * @param the list of element types
+     * @param elems list of element types
      */
     public final static Type tupleOf(Type... elems) {
         Type t = new TupleTypeCon(elems.length);

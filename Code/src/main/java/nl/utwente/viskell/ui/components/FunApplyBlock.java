@@ -1,11 +1,9 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
@@ -13,21 +11,19 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import nl.utwente.viskell.haskell.expr.*;
-import nl.utwente.viskell.haskell.type.*;
-import nl.utwente.viskell.ui.ToplevelPane;
+import nl.utwente.viskell.haskell.type.FunType;
+import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.DragContext;
+import nl.utwente.viskell.ui.ToplevelPane;
+import nl.utwente.viskell.ui.serialize.Bundleable;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class FunApplyBlock extends Block {
     
@@ -147,8 +143,17 @@ public class FunApplyBlock extends Block {
     @FXML private Pane bodySpace;
     
     private final Pane inputSpace;
+
+    private static final Map<String, String> functionReferenceClassMap;
+    static {
+        Map<String, String> aMap = new HashMap<>();
+        aMap.put(LocalDefUse.class.getSimpleName(), LocalDefUse.class.getName());
+        aMap.put(LibraryFunUse.class.getSimpleName(), LibraryFunUse.class.getName());
+        aMap.put(ApplyAnchor.class.getSimpleName(), ApplyAnchor.class.getName());
+        functionReferenceClassMap = Collections.unmodifiableMap(aMap);
+    }
     
-    public FunApplyBlock(FunctionReference funRef, ToplevelPane pane) {
+    public FunApplyBlock(ToplevelPane pane, FunctionReference funRef) {
         super(pane);
         this.loadFXML("FunApplyBlock");
 
@@ -203,6 +208,30 @@ public class FunApplyBlock extends Block {
         this.curriedOutput.translateYProperty().bind(outputSpace.translateYProperty());
     }
 
+    /** @return a Map of class-specific properties of this Block. */
+    @Override
+    protected Map<String, Object> toBundleFragment() {
+        Map<String, Object> bundleFragment = ImmutableMap.of(
+                "curriedArgs", this.inputs.stream().map(i -> i.curried).toArray(),
+                "funRef", this.funRef.toBundleFragment()
+                );
+        return bundleFragment;
+    }
+
+    /** return a new instance of this Block type deserializing class-specific properties used in constructor **/
+    public static FunApplyBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) throws ClassNotFoundException, InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+        Map<String, Object> funRefBundle = (Map<String, Object>)bundleFragment.get("funRef");
+
+        String funcReferenceClassName = functionReferenceClassMap.get(funRefBundle.get(Bundleable.KIND));
+        Class<?> clazz = Class.forName(funcReferenceClassName);
+
+        // Find the static "fromBundleFragment" method for the named type and call it
+        Method fromBundleMethod = clazz.getDeclaredMethod("fromBundleFragment", Map.class);
+        FunctionReference functionReference = (FunctionReference)fromBundleMethod.invoke(null, funRefBundle);
+
+        return new FunApplyBlock(pane, functionReference);
+    }
+
     /** Shift the output type/anchor down to some distance. */
     private void dragShiftOuput(double y) {
         double shift = Math.max(0, y);
@@ -245,7 +274,7 @@ public class FunApplyBlock extends Block {
     @Override
     public Optional<Block> getNewCopy() {
         if (this.inputs.stream().map(i -> i.curried).filter(c -> c).count() == 0) {
-            return Optional.of(new FunApplyBlock(this.funRef.getNewCopy(), this.getToplevel()));
+            return Optional.of(new FunApplyBlock(this.getToplevel(), this.funRef.getNewCopy()));
         }
         
         return Optional.empty();
@@ -355,10 +384,4 @@ public class FunApplyBlock extends Block {
     public String toString() {
         return funRef.getName();
     }
-
-    @Override
-    protected ImmutableMap<String, Object> toBundleFragment() {
-        return ImmutableMap.of("name", funRef.getName(), "curriedArgs", this.inputs.stream().map(i -> i.curried).toArray());
-    }
-    
 }

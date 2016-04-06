@@ -31,15 +31,12 @@ public class MainOverlay extends BorderPane {
     /** The current inspector window, or null if not yet opened. */
     private InspectorWindow inspector;
 
-    /** The currently active customUIpane. */
-    private ToplevelPane mainPane;
+    private final ToplevelPane toplevelPane;
     
-    public MainOverlay(ToplevelPane pane) {
+    public MainOverlay(ToplevelPane toplevelPane) {
         super();
 
-        this.mainPane = pane;
-
-        FlowPane buttons = makeZoomBar();
+        this.toplevelPane = toplevelPane;
 
         circleByTouchId = new TreeMap<>();
         touchOverlay = new Pane();
@@ -81,12 +78,12 @@ public class MainOverlay extends BorderPane {
 
         final String os = System.getProperty("os.name");
         boolean topMenu = (os != null && os.startsWith ("Mac"));
-        stack.getChildren().setAll(this.mainPane, buttons, makeToolBars(topMenu), touchOverlay);
+        stack.getChildren().setAll(this.toplevelPane, makeZoomBar(), makeToolBars(topMenu), touchOverlay);
         this.setCenter(stack);
     }
 
-    public ToplevelPane getMainPane() {
-        return this.mainPane;
+    public ToplevelPane getToplevelPane() {
+        return this.toplevelPane;
     }
 
     private FlowPane makeToolBars(boolean topMenu) {
@@ -122,13 +119,13 @@ public class MainOverlay extends BorderPane {
         Button zoomOut = new Button("–");
         zoomOut.setOnAction(e -> this.zoom(1/1.1));
 
-        FlowPane buttons = new FlowPane(10, 0, zoomIn, zoomOut);
-        buttons.setPrefSize(100, 20);
-        buttons.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        buttons.setPadding(new Insets(10));
-        buttons.getStyleClass().add("overlayButtons");
-        StackPane.setAlignment(buttons, ZOOMBAR_POS);
-        return buttons;
+        FlowPane zoomBar = new FlowPane(10, 0, zoomIn, zoomOut);
+        zoomBar.setPrefSize(100, 20);
+        zoomBar.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        zoomBar.setPadding(new Insets(10));
+        zoomBar.getStyleClass().add("overlayButtons");
+        StackPane.setAlignment(zoomBar, ZOOMBAR_POS);
+        return zoomBar;
     }
     
     public void setTouchVisible(boolean value) {
@@ -156,16 +153,16 @@ public class MainOverlay extends BorderPane {
      * @param ratio the additional zoom factor to apply.
      */
     private void zoom(double ratio) {
-        double scale = this.mainPane.getScaleX();
+        double scale = this.toplevelPane.getScaleX();
 
         /* Limit zoom to reasonable range. */
         if (scale <= 0.2 && ratio < 1) return;
         if (scale >= 3 && ratio > 1) return;
 
-        this.mainPane.setScaleX(scale * ratio);
-        this.mainPane.setScaleY(scale * ratio);
-        this.mainPane.setTranslateX(this.mainPane.getTranslateX() * ratio);
-        this.mainPane.setTranslateY(this.mainPane.getTranslateY() * ratio);
+        this.toplevelPane.setScaleX(scale * ratio);
+        this.toplevelPane.setScaleY(scale * ratio);
+        this.toplevelPane.setTranslateX(this.toplevelPane.getTranslateX() * ratio);
+        this.toplevelPane.setTranslateY(this.toplevelPane.getTranslateY() * ratio);
     }
 
 }

@@ -7,8 +7,10 @@ import nl.utwente.viskell.haskell.type.TypeScope;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
+import static org.mockito.AdditionalMatchers.not;
 
 public class ApplyTest {
     private final Type integer = Type.con("Int");
@@ -87,7 +89,7 @@ public class ApplyTest {
         assertEquals("((lcm (42)) (\"haskell\"))", apply2.toHaskell());
 
         assertEquals(Type.fun(this.integer, this.integer).prettyPrint(), apply1.inferType().prettyPrint());
-        assertNotEquals(this.string, apply2.inferType().prettyPrint());
-        assertNotEquals(this.integer, apply2.inferType().prettyPrint());
+        assertThat(this.string, is(not(apply2.inferType().prettyPrint())));
+        assertThat(this.integer, is(not(apply2.inferType().prettyPrint())));
     }
 }

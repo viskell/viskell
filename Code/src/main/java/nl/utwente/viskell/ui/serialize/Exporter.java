@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import nl.utwente.viskell.ui.ToplevelPane;
 
-import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Convert Viskell programs into JSON text.
@@ -22,11 +23,9 @@ public class Exporter {
      */
     public static String export(ToplevelPane pane) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        return gson.toJson(pane.streamChildren()
-                .filter(n -> n instanceof Bundleable)
-                .sorted(Comparator.comparing(u -> u.getClass().getName()).thenComparing(Object::hashCode))
-                .map(n -> ((Bundleable) n).toBundle())
-                .toArray());
+        Map<String, Object> exportMap = new HashMap<>();
+        exportMap.put(ViskellFormat.VERSION_NUMBER_LABEL, ViskellFormat.EXPORT_VERSION);
+        exportMap.putAll(pane.toBundle());
+        return gson.toJson(exportMap);
     }
 }

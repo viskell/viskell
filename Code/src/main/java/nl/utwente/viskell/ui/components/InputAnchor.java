@@ -271,8 +271,8 @@ public class InputAnchor extends ConnectionAnchor implements ConnectionAnchor.Ta
     @Override
     public Map<String, Object> toBundle() {
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
-        bundle.put("startBlock", this.block.hashCode());
-        bundle.put("startAnchor", 0);
+        bundle.put(BLOCK_LABEL, this.block.hashCode());
+        bundle.put(ANCHOR_LABEL, block.getAllInputs().indexOf(this));
         return bundle.build();
     }
 

@@ -2,15 +2,6 @@ package nl.utwente.viskell.ui.components;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Predicate;
-
 import javafx.application.Platform;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -19,13 +10,13 @@ import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.LetExpression;
-import nl.utwente.viskell.ui.BlockContainer;
-import nl.utwente.viskell.ui.CircleMenu;
-import nl.utwente.viskell.ui.ComponentLoader;
-import nl.utwente.viskell.ui.ToplevelPane;
-import nl.utwente.viskell.ui.DragContext;
-import nl.utwente.viskell.ui.TrashContainer;
+import nl.utwente.viskell.ui.*;
 import nl.utwente.viskell.ui.serialize.Bundleable;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Base block shaped UI Component that other visual elements will extend from.
@@ -42,6 +33,11 @@ import nl.utwente.viskell.ui.serialize.Bundleable;
  * </p>
  */
 public abstract class Block extends StackPane implements Bundleable, ComponentLoader {
+    private static final String BLOCK_ID_PARAMETER = "id";
+    private static final String BLOCK_X_PARAMETER = "x";
+    private static final String BLOCK_Y_PARAMETER = "y";
+    private static final String BLOCK_PROPERTIES_PARAMETER = "properties";
+
     /** The pane that is used to hold state and place all components on. */
     private final ToplevelPane toplevel;
     
@@ -59,7 +55,33 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
 
     /** Whether this block has a meaningful interpretation the current container context. */
     protected boolean inValidContext;
-    
+
+    /**
+     * In order to serialize using simple class names we need some way to map the simple class
+     * name to the full class names. This is one that should survive automatic refactoring of classes
+     * into different packages - but won't survive class renaming
+     */
+    private static final Map<String, String> blockClassMap;
+    static {
+        Map<String, String> aMap = new HashMap<>();
+        aMap.put(JoinerBlock.class.getSimpleName(), JoinerBlock.class.getName());
+        aMap.put(LambdaBlock.class.getSimpleName(), LambdaBlock.class.getName());
+        aMap.put(ConstantMatchBlock.class.getSimpleName(), ConstantMatchBlock.class.getName());
+        aMap.put(ChoiceBlock.class.getSimpleName(), ChoiceBlock.class.getName());
+        aMap.put(LiftingBlock.class.getSimpleName(), LiftingBlock.class.getName());
+        aMap.put(MatchBlock.class.getSimpleName(), MatchBlock.class.getName());
+        aMap.put(GraphBlock.class.getSimpleName(), GraphBlock.class.getName());
+        aMap.put(FunApplyBlock.class.getSimpleName(), FunApplyBlock.class.getName());
+        aMap.put(BinOpApplyBlock.class.getSimpleName(), BinOpApplyBlock.class.getName());
+        aMap.put(SimulateBlock.class.getSimpleName(), SimulateBlock.class.getName());
+        aMap.put(DisplayBlock.class.getSimpleName(), DisplayBlock.class.getName());
+        aMap.put(SplitterBlock.class.getSimpleName(), SplitterBlock.class.getName());
+        aMap.put(ArbitraryBlock.class.getSimpleName(), ArbitraryBlock.class.getName());
+        aMap.put(SliderBlock.class.getSimpleName(), SliderBlock.class.getName());
+        aMap.put(ConstantBlock.class.getSimpleName(), ConstantBlock.class.getName());
+        blockClassMap = Collections.unmodifiableMap(aMap);
+    }
+
     /**
      * @param pane The pane this block belongs to.
      */
@@ -187,7 +209,7 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         
         if (finalPhase) {
             // Now that the expressions and types are fully updated, initiate a visual refresh.
-            Platform.runLater(() -> this.invalidateVisualState());
+            Platform.runLater(this::invalidateVisualState);
         }
     }
     
@@ -234,10 +256,10 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     }
     
     /** @return class-specific properties of this Block. */
-    protected ImmutableMap<String, Object> toBundleFragment() {
+    protected Map<String, Object> toBundleFragment() {
         return ImmutableMap.of();
     }
-    
+
     /** @return the container to which this block belongs */
     public BlockContainer getContainer() {
         return container;
@@ -302,11 +324,11 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
                 new Point2D(myBounds.getMaxX(), myBounds.getMaxY()));
         
         // use center point plus one corner to determine wherein this block is, to ease moving a block into a small container
-        Predicate<Bounds> within = bounds -> bounds.contains(center) && corners.stream().anyMatch(p -> bounds.contains(p));
+        Predicate<Bounds> within = bounds -> bounds.contains(center) && corners.stream().anyMatch(bounds::contains);
         
         // a container may never end up in itself or its children
         List<? extends WrappedContainer> internals = this.getInternalContainers();
-        Predicate<BlockContainer> notInSelf = con -> internals.stream().noneMatch(internal -> con.isContainedWithin(internal));
+        Predicate<BlockContainer> notInSelf = con -> internals.stream().noneMatch(con::isContainedWithin);
         
         BlockContainer newContainer = toplevel.getAllBlockContainers().
             filter(container -> within.test(container.containmentBoundsInScene()) && notInSelf.test(container)).
@@ -334,12 +356,29 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
     @Override
     public Map<String, Object> toBundle() {
         return ImmutableMap.of(
-            "kind", getClass().getSimpleName(),
-            "id", hashCode(),
-            "x", getLayoutX(),
-            "y", getLayoutY(),
-            "properties", toBundleFragment()
+                Bundleable.KIND, getClass().getSimpleName(),
+                BLOCK_ID_PARAMETER, hashCode(),
+                BLOCK_X_PARAMETER, getLayoutX(),
+                BLOCK_Y_PARAMETER, getLayoutY(),
+                BLOCK_PROPERTIES_PARAMETER, toBundleFragment()
         );
     }
 
+    public static Block fromBundle(Map<String,Object> blockBundle,
+                                   ToplevelPane toplevelPane,
+                                   Map<Integer, Block> blockLookupTable)
+            throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        String kind = (String)blockBundle.get(Bundleable.KIND);
+        String className = blockClassMap.get(kind);
+        Class<?> clazz = Class.forName(className);
+
+        // Find the static "fromBundleFragment" method for the named type and call it
+        Method fromBundleMethod = clazz.getDeclaredMethod("fromBundleFragment", ToplevelPane.class, Map.class);
+        Block block = (Block) fromBundleMethod.invoke(null, toplevelPane, blockBundle.get(BLOCK_PROPERTIES_PARAMETER));
+        block.setLayoutX((Double)blockBundle.get(BLOCK_X_PARAMETER));
+        block.setLayoutY((Double) blockBundle.get(BLOCK_Y_PARAMETER));
+        blockLookupTable.put(((Double)blockBundle.get(Block.BLOCK_ID_PARAMETER)).intValue(), block);
+
+        return block;
+    }
 }

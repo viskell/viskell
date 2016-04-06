@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class DisplayBlockTest extends ComponentTest {
+public class DisplayBlockITCase extends ComponentIntegrationTest {
     @Test
     public void initTest() throws Exception {
         assertNotNull(new DisplayBlock(getPane()));

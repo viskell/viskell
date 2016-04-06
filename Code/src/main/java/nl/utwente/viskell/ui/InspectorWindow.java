@@ -33,9 +33,10 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
         stage = new Stage();
         stage.setTitle("Inspect");
         stage.setScene(new Scene(this, 450, 450));
-        if (! (Main.primaryStage.isMaximized() || Main.primaryStage.isFullScreen())) {
-            stage.setX(Main.primaryStage.getX()+Main.primaryStage.getWidth());
-            stage.setY(Main.primaryStage.getY());
+        Stage stage = Main.getStage();
+        if (! (stage.isMaximized() || stage.isFullScreen())) {
+            stage.setX(stage.getX() + stage.getWidth());
+            stage.setY(stage.getY());
         }
     }
 
@@ -49,7 +50,7 @@ public class InspectorWindow extends BorderPane implements ComponentLoader {
     }
 
     public void update() {
-        ToplevelPane pane = this.overlay.getMainPane();
+        ToplevelPane pane = this.overlay.getToplevelPane();
         json.setText(Exporter.export(pane));
         TreeItem<String> root = new TreeItem<>("all blocks");
         root.setExpanded(true);

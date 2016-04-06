@@ -1,12 +1,6 @@
 package nl.utwente.viskell.ui;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.google.common.collect.ImmutableMap;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -17,18 +11,22 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.haskell.env.Environment;
-import nl.utwente.viskell.ui.components.Block;
-import nl.utwente.viskell.ui.components.Connection;
-import nl.utwente.viskell.ui.components.ConnectionAnchor;
-import nl.utwente.viskell.ui.components.DrawWire;
-import nl.utwente.viskell.ui.components.WrappedContainer;
+import nl.utwente.viskell.ui.components.*;
+import nl.utwente.viskell.ui.serialize.Bundleable;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * The core Pane that represent the programming workspace.
  * It is a layered visualization of all blocks, wires, and menu elements.
  * And represents the toplevel container of all blocks.
  */
-public class ToplevelPane extends Region implements BlockContainer {
+public class ToplevelPane extends Region implements BlockContainer, Bundleable {
+    public static final String BLOCKS_SERIALIZED_NAME = "Blocks";
+    public static final String CONNECTIONS_SERIALIZED_NAME = "Connections";
+
     /** bottom pane layer intended for block container such as lambda's */
     private final Pane bottomLayer;
 
@@ -178,6 +176,55 @@ public class ToplevelPane extends Region implements BlockContainer {
         return Stream.concat(bottom, Stream.concat(blocks, wires));
     }
 
+    @Override
+    public Map<String, Object> toBundle() {
+        ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
+
+        Stream<Node> blocks = Stream.concat(this.bottomLayer.getChildren().stream(),
+                this.blockLayer.getChildren().stream());
+
+        bundle.put(BLOCKS_SERIALIZED_NAME, blocks
+                .filter(n -> n instanceof Bundleable)
+                .map(n -> ((Bundleable) n).toBundle())
+                .toArray());
+
+        bundle.put(CONNECTIONS_SERIALIZED_NAME, this.wireLayer.getChildren().stream()
+                .filter(n -> n instanceof Bundleable)
+                .map(n -> ((Bundleable) n).toBundle())
+                .toArray());
+
+        return bundle.build();
+    }
+
+    public void fromBundle(Map<String, Object> layers) {
+        if (layers != null) {
+            Map<Integer, Block> blockLookupTable = new HashMap<>();
+            List<Map<String, Object>> blocksBundle = (ArrayList<Map<String, Object>>) layers.get(BLOCKS_SERIALIZED_NAME);
+            if (blocksBundle != null) {
+                for (Map<String, Object> bundle : blocksBundle) {
+                    Block block;
+                    try {
+                        block = Block.fromBundle(bundle, this, blockLookupTable);
+                        addBlock(block);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            List<Map<String, Object>> connectionsBundle = (ArrayList<Map<String, Object>>) layers.get(CONNECTIONS_SERIALIZED_NAME);
+            if (connectionsBundle != null) {
+                for (Map<String, Object> bundle : connectionsBundle) {
+                    try {
+                        Connection.fromBundle(bundle, blockLookupTable);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
     public Stream<BlockContainer> getAllBlockContainers() {
         return bottomLayer.getChildrenUnmodifiable().stream().flatMap(node ->
             (node instanceof Block) ? ((Block)node).getInternalContainers().stream() : Stream.empty());
@@ -196,11 +243,9 @@ public class ToplevelPane extends Region implements BlockContainer {
                 this.bottomLayer.getChildren().remove(block);
                 this.bottomLayer.getChildren().add(parentIndex, block);
                 // moving the block after the parent might have caused ordering issues in the block inbetween, resolve them
-                for (Node node : new ArrayList<Node>(this.bottomLayer.getChildren().subList(childIndex, parentIndex-1))) {
-                    if (node instanceof Block) {
-                        this.moveInFrontOfParentContainers((Block)node);
-                    }
-                }
+                new ArrayList<>(this.bottomLayer.getChildren().subList(childIndex, parentIndex - 1)).stream()
+                        .filter(node -> node instanceof Block)
+                        .forEach(node -> this.moveInFrontOfParentContainers((Block) node));
             }
         }
     }
@@ -230,14 +275,13 @@ public class ToplevelPane extends Region implements BlockContainer {
     }
     
     protected void cutIntersectingConnections(Shape cutter) {
-        for (Node node : new ArrayList<>(this.wireLayer.getChildren())) {
-           if (node instanceof Connection) {
-               Connection wire = (Connection)node;
-               if (((Path)Shape.intersect(wire, cutter)).getElements().size() > 0) {
-                   wire.remove();
-               }
-           }
-        }
+        new ArrayList<>(this.wireLayer.getChildren()).stream()
+                .filter(node -> node instanceof Connection).forEach(node -> {
+            Connection wire = (Connection) node;
+            if (((Path) Shape.intersect(wire, cutter)).getElements().size() > 0) {
+                wire.remove();
+            }
+        });
     }
     
     @Override

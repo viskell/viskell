@@ -4,8 +4,10 @@ import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.env.HaskellCatalog;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThat;
 
 public class ClassesTest {
     @Test
@@ -23,11 +25,11 @@ public class ClassesTest {
         assertEquals(b, b2);
 
         TypeScope scope2 = new TypeScope(); 
-        assertNotEquals(a, scope2.getVar("a"));
-        assertNotEquals(b, scope2.getVar("b"));
+        assertThat(a, is(not(scope2.getVar("a"))));
+        assertThat(b, is(not(scope2.getVar("b"))));
 
         TypeScope scope3 = new TypeScope();
-        assertNotEquals(b, scope3.getVarTC("b", new TypeClass("Test")));
+        assertThat(b, is(not(scope3.getVarTC("b", new TypeClass("Test")))));
     }
     
     @Test

@@ -16,6 +16,8 @@ import nl.utwente.viskell.ui.serialize.Bundleable;
  * A ConnectionAnchor has an invisible part that acts as an enlargement of the touch zone.
  */
 public abstract class ConnectionAnchor extends StackPane implements ComponentLoader, Bundleable {
+    protected static final String BLOCK_LABEL = "block";
+    protected static final String ANCHOR_LABEL = "anchor";
 
     /** Helper interface for finding the associated connection anchor on release a wire onto something. */
     public interface Target {
@@ -59,15 +61,6 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     }
 
     /**
-     * @param active The new active state for this ConnectionAnchor.
-     */
-    public void toggleActiveState(boolean active) {
-        if (!active) {
-            this.removeConnections();
-        }
-    }
-
-    /**
      * Removes all the connections this anchor has.
      */
     public abstract void removeConnections();
@@ -88,7 +81,7 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     protected abstract void setNearbyWireReaction(int goodness);
 
     /**
-     * @returns the wire is being drawn from this connection anchor, or null if none.
+     * @return the wire is being drawn from this connection anchor, or null if none.
      */
     public DrawWire getWireInProgress() {
         return this.wireInProgress;
@@ -139,5 +132,4 @@ public abstract class ConnectionAnchor extends StackPane implements ComponentLoa
     public ToplevelPane getPane() {
         return this.block.getToplevel();
     }
-
 }

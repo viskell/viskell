@@ -1,16 +1,19 @@
 package nl.utwente.viskell.ui.components;
 
+import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.collect.ImmutableMap;
 import javafx.scene.control.TextInputDialog;
 import nl.utwente.viskell.ghcj.GhciSession;
 import nl.utwente.viskell.ghcj.HaskellException;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.ToplevelPane;
+import nl.utwente.viskell.ui.serialize.Bundleable;
 
 /** Block with a constant value that is editable as a plain text expression. */
-public class ConstantBlock extends ValueBlock {
+public class ConstantBlock extends ValueBlock  implements Bundleable {
 
     private boolean hasValidValue;
     
@@ -25,6 +28,23 @@ public class ConstantBlock extends ValueBlock {
         super("ValueBlock", pane, type);
         this.setValue(value);
         this.hasValidValue = hasValidValue;
+    }
+
+    @Override
+    protected ImmutableMap<String, Object> toBundleFragment() {
+        return ImmutableMap.of(
+                "value", getValue(),
+                "type", type.toString(), // TODO this seems to create some kind of UTF-8 problem
+                "hasValidValue", hasValidValue);
+    }
+
+    public static ConstantBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) throws ClassNotFoundException {
+        String value = (String)bundleFragment.get("value");
+        // FIXME Use Environment/TypeBuilder to create Type from String?
+        // FIXME I got lost in the code trying to figure out how to do this isung DataTypeInfo, TypeCon, etc...
+        // FIXME Type type = (String)bundleFragment.get("type");
+        boolean hasValidValue = (Boolean)bundleFragment.get("hasValidValue");
+        return new ConstantBlock(pane, null, value, hasValidValue);
     }
 
     public void editValue(Optional<String> startValue) {

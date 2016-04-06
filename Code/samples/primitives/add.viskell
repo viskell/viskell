@@ -1,0 +1,27 @@
+{
+  "ViskellVersion": 1,
+  "Blocks": [
+    {
+      "kind": "BinOpApplyBlock",
+      "id": 856534029,
+      "x": 708.0,
+      "y": 134.0,
+      "properties": {
+        "curriedArgs": [
+          false,
+          false
+        ],
+        "funInfo": {
+          "signature": "n(3bd2ccbf)[Num] -\u003e n(3bd2ccbf)[Num] -\u003e n(3bd2ccbf)[Num]",
+          "kind": "CatalogFunction",
+          "documentation": "Mathematical addition.",
+          "isConstructor": false,
+          "name": "(+)",
+          "isCommon": true,
+          "category": "Arithmetic"
+        }
+      }
+    }
+  ],
+  "Connections": []
+}

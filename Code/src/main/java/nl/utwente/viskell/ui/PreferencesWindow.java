@@ -43,7 +43,7 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
         ghci.getSelectionModel().select(GhciSession.pickBackend());
         ghci.valueProperty().addListener(event -> {
             preferences.put("ghci", ghci.getValue().toString());
-            overlay.getMainPane().restartBackend();
+            overlay.getToplevelPane().restartBackend();
         });
         
         background.getItems().setAll(ImmutableList.of("/ui/grid.png", "/ui/light_grid.png", "/ui/white.png"));
@@ -78,12 +78,12 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
     }
 
     protected void refreshTheme(MainOverlay overlay) {
-        Main.primaryStage.getScene().getStylesheets().clear();
-        Main.primaryStage.getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
+        Main.getStage().getScene().getStylesheets().clear();
+        Main.getStage().getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
         stage.getScene().getStylesheets().clear();
         stage.getScene().getStylesheets().addAll("/ui/layout.css", preferences.get("theme", "/ui/colours.css"));
         String backGroundImage = preferences.get("background", "/ui/grid.png");
-        overlay.getMainPane().setStyle("-fx-background-image: url('" + backGroundImage + "');");
+        overlay.getToplevelPane().setStyle("-fx-background-image: url('" + backGroundImage + "');");
     }
 
     public void show() {

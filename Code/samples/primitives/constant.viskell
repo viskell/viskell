@@ -1,0 +1,17 @@
+{
+  "ViskellVersion": 1,
+  "Blocks": [
+    {
+      "kind": "ConstantBlock",
+      "id": 1600412242,
+      "x": 445.0,
+      "y": 112.0,
+      "properties": {
+        "value": "\"Hello, World!\"",
+        "type": "x___0(ce0daf9)[]",
+        "hasValidValue": true
+      }
+    }
+  ],
+  "Connections": []
+}

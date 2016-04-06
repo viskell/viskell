@@ -1,11 +1,13 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 
+import com.google.common.collect.ImmutableMap;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -53,6 +55,20 @@ public class ConstantMatchBlock extends Block {
        
         body.getStyleClass().addAll("block", "constantMatch");
         this.getChildren().add(body);
+    }
+
+    /** @return a Map of class-specific properties of this Block. */
+    @Override
+    protected Map<String, Object> toBundleFragment() {
+        return ImmutableMap.of("originalId", this.original.hashCode());
+    }
+
+    /** return a new instance of this Block type deserializing class-specific properties used in constructor **/
+    public static ConstantMatchBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) {
+        int originalId = ((Double)bundleFragment.get("originalId")).intValue();
+        // TODO find the original block using the id?
+        // TODO not sure what to do here.....as I don't know what this block does yet
+        return new ConstantMatchBlock(pane, null);
     }
 
     public final String getValue() {

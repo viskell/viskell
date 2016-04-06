@@ -1,0 +1,15 @@
+{
+  "ViskellVersion": 1,
+  "Blocks": [
+    {
+      "kind": "LambdaBlock",
+      "id": 1219102843,
+      "x": 473.0,
+      "y": 249.0,
+      "properties": {
+        "arity": 1
+      }
+    }
+  ],
+  "Connections": []
+}

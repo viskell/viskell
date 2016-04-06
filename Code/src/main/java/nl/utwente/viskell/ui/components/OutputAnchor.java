@@ -1,20 +1,16 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import com.google.common.collect.ImmutableMap;
-
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 import nl.utwente.viskell.haskell.expr.*;
-import nl.utwente.viskell.haskell.type.*;
+import nl.utwente.viskell.haskell.type.Type;
+import nl.utwente.viskell.haskell.type.TypeScope;
 import nl.utwente.viskell.ui.BlockContainer;
+
+import java.util.*;
 
 /**
  * Anchor that specifically functions as an output.
@@ -253,13 +249,12 @@ public class OutputAnchor extends ConnectionAnchor implements ConnectionAnchor.T
     public BlockContainer getContainer() {
         return this.block.getContainer();
     }
-    
+
     @Override
     public Map<String, Object> toBundle() {
         ImmutableMap.Builder<String, Object> bundle = ImmutableMap.builder();
         Block block = this.block;
-        bundle.put("endBlock", block.hashCode());
-        bundle.put("endAnchor", block.getAllInputs().indexOf(this));
+        bundle.put(BLOCK_LABEL, block.hashCode());
         return bundle.build();
     }
 

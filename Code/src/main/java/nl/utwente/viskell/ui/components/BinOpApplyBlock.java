@@ -1,38 +1,24 @@
 package nl.utwente.viskell.ui.components;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.BorderStroke;
-import javafx.scene.layout.BorderStrokeStyle;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import nl.utwente.viskell.haskell.env.FunctionInfo;
-import nl.utwente.viskell.haskell.expr.Apply;
-import nl.utwente.viskell.haskell.expr.Binder;
-import nl.utwente.viskell.haskell.expr.Expression;
-import nl.utwente.viskell.haskell.expr.FunVar;
-import nl.utwente.viskell.haskell.expr.Lambda;
-import nl.utwente.viskell.haskell.expr.LocalVar;
+import nl.utwente.viskell.haskell.expr.*;
 import nl.utwente.viskell.haskell.type.FunType;
 import nl.utwente.viskell.haskell.type.Type;
 import nl.utwente.viskell.haskell.type.TypeScope;
-import nl.utwente.viskell.ui.ToplevelPane;
 import nl.utwente.viskell.ui.DragContext;
+import nl.utwente.viskell.ui.ToplevelPane;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class BinOpApplyBlock extends Block {
 
@@ -155,18 +141,16 @@ public class BinOpApplyBlock extends Block {
     
     /** The space containing anchors and type labels. */
     @FXML private Pane bodySpace;
-    
-    /** The Label in which the information of the function is displayed. */
-    private Label functionInfo;
 
-    public BinOpApplyBlock(FunctionInfo funInfo, ToplevelPane pane) {
+    public BinOpApplyBlock(ToplevelPane pane, FunctionInfo funInfo) {
         super(pane);
         this.loadFXML("BinOpApplyBlock");
 
         this.funInfo = funInfo;
         String name = funInfo.getDisplayName();
-        this.functionInfo = new Label(name.substring(1, name.length()-1));
-        this.functionInfo.getStyleClass().add("operator");
+        /* The Label in which the information of the function is displayed. */
+        Label functionInfo = new Label(name.substring(1, name.length() - 1));
+        functionInfo.getStyleClass().add("operator");
         Pane infoArea = new StackPane(functionInfo);
         infoArea.setMinHeight(36);
         infoArea.setMaxHeight(36);
@@ -224,7 +208,26 @@ public class BinOpApplyBlock extends Block {
         this.curriedOutput.translateYProperty().bind(inputSpace.heightProperty());
     }
 
-	private void dragShiftOuput(double y) {
+    /** @return a Map of class-specific properties of this Block. */
+    @Override
+    protected Map<String, Object> toBundleFragment() {
+        return ImmutableMap.of(
+                "curriedArgs", new boolean[]{this.leftInput.curried, this.rightInput.curried},
+                "funInfo", this.funInfo.toBundleFragment());
+    }
+
+    /** return a new instance of this Block type deserializing class-specific properties used in constructor **/
+    public static BinOpApplyBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        List<Boolean> curriedArgs = (ArrayList<Boolean>)bundleFragment.get("curriedArgs");
+        Map<String, Object> funInfoBundle = (Map<String, Object>)bundleFragment.get("funInfo");
+        FunctionInfo funInfo = FunctionInfo.fromBundleFragment(funInfoBundle);
+        BinOpApplyBlock binOpApplyBlock = new BinOpApplyBlock(pane, funInfo);
+        binOpApplyBlock.leftInput.curried = curriedArgs.get(0);
+        binOpApplyBlock.rightInput.curried = curriedArgs.get(1);
+        return binOpApplyBlock;
+    }
+
+    private void dragShiftOuput(double y) {
         double shift = Math.max(0, y);
         if (this.leftInput.curried || this.rightInput.curried) {
             this.curriedOutput.setVisible(true);
@@ -256,7 +259,7 @@ public class BinOpApplyBlock extends Block {
             return Optional.empty();
         }
         
-        return Optional.of(new BinOpApplyBlock(this.funInfo, this.getToplevel()));
+        return Optional.of(new BinOpApplyBlock(this.getToplevel(), this.funInfo));
     }
 
     @Override
@@ -324,10 +327,4 @@ public class BinOpApplyBlock extends Block {
     public String toString() {
         return funInfo.getName();
     }
-
-    @Override
-    protected ImmutableMap<String, Object> toBundleFragment() {
-        return ImmutableMap.of("name", funInfo.getName(), "curriedArgs", new boolean[]{this.leftInput.curried, this.rightInput.curried});
-    }
-
 }

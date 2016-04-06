@@ -1,18 +1,22 @@
 package nl.utwente.viskell.ui.components;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
+import com.google.common.collect.ImmutableMap;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import javafx.scene.input.TouchEvent;
 import nl.utwente.viskell.ui.ToplevelPane;
+import nl.utwente.viskell.ui.serialize.Bundleable;
 
 /**
  * An extension of ValueBlock.
  * The value of this Block can be changed by dragging a slider.
  */
-public class SliderBlock extends ValueBlock {
+public class SliderBlock extends ValueBlock  implements Bundleable {
     @FXML protected Slider slider;
     
     /** Whether this slider represent an integral value. */
@@ -43,7 +47,21 @@ public class SliderBlock extends ValueBlock {
         slider.valueProperty().addListener(ev -> this.updateValue());
         slider.valueChangingProperty().addListener(ev -> this.toggleSliding());
         
-        slider.addEventHandler(TouchEvent.TOUCH_MOVED, event -> event.consume());
+        slider.addEventHandler(TouchEvent.TOUCH_MOVED, Event::consume);
+    }
+
+    @Override
+    protected ImmutableMap<String, Object> toBundleFragment() {
+        return ImmutableMap.of(
+                "isIntegral", isIntegral,
+                "value", getValue());
+    }
+
+    public static SliderBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) {
+        boolean isIntegral = (Boolean)bundleFragment.get("isIntegral");
+        SliderBlock sliderBlock = new SliderBlock(pane, isIntegral);
+        sliderBlock.setValue((String)bundleFragment.get("value"));
+        return sliderBlock;
     }
 
     private double computeCurrentValue() {
