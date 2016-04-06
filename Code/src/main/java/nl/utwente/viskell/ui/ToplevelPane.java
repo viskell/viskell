@@ -319,4 +319,20 @@ public class ToplevelPane extends Region implements BlockContainer, Bundleable {
         // The toplevel is large enough to fit practical everything
     }
 
+    /**
+     * Zooms the underlying main pane in/out with a ratio, up to reasonable limits.
+     * @param ratio the additional zoom factor to apply.
+     */
+    protected void zoom(double ratio) {
+        double scale = getScaleX();
+
+        /* Limit zoom to reasonable range. */
+        if (scale <= 0.2 && ratio < 1) return;
+        if (scale >= 3 && ratio > 1) return;
+
+        setScaleX(scale * ratio);
+        setScaleY(scale * ratio);
+        setTranslateX(getTranslateX() * ratio);
+        setTranslateY(getTranslateY() * ratio);
+    }
 }
