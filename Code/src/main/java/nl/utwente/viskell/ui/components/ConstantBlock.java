@@ -40,11 +40,22 @@ public class ConstantBlock extends ValueBlock  implements Bundleable {
 
     public static ConstantBlock fromBundleFragment(ToplevelPane pane, Map<String,Object> bundleFragment) throws ClassNotFoundException {
         String value = (String)bundleFragment.get("value");
-        // FIXME Use Environment/TypeBuilder to create Type from String?
-        // FIXME I got lost in the code trying to figure out how to do this isung DataTypeInfo, TypeCon, etc...
-        // FIXME Type type = (String)bundleFragment.get("type");
         boolean hasValidValue = (Boolean)bundleFragment.get("hasValidValue");
-        return new ConstantBlock(pane, null, value, hasValidValue);
+
+        if (hasValidValue) {
+            // Recover the type from the saved value.
+            try {
+                Type type = pane.getGhciSession().pullType(value, pane.getEnvInstance());
+                return new ConstantBlock(pane, type, value, true);
+            } catch (HaskellException e) {
+                // Should not happen as it was typechecked before saving. 
+            }
+        } 
+        
+        // Constant with invalid value or bad type. 
+        ConstantBlock block = new ConstantBlock(pane);
+        block.setValue(value);
+        return block;
     }
 
     public void editValue(Optional<String> startValue) {

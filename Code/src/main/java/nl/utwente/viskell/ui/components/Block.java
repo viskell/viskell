@@ -379,6 +379,8 @@ public abstract class Block extends StackPane implements Bundleable, ComponentLo
         block.setLayoutY((Double) blockBundle.get(BLOCK_Y_PARAMETER));
         blockLookupTable.put(((Double)blockBundle.get(Block.BLOCK_ID_PARAMETER)).intValue(), block);
 
+        // Ensure initialization of types related to the block
+        block.initiateConnectionChanges();
         return block;
     }
 }
