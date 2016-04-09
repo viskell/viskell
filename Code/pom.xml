@@ -131,11 +131,8 @@
         <configuration>
           <validationSets>
             <validationSet>
-              <dir>src/main/resources/catalog/</dir>
-            </validationSet>
-            <validationSet>
-              <dir>src/main/resources/catalog/</dir>
-              <includes><include>catalog.xml</include></includes>
+              <dir>src/main/resources/catalog</dir>
+              <includes><include>*.xml</include></includes>
               <systemId>src/main/resources/catalog/catalog.xsd</systemId>
             </validationSet>
           </validationSets>
