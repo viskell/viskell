@@ -27,7 +27,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Pane.class, Block.class})
-public class ToplevelPaneTest {
+public class ToplevelPaneITCase {
     private GhciSession mockGhci;
 
     @Before
