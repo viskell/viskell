@@ -4,6 +4,9 @@ import com.google.common.base.Charsets;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -21,14 +24,24 @@ import java.util.*;
  * menu actions
  */
 public class MenuActions {
-    /** The main overlay of which this menu is a part */ 
+    /**
+     * The main overlay of which this menu is a part
+     */
     protected MainOverlay overlay;
 
-    /** The File we're currently working on, if any. */
+    /**
+     * The File we're currently working on, if any.
+     */
     private Optional<File> currentFile;
 
-    public MenuActions(MainOverlay overlay) {
-        this.overlay = overlay;
+    /** The current preferences window, or null if not yet opened. */
+    private PreferencesWindow preferences;
+
+    /** The current inspector window, or null if not yet opened. */
+    private InspectorWindow inspector;
+
+    public MenuActions(MainOverlay ol) {
+        overlay = ol;
         newFile();
     }
 
@@ -54,18 +67,22 @@ public class MenuActions {
         List<MenuItem> list = new ArrayList<>();
 
         MenuItem menuNew = new MenuItem("New");
+        menuNew.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         menuNew.setOnAction(this::onNew);
         list.add(menuNew);
 
         MenuItem menuOpen = new MenuItem("Open...");
+        menuOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
         menuOpen.setOnAction(this::onOpen);
         list.add(menuOpen);
 
         MenuItem menuSave = new MenuItem("Save");
+        menuSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
         menuSave.setOnAction(this::onSave);
         list.add(menuSave);
 
         MenuItem menuSaveAs = new MenuItem("Save as...");
+        menuSaveAs.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN));
         menuSaveAs.setOnAction(this::onSaveAs);
         list.add(menuSaveAs);
 
@@ -74,12 +91,20 @@ public class MenuActions {
 
     @SuppressWarnings("UnusedParameters")
     protected void showPreferences(ActionEvent actionEvent) {
-        this.overlay.showPreferences();
+        if (preferences == null) {
+            preferences = new PreferencesWindow(overlay);
+        }
+
+        preferences.show();
     }
 
     @SuppressWarnings("UnusedParameters")
     protected void showInspector(ActionEvent actionEvent) {
-        this.overlay.showInspector();
+        if (inspector == null) {
+            inspector = new InspectorWindow(overlay);
+        }
+
+        inspector.show();
     }
 
     protected void onNew(ActionEvent actionEvent) {
@@ -98,24 +123,24 @@ public class MenuActions {
      * @param actionEvent correspondign to the open request
      */
     protected void onOpen(ActionEvent actionEvent) {
-        Window window = this.overlay.getScene().getWindow();
+        Window window = overlay.getScene().getWindow();
         File file = new FileChooser().showOpenDialog(window);
 
         if (file != null) {
-            addChildrenFrom(file, this.overlay.getToplevelPane());
+            addChildrenFrom(file, overlay.getToplevelPane());
         }
     }
 
     protected void onSave(ActionEvent actionEvent) {
-        if (this.currentFile.isPresent()) {
-            saveTo(this.currentFile.get());
+        if (currentFile.isPresent()) {
+            saveTo(currentFile.get());
         } else {
             onSaveAs(actionEvent);
         }
     }
 
     protected void onSaveAs(ActionEvent actionEvent) {
-        Window window = this.overlay.getScene().getWindow();
+        Window window = overlay.getScene().getWindow();
         File file = new FileChooser().showSaveDialog(window);
 
         if (file != null) {
@@ -153,7 +178,7 @@ public class MenuActions {
             e.printStackTrace();
         }
     }
-    
+
     @SuppressWarnings("UnusedParameters")
     protected void toggleFullScreen(ActionEvent actionEvent) {
         Stage stage = Main.getStage();
@@ -168,5 +193,15 @@ public class MenuActions {
     @SuppressWarnings("UnusedParameters")
     protected void onQuit(ActionEvent actionEvent) {
         Platform.exit();
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    protected void zoomIn(ActionEvent actionEvent) {
+        overlay.getToplevelPane().zoom(1.1);
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    protected void zoomOut(ActionEvent actionEvent) {
+        overlay.getToplevelPane().zoom(1 / 1.1);
     }
 }

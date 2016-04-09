@@ -25,12 +25,6 @@ public class MainOverlay extends BorderPane {
     private final Pane touchOverlay;
     final Map<Integer, TouchDisplay> circleByTouchId;
 
-    /** The current preferences window, or null if not yet opened. */
-    private PreferencesWindow preferences;
-
-    /** The current inspector window, or null if not yet opened. */
-    private InspectorWindow inspector;
-
     private final ToplevelPane toplevelPane;
     
     public MainOverlay(ToplevelPane toplevelPane) {
@@ -75,10 +69,11 @@ public class MainOverlay extends BorderPane {
         });
 
         StackPane stack = new StackPane();
+        MenuActions menuActions = new MenuActions(this);
 
         final String os = System.getProperty("os.name");
         boolean topMenu = (os != null && os.startsWith ("Mac"));
-        stack.getChildren().setAll(this.toplevelPane, makeZoomBar(), makeToolBars(topMenu), touchOverlay);
+        stack.getChildren().setAll(this.toplevelPane, makeZoomBar(menuActions), makeToolBars(topMenu, menuActions), touchOverlay);
         this.setCenter(stack);
     }
 
@@ -86,9 +81,8 @@ public class MainOverlay extends BorderPane {
         return this.toplevelPane;
     }
 
-    private FlowPane makeToolBars(boolean topMenu) {
+    private FlowPane makeToolBars(boolean topMenu, MenuActions menuActions) {
         FlowPane toolBar;
-        MenuActions menuActions = new MenuActions(this);
 
         if (topMenu) {
             setTop(new MacTopMenu(menuActions));
@@ -112,12 +106,12 @@ public class MainOverlay extends BorderPane {
         return toolBar;
     }
 
-    private FlowPane makeZoomBar() {
+    private FlowPane makeZoomBar(MenuActions menuActions) {
         Button zoomIn = new Button("+");
-        zoomIn.setOnAction(e -> this.zoom(1.1));
+        zoomIn.setOnAction(menuActions::zoomIn);
 
         Button zoomOut = new Button("–");
-        zoomOut.setOnAction(e -> this.zoom(1/1.1));
+        zoomOut.setOnAction(menuActions::zoomOut);
 
         FlowPane zoomBar = new FlowPane(10, 0, zoomIn, zoomOut);
         zoomBar.setPrefSize(100, 20);
@@ -131,38 +125,4 @@ public class MainOverlay extends BorderPane {
     public void setTouchVisible(boolean value) {
         this.touchOverlay.setVisible(value);
     }
-
-    public void showPreferences() {
-        if (this.preferences == null) {
-            this.preferences = new PreferencesWindow(this);
-        }
-
-        this.preferences.show();
-    }
-
-    public void showInspector() {
-        if (this.inspector == null) {
-            this.inspector = new InspectorWindow(this);
-        }
-
-        this.inspector.show();
-    }
-
-    /**
-     * Zooms the underlying main pane in/out with a ratio, up to reasonable limits. 
-     * @param ratio the additional zoom factor to apply.
-     */
-    private void zoom(double ratio) {
-        double scale = this.toplevelPane.getScaleX();
-
-        /* Limit zoom to reasonable range. */
-        if (scale <= 0.2 && ratio < 1) return;
-        if (scale >= 3 && ratio > 1) return;
-
-        this.toplevelPane.setScaleX(scale * ratio);
-        this.toplevelPane.setScaleY(scale * ratio);
-        this.toplevelPane.setTranslateX(this.toplevelPane.getTranslateX() * ratio);
-        this.toplevelPane.setTranslateY(this.toplevelPane.getTranslateY() * ratio);
-    }
-
 }
