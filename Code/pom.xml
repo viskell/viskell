@@ -18,7 +18,7 @@
 
   <dependencies>
 
-  <!-- Test dependencies -->
+    <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -44,7 +44,7 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Compile/Runtime dependencies -->
+    <!-- Compile-time/Runtime dependencies -->
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
@@ -61,20 +61,14 @@
       <version>4.5</version>
     </dependency>
     <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr4-maven-plugin</artifactId>
-      <version>4.5</version>
-      <type>maven-plugin</type>
+      <groupId>org.jfxtras</groupId>
+      <artifactId>jfxtras-common</artifactId>
+      <version>8.0-r3</version>
     </dependency>
     <dependency>
-    	<groupId>org.jfxtras</groupId>
-    	<artifactId>jfxtras-common</artifactId>
-    	<version>8.0-r3</version>
-    </dependency>
-    <dependency>
-    	<groupId>org.jfxtras</groupId>
-    	<artifactId>jfxtras-menu</artifactId>
-    	<version>8.0-r3</version>
+      <groupId>org.jfxtras</groupId>
+      <artifactId>jfxtras-menu</artifactId>
+      <version>8.0-r3</version>
     </dependency>
   </dependencies>
 
