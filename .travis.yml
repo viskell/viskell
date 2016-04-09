@@ -6,4 +6,6 @@ before_install:
 script: 
  - cd Code && mvn package
 addons:
-  artifacts: true
+  artifacts:
+    paths:
+      - $(ls target/*.jar | tr "\n" ":")
