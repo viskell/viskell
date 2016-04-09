@@ -5,3 +5,5 @@ before_install:
  - "sudo apt-get install -y ghc"
 script: 
  - cd Code && mvn test
+addons:
+  artifacts: true
