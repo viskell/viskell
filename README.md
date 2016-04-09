@@ -36,7 +36,7 @@ To build an executable `.jar` file that includes dependencies, check out this re
 
 Java(FX) 8u40 or newer, GHC and QuickCheck are required. Importing as a Maven project into any Java IDE should also work.
 
-You can also download a [pre-built binary jar archive](https://github.com/viskell/viskell/releases/download/nlfp-day-demo/viskell-0.1.jar).
+You can also download [the latest release](https://github.com/viskell/viskell/releases/download/nlfp-day-demo/viskell-0.1.jar) or a [the latest bleeding-edge build](https://twnc.org/viskell/latest/viskell-0.1-jar-with-dependencies.jar).
 
 #### Using the touch interface (and the mouse alternatives)
  * Moving a block: dragging by one finger (or primary mouse button)
