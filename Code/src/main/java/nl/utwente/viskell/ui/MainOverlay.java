@@ -68,6 +68,14 @@ public class MainOverlay extends BorderPane {
             touchOverlay.getChildren().remove(circle);
         });
 
+        setOnScroll(event -> {
+            if (!event.isInertia()) {
+                setTranslateX(getTranslateX() + event.getDeltaX());
+                setTranslateY(getTranslateY() + event.getDeltaY());
+            }
+            event.consume();
+        });
+
         StackPane stack = new StackPane();
         MenuActions menuActions = new MenuActions(this);
 
