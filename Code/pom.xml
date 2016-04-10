@@ -9,6 +9,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <junit.version>4.11</junit.version>
     <powermock.version>1.5.1</powermock.version>
     <skipTests>false</skipTests>
