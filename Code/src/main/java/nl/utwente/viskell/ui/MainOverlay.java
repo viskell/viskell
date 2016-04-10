@@ -1,5 +1,6 @@
 package nl.utwente.viskell.ui;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -7,6 +8,7 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.*;
 
@@ -66,6 +68,14 @@ public class MainOverlay extends BorderPane {
             int touchId = event.getTouchPoint().getId();
             TouchDisplay circle = circleByTouchId.get(touchId);
             touchOverlay.getChildren().remove(circle);
+        });
+
+        setOnScroll(event -> {
+            if (!event.isInertia()) {
+                setTranslateX(getTranslateX() + event.getDeltaX());
+                setTranslateY(getTranslateY() + event.getDeltaY());
+            }
+            event.consume();
         });
 
         StackPane stack = new StackPane();
