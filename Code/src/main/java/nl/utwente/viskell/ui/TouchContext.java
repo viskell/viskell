@@ -1,6 +1,7 @@
 package nl.utwente.viskell.ui;
 
 import java.util.function.BiConsumer;
+import java.util.prefs.Preferences;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -21,6 +22,8 @@ import javafx.util.Duration;
  */
 public class TouchContext {
 
+    private static Preferences preferences = Preferences.userNodeForPackage(Main.class);
+    
     /** The container this context handling events for. */
     private final BlockContainer container;
 
@@ -147,7 +150,11 @@ public class TouchContext {
         // only react to proper panning gestures that not on the touch screen itself
         if ((!e.isDirect()) && !e.isInertia()) {
             if (this.panningAction != null) {
-                this.panningAction.accept(e.getDeltaX(), e.getDeltaY());
+                if (preferences.getBoolean("invertScroll", false)) {
+                    this.panningAction.accept(-e.getDeltaX(), -e.getDeltaY());
+                } else {
+                    this.panningAction.accept(e.getDeltaX(), e.getDeltaY());
+                }
             }
         }
         

@@ -25,6 +25,7 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
     @FXML private ComboBox<GhciSession.Backend> ghci;
     @FXML private ComboBox<String> background;
     @FXML private ComboBox<String> theme;
+    @FXML private CheckBox scrollInversion;
     @FXML protected CheckBox debugOverlay;
     @FXML private Button reloadTheme;
 
@@ -58,6 +59,11 @@ public class PreferencesWindow extends BorderPane implements ComponentLoader {
         theme.valueProperty().addListener(event -> {
             preferences.put("theme", theme.getValue());
             refreshTheme(overlay);
+        });
+        
+        scrollInversion.setSelected(preferences.getBoolean("invertScroll", false));
+        scrollInversion.setOnAction(event -> {
+            preferences.put("invertScroll", Boolean.toString(scrollInversion.isSelected()));
         });
         
         debugOverlay.setOnAction(event -> {
