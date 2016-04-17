@@ -26,14 +26,13 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @PrepareForTest({MenuActions.class, Main.class, Stage.class, MainOverlay.class, PreferencesWindow.class, InspectorWindow.class})
 public class MenuActionsTest {
     private MainOverlay mockMainOverlay;
-    private Stage mockStage;
     private ActionEvent mockEvent;
 
 
     @Before
     public void Setup() throws Exception {
         mockMainOverlay = mock(MainOverlay.class);
-        mockStage = mock(Stage.class);
+        Stage mockStage = mock(Stage.class);
         mockStatic(Main.class);
         when(Main.getStage()).thenReturn(mockStage);
         mockEvent = mock(ActionEvent.class);
@@ -41,8 +40,11 @@ public class MenuActionsTest {
 
     @Test
     public void initialisesWithANewFileTest() {
+        // Mocks
+        ToplevelPane mockToplevelPane = mock(ToplevelPane.class);
+
         // UUT
-        MenuActions menuActions = new MenuActions(mockMainOverlay);
+        MenuActions menuActions = new MenuActions(mockMainOverlay, mockToplevelPane);
 
         // Access
         Optional<File> currentFile = Whitebox.getInternalState(menuActions, "currentFile");
@@ -54,11 +56,12 @@ public class MenuActionsTest {
     @Test
     public void showPreferencesTest() throws Exception {
         // Mocks
+        ToplevelPane mockToplevelPane = mock(ToplevelPane.class);
         PreferencesWindow mockPreferencesWindow = mock(PreferencesWindow.class);
         whenNew(PreferencesWindow.class).withArguments(any()).thenReturn(mockPreferencesWindow);
 
         // UUT
-        MenuActions menuActions = new MenuActions(mockMainOverlay);
+        MenuActions menuActions = new MenuActions(mockMainOverlay, mockToplevelPane);
 
         // Test
         menuActions.showPreferences(mockEvent);
@@ -70,11 +73,12 @@ public class MenuActionsTest {
     @Test
     public void showInspectorTest() throws Exception {
         // Mocks
+        ToplevelPane mockToplevelPane = mock(ToplevelPane.class);
         InspectorWindow mockInspectorWindow = mock(InspectorWindow.class);
         whenNew(InspectorWindow.class).withArguments(any()).thenReturn(mockInspectorWindow);
 
         // UUT
-        MenuActions menuActions = new MenuActions(mockMainOverlay);
+        MenuActions menuActions = new MenuActions(mockMainOverlay, mockToplevelPane);
 
         // Test
         menuActions.showInspector(mockEvent);
@@ -90,7 +94,7 @@ public class MenuActionsTest {
         when(mockMainOverlay.getToplevelPane()).thenReturn(mockToplevelPane);
 
         // UUT
-        MenuActions menuActions = new MenuActions(mockMainOverlay);
+        MenuActions menuActions = new MenuActions(mockMainOverlay, mockToplevelPane);
 
         // Test
         menuActions.zoomIn(mockEvent);
@@ -106,7 +110,7 @@ public class MenuActionsTest {
         when(mockMainOverlay.getToplevelPane()).thenReturn(mockToplevelPane);
 
         // UUT
-        MenuActions menuActions = new MenuActions(mockMainOverlay);
+        MenuActions menuActions = new MenuActions(mockMainOverlay, mockToplevelPane);
 
         // Test
         menuActions.zoomOut(mockEvent);

@@ -14,30 +14,22 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * MainOverlay provides an overlay with zoom buttons, toolbar buttons etc.
+ * MainOverlay creates a stack of panes, the ToplevelPane with contents, menu button, zoom buttons, and touch overlay
  */
-public class MainOverlay extends BorderPane {
-    public static final Pos TOOLBAR_POS = Pos.TOP_LEFT;
-    public static final Pos ZOOMBAR_POS = Pos.BOTTOM_CENTER;
-
+public class MainOverlay extends StackPane {
     public static final String MENU_LABEL = "\u2630";
 
     private final Pane touchOverlay;
-    final Map<Integer, TouchDisplay> circleByTouchId;
-
+    private final Map<Integer, TouchDisplay> circleByTouchId;
     private final ToplevelPane toplevelPane;
-    
+
     public MainOverlay(ToplevelPane toplevelPane) {
         super();
 
         this.toplevelPane = toplevelPane;
 
+        touchOverlay = makeTouchOverlay();
         circleByTouchId = new TreeMap<>();
-        touchOverlay = new Pane();
-        // touch overlay shouldn't receive events
-        touchOverlay.setDisable(true);
-        // touch overlay is invisible by default
-        this.touchOverlay.setVisible(false);
 
         addEventFilter(TouchEvent.TOUCH_PRESSED, event -> {
             int touchId = event.getTouchPoint().getId();
@@ -68,45 +60,88 @@ public class MainOverlay extends BorderPane {
             touchOverlay.getChildren().remove(circle);
         });
 
-        StackPane stack = new StackPane();
-        MenuActions menuActions = new MenuActions(this);
+        MenuActions menuActions = new MenuActions(this, toplevelPane);
+        Pane zoomBar = makeZoomPane(menuActions);
+        StackPane.setAlignment(zoomBar, Pos.BOTTOM_CENTER);
 
-        final String os = System.getProperty("os.name");
-        boolean topMenu = (os != null && os.startsWith ("Mac"));
-        stack.getChildren().setAll(this.toplevelPane, makeZoomBar(menuActions), makeToolBars(topMenu, menuActions), touchOverlay);
-        this.setCenter(stack);
+        getChildren().setAll(this.toplevelPane, zoomBar, getMenu(menuActions), touchOverlay);
     }
 
+    /**
+     * Create the menu to be shown. If we are running on an OS that can display a top menu, then create that
+     * otherwise create an on-screen context menu
+     *
+     * @return menu to show
+     */
+    private Region getMenu(MenuActions menuActions) {
+        Region menu;
+        final String os = System.getProperty("os.name");
+        if ((os != null) && os.startsWith("Mac")) {
+            menu = new MacTopMenu(menuActions);
+        } else {
+            menu = makeMenuPane(menuActions);
+            StackPane.setAlignment(menu, Pos.TOP_LEFT);
+        }
+
+        return menu;
+    }
+
+    /**
+     * Get the ToplevelPane where all content is displayed
+     *
+     * @return ToplevelPane
+     */
     public ToplevelPane getToplevelPane() {
         return this.toplevelPane;
     }
 
-    private FlowPane makeToolBars(boolean topMenu, MenuActions menuActions) {
-        FlowPane toolBar;
+    /**
+     * Create an invisible Pane that can be used to display touch events for debugging
+     *
+     * @return Touch Pane
+     */
+    private Pane makeTouchOverlay() {
+        Pane touch = new Pane();
+        // touch overlay shouldn't receive events
+        touch.setDisable(true);
+        // touch overlay is invisible by default
+        touch.setVisible(false);
 
-        if (topMenu) {
-            setTop(new MacTopMenu(menuActions));
-            toolBar = new FlowPane(10, 0);
-        } else {
-            ContextMenu burgerMenu = new GlobalContextMenu(menuActions);
-            Button menu = new Button(MENU_LABEL);
-            menu.setFocusTraversable(false);
-            menu.setContextMenu(burgerMenu);
-            menu.setOnAction(e -> menu.getContextMenu().show(menu, Side.BOTTOM, 0, 10));
+        return touch;
+    }
 
-            toolBar = new FlowPane(10, 0, menu);
-        }
+    /**
+     * Make a Pane that contains a Context menu that can be displayed on-screen
+     *
+     * @param menuActions that can be performed
+     *
+     * @return Menu Pane
+     */
+    private Pane makeMenuPane(MenuActions menuActions) {
+        ContextMenu burgerMenu = new GlobalContextMenu(menuActions);
+        Button menu = new Button(MENU_LABEL);
+        menu.setFocusTraversable(false);
+        menu.setContextMenu(burgerMenu);
+        menu.setOnAction(e -> menu.getContextMenu().show(menu, Side.BOTTOM, 0, 10));
+
+        FlowPane toolBar = new FlowPane(10, 0, menu);
 
         toolBar.setMaxHeight(40);
         toolBar.setMaxWidth(40); // workaround to make it not confiscate the whole top of the screen
         toolBar.setPadding(new Insets(10));
         toolBar.getStyleClass().add("overlayButtons");
-        StackPane.setAlignment(toolBar, TOOLBAR_POS);
 
         return toolBar;
     }
 
-    private FlowPane makeZoomBar(MenuActions menuActions) {
+    /**
+     * Make a Pane that contains buttons for zoom in and zoom out
+     *
+     * @param menuActions that can be performed, including Zoom In and Zoom Out actions
+     *
+     * @return Zoom Pane
+     */
+    private Pane makeZoomPane(MenuActions menuActions) {
         Button zoomIn = new Button("+");
         zoomIn.setOnAction(menuActions::zoomIn);
 
@@ -118,11 +153,15 @@ public class MainOverlay extends BorderPane {
         zoomBar.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         zoomBar.setPadding(new Insets(10));
         zoomBar.getStyleClass().add("overlayButtons");
-        StackPane.setAlignment(zoomBar, ZOOMBAR_POS);
         return zoomBar;
     }
-    
-    public void setTouchVisible(boolean value) {
-        this.touchOverlay.setVisible(value);
+
+    /**
+     * Set the touch overlay plane to be visible (so that touch events can be displayed) or invisible
+     *
+     * @param visible - new visibility state of the touch overlay plance
+     */
+    public void setTouchOverlayVisible(boolean visible) {
+        this.touchOverlay.setVisible(visible);
     }
 }
