@@ -29,6 +29,8 @@ public class MenuActions {
      */
     protected MainOverlay overlay;
 
+    private final ToplevelPane toplevelPane;
+
     /**
      * The File we're currently working on, if any.
      */
@@ -40,8 +42,9 @@ public class MenuActions {
     /** The current inspector window, or null if not yet opened. */
     private InspectorWindow inspector;
 
-    public MenuActions(MainOverlay ol) {
+    public MenuActions(final MainOverlay ol, final ToplevelPane tl) {
         overlay = ol;
+        toplevelPane = tl;
         newFile();
     }
 
@@ -108,7 +111,7 @@ public class MenuActions {
     }
 
     protected void onNew(ActionEvent actionEvent) {
-        this.overlay.getToplevelPane().clearChildren();
+        toplevelPane.clearChildren();
         newFile();
     }
 
@@ -127,7 +130,7 @@ public class MenuActions {
         File file = new FileChooser().showOpenDialog(window);
 
         if (file != null) {
-            addChildrenFrom(file, overlay.getToplevelPane());
+            addChildrenFrom(file, toplevelPane);
         }
     }
 
@@ -171,7 +174,7 @@ public class MenuActions {
 
     protected void saveTo(File file) {
         try (FileOutputStream fos = new FileOutputStream(file)) {
-            fos.write(Exporter.export(this.overlay.getToplevelPane()).getBytes(Charsets.UTF_8));
+            fos.write(Exporter.export(toplevelPane).getBytes(Charsets.UTF_8));
             fos.close();
         } catch (IOException e) {
             // TODO do something sensible here
@@ -197,11 +200,11 @@ public class MenuActions {
 
     @SuppressWarnings("UnusedParameters")
     protected void zoomIn(ActionEvent actionEvent) {
-        overlay.getToplevelPane().zoom(1.1);
+        toplevelPane.zoom(1.1);
     }
 
     @SuppressWarnings("UnusedParameters")
     protected void zoomOut(ActionEvent actionEvent) {
-        overlay.getToplevelPane().zoom(1 / 1.1);
+        toplevelPane.zoom(1 / 1.1);
     }
 }

@@ -35,7 +35,7 @@ public class Main extends Application {
         Scene scene = new Scene(overlay);
         Preferences prefs = Preferences.userNodeForPackage(Main.class);
         String backGroundImage = prefs.get("background", "/ui/grid.png");
-        overlay.getToplevelPane().setStyle("-fx-background-image: url('" + backGroundImage + "');");
+        toplevelPane.setStyle("-fx-background-image: url('" + backGroundImage + "');");
         String theme = prefs.get("theme", "/ui/colours.css");
         scene.getStylesheets().addAll("/ui/layout.css", theme);
 
@@ -80,7 +80,7 @@ public class Main extends Application {
     /**
      * Get the main stage for this app
      *
-     * @return
+     * @return the current stage
      */
     public static Stage getStage() {
         return primaryStage;
