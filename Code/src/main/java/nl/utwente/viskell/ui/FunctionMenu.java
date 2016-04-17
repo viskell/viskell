@@ -69,11 +69,6 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
         this.parent = pane;
         this.loadFXML("FunctionMenu");
         this.dragContext = new DragContext(this);
-        /*
-         * Consume scroll events to prevent mixing of zooming and list
-         * scrolling.
-         */
-        this.addEventHandler(ScrollEvent.SCROLL, Event::consume);
 
         /* Create content for searchSpace. */
         // TODO create search tools and add them to searchSpace.
@@ -214,7 +209,10 @@ public class FunctionMenu extends StackPane implements ComponentLoader {
             });
             
             //Prevent dragging the whole menu when dragging inside a category list 
-            submenu.addEventHandler(TouchEvent.TOUCH_MOVED, Event::consume);
+            listView.addEventHandler(TouchEvent.TOUCH_MOVED, Event::consume);
+            
+            // Consume scroll events to prevent mixing of zooming and list scrolling.
+            listView.addEventHandler(ScrollEvent.SCROLL, Event::consume);
             
             categoryContainer.getPanes().addAll(submenu);
         }

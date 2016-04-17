@@ -1,6 +1,7 @@
 package nl.utwente.viskell.ui;
 
 import java.util.function.BiConsumer;
+import java.util.prefs.Preferences;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -8,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.paint.Color;
@@ -20,6 +22,8 @@ import javafx.util.Duration;
  */
 public class TouchContext {
 
+    private static Preferences preferences = Preferences.userNodeForPackage(Main.class);
+    
     /** The container this context handling events for. */
     private final BlockContainer container;
 
@@ -50,6 +54,7 @@ public class TouchContext {
         container.asNode().addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDrag);
         container.asNode().addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseRelease);
         container.asNode().addEventHandler(TouchEvent.TOUCH_PRESSED, this::handleTouchPress);
+        container.asNode().addEventHandler(ScrollEvent.SCROLL, this::handleScrollGesture);
     }
     
     private void dropMouseCutLine() {
@@ -138,6 +143,21 @@ public class TouchContext {
     
     private void handleTouchPress(TouchEvent e) {
         this.container.getToplevel().addLowerTouchArea(new TouchArea(e.getTouchPoint()));
+        e.consume();
+    }
+    
+    private void handleScrollGesture(ScrollEvent e) {
+        // only react to proper panning gestures that not on the touch screen itself
+        if ((!e.isDirect()) && !e.isInertia()) {
+            if (this.panningAction != null) {
+                if (preferences.getBoolean("invertScroll", false)) {
+                    this.panningAction.accept(-e.getDeltaX(), -e.getDeltaY());
+                } else {
+                    this.panningAction.accept(e.getDeltaX(), e.getDeltaY());
+                }
+            }
+        }
+        
         e.consume();
     }
     

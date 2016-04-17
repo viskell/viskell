@@ -16,8 +16,10 @@
                     <ComboBox fx:id="theme"/>
                     <Button fx:id="reloadTheme" text="Reload"/>
                 </HBox>
-                <Label GridPane.columnIndex="0" GridPane.rowIndex="3">Debug overlay</Label>
-                <CheckBox fx:id="debugOverlay" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="3">Invert scroll direction</Label>
+                <CheckBox fx:id="scrollInversion" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="4">Debug overlay</Label>
+                <CheckBox fx:id="debugOverlay" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
             </children>
         </GridPane>
     </center>
