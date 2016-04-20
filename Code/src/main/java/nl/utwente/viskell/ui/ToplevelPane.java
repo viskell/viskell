@@ -66,7 +66,10 @@ public class ToplevelPane extends Region implements BlockContainer, Bundleable {
     public void showFunctionMenuAt(double x, double y, boolean byMouse) {
         FunctionMenu menu = new FunctionMenu(byMouse, ghci.getCatalog(), this);
         double verticalCenter = 150; // just a guesstimate, because computing it here is annoying
-        menu.relocate(x, y - verticalCenter);
+        Point2D scenePos = this.localToScene(x, y - verticalCenter);
+        // avoid opening menu above top edge of the window
+        Point2D newPos = this.sceneToLocal(scenePos.getX(), Math.max(0, scenePos.getY()));
+        menu.relocate(newPos.getX(), newPos.getY());
         this.addMenu(menu);
     }
     
