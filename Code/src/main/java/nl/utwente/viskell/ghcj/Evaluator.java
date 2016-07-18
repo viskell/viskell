@@ -2,6 +2,7 @@ package nl.utwente.viskell.ghcj;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,10 +28,10 @@ abstract public class Evaluator {
     protected static final Charset UTF_8 = StandardCharsets.UTF_8;
 
     /** Raw input stream for result data from ghci to the application. */
-    protected final InputStream in;
+    protected InputStream in;
 
     /** Raw output stream from the application to ghci. */
-    protected final OutputStream out;
+    protected OutputStream out;
 
     /** A newline character. */
     protected final String NL;
@@ -47,7 +48,20 @@ abstract public class Evaluator {
             this.in = process.getInputStream();
             this.out = process.getOutputStream();
         } catch (IOException io) {
-            throw new HaskellException(io);
+            // Try an alternative ghci command if available.
+            List<String> altCommand = this.getAltCommand();
+            if (! altCommand.isEmpty()) {
+                try {
+                    Process process = new ProcessBuilder(altCommand).redirectErrorStream(true).start();
+
+                    this.in = process.getInputStream();
+                    this.out = process.getOutputStream();
+                } catch (IOException io2) {
+                    throw new HaskellException(io2);
+                }
+            } else {
+                throw new HaskellException(io);
+            }
         }
 
         /* Make it so that GHCi prints a null byte to its standard output when
@@ -133,6 +147,11 @@ abstract public class Evaluator {
 
     /** @return the command and arguments for the subprocess. */
     protected abstract List<String> getCommand();
+
+    /** @return the alternative command and arguments for the subprocess. */
+    protected List<String> getAltCommand() {
+        return ImmutableList.of();
+    }
 
     /** @return the list of modules to load automatically. */
     protected abstract List<String> getModules();
