@@ -65,7 +65,11 @@ public class WireMenu extends TilePane {
             joinBlockButton.setOnAction(event -> addBlockWithOutput(new JoinerBlock(this.toplevel, tupleArity)));
             joinBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new JoinerBlock(this.toplevel, tupleArity)));
             
-            this.getChildren().addAll(cancelButton, arbitraryBlockButton, rationalBlockButton, IntegerBlockButton , joinBlockButton);
+            Button appendBlockButton = new Button("Append");
+            appendBlockButton.setOnAction(event -> addBlockWithOutput(new AppendBlock(this.toplevel, 2)));
+            appendBlockButton.setOnTouchPressed(event -> addBlockWithOutput(new AppendBlock(this.toplevel, 2)));
+
+            this.getChildren().addAll(cancelButton, arbitraryBlockButton, rationalBlockButton, IntegerBlockButton , joinBlockButton, appendBlockButton);
             if (type.countArguments() > 0) {
                 this.getChildren().add(lambdaBlockButton);
             }
