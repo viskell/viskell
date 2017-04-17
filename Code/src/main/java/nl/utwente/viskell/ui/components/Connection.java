@@ -8,6 +8,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.transform.Transform;
 import nl.utwente.viskell.haskell.expr.LetExpression;
@@ -195,6 +196,9 @@ public class Connection extends CubicCurve implements
         this.setStartX(point.getX());
         this.setStartY(point.getY());
         updateBezierControlPoints(this);
+        if (this.getStroke() != Color.RED) {
+            this.setStroke(this.calculateColor());
+        }
     }
 
     /**
@@ -205,6 +209,9 @@ public class Connection extends CubicCurve implements
         this.setEndX(point.getX());
         this.setEndY(point.getY());
         updateBezierControlPoints(this);
+        if (this.getStroke() != Color.RED) {
+            this.setStroke(this.calculateColor());
+        }
     }
 
     /** Returns the current bezier offset based on the current start and end positions. */
@@ -269,13 +276,26 @@ public class Connection extends CubicCurve implements
 	        }
 		
 		} else {
-		    this.setStroke(Color.BLACK);
+		    this.setStroke(this.calculateColor());
 		    this.getStrokeDashArray().clear();
 			this.setStrokeWidth(calculateTypeWidth(this.endAnchor.getType()));
 		}
 	}
 
-	private static int calculateTypeWidth(Type wireType) {
+	private Paint calculateColor() {
+	    double diffX = this.getEndX() - this.getStartX();
+	    double distY = Math.abs(this.getEndY() - this.getStartY());
+	    long gridX = Math.abs(Math.round((this.getEndX() / 40))) % 4;
+	    long gridY = Math.abs(Math.round((this.getEndY() / 60))) % 4;
+	    long index = (gridX * 4 + gridY * 9) % 16;
+	    double angle = Math.toDegrees(Math.atan(diffX / (distY+0.1)));
+	    double hue = index * 22.5 + angle/2; 
+	    double saturation = this.getEndY() > this.getStartY() ? 0.3 : 0.7;
+	    double brightness = Math.min(12, distY / 40) / 100;
+        return Color.hsb(hue, saturation, brightness);
+    }
+
+    private static int calculateTypeWidth(Type wireType) {
 		Type type = wireType.getConcrete();
 		
 		int fcount = 0;
