@@ -4,10 +4,7 @@ import nl.utwente.viskell.haskell.env.Environment;
 import nl.utwente.viskell.haskell.expr.Expression;
 import nl.utwente.viskell.haskell.expr.Value;
 import nl.utwente.viskell.haskell.type.Type;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class GhciSessionTest {
     /** Our session with Ghci. */
@@ -17,20 +14,26 @@ public class GhciSessionTest {
     private Expression pi;
 
     @Before
-    public void setUp() throws HaskellException {
-        this.env = new Environment();
-        this.ghci = new GhciSession();
-        this.ghci.startAsync();
-        this.ghci.awaitRunning();
-
-        this.env.addTestSignature("my_pi", "Float");
-        this.pi = new Value(Type.con("Float"), "3.14");
+    public void setUp() {
+        Exception setUpIssue = null;
+        try {
+            this.env = new Environment();
+            this.ghci = new GhciSession();
+            this.ghci.startAsync();
+            this.ghci.awaitRunning();
+            this.env.addTestSignature("my_pi", "Float");
+            this.pi = new Value(Type.con("Float"), "3.14");
+        } catch (Exception e) {
+            setUpIssue = e;
+        }
+        Assume.assumeNoException("could not set up GhciSession: "+setUpIssue.getMessage(), setUpIssue);
     }
 
     @After
     public void tearDown() {
         this.ghci.stopAsync();
-        this.ghci.awaitTerminated();
+        if (ghci.isRunning())
+            this.ghci.awaitTerminated();
     }
 
     @Test
