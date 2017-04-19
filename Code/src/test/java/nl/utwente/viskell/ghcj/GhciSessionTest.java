@@ -26,7 +26,8 @@ public class GhciSessionTest {
         } catch (Exception e) {
             setUpIssue = e;
         }
-        Assume.assumeNoException("could not set up GhciSession: "+setUpIssue.getMessage(), setUpIssue);
+        Assume.assumeNoException(setUpIssue == null ? "" :
+            "could not set up GhciSession: "+setUpIssue.getMessage(), setUpIssue);
     }
 
     @After
